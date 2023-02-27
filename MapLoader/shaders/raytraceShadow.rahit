@@ -1,0 +1,6 @@
+#version 460
+#extension GL_GOOGLE_include_directive : enable
+
+#define PAYLOAD_1
+#define IS_SHADOW_RAY
+#include "raytrace-rahit.glsl"

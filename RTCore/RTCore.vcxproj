@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{7a79a25a-bff9-4d7a-8c67-ba520116ca14}</ProjectGuid>
+    <RootNamespace>RTCore</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Vulkan.props" />
+    <Import Project="..\CppGlobalConfig.props" />
+    <Import Project="RTCoreInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
+    <Import Project="..\GLFW\GLFWInclude.props" />
+    <Import Project="..\DebugOptimization.props" />
+    <Import Project="..\tinygltf\tinygltfInclude.props" />
+    <Import Project="..\tinyobjloader\tinyobjloaderInclude.props" />
+    <Import Project="..\Imgui\ImguiInclude.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Vulkan.props" />
+    <Import Project="..\CppGlobalConfig.props" />
+    <Import Project="RTCoreInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
+    <Import Project="..\GLFW\GLFWInclude.props" />
+    <Import Project="..\Optimization.props" />
+    <Import Project="..\tinygltf\tinygltfInclude.props" />
+    <Import Project="..\tinyobjloader\tinyobjloaderInclude.props" />
+    <Import Project="..\Imgui\ImguiInclude.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Vulkan.props" />
+    <Import Project="..\CppGlobalConfig.props" />
+    <Import Project="RTCoreInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
+    <Import Project="..\GLFW\GLFWInclude.props" />
+    <Import Project="..\DebugOptimization.props" />
+    <Import Project="..\tinygltf\tinygltfInclude.props" />
+    <Import Project="..\tinyobjloader\tinyobjloaderInclude.props" />
+    <Import Project="..\Imgui\ImguiInclude.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\Vulkan.props" />
+    <Import Project="..\CppGlobalConfig.props" />
+    <Import Project="RTCoreInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
+    <Import Project="..\GLFW\GLFWInclude.props" />
+    <Import Project="..\Optimization.props" />
+    <Import Project="..\tinygltf\tinygltfInclude.props" />
+    <Import Project="..\tinyobjloader\tinyobjloaderInclude.props" />
+    <Import Project="..\Imgui\ImguiInclude.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN32;_WINDOWS;RESOURCE_DIRECTORY="$(SolutionDir)RTCore/resources/";NOMINMAX;NVP_SUPPORTS_VULKANSDK;VK_ENABLE_BETA_EXTENSIONS;VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1;VK_USE_PLATFORM_WIN32_KHR;_CRT_SECURE_NO_WARNINGS;STBI_MSC_SECURE_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32;_WINDOWS;RESOURCE_DIRECTORY="$(SolutionDir)RTCore/resources/";NOMINMAX;NVP_SUPPORTS_VULKANSDK;VK_ENABLE_BETA_EXTENSIONS;VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1;VK_USE_PLATFORM_WIN32_KHR;_CRT_SECURE_NO_WARNINGS;STBI_MSC_SECURE_CRT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Imgui\src\Imgui\backends\imgui_impl_glfw.cpp" />
+    <ClCompile Include="src\fileformats\nv_dds.cpp" />
+    <ClCompile Include="src\fileformats\tiny_converter.cpp" />
+    <ClCompile Include="src\imgui\backends\imgui_impl_vulkan.cpp" />
+    <ClCompile Include="src\imgui\backends\imgui_vk_extra.cpp" />
+    <ClCompile Include="src\imgui\imgui_camera_widget.cpp" />
+    <ClCompile Include="src\imgui\imgui_helper.cpp" />
+    <ClCompile Include="src\imgui\imgui_orient.cpp" />
+    <ClCompile Include="src\nvh\appwindowprofiler.cpp" />
+    <ClCompile Include="src\nvh\bitarray.cpp" />
+    <ClCompile Include="src\nvh\cameramanipulator.cpp" />
+    <ClCompile Include="src\nvh\filemapping.cpp" />
+    <ClCompile Include="src\nvh\gltfscene.cpp" />
+    <ClCompile Include="src\nvh\nvprint.cpp" />
+    <ClCompile Include="src\nvh\parametertools.cpp" />
+    <ClCompile Include="src\nvh\primitives.cpp" />
+    <ClCompile Include="src\nvh\profiler.cpp" />
+    <ClCompile Include="src\nvh\shaderfilemanager.cpp" />
+    <ClCompile Include="src\nvmath.cpp" />
+    <ClCompile Include="src\nvp\nvpfilesystem.cpp" />
+    <ClCompile Include="src\nvp\nvpsystem.cpp" />
+    <ClCompile Include="src\nvp\nvpsystem_win32.cpp" />
+    <ClCompile Include="src\nvp\nvpwindow.cpp" />
+    <ClCompile Include="src\nvp\perproject_globals.cpp" />
+    <ClCompile Include="src\nvvkhl\appbase_vk.cpp" />
+    <ClCompile Include="src\nvvkhl\appbase_vkpp.cpp" />
+    <ClCompile Include="src\nvvkhl\application.cpp" />
+    <ClCompile Include="src\nvvkhl\gbuffer.cpp" />
+    <ClCompile Include="src\nvvkhl\gltf_scene_rtx.cpp" />
+    <ClCompile Include="src\nvvkhl\gltf_scene_vk.cpp" />
+    <ClCompile Include="src\nvvkhl\hdr_env.cpp" />
+    <ClCompile Include="src\nvvkhl\hdr_env_dome.cpp" />
+    <ClCompile Include="src\nvvkhl\sky.cpp" />
+    <ClCompile Include="src\nvvkhl\tonemap_postprocess.cpp" />
+    <ClCompile Include="src\nvvk\appwindowprofiler_vk.cpp" />
+    <ClCompile Include="src\nvvk\buffersuballocator_vk.cpp" />
+    <ClCompile Include="src\nvvk\commands_vk.cpp" />
+    <ClCompile Include="src\nvvk\context_vk.cpp" />
+    <ClCompile Include="src\nvvk\debug_util_vk.cpp" />
+    <ClCompile Include="src\nvvk\descriptorsets_vk.cpp" />
+    <ClCompile Include="src\nvvk\dynamicrendering_vk.cpp" />
+    <ClCompile Include="src\nvvk\error_vk.cpp" />
+    <ClCompile Include="src\nvvk\extensions_vk.cpp" />
+    <ClCompile Include="src\nvvk\gizmos_vk.cpp" />
+    <ClCompile Include="src\nvvk\images_vk.cpp" />
+    <ClCompile Include="src\nvvk\memallocator_dedicated_vk.cpp" />
+    <ClCompile Include="src\nvvk\memallocator_vk.cpp" />
+    <ClCompile Include="src\nvvk\memorymanagement_vk.cpp" />
+    <ClCompile Include="src\nvvk\memorymanagement_vkgl.cpp" />
+    <ClCompile Include="src\nvvk\nsight_aftermath_vk.cpp" />
+    <ClCompile Include="src\nvvk\pipeline_vk.cpp" />
+    <ClCompile Include="src\nvvk\profiler_vk.cpp" />
+    <ClCompile Include="src\nvvk\raytraceKHR_vk.cpp" />
+    <ClCompile Include="src\nvvk\raytraceNV_vk.cpp" />
+    <ClCompile Include="src\nvvk\renderpasses_vk.cpp" />
+    <ClCompile Include="src\nvvk\resourceallocator_vk.cpp" />
+    <ClCompile Include="src\nvvk\samplers_vk.cpp" />
+    <ClCompile Include="src\nvvk\sbtwrapper_vk.cpp" />
+    <ClCompile Include="src\nvvk\shadermodulemanager_vk.cpp" />
+    <ClCompile Include="src\nvvk\stagingmemorymanager_vk.cpp" />
+    <ClCompile Include="src\nvvk\swapchain_vk.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Imgui\src\Imgui\backends\imgui_impl_glfw.h" />
+    <ClInclude Include="src\defines.h" />
+    <ClInclude Include="src\fileformats\bmp.hpp" />
+    <ClInclude Include="src\fileformats\cadscenefile.h" />
+    <ClInclude Include="src\fileformats\khr_df.h" />
+    <ClInclude Include="src\fileformats\nv_dds.h" />
+    <ClInclude Include="src\fileformats\nv_ktx.h" />
+    <ClInclude Include="src\fileformats\tiny_converter.hpp" />
+    <ClInclude Include="src\fileformats\tiny_gltf_freeimage.h" />
+    <ClInclude Include="src\imgui\backends\imgui_impl_vulkan.h" />
+    <ClInclude Include="src\imgui\backends\imgui_vk_extra.h" />
+    <ClInclude Include="src\imgui\imgui_camera_widget.h" />
+    <ClInclude Include="src\imgui\imgui_helper.h" />
+    <ClInclude Include="src\imgui\imgui_orient.h" />
+    <ClInclude Include="src\nvh\alignment.hpp" />
+    <ClInclude Include="src\nvh\appwindowcamerainertia.hpp" />
+    <ClInclude Include="src\nvh\appwindowprofiler.hpp" />
+    <ClInclude Include="src\nvh\bitarray.hpp" />
+    <ClInclude Include="src\nvh\boundingbox.hpp" />
+    <ClInclude Include="src\nvh\cameracontrol.hpp" />
+    <ClInclude Include="src\nvh\camerainertia.hpp" />
+    <ClInclude Include="src\nvh\cameramanipulator.hpp" />
+    <ClInclude Include="src\nvh\commandlineparser.hpp" />
+    <ClInclude Include="src\nvh\container_utils.hpp" />
+    <ClInclude Include="src\nvh\filemapping.hpp" />
+    <ClInclude Include="src\nvh\fileoperations.hpp" />
+    <ClInclude Include="src\nvh\geometry.hpp" />
+    <ClInclude Include="src\nvh\gltfscene.hpp" />
+    <ClInclude Include="src\nvh\inputparser.h" />
+    <ClInclude Include="src\nvh\misc.hpp" />
+    <ClInclude Include="src\nvh\nsightevents.h" />
+    <ClInclude Include="src\nvh\nvprint.hpp" />
+    <ClInclude Include="src\nvh\parallel_work.hpp" />
+    <ClInclude Include="src\nvh\parametertools.hpp" />
+    <ClInclude Include="src\nvh\primitives.hpp" />
+    <ClInclude Include="src\nvh\profiler.hpp" />
+    <ClInclude Include="src\nvh\radixsort.hpp" />
+    <ClInclude Include="src\nvh\shaderfilemanager.hpp" />
+    <ClInclude Include="src\nvh\threading.hpp" />
+    <ClInclude Include="src\nvh\timesampler.hpp" />
+    <ClInclude Include="src\nvh\trangeallocator.hpp" />
+    <ClInclude Include="src\nvmath.h" />
+    <ClInclude Include="src\nvp\include_gl.h" />
+    <ClInclude Include="src\nvp\NvFoundation.h" />
+    <ClInclude Include="src\nvp\nvpfilesystem.hpp" />
+    <ClInclude Include="src\nvp\nvpsystem.hpp" />
+    <ClInclude Include="src\nvp\nvpwindow.hpp" />
+    <ClInclude Include="src\nvp\perproject_globals.hpp" />
+    <ClInclude Include="src\nvp\platform.h" />
+    <ClInclude Include="src\nvp\resources.h" />
+    <ClInclude Include="src\nvvkhl\alloc_vma.hpp" />
+    <ClInclude Include="src\nvvkhl\appbase_vk.hpp" />
+    <ClInclude Include="src\nvvkhl\appbase_vkpp.hpp" />
+    <ClInclude Include="src\nvvkhl\application.hpp" />
+    <ClInclude Include="src\nvvkhl\element_camera.hpp" />
+    <ClInclude Include="src\nvvkhl\element_gui.hpp" />
+    <ClInclude Include="src\nvvkhl\element_logger.hpp" />
+    <ClInclude Include="src\nvvkhl\element_testing.hpp" />
+    <ClInclude Include="src\nvvkhl\gbuffer.hpp" />
+    <ClInclude Include="src\nvvkhl\glsl_compiler.hpp" />
+    <ClInclude Include="src\nvvkhl\gltf_scene.hpp" />
+    <ClInclude Include="src\nvvkhl\gltf_scene_rtx.hpp" />
+    <ClInclude Include="src\nvvkhl\gltf_scene_vk.hpp" />
+    <ClInclude Include="src\nvvkhl\hdr_env.hpp" />
+    <ClInclude Include="src\nvvkhl\hdr_env_dome.hpp" />
+    <ClInclude Include="src\nvvkhl\pipeline_container.hpp" />
+    <ClInclude Include="src\nvvkhl\Roboto-Regular.h" />
+    <ClInclude Include="src\nvvkhl\scene_camera.hpp" />
+    <ClInclude Include="src\nvvkhl\sky.hpp" />
+    <ClInclude Include="src\nvvkhl\tonemap_postprocess.hpp" />
+    <ClInclude Include="src\nvvk\appwindowprofiler_vk.hpp" />
+    <ClInclude Include="src\nvvk\buffersuballocator_vk.hpp" />
+    <ClInclude Include="src\nvvk\buffers_vk.hpp" />
+    <ClInclude Include="src\nvvk\commands_vk.hpp" />
+    <ClInclude Include="src\nvvk\compute_vk.hpp" />
+    <ClInclude Include="src\nvvk\context_vk.hpp" />
+    <ClInclude Include="src\nvvk\debug_util_vk.hpp" />
+    <ClInclude Include="src\nvvk\descriptorsets_vk.hpp" />
+    <ClInclude Include="src\nvvk\dynamicrendering_vk.hpp" />
+    <ClInclude Include="src\nvvk\error_vk.hpp" />
+    <ClInclude Include="src\nvvk\extensions_vk.hpp" />
+    <ClInclude Include="src\nvvk\gizmos_vk.hpp" />
+    <ClInclude Include="src\nvvk\images_vk.hpp" />
+    <ClInclude Include="src\nvvk\memallocator_dedicated_vk.hpp" />
+    <ClInclude Include="src\nvvk\memallocator_dma_vk.hpp" />
+    <ClInclude Include="src\nvvk\memallocator_vk.hpp" />
+    <ClInclude Include="src\nvvk\memallocator_vma_vk.hpp" />
+    <ClInclude Include="src\nvvk\memorymanagement_vk.hpp" />
+    <ClInclude Include="src\nvvk\memorymanagement_vkgl.hpp" />
+    <ClInclude Include="src\nvvk\nsight_aftermath_vk.hpp" />
+    <ClInclude Include="src\nvvk\pipeline_vk.hpp" />
+    <ClInclude Include="src\nvvk\profiler_vk.hpp" />
+    <ClInclude Include="src\nvvk\raypicker_vk.hpp" />
+    <ClInclude Include="src\nvvk\raytraceKHR_vk.hpp" />
+    <ClInclude Include="src\nvvk\raytraceNV_vk.hpp" />
+    <ClInclude Include="src\nvvk\renderpasses_vk.hpp" />
+    <ClInclude Include="src\nvvk\resourceallocator_vk.hpp" />
+    <ClInclude Include="src\nvvk\samplers_vk.hpp" />
+    <ClInclude Include="src\nvvk\sbtwrapper_vk.hpp" />
+    <ClInclude Include="src\nvvk\shadermodulemanager_vk.hpp" />
+    <ClInclude Include="src\nvvk\shaders_vk.hpp" />
+    <ClInclude Include="src\nvvk\specialization.hpp" />
+    <ClInclude Include="src\nvvk\stagingmemorymanager_vk.hpp" />
+    <ClInclude Include="src\nvvk\structs_vk.hpp" />
+    <ClInclude Include="src\nvvk\swapchain_vk.hpp" />
+    <ClInclude Include="src\vma\vk_mem_alloc.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\nvvk\memallocator_vma_vk.inl" />
+    <None Include="src\nvvk\structs_vk.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GLFW\GLFW.vcxproj">
+      <Project>{96c9131a-585e-4c2e-b512-a4daa4012102}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Imgui\Imgui.vcxproj">
+      <Project>{5cd4cce1-ace8-41b8-af9a-d3a7a1b79d1b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tinygltf\tinygltf.vcxproj">
+      <Project>{2d5430d2-cf77-4bc4-8cba-f7961d91dc50}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tinyobjloader\tinyobjloader.vcxproj">
+      <Project>{6b60993b-efba-4b61-91c6-0fcf64168392}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

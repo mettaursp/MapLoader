@@ -1,0 +1,207 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\VulkanGraphics">
+      <UniqueIdentifier>{3e094ab4-ac46-47b6-990b-bdacd0fc1e6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VulkanGraphics\Core">
+      <UniqueIdentifier>{adbffb66-458a-4d16-9f60-b52ad343168e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VulkanGraphics\FileFormats">
+      <UniqueIdentifier>{d66377b9-b9ba-42fe-8a0f-d1a65ec48bb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\VulkanGraphics\Scene">
+      <UniqueIdentifier>{9080c6fe-3c5e-4a09-be78-dc3f5fcfddcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Reflection">
+      <UniqueIdentifier>{31c18b8f-3fb2-4b8f-8cd1-df1cf756f9fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{a42ce9aa-f775-4c7f-935b-ee8050926017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{7c5f59e6-c131-4d57-918e-fd336b6ad9b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assets">
+      <UniqueIdentifier>{d2ab9e86-bfdc-496b-8183-216599182c87}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Engine\IdentifierHeap.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\ObjectAllocator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\PageAllocator.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Precision.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\Scene\MeshData.h">
+      <Filter>Source Files\VulkanGraphics\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\NifBlockTypes.h">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\NifComponentInfo.h">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\NifParser.h">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\PackageNodes.h">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\Core\BufferFormat.h">
+      <Filter>Source Files\VulkanGraphics\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Reflection\MetaData.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Reflection\Reflected.h">
+      <Filter>Source Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Objects\Object.h">
+      <Filter>Source Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Objects\Transform.h">
+      <Filter>Source Files\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Color1.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Color1I.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Color2.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Color2I.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Color3.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Color3I.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Color4.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Color4I.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Matrix3.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Matrix3-decl.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Matrix4.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Matrix4-decl.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Quaternion.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Vector2.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Vector2-decl.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Vector2S.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Vector2S-decl.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Vector3.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Vector3-decl.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Vector3S.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\Math\Vector3S-decl.h">
+      <Filter>Source Files\Math</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Engine\Precision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\Scene\MeshData.cpp">
+      <Filter>Source Files\VulkanGraphics\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\NifBlockTypes.cpp">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\NifComponentInfo.cpp">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\NifParser.cpp">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\Core\BufferFormat.cpp">
+      <Filter>Source Files\VulkanGraphics\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Reflection\MetaData.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Reflection\Reflected.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Objects\Object.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Objects\Transform.cpp">
+      <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Color1.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Color1I.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Color2.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Color2I.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Color3.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Color3I.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Color4.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Color4I.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\Math\Quaternion.cpp">
+      <Filter>Source Files\Math</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

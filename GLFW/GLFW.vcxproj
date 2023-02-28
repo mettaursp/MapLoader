@@ -128,7 +128,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;WIN32;_WINDOWS;_GLFW_USE_CONFIG_H;UNICODE;_UNICODE;_CRT_SECURE_NO_WARNINGS;NOMINMAX;NVP_SUPPORTS_VULKANSDK;VK_ENABLE_BETA_EXTENSIONS;VULKAN_HPP_DISPATCH_LOADER_DYNAMIC=1;RESOURCE_DIRECTORY="$(SolutionDir)RTCore/resources/";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
     </ClCompile>
     <Link>

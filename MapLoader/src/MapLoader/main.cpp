@@ -2578,7 +2578,7 @@ int main(int argc, char** argv)
 
 		std::cout << "loading map " << maps[i].id << std::endl;
 
-		//loadMap(maps[i].id);
+		loadMap(maps[i].id);
 
 		loadLights = false;
 	}
@@ -2627,7 +2627,7 @@ int main(int argc, char** argv)
 
 
 	//loadMap("02000376"); //sb map
-	loadMap("02010011"); // ludari promenade
+	//loadMap("02010011"); // ludari promenade
 	//loadMap("02000415"); // lions gate
 	//loadMap("99999887"); // test
 	//loadMap("02000422"); // sky fort

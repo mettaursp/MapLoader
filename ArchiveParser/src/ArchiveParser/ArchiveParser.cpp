@@ -134,12 +134,20 @@ namespace Archive
 			}
 
 			int level = 0;
+			bool inserted = false;
 
 			for (size_t i = 0; i < parentDir; ++i)
 			{
 				subPath[i] = path[i];
 
-				if (path[i] == '/' && strncmp(lastDirectory.c_str(), path.c_str(), i) != 0)
+				bool pathMatches = path[i] == '/' && strncmp(lastDirectory.c_str(), path.c_str(), i) == 0;
+
+				if (pathMatches && (lastDirectory.size() < i - 1 || lastDirectory[i] != '/'))
+				{
+					pathMatches = false;
+				}
+
+				if (path[i] == '/' && !pathMatches)
 				{
 					subPath.resize(i);
 
@@ -150,6 +158,7 @@ namespace Archive
 					DirectoryEntry& directory = Directories.back();
 					directory.Path = subPath;
 					directory.Index = Directories.size() - 1;
+					inserted = true;
 
 					if (level > 0)
 						directory.Parent = (DirectoryEntry*)-1ll;
@@ -164,6 +173,24 @@ namespace Archive
 					++level;
 			}
 
+			if (!inserted && lastDirectory.size() > parentDir && strncmp(lastDirectory.c_str(), path.c_str(), parentDir) != 0 && lastDirectory[parentDir] != '/')
+			{
+				subPath.resize(parentDir - 1);
+
+				if (DirectoryMap.find(subPath) != DirectoryMap.end()) continue;
+
+				Directories.push_back({});
+
+				DirectoryEntry& directory = Directories.back();
+				directory.Path = subPath;
+				directory.Index = Directories.size() - 1;
+
+				if (level > 0)
+					directory.Parent = (DirectoryEntry*)-1ll;
+
+				DirectoryMap.insert(std::make_pair(subPath, nullptr));
+			}
+
 			if (level > 0)
 				file.Parent = (DirectoryEntry*)-1ll;
 
@@ -172,8 +199,10 @@ namespace Archive
 
 		FileIndexMap.clear();
 
-		for (DirectoryEntry& directory : Directories)
+		for (size_t i = 0; i < Directories.size(); ++i)
 		{
+			DirectoryEntry& directory = Directories[i];
+
 			DirectoryMap[directory.Path] = &directory;
 			DirectoryMap.insert(std::make_pair(directory.Path / "", &directory));
 
@@ -188,12 +217,14 @@ namespace Archive
 
 			directory.DirectoryIndices.reserve(directory.Directories.size());
 			directory.FileIndices.reserve(directory.Files.size());
-			directory.Parent->Directories.insert(std::move(std::make_pair(std::move(directory.Path.filename()), &directory)));
+			directory.Parent->Directories.insert(std::make_pair(directory.Path.filename(), &directory));
 			directory.Parent->DirectoryIndices.push_back(directory.Index);
 		}
 
-		for (FileEntry& file : Files)
+		for (size_t i = 0; i < Files.size(); ++i)
 		{
+			FileEntry& file = Files[i];
+
 			FileMap[file.Path] = &file;
 			FileIndexMap.insert(std::make_pair(file.Index, &file));
 
@@ -206,7 +237,7 @@ namespace Archive
 				file.Parent = &RootDirectory;
 			}
 
-			file.Parent->Files.insert(std::move(std::make_pair(std::move(file.Path.filename()), &file)));
+			file.Parent->Files.insert(std::make_pair(file.Path.filename(), &file));
 			file.Parent->FileIndices.push_back(file.Location);
 		}
 	}

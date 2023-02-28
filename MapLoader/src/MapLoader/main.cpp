@@ -66,6 +66,9 @@
 #include <Engine/Math/Color4I.h>
 #include <Engine/Objects/Transform.h>
 #include <ArchiveParser/ParserUtils.h>
+#include <ArchiveParser/ArchiveReader.h>
+#include <ArchiveParser/ArchiveParser.h>
+#include <ArchiveParser/MetadataMapper.h>
 
 
 const auto PROJECT_NAME = "MapLoader";
@@ -114,7 +117,6 @@ mat4 convert(const Matrix4F& matrix)
 
 struct LoadedModel
 {
-	std::string Path;
 	std::vector<int> ModelIds;
 	std::vector<Matrix4F> Transformations;
 	std::vector<std::string> Shaders;
@@ -122,6 +124,7 @@ struct LoadedModel
 	std::vector<std::string> NodeNames;
 	std::vector<MaterialObj> Materials;
 	std::vector<std::shared_ptr<Engine::Graphics::MeshData>> Meshes;
+	const Archive::Metadata::Entry* Entry = nullptr;
 
 	bool IsLoaded(size_t index)
 	{
@@ -137,12 +140,13 @@ struct LoadedModel
 	}
 };
 
+struct EntityData;
+
 struct SpawnedEntity
 {
 	LoadedModel* Model = nullptr;
+	const EntityData* Flat = nullptr;
 	std::string Id;
-	std::string ModelName;
-	std::string NifName;
 	std::string Name;
 	Vector3SF Position;
 	Vector3SF WorldPosition;
@@ -279,14 +283,17 @@ struct Emotion
 	std::vector<EmotionTexture> Faces;
 };
 
-std::map<std::string, std::unique_ptr<LoadedModel>> models;
-std::map<std::string, std::unique_ptr<LoadedModel>> modelsFromPath;
+std::map<const Archive::Metadata::Entry*, std::unique_ptr<LoadedModel>> models;
 
 HelloVulkan* helloVkPtr = nullptr;
+Archive::ArchiveReader Reader;
+std::string documentBuffer;
+std::string flatDocumentBuffer;
 
 const char* localeName = "NA";
 const char* environmentName = "Live";
 fs::path ms2root = "B:/Files/ms2export/export/";
+fs::path ms2Root = "B:/Files/Maplstory 2 Client/appdata";
 fs::path tableroot = fs::path("Xml/table/");
 bool loadLights = true;
 std::shared_ptr<Engine::Graphics::MeshFormat> importFormat;
@@ -294,7 +301,6 @@ std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithColor;
 std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithBinormal;
 std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithColorAndBinormal;
 std::unordered_map<std::string, std::string> modelPathMap;
-std::unordered_map<std::string, std::string> flatPathMap;
 std::vector<SpawnedModel> spawnedModels;
 std::vector<SpawnedEntity> spawnedEntities;
 std::vector<LoadedMap> loadedMaps;
@@ -452,7 +458,6 @@ bool getModel(const fs::path& filepath, LoadedModel& loadedModel, bool saveMesh 
 	std::ifstream file(filepath, std::ios::in | std::ios::binary);
 	parser.Parse(file);
 
-	loadedModel.Path = filepath.string();
 	loadedModel.ModelIds.resize(parser.Package->Nodes.size());
 	loadedModel.Transformations.resize(parser.Package->Nodes.size());
 	loadedModel.Materials.resize(parser.Package->Nodes.size());
@@ -725,78 +730,32 @@ bool getModel(const fs::path& filepath, LoadedModel& loadedModel, bool saveMesh 
 	return true;
 }
 
-LoadedModel* getModel(const std::string& filename, bool saveMesh = false)
+LoadedModel* getModel(const Archive::Metadata::Entry* entry, bool saveMesh = false)
 {
-	auto path = modelPathMap.find(lower(filename));
+	if (entry == nullptr) return nullptr;
 
-	std::string name = filename;
-
-	if (path == modelPathMap.end())
-	{
-		char extension[5] = { 0 };
-
-		for (int i = 0; i < 4; ++i)
-		{
-			extension[i] = filename[filename.size() - 4 + i];
-
-			if (extension[i] >= 'A' && extension[i] <= 'Z')
-				extension[i] += 'a' - 'A';
-		}
-
-		name = std::string(extension) == ".nif" ? filename.substr(0, filename.size() - 4) : filename;
-
-		path = modelPathMap.find(lower(name));
-	}
-
-	if (path == modelPathMap.end())
-	{
-		return nullptr;
-	}
-
-	fs::path filepath = ms2root;
-	filepath += "Resource/" + path->second;
+	fs::path filepath = "Resource";
+	filepath += entry->RelativePath;
 
 	if (filepath.extension().string() == ".kfm")
 		filepath = filepath.replace_extension(fs::path(".nif"));
 
-	const auto& asset = models.find(name);
+	std::string name = lower(entry->Name);
+
+	const auto& asset = models.find(entry);
 
 	if (asset != models.end())
 	{
 		return asset->second.get();
 	}
 
-	models[name] = std::move(std::make_unique<LoadedModel>());
+	models[entry] = std::move(std::make_unique<LoadedModel>());
 
-	LoadedModel& loadedModel = *models[name];
+	LoadedModel& loadedModel = *models[entry];
 
-	getModel(filepath, loadedModel, saveMesh);
+	loadedModel.Entry = entry;
 
-	return &loadedModel;
-}
-
-LoadedModel* getModelFromPath(const fs::path& filepath, bool saveMesh)
-{
-	fs::path modelPath = ms2root / filepath;
-
-	if (!fs::exists(modelPath))
-	{
-		std::cout << "failed to load model " << filepath.string() << std::endl;
-		return nullptr;
-	}
-
-	const auto& asset = modelsFromPath.find(filepath.string());
-
-	if (asset != modelsFromPath.end())
-	{
-		return asset->second.get();
-	}
-
-	modelsFromPath[filepath.string()] = std::move(std::make_unique<LoadedModel>());
-
-	LoadedModel& loadedModel = *modelsFromPath[filepath.string()];
-
-	getModel(modelPath, loadedModel, saveMesh);
+	getModel(ms2root / filepath, loadedModel, saveMesh);
 
 	return &loadedModel;
 }
@@ -826,16 +785,15 @@ struct EntityLight
 struct EntityData
 {
 	LoadedModel* Model = nullptr;
+	const Archive::Metadata::Entry* Entry = nullptr;
 	Matrix4F Transformation;
 	Vector3SF VisualOffset;
 	Vector3SF Position;
 	Vector3SF Rotation;
 	float Scale;
 	bool IsVisible = true;
-	std::string NifName;
+	const Archive::Metadata::Entry* ModelEntry = nullptr;
 	std::string Id;
-	std::string ModelName;
-	std::string Name;
 	Color3 MaterialColor = Color3(1.0f, 1, 1);
 	bool IsLight = false;
 	EntityLight Light;
@@ -884,12 +842,7 @@ SpawnedEntity* spawnModel(LoadedModel* model, const Matrix4F& transform = Matrix
 	return &spawnedEntities.back();
 }
 
-SpawnedEntity* spawnModel(const std::string& name, const Matrix4F& transform = Matrix4F())
-{
-	return spawnModel(getModel(name), transform);
-}
-
-std::map<std::string, EntityData> loadedFlats;
+std::map<const Archive::Metadata::Entry*, EntityData> loadedFlats;
 
 float degToRad(float deg)
 {
@@ -990,6 +943,7 @@ const char* adjustPath(const char* path)
 struct ItemAsset
 {
 	std::string NifPath;
+	const Archive::Metadata::Entry* ModelEntry = nullptr;
 	LoadedModel* Model = nullptr;
 	std::string SelfNode;
 	std::string TargetNode;
@@ -1085,17 +1039,18 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 		0
 	};
 
-	fs::path file = ms2root / "Xml/Item/" / itemDir / (id + ".xml");
+	Archive::ArchivePath file = Reader.GetPath("Xml/Item/" + std::string(itemDir) + (id + ".xml"));
 
-	if (!fs::exists(file))
+	if (!file.Loaded())
 	{
-		std::cout << "failed to load item " << file.string() << std::endl;
+		std::cout << "failed to load item " << file.GetPath().string() << std::endl;
 		return nullptr;
 	}
 
 	tinyxml2::XMLDocument document;
 
-	document.LoadFile(file.string().c_str());
+	file.Read(documentBuffer);
+	document.Parse(documentBuffer.data(), documentBuffer.size());
 
 	tinyxml2::XMLElement* rootElement = document.RootElement();
 	tinyxml2::XMLElement* envElement = nullptr;
@@ -1153,13 +1108,31 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 								if (nifPath[i] == ':')
 									lastColon = i;
 
-							asset.NifPath = nifPath + lastColon + 1;
-							asset.Model = getModel(asset.NifPath, slot.Name == "HR");
+							if (nifPath[lastColon + 1])
+							{
+								std::vector<const Archive::Metadata::Entry*> entries;
+								Archive::Metadata::Entry::FindEntriesByTags(nifPath + lastColon + 1, "gamebryo-scenegraph", [&entries](const auto& entry) { entries.push_back(&entry); });
+
+								if (entries.size() != 1)
+								{
+									int i = 0;
+									++i;
+								}
+
+								asset.ModelEntry = Archive::Metadata::Entry::FindFirstEntryByTags(nifPath + lastColon + 1, "gamebryo-scenegraph");
+
+								if (asset.ModelEntry)
+								{
+									asset.NifPath = "Resource" + asset.ModelEntry->RelativePath.string();
+									asset.Model = getModel(asset.ModelEntry, slot.Name == "HR");
+								}
+							}
 						}
 						else
 						{
-							asset.NifPath = adjustPath(nifPath);
-							asset.Model = getModelFromPath(asset.NifPath, slot.Name == "HR");
+							asset.NifPath = nifPath + 5;
+							asset.ModelEntry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(nifPath + 5 + 8, "gamebryo-scenegraph");
+							asset.Model = getModel(asset.ModelEntry, slot.Name == "HR");
 						}
 
 						asset.SelfNode = readAttribute<const char*>(attributeElement, "selfnode", "");
@@ -1437,9 +1410,11 @@ void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 
 	EquipItem(character, data, data.Hair);
 
-	fs::path rigPath = data.Gender == Gender::Male ? "male/m_body.nif" : "female/f_body.nif";
+	std::string rigPath = data.Gender == Gender::Male ? "/Model/Character/male/m_body.nif" : "/Model/Character/female/f_body.nif";
 
-	LoadedModel* rig = getModelFromPath(ms2root / "Resource/Model/Character/" / rigPath, true);
+	const Archive::Metadata::Entry* rigEntry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(rigPath, "gamebryo-scenegraph");
+
+	LoadedModel* rig = getModel(rigEntry, true);
 
 	if (character.HideEars)
 		character.CutMeshes.push_back("FA_EA");
@@ -1617,11 +1592,9 @@ void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 
 void LoadEntity(EntityData& entity, tinyxml2::XMLElement* entityElement)
 {
-	std::string nifName;
-
-	entity.Name = readAttribute<const char*>(entityElement, "name", "");
-	entity.ModelName = readAttribute<const char*>(entityElement, "modelName", "");
 	entity.Id = readAttribute<const char*>(entityElement, "id", "");
+
+	const Archive::Metadata::Entry* modelEntry = nullptr;
 
 	for (tinyxml2::XMLElement* traitElement = entityElement->FirstChildElement(); traitElement; traitElement = traitElement->NextSiblingElement())
 	{
@@ -1700,15 +1673,7 @@ void LoadEntity(EntityData& entity, tinyxml2::XMLElement* entityElement)
 		{
 			const char* uuid = readAttribute<const char*>(setElement, "value", "urn:llid:null") + 9;
 
-			const auto& llid = llidToUUID.find(uuid);
-
-			if (llid == llidToUUID.end()) continue;
-
-			const auto& nifNameEntry = names.find(llid->second);
-
-			if (nifNameEntry == names.end()) continue;
-
-			nifName = nifNameEntry->second;
+			modelEntry = Archive::Metadata::Entry::FindFirstEntryByTagsWithLink(Archive::ParseHexInt(uuid, 0), "gamebryo-scenegraph");
 
 			continue;
 		}
@@ -1797,16 +1762,15 @@ void LoadEntity(EntityData& entity, tinyxml2::XMLElement* entityElement)
 		}
 	}
 
-	if (nifName != "" && nifName != entity.NifName && entity.IsVisible)
+	if (modelEntry != nullptr && modelEntry != entity.ModelEntry && entity.IsVisible)
 	{
-		entity.Model = getModel(nifName);
+		entity.Model = getModel(modelEntry);
+		entity.ModelEntry = modelEntry;
 	}
 
-	entity.NifName = nifName;
-
-	if (entity.IsVisible && entity.Model == nullptr && entity.NifName != "")
+	if (entity.IsVisible && entity.Model == nullptr && modelEntry != nullptr)
 	{
-		entity.Model = getModel(nifName);
+		entity.Model = getModel(modelEntry);
 	}
 
 	entity.Transformation = getMatrix(entity.Position, entity.Rotation, entity.Scale);
@@ -1822,31 +1786,33 @@ void LoadEntity(EntityData& entity, tinyxml2::XMLElement* entityElement)
 
 EntityData* loadFlat(const std::string& name)
 {
-	const auto& cachedFlat = loadedFlats.find(name);
+	const Archive::Metadata::Entry* entry = Archive::Metadata::Entry::FindFirstEntryByTags(name, "emergent-flat-model");
+
+	const auto& cachedFlat = loadedFlats.find(entry);
 
 	if (cachedFlat != loadedFlats.end())
 		return &cachedFlat->second;
 
-	const auto& flatPathEntry = flatPathMap.find(lower(name));
-
-	if (flatPathEntry == flatPathMap.end())
+	if (entry == nullptr)
 		return nullptr;
 
-	fs::path flatPath = ms2root / "Resource/";
-	flatPath += flatPathEntry->second;
+	Archive::ArchivePath flatFile = Reader.GetPath("Resource" + entry->RelativePath.string());
 
-	if (!fs::exists(flatPath))
+	if (!flatFile.Loaded())
 	{
-		std::cout << "failed to load map resource: " << flatPath.string() << std::endl;
+		std::cout << "failed to load map resource: " << flatFile.GetPath().string() << std::endl;
 		return nullptr;
 	}
 
-	loadedFlats[name] = EntityData();
-	EntityData& flat = loadedFlats[name];
+	loadedFlats[entry] = EntityData();
+	EntityData& flat = loadedFlats[entry];
+
+	flat.Entry = entry;
 
 	tinyxml2::XMLDocument document;
 
-	document.LoadFile(flatPath.string().c_str());
+	flatFile.Read(documentBuffer);
+	document.Parse(documentBuffer.data(), documentBuffer.size());
 
 	tinyxml2::XMLElement* rootElement = document.RootElement();
 
@@ -1857,11 +1823,11 @@ EntityData* loadFlat(const std::string& name)
 
 void loadMap(const std::string& mapId)
 {
-	fs::path filepath = ms2root / fs::path("Xml/map/" + padId(mapId) + ".xml");
+	Archive::ArchivePath mapFile = Reader.GetPath("Xml/map/" + padId(mapId) + ".xml");
 
-	if (!fs::exists(filepath))
+	if (!mapFile.Loaded())
 	{
-		std::cout << "failed to load map: " << filepath.string() << std::endl;
+		std::cout << "failed to load map: " << mapFile.GetPath().string() << std::endl;
 		return;
 	}
 
@@ -1870,7 +1836,8 @@ void loadMap(const std::string& mapId)
 	{
 		tinyxml2::XMLDocument document;
 
-		document.LoadFile(filepath.string().c_str());
+		mapFile.Read(documentBuffer);
+		document.Parse(documentBuffer.data(), documentBuffer.size());
 
 		tinyxml2::XMLElement* rootElement = document.RootElement();
 
@@ -1897,18 +1864,18 @@ void loadMap(const std::string& mapId)
 	if (xblockPathEntry == helloVkPtr->pathMap.end())
 		return;
 
-	fs::path xblockPath = ms2root / "Resource/";
-	xblockPath += xblockPathEntry->second;
+	Archive::ArchivePath xblockFile = Reader.GetPath("Resource/" + xblockPathEntry->second);
 
-	if (!fs::exists(xblockPath))
+	if (!xblockFile.Loaded())
 	{
-		std::cout << "failed to load map " << xblockPath.string() << std::endl;
+		std::cout << "failed to load map " << xblockFile.GetPath().string() << std::endl;
 		return;
 	}
 
 	tinyxml2::XMLDocument document;
 
-	document.LoadFile(xblockPath.string().c_str());
+	xblockFile.Read(flatDocumentBuffer);
+	document.Parse(flatDocumentBuffer.data(), flatDocumentBuffer.size());
 
 	tinyxml2::XMLElement* rootElement = document.RootElement();
 	tinyxml2::XMLElement* entitySet = rootElement->FirstChildElement("entitySet");
@@ -1916,7 +1883,7 @@ void loadMap(const std::string& mapId)
 	if (entitySet == nullptr) return;
 
 	mapIndices[mapId] = (int)loadedMaps.size();
-	loadedMaps.push_back(LoadedMap{ mapId, mapNames[mapId], {}, ms2ToWorld, xblockPath.string()});
+	loadedMaps.push_back(LoadedMap{ mapId, mapNames[mapId], {}, ms2ToWorld, xblockFile.GetPath().string()});
 
 	size_t directionalLight = -1;
 
@@ -1925,13 +1892,14 @@ void loadMap(const std::string& mapId)
 
 	for (tinyxml2::XMLElement* entityElement = entitySet->FirstChildElement(); entityElement; entityElement = entityElement->NextSiblingElement())
 	{
+		std::string entityName = readAttribute<const char*>(entityElement, "name", "");
 		std::string modelName = readAttribute<std::string>(entityElement, "modelName", "");
 
 		EntityData* flat = loadFlat(modelName);
 
-		LoadedModel* model = flat->Model;
 		if (flat == nullptr)
 			flat = loadFlat(modelName);
+		LoadedModel* model = flat->Model;
 
 		if (flat == nullptr)
 			continue;
@@ -1985,9 +1953,8 @@ void loadMap(const std::string& mapId)
 			}
 		);// *flat->Transformation);
 		newModel->Id = entity.Id;
-		newModel->ModelName = entity.ModelName;
-		newModel->NifName = model->Path;
-		newModel->Name = entity.Name;
+		newModel->Name = entityName;
+		newModel->Flat = flat;
 		newModel->Position = entity.Position;
 		newModel->WorldPosition = ms2ToWorld * Vector3F(entity.Position, 1);
 		newModel->MapIndex = (int)loadedMaps.size() - 1;
@@ -2024,20 +1991,18 @@ void loadMap(const std::string& mapId)
 	}
 }
 
-void loadMapNames()
+void loadMapNames(const Archive::ArchivePath& file)
 {
-	fs::path mapNamePath = ms2root;
-	mapNamePath += "Xml/string/en/mapname.xml";
-
-	if (!fs::exists(mapNamePath))
+	if (!file.Loaded())
 	{
-		std::cout << "failed to load map names " << mapNamePath.string() << std::endl;
+		std::cout << "failed to load map names " << file.GetPath().string() << std::endl;
 		return;
 	}
 
 	tinyxml2::XMLDocument document;
 
-	document.LoadFile(mapNamePath.string().c_str());
+	file.Read(documentBuffer);
+	document.Parse(documentBuffer.data(), documentBuffer.size());
 
 	tinyxml2::XMLElement* rootElement = document.RootElement();
 
@@ -2047,17 +2012,19 @@ void loadMapNames()
 	}
 }
 
-void loadDyes(const fs::path& file, std::vector<DyeColorInfo>& container)
+void loadDyes(const Archive::ArchivePath& file, std::vector<DyeColorInfo>& container)
 {
-	if (!fs::exists(file))
+	if (!file.Loaded())
 	{
-		std::cout << "failed to load dyes " << file.string() << std::endl;
+		std::cout << "failed to load dyes " << file.GetPath().string() << std::endl;
 		return;
 	}
 
 	tinyxml2::XMLDocument document;
 
-	document.LoadFile(file.string().c_str());
+	file.Read(documentBuffer);
+
+	document.Parse(documentBuffer.data(), documentBuffer.size());
 
 	tinyxml2::XMLElement* rootElement = document.RootElement();
 
@@ -2114,17 +2081,18 @@ void loadDyes(const fs::path& file, std::vector<DyeColorInfo>& container)
 	}
 }
 
-void loadDyeNames(const fs::path& file, std::vector<DyeColorInfo>& container)
+void loadDyeNames(const Archive::ArchivePath& file, std::vector<DyeColorInfo>& container)
 {
-	if (!fs::exists(file))
+	if (!file.Loaded())
 	{
-		std::cout << "failed to load dye names " << file.string() << std::endl;
+		std::cout << "failed to load dye names " << file.GetPath().string() << std::endl;
 		return;
 	}
 
 	tinyxml2::XMLDocument document;
 
-	document.LoadFile(file.string().c_str());
+	file.Read(documentBuffer);
+	document.Parse(documentBuffer.data(), documentBuffer.size());
 
 	tinyxml2::XMLElement* rootElement = document.RootElement();
 
@@ -2145,17 +2113,18 @@ void loadDyeNames(const fs::path& file, std::vector<DyeColorInfo>& container)
 	}
 }
 
-void loadEmotions(const fs::path& file, std::unordered_map<std::string, Emotion>& container)
+void loadEmotions(const Archive::ArchivePath& file, std::unordered_map<std::string, Emotion>& container)
 {
-	if (!fs::exists(file))
+	if (!file.Loaded())
 	{
-		std::cout << "failed to load emotions " << file.string() << std::endl;
+		std::cout << "failed to load emotions " << file.GetPath().string() << std::endl;
 		return;
 	}
 
 	tinyxml2::XMLDocument document;
 
-	document.LoadFile(file.string().c_str());
+	file.Read(documentBuffer);
+	document.Parse(documentBuffer.data(), documentBuffer.size());
 
 	tinyxml2::XMLElement* rootElement = document.RootElement();
 
@@ -2299,7 +2268,17 @@ int main(int argc, char** argv)
 	std::cout << "path found: " << fs::exists(ms2root) << std::endl;
 	std::cout << "locale: " << localeName << "; env: " << environmentName << std::endl;
 
-	if (!loadFeatures(ms2root / tableroot, localeName, environmentName)) return -1;
+	Reader.Load(ms2Root / "Data", true);
+
+	fs::path webMetaCache = "./cache/asset-web-metadata-cache";
+
+	if (!Archive::Metadata::Entry::LoadCached(webMetaCache))
+	{
+		Archive::Metadata::Entry::LoadEntries(Reader, "Resource/asset-web-metadata", documentBuffer);
+		Archive::Metadata::Entry::Cache(webMetaCache);
+	}
+
+	if (!loadFeatures(Reader.GetPath("Xml/table"), localeName, environmentName, documentBuffer)) return -1;
 
 	std::cout << "loaded features" << std::endl;
 	
@@ -2391,13 +2370,12 @@ int main(int argc, char** argv)
 	fs::path llidNt = ms2root;
 	llidNt += "Resource/asset-web-metadata/llid.nt";
 
-	loadDyes(ms2root / "Xml/table/colorpalette.xml", dyeColors);
-	loadDyes(ms2root / "Xml/table/na/colorpalette_achieve.xml", dyeColorsNA);
-	loadDyeNames(ms2root / "Xml/string/en/stringcolorpalette.xml", dyeColorsNA);
-	loadEmotions(ms2root / "Xml/emotion/common/femalecustom.xml", femaleEmotions);
-	loadEmotions(ms2root / "Xml/emotion/common/malecustom.xml", maleEmotions);
-
-	defaultSearchPaths.push_back(ms2root.string());
+	loadDyes(Reader.GetPath("Xml/table/colorpalette.xml"), dyeColors);
+	loadDyes(Reader.GetPath("Xml/table/na/colorpalette_achieve.xml"), dyeColorsNA);
+	loadDyeNames(Reader.GetPath("Xml/string/en/stringcolorpalette.xml"), dyeColorsNA);
+	loadEmotions(Reader.GetPath("Xml/emotion/common/femalecustom.xml"), femaleEmotions);
+	loadEmotions(Reader.GetPath("Xml/emotion/common/malecustom.xml"), maleEmotions);
+	defaultSearchPaths.push_back("B:/Files/ms2export/export/");
 
 	fs::path item = ms2root;
 
@@ -2452,12 +2430,12 @@ int main(int argc, char** argv)
 		if (extension == ".kfm" || extension == ".nif")
 			modelPathMap[nameLower] = relpath;
 		else if (extension == ".flat")
-			flatPathMap[nameLower] = relpath;
+			([]() {})(); // no-op
 		else
 			helloVk.pathMap[nameLower] = relpath;
 	}
 
-	loadMapNames();
+	loadMapNames(Reader.GetPath("Xml/string/en/mapname.xml"));
 
 	std::vector<Engine::Graphics::VertexAttributeFormat> attributes;
 
@@ -2672,7 +2650,7 @@ int main(int argc, char** argv)
 
 		std::cout << "loading map " << maps[i].id << std::endl;
 
-		//loadMap(maps[i].id);
+		loadMap(maps[i].id);
 
 		loadLights = false;
 	}
@@ -2721,10 +2699,10 @@ int main(int argc, char** argv)
 
 
 	//loadMap("02000376"); //sb map
-	//loadMap("02010011"); // ludari promenade
+	loadMap("02010011"); // ludari promenade
 	//loadMap("02000415"); // lions gate
 	//loadMap("99999887"); // test
-	loadMap("02000422"); // sky fort
+	//loadMap("02000422"); // sky fort
 	//loadMap("02000496"); // storms eye
 	//loadMap("02020130"); // 
 	//loadMap("02000083"); 
@@ -2841,7 +2819,15 @@ int main(int argc, char** argv)
 					int spawnedModelId = spawnedModels[modelId].ModelId;
 
 					ImGui::Text("Entity Name: %s", entity.Name.c_str());
-					ImGui::Text("Entity Model Name: %s", entity.ModelName.c_str());
+
+					if (entity.Flat != nullptr)
+					{
+						ImGui::Text("Entity Flat Name: %s", entity.Flat->Entry->Name.c_str());
+						ImGui::Text("Entity Flat Path: %s", entity.Flat->Entry->RelativePath.string().c_str());
+					}
+
+					ImGui::Text("Entity Model Name: %s", entity.Model->Entry->Name.c_str());
+					ImGui::Text("Entity Model Path: %s", entity.Model->Entry->RelativePath.string().c_str());
 					ImGui::Text("Entity Id: %s", entity.Id.c_str());
 					ImGui::Text("Spawned Entity Position: %.3f, %.3f, %.3f", entity.WorldPosition.X, entity.WorldPosition.Y, entity.WorldPosition.Z);
 					ImGui::Text("Entity Coordinates: %.3f, %.3f, %.3f", entity.Position.X, entity.Position.Y, entity.Position.Z);
@@ -2865,23 +2851,16 @@ int main(int argc, char** argv)
 						int line = -1;
 						DWORD flags = 0;
 
-						if (modifiers == (ModifierKeys::Shift | ModifierKeys::Ctrl))
+						if (modifiers == (ModifierKeys::Shift | ModifierKeys::Ctrl) && entity.Flat != nullptr)
 						{
-							const auto& flatPathEntry = flatPathMap.find(lower(entity.ModelName));
-
 							flags = CREATE_NO_WINDOW;
 
-							if (flatPathEntry != flatPathMap.end())
-							{
-								path += flatPathEntry->second;
-							}
-							else
-								path = "err";
+							path = path / entity.Flat->Entry->RelativePath;
 						}
 						else if (modifiers == ModifierKeys::Alt)
 						{
 							editor = "\"B:/Files/NifSkope_2_0_2020-07-09-x64/NifSkope.exe\"";
-							path = entity.NifName;
+							path = path / entity.Model->Entry->RelativePath;
 						}
 						else if (modifiers == ModifierKeys::Ctrl)
 						{
@@ -2964,7 +2943,15 @@ int main(int argc, char** argv)
 									const SpawnedEntity& targetPortal = spawnedEntities[targetPortalIndex->second];
 
 									ImGui::Text("Target Portal Entity Name: %s", targetPortal.Name.c_str());
-									ImGui::Text("Target Portal Entity Model Name: %s", targetPortal.ModelName.c_str());
+
+									if (targetPortal.Flat != nullptr)
+									{
+										ImGui::Text("Target Portal Entity Flat Name: %s", targetPortal.Flat->Entry->Name.c_str());
+										ImGui::Text("Target Portal Entity Flat Path: %s", targetPortal.Flat->Entry->RelativePath.string().c_str());
+									}
+
+									ImGui::Text("Target Portal Entity Model Name: %s", targetPortal.Model->Entry->Name.c_str());
+									ImGui::Text("Target Portal Entity Model Path: %s", targetPortal.Model->Entry->RelativePath.string().c_str());
 									ImGui::Text("Target Portal Entity Id: %s", targetPortal.Id.c_str());
 									ImGui::Text("Target Portal Spawned Entity Position: %.3f, %.3f, %.3f", targetPortal.WorldPosition.X, targetPortal.WorldPosition.Y, targetPortal.WorldPosition.Z);
 									ImGui::Text("Target Portal Entity Coordinates: %.3f, %.3f, %.3f", targetPortal.Position.X, targetPortal.Position.Y, targetPortal.Position.Z);

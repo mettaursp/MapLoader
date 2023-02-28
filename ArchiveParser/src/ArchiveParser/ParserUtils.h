@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <tinyxml2/tinyxml2.h>
+#include "ArchiveReader.h"
 
 std::string lower(const std::string& text);
 
@@ -179,4 +180,5 @@ void readAttribute(tinyxml2::XMLElement* node, const char* name, std::vector<Typ
 	}
 }
 
-bool loadFeatures(const fs::path& tableRoot, const char* locale, const char* env);
+bool loadFeatures(const Archive::ArchivePath& tablePath, const char* locale, const char* env, std::string& buffer);
+bool loadFeatures(const Archive::ArchivePath& tablePath, const char* locale, const char* env);

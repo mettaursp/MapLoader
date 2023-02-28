@@ -1,6 +1,7 @@
 #include "MetadataMapper.h"
 
 #include "ArchiveReader.h"
+#include "ParserUtils.h"
 
 #include <algorithm>
 #include <iostream>
@@ -219,6 +220,15 @@ namespace Archive
 			return (size_t)-1;
 		}
 
+		const Tag* Entry::GetTagData(const std::string& name)
+		{
+			for (size_t i = 0; i < TagTypes.size(); ++i)
+				if (TagTypes[i].Name == name)
+					return &TagTypes[i];
+
+			return nullptr;
+		}
+
 		void Entry::IndexEntries()
 		{
 			size_t applicationId = GetTag("application");
@@ -251,10 +261,18 @@ namespace Archive
 
 					if (entry.Name != "")
 					{
-						auto& names = tag.Names[entry.Name];
+						auto& names = tag.Names[lower(entry.Name)];
 
 						names.push_back(&entry);
 						tag.MaxNames = std::max(tag.MaxNames, names.size());
+					}
+
+					if (entry.RelativePath != "")
+					{
+						std::string relativePath = entry.RelativePath.string();
+						assert(tag.RelativePaths.find(relativePath) == tag.RelativePaths.end());
+
+						tag.RelativePaths[lower(relativePath)] = &entry;
 					}
 				}
 			}
@@ -262,12 +280,17 @@ namespace Archive
 
 		void Entry::LoadEntries(ArchiveReader& reader, const fs::path& path)
 		{
+			std::string buffer;
+			LoadEntries(reader, path, buffer);
+		}
+
+		void Entry::LoadEntries(ArchiveReader& reader, const fs::path& path, std::string& buffer)
+		{
 			if (!reader.IsValid()) return;
 
 			ArchivePath webMeta = reader.GetPath(path);
 
 			size_t files = webMeta.ChildFiles();
-			std::string buffer;
 
 			for (size_t i = 0; i < files; ++i)
 			{
@@ -275,6 +298,122 @@ namespace Archive
 			}
 
 			IndexEntries();
+		}
+
+		bool Entry::FoundMatch(const Entry* entry, const Tag& tag, const std::string** secondaryTags, size_t tagCount)
+		{
+			bool found = true;
+
+			for (size_t i = 0; i < tagCount && found; ++i)
+			{
+				bool matches = false;
+
+				for (size_t i = 0; i < entry->Tags.size() && !matches && tagCount > 0; ++i)
+				{
+					const Tag& secondaryTag = TagTypes[entry->Tags[i]];
+
+					matches = &secondaryTag == &tag || secondaryTag.Name == *secondaryTags[i];
+				}
+
+				found = matches;
+			}
+
+			return found;
+		}
+
+		void Entry::FindMatches(const std::function<void(const Entry&)>& callback, const Tag& tag, const std::vector<Entry*> matches, const std::string** secondaryTags, size_t tagCount)
+		{
+			for (const Entry* entry : matches)
+			{
+				bool found = FoundMatch(entry, tag, secondaryTags, tagCount);
+
+				if (found)
+					callback(*entry);
+			}
+		}
+
+		const Entry* Entry::FindFirstMatch(const Tag& tag, const std::vector<Entry*> matches, const std::string** secondaryTags, size_t tagCount)
+		{
+			for (const Entry* entry : matches)
+			{
+				bool found = FoundMatch(entry, tag, secondaryTags, tagCount);
+
+				if (found)
+					return entry;
+			}
+
+			return nullptr;
+		}
+
+		const Entry* Entry::FindFirstEntryByTagWithRelPath(const std::string& path, const std::string& primaryTag)
+		{
+			const Tag* tag = GetTagData(primaryTag);
+
+			if (tag == nullptr) return nullptr;
+
+			std::string pathLower = lower(path);
+
+			const auto& pathIndex = tag->RelativePaths.find(pathLower);
+
+			if (pathIndex == tag->RelativePaths.end()) return nullptr;
+
+			return pathIndex->second;
+		}
+
+		const Entry* Entry::FindFirstEntryByTags(const std::string& name, const std::string& primaryTag, const std::string** secondaryTags, size_t tagCount)
+		{
+			const Tag* tag = GetTagData(primaryTag);
+
+			if (tag == nullptr) return nullptr;
+
+			std::string nameLower = lower(name);
+
+			const auto& nameIndex = tag->Names.find(nameLower);
+
+			if (nameIndex == tag->Names.end()) return nullptr;
+
+			return FindFirstMatch(*tag, nameIndex->second, secondaryTags, tagCount);
+		}
+
+		void Entry::FindEntriesByTags(const std::string& name, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string** secondaryTags, size_t tagCount)
+		{
+			const Tag* tag = GetTagData(primaryTag);
+
+			if (tag == nullptr) return;
+
+			std::string nameLower = lower(name);
+
+			const auto& nameIndex = tag->Names.find(nameLower);
+
+			if (nameIndex == tag->Names.end()) return;
+
+			FindMatches(callback, *tag, nameIndex->second, secondaryTags, tagCount);
+		}
+
+		const Entry* Entry::FindFirstEntryByTagsWithLink(int linkId, const std::string& primaryTag, const std::string** secondaryTags, size_t tagCount)
+		{
+			const Tag* tag = GetTagData(primaryTag);
+
+			if (tag == nullptr) return nullptr;
+
+			const auto& linkIndex = tag->LinkIds.find(linkId);
+
+			if (linkIndex == tag->LinkIds.end()) return nullptr;
+
+			return FindFirstMatch(*tag, linkIndex->second, secondaryTags, tagCount);
+		}
+
+		void Entry::FindEntriesByTagsWithLink(int linkId, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string** secondaryTags, size_t tagCount)
+		{
+			const Tag* tag = GetTagData(primaryTag);
+
+			if (tag == nullptr) return;
+
+			const auto& linkIndex = tag->LinkIds.find(linkId);
+
+			if (linkIndex == tag->LinkIds.end()) return;
+
+			FindMatches(callback, *tag, linkIndex->second, secondaryTags, tagCount);
 		}
 
 		template <typename T>

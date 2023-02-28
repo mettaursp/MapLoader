@@ -3,6 +3,7 @@
 #include <string>
 #include <filesystem>
 #include <unordered_map>
+#include <functional>
 
 namespace fs = std::filesystem;
 
@@ -100,6 +101,7 @@ namespace Archive
 			std::unordered_map<UUID, Entry*> Ids;
 			std::unordered_map<unsigned int, std::vector<Entry*>> LinkIds;
 			std::unordered_map<std::string, std::vector<Entry*>> Names;
+			std::unordered_map<std::string, Entry*> RelativePaths;
 		};
 
 		struct Entry
@@ -114,11 +116,60 @@ namespace Archive
 			std::vector<size_t> Tags;
 
 			static size_t GetTag(const std::string& name);
+			static const Tag* GetTagData(const std::string& name);
 			static Entry& Add();
 			static void IndexEntries();
+			static void LoadEntries(ArchiveReader& reader, const fs::path& path, std::string& buffer);
 			static void LoadEntries(ArchiveReader& reader, const fs::path& path);
 			static bool LoadCached(const fs::path& path);
 			static void Cache(const fs::path& path);
+
+			static bool FoundMatch(const Entry* entry, const Tag& tag, const std::string** secondaryTags, size_t tagCount);
+			static void FindMatches(const std::function<void(const Entry&)>& callback, const Tag& tag, const std::vector<Entry*> matches, const std::string** secondaryTags, size_t tagCount);
+			static const Entry* FindFirstMatch(const Tag& tag, const std::vector<Entry*> matches, const std::string** secondaryTags, size_t tagCount);
+
+			static const Entry* FindFirstEntryByTagWithRelPath(const std::string& path, const std::string& primaryTag);
+			static const Entry* FindFirstEntryByTags(const std::string& name, const std::string& primaryTag, const std::string** secondaryTags = nullptr, size_t tagCount = 0);
+			static void FindEntriesByTags(const std::string& name, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string** secondaryTags = nullptr, size_t tagCount = 0);
+
+			template <typename... T>
+			static void FindEntriesByTags(const std::string& name, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string& secondaryTag0, const T&... secondaryTags)
+			{
+				const std::string* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
+				size_t count = sizeof...(T);
+
+				FindEntriesByTags(name, primaryTag, callback, tags, count);
+			}
+
+			template <typename... T>
+			static const Entry* FindFirstEntryByTags(const std::string& name, const std::string& primaryTag, const std::string& secondaryTag0, const T&... secondaryTags)
+			{
+				const std::string* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
+				size_t count = sizeof...(T);
+
+				return FindFirstEntryByTags(name, primaryTag, tags, count);
+			}
+
+			static const Entry* FindFirstEntryByTagsWithLink(int linkId, const std::string& primaryTag, const std::string** secondaryTags = nullptr, size_t tagCount = 0);
+			static void FindEntriesByTagsWithLink(int linkId, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string** secondaryTags = nullptr, size_t tagCount = 0);
+
+			template <typename... T>
+			static void FindEntriesByTagsWithLink(int linkId, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string& secondaryTag0, const T&... secondaryTags)
+			{
+				const std::string* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
+				size_t count = sizeof...(T);
+
+				FindEntriesByTagsWithLink(linkId, primaryTag, callback, tags, count);
+			}
+
+			template <typename... T>
+			static const Entry* FindFirstEntryByTagsWithLink(int linkId, const std::string& primaryTag, const std::string& secondaryTag0, const T&... secondaryTags)
+			{
+				const std::string* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
+				size_t count = sizeof...(T);
+
+				return FindFirstEntryByTagsWithLink(linkId, primaryTag, tags, count);
+			}
 
 			static std::vector<Tag> TagTypes;
 			static std::vector<Entry> Entries;

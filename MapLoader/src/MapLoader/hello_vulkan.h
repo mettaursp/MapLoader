@@ -27,6 +27,8 @@
 #include "nvvk/memallocator_dma_vk.hpp"
 #include "nvvk/resourceallocator_vk.hpp"
 #include <host_device.h>
+#include <ArchiveParser/ArchiveReader.h>
+#include <ArchiveParser/ArchiveParser.h>
 
 // #VKRay
 #include "nvvk/raytraceKHR_vk.hpp"
@@ -116,6 +118,7 @@ public:
 	nvvk::Buffer m_InstDesc;
 	nvvk::Buffer m_textureOverride;
 	GlobalUniforms hostUBO;
+	Archive::ArchiveReader* Reader = nullptr;
 
 	std::vector<nvvk::Texture> m_textures;  // vector of all textures of the scene
 	std::vector<std::string> textureNames = { "" };

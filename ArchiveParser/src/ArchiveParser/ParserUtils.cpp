@@ -197,22 +197,19 @@ bool isNodeEnabled(tinyxml2::XMLElement* node, SupportSettings* feature, Support
 	return true;
 }
 
-bool loadFeatures(const fs::path& tableRoot, const char* locale, const char* env)
+bool loadFeatures(const Archive::ArchivePath& tablePath, const char* locale, const char* env, std::string& buffer)
 {
-	fs::path featureSettingPath = tableRoot;
-	featureSettingPath += "feature_setting.xml";
-
-	fs::path featurePath = tableRoot;
-	featurePath += "feature.xml";
+	Archive::ArchivePath featureSettingPath = tablePath.Child("feature_setting.xml");
+	Archive::ArchivePath featurePath = tablePath.Child("feature.xml");
 
 	::locale = locale;
 
-	if (!fs::exists(featurePath) || !fs::exists(featureSettingPath))
+	if (!featureSettingPath.Loaded() || !featurePath.Loaded())
 	{
-		if (!fs::exists(featurePath))
-			std::cout << "failed to find " << featurePath.string() << std::endl;
-		if (!fs::exists(featureSettingPath))
-			std::cout << "failed to find " << featurePath.string() << std::endl;
+		if (featurePath.Loaded())
+			std::cout << "failed to find " << featurePath.GetPath().string() << std::endl;
+		if (!featureSettingPath.Loaded())
+			std::cout << "failed to find " << featureSettingPath.GetPath().string() << std::endl;
 
 		return false;
 	}
@@ -222,7 +219,9 @@ bool loadFeatures(const fs::path& tableRoot, const char* locale, const char* env
 	{
 		tinyxml2::XMLDocument document;
 
-		document.LoadFile(featureSettingPath.string().c_str());
+		featureSettingPath.Read(buffer);
+
+		document.Parse(buffer.data(), buffer.size());
 
 		tinyxml2::XMLElement* rootElement = document.RootElement();
 
@@ -247,7 +246,9 @@ bool loadFeatures(const fs::path& tableRoot, const char* locale, const char* env
 
 	tinyxml2::XMLDocument document;
 
-	document.LoadFile(featurePath.string().c_str());
+	featurePath.Read(buffer);
+
+	document.Parse(buffer.data(), buffer.size());
 
 	tinyxml2::XMLElement* rootElement = document.RootElement();
 
@@ -270,4 +271,10 @@ bool loadFeatures(const fs::path& tableRoot, const char* locale, const char* env
 	}
 
 	return true;
+}
+
+bool loadFeatures(const Archive::ArchivePath& tablePath, const char* locale, const char* env)
+{
+	std::string buffer;
+	return loadFeatures(tablePath, locale, env, buffer);
 }

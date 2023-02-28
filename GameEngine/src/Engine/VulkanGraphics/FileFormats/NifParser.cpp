@@ -681,6 +681,11 @@ std::map<std::string, std::string> attributeAliases = {
 
 using namespace Engine::Graphics;
 
+void NifParser::Parse(const std::string_view& stream)
+{
+
+}
+
 void NifParser::Parse(std::istream& stream)
 {
 	NifDocument document;

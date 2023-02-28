@@ -17,7 +17,7 @@
 #include "NifComponentInfo.h"
 #include "NifBlockTypes.h"
 
-void NifDocument::ParseTransform(std::istream& stream, NiTransform& transform, bool translationFirst, bool isQuaternion)
+void NifDocument::ParseTransform(std::string_view& stream, NiTransform& transform, bool translationFirst, bool isQuaternion)
 {
 	if (translationFirst)
 	{
@@ -62,7 +62,7 @@ void NifDocument::ParseTransform(std::istream& stream, NiTransform& transform, b
 	transform.Scale = Endian.read<float>(stream);
 }
 
-void NifDocument::ParseBounds(std::istream& stream, NiBounds& bounds)
+void NifDocument::ParseBounds(std::string_view& stream, NiBounds& bounds)
 {
 	float z = Endian.read<float>(stream);
 	float y = Endian.read<float>(stream);
@@ -74,7 +74,7 @@ void NifDocument::ParseBounds(std::istream& stream, NiBounds& bounds)
 	std::swap(bounds.Center.X, bounds.Center.Z);
 }
 
-void NifDocument::ParseNode(std::istream& stream, BlockData& block)
+void NifDocument::ParseNode(std::string_view& stream, BlockData& block)
 {
 	NiNode* data = block.AddData<NiNode>();
 
@@ -119,7 +119,7 @@ void NifDocument::ParseNode(std::istream& stream, BlockData& block)
 		data->Effects[i] = &Blocks[Endian.read<unsigned int>(stream)];
 }
 
-void NifDocument::ParseMesh(std::istream& stream, BlockData& block)
+void NifDocument::ParseMesh(std::string_view& stream, BlockData& block)
 {
 	NiMesh* data = block.AddData<NiMesh>();
 
@@ -198,7 +198,7 @@ void NifDocument::ParseMesh(std::istream& stream, BlockData& block)
 		data->Modifiers[i] = FetchRef(stream);
 }
 
-void NifDocument::ParseTexturingProperty(std::istream& stream, BlockData& block)
+void NifDocument::ParseTexturingProperty(std::string_view& stream, BlockData& block)
 {
 	NiTexturingProperty* data = block.AddData<NiTexturingProperty>();
 
@@ -280,7 +280,7 @@ void NifDocument::ParseTexturingProperty(std::istream& stream, BlockData& block)
 	}
 }
 
-void NifDocument::ParseSourceTexture(std::istream& stream, BlockData& block)
+void NifDocument::ParseSourceTexture(std::string_view& stream, BlockData& block)
 {
 	NiSourceTexture* data = block.AddData<NiSourceTexture>();
 
@@ -303,7 +303,7 @@ void NifDocument::ParseSourceTexture(std::istream& stream, BlockData& block)
 	data->PersistRenderData = Endian.read<unsigned char>(stream);
 }
 
-void NifDocument::ParseStream(std::istream& stream, BlockData& block)
+void NifDocument::ParseStream(std::string_view& stream, BlockData& block)
 {
 	NiDataStream* data = block.AddData<NiDataStream>();
 
@@ -346,12 +346,15 @@ void NifDocument::ParseStream(std::istream& stream, BlockData& block)
 
 	data->StreamData.resize(data->StreamSize);
 
-	stream.read(data->StreamData.data(), data->StreamSize);
+	size_t amount = std::min((size_t)data->StreamSize, stream.size());
+
+	std::memcpy(data->StreamData.data(), stream.data(), amount);
+	advanceStream(stream, amount);
 
 	data->Streamable = Endian.read<char>(stream);
 }
 
-Color3 NifDocument::ParseColor3(std::istream& stream)
+Color3 NifDocument::ParseColor3(std::string_view& stream)
 {
 	float r = Endian.read<float>(stream);
 	float g = Endian.read<float>(stream);
@@ -360,7 +363,7 @@ Color3 NifDocument::ParseColor3(std::istream& stream)
 	return Color3(r, g, b);
 }
 
-Color4 NifDocument::ParseColor4(std::istream& stream)
+Color4 NifDocument::ParseColor4(std::string_view& stream)
 {
 	float r = Endian.read<float>(stream);
 	float g = Endian.read<float>(stream);
@@ -370,7 +373,7 @@ Color4 NifDocument::ParseColor4(std::istream& stream)
 	return Color4(r, g, b, a);
 }
 
-void NifDocument::ParseMaterialProperty(std::istream& stream, BlockData& block)
+void NifDocument::ParseMaterialProperty(std::string_view& stream, BlockData& block)
 {
 	NiMaterialProperty* data = block.AddData<NiMaterialProperty>();
 
@@ -385,7 +388,7 @@ void NifDocument::ParseMaterialProperty(std::istream& stream, BlockData& block)
 	data->Alpha = Endian.read<float>(stream);
 }
 
-void NifDocument::ParseSkinningMeshModifier(std::istream& stream, BlockData& block)
+void NifDocument::ParseSkinningMeshModifier(std::string_view& stream, BlockData& block)
 {
 	NiSkinningMeshModifier* data = block.AddData<NiSkinningMeshModifier>();
 
@@ -424,7 +427,7 @@ void NifDocument::ParseSkinningMeshModifier(std::istream& stream, BlockData& blo
 	}
 }
 
-void NifDocument::ParseSequenceData(std::istream& stream, BlockData& block)
+void NifDocument::ParseSequenceData(std::string_view& stream, BlockData& block)
 {
 	NiSequenceData* data = block.AddData<NiSequenceData>();
 
@@ -448,7 +451,7 @@ void NifDocument::ParseSequenceData(std::istream& stream, BlockData& block)
 	data->AccumFlags = (AccumFlags)Endian.read<unsigned int>(stream);
 }
 
-void NifDocument::ParseEvaluator(std::istream& stream, BlockData& block, NiEvaluator* data)
+void NifDocument::ParseEvaluator(std::string_view& stream, BlockData& block, NiEvaluator* data)
 {
 	data->NodeName = FetchString(stream);
 	data->PropertyType = FetchString(stream);
@@ -471,7 +474,7 @@ void NifDocument::ParseEvaluator(std::istream& stream, BlockData& block, NiEvalu
 	data->ChannelFlags = (ChannelTypeFlags)flags;
 }
 
-void NifDocument::ParseBSplineCompTransformEvaluator(std::istream& stream, BlockData& block)
+void NifDocument::ParseBSplineCompTransformEvaluator(std::string_view& stream, BlockData& block)
 {
 	NiBSplineCompTransformEvaluator* data = block.AddData<NiBSplineCompTransformEvaluator>();
 
@@ -495,7 +498,7 @@ void NifDocument::ParseBSplineCompTransformEvaluator(std::istream& stream, Block
 	data->ScaleHalfRange = Endian.read<float>(stream);
 }
 
-void NifDocument::ParseBSpineData(std::istream& stream, BlockData& block)
+void NifDocument::ParseBSpineData(std::string_view& stream, BlockData& block)
 {
 	NiBSpineData* data = block.AddData<NiBSpineData>();
 
@@ -514,14 +517,14 @@ void NifDocument::ParseBSpineData(std::istream& stream, BlockData& block)
 		data->CompactControlPoints[i] = Endian.read<short>(stream);
 }
 
-void NifDocument::ParseBSplineBasisData(std::istream& stream, BlockData& block)
+void NifDocument::ParseBSplineBasisData(std::string_view& stream, BlockData& block)
 {
 	NiBSplineBasisData* data = block.AddData<NiBSplineBasisData>();
 
 	data->NumControlPoints = Endian.read<unsigned int>(stream);
 }
 
-void NifDocument::ParseTransformEvaluator(std::istream& stream, BlockData& block)
+void NifDocument::ParseTransformEvaluator(std::string_view& stream, BlockData& block)
 {
 	NiTransformEvaluator* data = block.AddData<NiTransformEvaluator>();
 
@@ -532,13 +535,13 @@ void NifDocument::ParseTransformEvaluator(std::istream& stream, BlockData& block
 }
 
 template <>
-float ParseKey<float>(NifDocument* document, std::istream& stream)
+float ParseKey<float>(NifDocument* document, std::string_view& stream)
 {
 	return document->Endian.read<float>(stream);
 }
 
 template <>
-Quaternion ParseKey<Quaternion>(NifDocument* document, std::istream& stream)
+Quaternion ParseKey<Quaternion>(NifDocument* document, std::string_view& stream)
 {
 	float x = document->Endian.read<float>(stream);
 	float y = document->Endian.read<float>(stream);
@@ -549,7 +552,7 @@ Quaternion ParseKey<Quaternion>(NifDocument* document, std::istream& stream)
 }
 
 template <>
-Vector3F ParseKey<Vector3F>(NifDocument* document, std::istream& stream)
+Vector3F ParseKey<Vector3F>(NifDocument* document, std::string_view& stream)
 {
 	float x = document->Endian.read<float>(stream);
 	float y = document->Endian.read<float>(stream);
@@ -559,7 +562,7 @@ Vector3F ParseKey<Vector3F>(NifDocument* document, std::istream& stream)
 }
 
 
-void NifDocument::ParseTransformData(std::istream& stream, BlockData& block)
+void NifDocument::ParseTransformData(std::string_view& stream, BlockData& block)
 {
 	NiTransformData* data = block.AddData<NiTransformData>();
 
@@ -568,7 +571,7 @@ void NifDocument::ParseTransformData(std::istream& stream, BlockData& block)
 	data->ScaleKeys.Parse(this, stream);
 }
 
-void NifDocument::ParseTextKeyExtraData(std::istream& stream, BlockData& block)
+void NifDocument::ParseTextKeyExtraData(std::string_view& stream, BlockData& block)
 {
 	NiTextKeyExtraData* data = block.AddData<NiTextKeyExtraData>();
 
@@ -583,21 +586,21 @@ void NifDocument::ParseTextKeyExtraData(std::istream& stream, BlockData& block)
 	}
 }
 
-void NifDocument::ParseColorExtraData(std::istream& stream, BlockData& block)
+void NifDocument::ParseColorExtraData(std::string_view& stream, BlockData& block)
 {
 	NiColorExtraData* data = block.AddData<NiColorExtraData>();
 
 	data->Value = ParseColor4(stream);
 }
 
-void NifDocument::ParseFloatExtraData(std::istream& stream, BlockData& block)
+void NifDocument::ParseFloatExtraData(std::string_view& stream, BlockData& block)
 {
 	NiFloatExtraData* data = block.AddData<NiFloatExtraData>();
 
 	data->Value = Endian.read<float>(stream);
 }
 
-void NifDocument::ParseAlphaProperty(std::istream& stream, BlockData& block)
+void NifDocument::ParseAlphaProperty(std::string_view& stream, BlockData& block)
 {
 	NiAlphaProperty* data = block.AddData<NiAlphaProperty>();
 
@@ -608,7 +611,7 @@ void NifDocument::ParseAlphaProperty(std::istream& stream, BlockData& block)
 	data->Threshold = Endian.read<unsigned char>(stream);
 }
 
-void NifDocument::ParseVertexColorProperty(std::istream& stream, BlockData& block)
+void NifDocument::ParseVertexColorProperty(std::string_view& stream, BlockData& block)
 {
 	NiVertexColorProperty* data = block.AddData<NiVertexColorProperty>();
 
@@ -618,18 +621,14 @@ void NifDocument::ParseVertexColorProperty(std::istream& stream, BlockData& bloc
 	data->Flags = Endian.read<unsigned short>(stream);
 }
 
-void NifDocument::ParserNoOp(std::istream& stream, BlockData& block)
+void advanceStream(std::string_view& stream, size_t amount)
 {
-	char buffer[0xFFF];
+	stream = std::string_view(stream.data() + amount, stream.size() - amount);
+}
 
-	for (unsigned int i = block.BlockStart; i < block.BlockSize;)
-	{
-		unsigned int amount = std::min(block.BlockSize - i, 0xFFFu);
-
-		stream.read(buffer, amount);
-
-		i += amount;
-	}
+void NifDocument::ParserNoOp(std::string_view& stream, BlockData& block)
+{
+	advanceStream(stream, block.BlockSize);
 }
 
 std::map<std::string, NifDocument::BlockParseFunction> parserFunctions = {
@@ -681,46 +680,46 @@ std::map<std::string, std::string> attributeAliases = {
 
 using namespace Engine::Graphics;
 
-void NifParser::Parse(const std::string_view& stream)
-{
-
-}
-
 void NifParser::Parse(std::istream& stream)
 {
+	std::streampos start = stream.tellg();
+	stream.seekg(0, std::ios::end);
+	std::streampos length = stream.tellg() - start;
+	stream.seekg(start);
+	std::string buffer;
+	buffer.resize(length);
+	stream.read(&buffer[0], length);
+
+	Parse(buffer);
+}
+
+void NifParser::Parse(std::string_view stream)
+{
+	std::string_view streamStart = stream;
+
 	NifDocument document;
 
 	std::string headerString;
 
-	const unsigned int bufferSize = 0xFFF;
-	char buffer[bufferSize] = {};
-	size_t size = 0;
 	size_t index = 0;
 
-	while (buffer[index] != 0x0A)
-	{
-		char next;
-		stream.get(next);
-		buffer[size] = next;
-		++size;
-		index = size - 1;
-	}
+	for (index; stream[index] != 0x0A; ++index);
 
-	headerString.append(buffer, size - 1);
+	headerString.append(stream.data(), index);
 
-	stream.read(buffer, 4);
+	advanceStream(stream, index + 1);
+	advanceStream(stream, 4);
 
-	stream.get(buffer[0]);
-	
-	Endian endian = Endian(buffer[0] ? std::endian::little : std::endian::big);
+	Endian endian = Endian(stream[0] ? std::endian::little : std::endian::big);
 	document.Endian = endian;
+
+	advanceStream(stream, 1);
 
 	unsigned int userVersion = endian.read<unsigned int>(stream);
 	unsigned int numBlocks = endian.read<unsigned int>(stream);
 	unsigned int metaBlockSize = endian.read<unsigned int>(stream);
 	
-	for (unsigned int currentRemaining = metaBlockSize; currentRemaining <= metaBlockSize; currentRemaining -= bufferSize)
-		stream.read(buffer, std::min(currentRemaining, bufferSize));
+	advanceStream(stream, metaBlockSize);
 
 	unsigned short numBlockTypes = endian.read<unsigned short>(stream);
 
@@ -737,8 +736,8 @@ void NifParser::Parse(std::istream& stream)
 
 		if (blockTypeSize > 0)
 		{
-			stream.read(buffer, blockTypeSize);
-			document.BlockTypes[i].append(buffer, blockTypeSize);
+			document.BlockTypes[i].append(stream.data(), blockTypeSize);
+			advanceStream(stream, blockTypeSize);
 		}
 	}
 
@@ -759,8 +758,8 @@ void NifParser::Parse(std::istream& stream)
 
 		if (stringLength > 0)
 		{
-			stream.read(buffer, stringLength);
-			document.Strings[i].append(buffer, stringLength);
+			document.Strings[i].append(stream.data(), stringLength);
+			advanceStream(stream, stringLength);
 		}
 	}
 
@@ -775,7 +774,7 @@ void NifParser::Parse(std::istream& stream)
 	{
 		BlockData& block = document.InitializeBlock(blockIndex);
 
-		unsigned int position = (unsigned int)stream.tellg();
+		unsigned int position = (unsigned int)(stream.data() - streamStart.data());//stream.tellg();
 
 		size_t truncateIndex = 0;
 
@@ -807,11 +806,12 @@ void NifParser::Parse(std::istream& stream)
 			}
 		}
 
-		unsigned int parsedInBlock = (unsigned int)stream.tellg() - position;
+		unsigned int newPosition = (unsigned int)(stream.data() - streamStart.data());
+		unsigned int parsedInBlock = newPosition - position;
 
 		if (parsedInBlock != block.BlockSize)
 		{
-			stream.seekg(position + block.BlockStart);
+			advanceStream(stream, block.BlockSize - parsedInBlock);
 
 			auto parserIterator = parserFunctions.find(typeName);
 
@@ -1092,7 +1092,7 @@ void NifParser::Parse(std::istream& stream)
 
 			size_t binding = 0;
 			size_t vertexCount = 0;
-			
+
 			for (size_t i = 0; i < data->Streams.size(); ++i)
 			{
 				if (data->Streams[i].Stream->Data == nullptr) continue;

@@ -289,18 +289,18 @@ HelloVulkan* helloVkPtr = nullptr;
 Archive::ArchiveReader Reader;
 std::string documentBuffer;
 std::string flatDocumentBuffer;
+std::string nifDocumentBuffer;
 
 const char* localeName = "NA";
 const char* environmentName = "Live";
-fs::path ms2root = "B:/Files/ms2export/export/";
 fs::path ms2Root = "B:/Files/Maplstory 2 Client/appdata";
+fs::path ms2RootExtracted = "B:/Files/ms2export/export/";
 fs::path tableroot = fs::path("Xml/table/");
 bool loadLights = true;
 std::shared_ptr<Engine::Graphics::MeshFormat> importFormat;
 std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithColor;
 std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithBinormal;
 std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithColorAndBinormal;
-std::unordered_map<std::string, std::string> modelPathMap;
 std::vector<SpawnedModel> spawnedModels;
 std::vector<SpawnedEntity> spawnedEntities;
 std::vector<LoadedMap> loadedMaps;
@@ -312,11 +312,6 @@ std::vector<DyeColorInfo> dyeColorsNA;
 std::unordered_map<std::string, DyeColorInfo*> dyeColorMap;
 std::unordered_map<std::string, Emotion> maleEmotions;
 std::unordered_map<std::string, Emotion> femaleEmotions;
-
-std::unordered_map<std::string, std::string> names;
-std::unordered_map<std::string, std::string> relpaths;
-std::unordered_map<std::string, std::string> llids;
-std::unordered_map<std::string, std::string> llidToUUID;
 
 std::unordered_map<std::string, int> materialTypeMap = {
 	{ "MS2StandardMaterial", 0 },
@@ -443,11 +438,11 @@ void getBounds(const LoadedModel* model, Bounds& bounds)
 	}
 }
 
-bool getModel(const fs::path& filepath, LoadedModel& loadedModel, bool saveMesh = false)
+bool getModel(const Archive::ArchivePath& file, LoadedModel& loadedModel, bool saveMesh = false)
 {
-	if (!fs::exists(filepath))
+	if (!file.Loaded())
 	{
-		std::cout << "failed to load model " << filepath.string() << std::endl;
+		std::cout << "failed to load model " << file.GetPath().string() << std::endl;
 		return false;
 	}
 
@@ -455,8 +450,9 @@ bool getModel(const fs::path& filepath, LoadedModel& loadedModel, bool saveMesh 
 
 	NifParser parser;
 	parser.Package = &package;
-	std::ifstream file(filepath, std::ios::in | std::ios::binary);
-	parser.Parse(file);
+
+	file.Read(nifDocumentBuffer);
+	parser.Parse(nifDocumentBuffer);
 
 	loadedModel.ModelIds.resize(parser.Package->Nodes.size());
 	loadedModel.Transformations.resize(parser.Package->Nodes.size());
@@ -567,7 +563,7 @@ bool getModel(const fs::path& filepath, LoadedModel& loadedModel, bool saveMesh 
 				}
 			}
 
-			ObjLoader loader(helloVkPtr->textureNames, helloVkPtr->textureCache, helloVkPtr->textureFormats, helloVkPtr->textureSamplers); 
+			ObjLoader loader(helloVkPtr->textureCache, helloVkPtr->textureFormats, helloVkPtr->textureSamplers); 
 
 			std::vector<MaterialObj>& materials = loader.m_materials;
 
@@ -737,9 +733,6 @@ LoadedModel* getModel(const Archive::Metadata::Entry* entry, bool saveMesh = fal
 	fs::path filepath = "Resource";
 	filepath += entry->RelativePath;
 
-	if (filepath.extension().string() == ".kfm")
-		filepath = filepath.replace_extension(fs::path(".nif"));
-
 	std::string name = lower(entry->Name);
 
 	const auto& asset = models.find(entry);
@@ -755,7 +748,7 @@ LoadedModel* getModel(const Archive::Metadata::Entry* entry, bool saveMesh = fal
 
 	loadedModel.Entry = entry;
 
-	getModel(ms2root / filepath, loadedModel, saveMesh);
+	getModel(Reader.GetPath(filepath), loadedModel, saveMesh);
 
 	return &loadedModel;
 }
@@ -1110,15 +1103,6 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 
 							if (nifPath[lastColon + 1])
 							{
-								std::vector<const Archive::Metadata::Entry*> entries;
-								Archive::Metadata::Entry::FindEntriesByTags(nifPath + lastColon + 1, "gamebryo-scenegraph", [&entries](const auto& entry) { entries.push_back(&entry); });
-
-								if (entries.size() != 1)
-								{
-									int i = 0;
-									++i;
-								}
-
 								asset.ModelEntry = Archive::Metadata::Entry::FindFirstEntryByTags(nifPath + lastColon + 1, "gamebryo-scenegraph");
 
 								if (asset.ModelEntry)
@@ -1856,15 +1840,12 @@ void loadMap(const std::string& mapId)
 		}
 	}
 
-	if (xblockName == "")
+	const Archive::Metadata::Entry* entry = Archive::Metadata::Entry::FindFirstEntryByTags(xblockName, "emergent-world");
+
+	if (entry == nullptr)
 		return;
 
-	const auto& xblockPathEntry = helloVkPtr->pathMap.find(lower(xblockName));
-
-	if (xblockPathEntry == helloVkPtr->pathMap.end())
-		return;
-
-	Archive::ArchivePath xblockFile = Reader.GetPath("Resource/" + xblockPathEntry->second);
+	Archive::ArchivePath xblockFile = Reader.GetPath("Resource/" + entry->RelativePath.string());
 
 	if (!xblockFile.Loaded())
 	{
@@ -2245,7 +2226,19 @@ int main(int argc, char** argv)
 				return -1;
 			}
 
-			ms2root = argv[i];
+			ms2Root = argv[i];
+		}
+
+		if (strcmp(argv[i], "--rootExtracted") == 0 && ++i < argc)
+		{
+			if (!fs::exists(fs::path(argv[i])))
+			{
+				std::cout << "failed to find extracted root dir: " << argv[i] << std::endl;
+
+				return -1;
+			}
+
+			ms2RootExtracted = argv[i];
 		}
 
 		if (strcmp(argv[i], "--locale") == 0 && ++i < argc)
@@ -2264,8 +2257,8 @@ int main(int argc, char** argv)
 		}
 	}
 
-	std::cout << "using root path: " << ms2root.string() << std::endl;
-	std::cout << "path found: " << fs::exists(ms2root) << std::endl;
+	std::cout << "using root path: " << ms2Root.string() << std::endl;
+	std::cout << "path found: " << fs::exists(ms2Root) << std::endl;
 	std::cout << "locale: " << localeName << "; env: " << environmentName << std::endl;
 
 	Reader.Load(ms2Root / "Data", true);
@@ -2349,6 +2342,7 @@ int main(int argc, char** argv)
 	HelloVulkan helloVk;
 
 	helloVkPtr = &helloVk;
+	helloVk.Reader = &Reader;
 
 	// Window need to be opened to get the surface on which to draw
 	const VkSurfaceKHR surface = helloVk.getVkSurface(vkctx.m_instance, window);
@@ -2363,77 +2357,11 @@ int main(int argc, char** argv)
 	// Setup Imgui
 	helloVk.initGUI(0);  // Using sub-pass 0
 
-	fs::path nameNt = ms2root;
-	nameNt += "Resource/asset-web-metadata/name.nt";
-	fs::path relpathNt = ms2root;
-	relpathNt += "Resource/asset-web-metadata/relpath.nt";
-	fs::path llidNt = ms2root;
-	llidNt += "Resource/asset-web-metadata/llid.nt";
-
 	loadDyes(Reader.GetPath("Xml/table/colorpalette.xml"), dyeColors);
 	loadDyes(Reader.GetPath("Xml/table/na/colorpalette_achieve.xml"), dyeColorsNA);
 	loadDyeNames(Reader.GetPath("Xml/string/en/stringcolorpalette.xml"), dyeColorsNA);
 	loadEmotions(Reader.GetPath("Xml/emotion/common/femalecustom.xml"), femaleEmotions);
 	loadEmotions(Reader.GetPath("Xml/emotion/common/malecustom.xml"), maleEmotions);
-	defaultSearchPaths.push_back("B:/Files/ms2export/export/");
-
-	fs::path item = ms2root;
-
-	struct Pair
-	{
-		int start;
-		fs::path path;
-		std::unordered_map<std::string, std::string>& map;
-	};
-
-	Pair nts[] = { Pair{ 85, nameNt, names }, Pair{ 88, relpathNt, relpaths }, Pair{ 85, llidNt, llids } };
-
-	for (Pair pair : nts)
-	{
-		std::ifstream file(pair.path, std::ios::in);
-
-		char buffer[0xFFFF];
-
-		int line = 0;
-
-		file.read(buffer, 1);
-
-		while (!file.eof())
-		{
-			++line;
-
-			std::string lineText;
-
-			std::getline(file, lineText);
-
-			if (lineText.size() == 0) break;
-
-			std::string uuid = lineText.substr(10, 36);
-			std::string value = lineText.substr(pair.start, lineText.size() - 2 - pair.start);
-
-			pair.map[uuid] = lower(value);
-		}
-	}
-
-	for(const auto& llid : llids)
-	{
-		llidToUUID[llid.second] = llid.first;
-	}
-
-	for (const std::pair<std::string, std::string>& name : names)
-	{
-		std::string nameLower = lower(name.second);
-
-		std::string relpath = relpaths[name.first];
-		std::string extension = fs::path(relpath).extension().string();
-
-		if (extension == ".kfm" || extension == ".nif")
-			modelPathMap[nameLower] = relpath;
-		else if (extension == ".flat")
-			([]() {})(); // no-op
-		else
-			helloVk.pathMap[nameLower] = relpath;
-	}
 
 	loadMapNames(Reader.GetPath("Xml/string/en/mapname.xml"));
 
@@ -2650,7 +2578,7 @@ int main(int argc, char** argv)
 
 		std::cout << "loading map " << maps[i].id << std::endl;
 
-		loadMap(maps[i].id);
+		//loadMap(maps[i].id);
 
 		loadLights = false;
 	}
@@ -2843,10 +2771,10 @@ int main(int argc, char** argv)
 					ImGui::Text("Alpha: %.2f", entity.Model->Materials[spawnedModelId].dissolve);
 					ImGui::Text("Shininess: %.2f", entity.Model->Materials[spawnedModelId].shininess);
 
-					if (ImGui::IsKeyPressed(ImGuiKey_Insert))
+					if (ImGui::IsKeyPressed(ImGuiKey_Insert) && fs::exists(ms2RootExtracted))
 					{
 						std::cout << modifiers << std::endl;
-						fs::path path = ms2root / "Resource/";
+						fs::path path = ms2RootExtracted / "Resource/";
 						std::string editor = "cmd.exe /q /c start /b code --goto ";
 						int line = -1;
 						DWORD flags = 0;
@@ -3056,40 +2984,7 @@ int main(int argc, char** argv)
 
 			ImGui::EndTabBar();
 		}
-		/*
-	ImGui::RadioButton("Point", &helloVk.m_pcRaster.lightType, 0);
-	ImGui::SameLine();
-	ImGui::RadioButton("Infinite", &helloVk.m_pcRaster.lightType, 1);
 
-	ImGui::SliderFloat3("Position", &helloVk.m_pcRaster.lightPosition.x, -20.f, 20.f);
-	ImGui::SliderFloat("Intensity", &helloVk.m_pcRaster.lightIntensity, 0.f, 150.f);
-		*/
-
-		/*
-  if(ImGui::BeginTabBar("Hello"))
-  {
-    if(ImGui::BeginTabItem("Current"))
-    {
-      CurrentCameraTab(cameraM, camera, changed, instantSet);
-      ImGui::EndTabItem();
-    }
-
-    if(ImGui::BeginTabItem("Cameras"))
-    {
-      SavedCameraTab(cameraM, camera, changed);
-      ImGui::EndTabItem();
-    }
-
-    if(ImGui::BeginTabItem("Extra"))
-    {
-      CameraExtraTab(cameraM, changed);
-      ImGui::EndTabItem();
-    }
-    ImGui::EndTabBar();
-  }
-		*/
-
-		//renderUI(helloVk);
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGuiH::Control::Info("", "", "(F10) Toggle Pane", ImGuiH::Control::Flags::Disabled);
 		ImGuiH::Panel::End();

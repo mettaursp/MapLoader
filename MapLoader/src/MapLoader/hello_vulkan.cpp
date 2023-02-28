@@ -38,6 +38,7 @@
 #include "nvvk/buffers_vk.hpp"
 #include "nvvk/memorymanagement_vk.hpp"
 #include <ArchiveParser/ParserUtils.h>
+#include <ArchiveParser/MetadataMapper.h>
 
 extern std::vector<std::string> defaultSearchPaths;
 
@@ -287,7 +288,7 @@ uint32_t HelloVulkan::loadModel(ObjLoader& loader, mat4 transform, bool invisibl
 	model.matIndexBuffer = m_alloc.createBuffer(cmdBuf, loader.m_matIndx, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
 	// Creates all textures found and find the offset for this model
 	auto txtOffset = 0;
-	createTextureImages(cmdBuf, loader.m_textures);
+	createTextureImages(cmdBuf);
 	cmdBufGet.submitAndWait(cmdBuf);
 	m_alloc.finalizeAndReleaseStaging();
 
@@ -420,67 +421,36 @@ struct DDS_HEADER
 	DWORD           dwReserved2;
 };
 
-bool HelloVulkan::loadDDS(const VkCommandBuffer& cmdBuf, const std::string& path, VkSamplerCreateInfo& samplerCreateInfo)
+bool HelloVulkan::loadDDS(const VkCommandBuffer& cmdBuf, const fs::path& path, const std::string& buffer, VkSamplerCreateInfo& samplerCreateInfo)
 {
+	const char* bufferData = buffer.data();
 
-	std::ifstream file(path, std::ios_base::in | std::ios_base::binary);
-
-	if (!file.is_open() || !file.good())
+	if (strncmp(bufferData, "DDS ", 4) != 0)
 	{
-		std::cout << std::string("cannot open file: '" + std::string(path) + "'");
+		std::cout << std::string("not a valid DDS: '" + path.string() + "'");
 
 		return false;
 	}
 
-	char headerType[4];
+	bufferData += 4;
 
-	file.read(headerType, 4);
+	std::string formatName(bufferData + 80, 4);
+	const DDS_HEADER* ddsHeader = reinterpret_cast<const DDS_HEADER*>(bufferData);
+	const char* header = bufferData;
 
-	if (std::string(headerType, 4) != "DDS ")
-	{
-		std::cout << std::string("not a valid DDS: '" + std::string(path) + "'");
+	bufferData += sizeof(DDS_HEADER);
 
-		return false;
-	}
+	unsigned int linearSize = ddsHeader->dwPitchOrLinearSize;
+	int mipLevels = ddsHeader->dwMipMapCount;
 
-	unsigned char header[124];
-	const DDS_HEADER* ddsHeader = reinterpret_cast<const DDS_HEADER*>(header);
-
-	file.read((char*)header, 124);
-
-	int               texWidth, texHeight, mipLevels;
-
-	texHeight = (header[8]) | (header[9] << 8) | (header[10] << 16) | (header[11] << 24);
-	texWidth = (header[12]) | (header[13] << 8) | (header[14] << 16) | (header[15] << 24);
-	unsigned int linearSize = (header[16]) | (header[17] << 8) | (header[18] << 16) | (header[19] << 24);
-	mipLevels = (header[24]) | (header[25] << 8) | (header[26] << 16) | (header[27] << 24);
-
-	if (texWidth == 0 && texHeight == 0)
-		texWidth += 0;
+	if (ddsHeader->dwWidth == 0 && ddsHeader->dwHeight == 0)
+		bufferData += 0;
 
 	if (mipLevels == 0)
 		mipLevels = 1;
 
 	unsigned int size = (mipLevels > 1 ? linearSize + linearSize : linearSize);
 
-	std::vector<unsigned char> data(size);
-	data.resize(size);
-
-	int count = -1;
-	int remaining = size;
-	char* offset = (char*)data.data();
-
-	while (count != 0 && remaining > 0)
-	{
-		file.read((char*)data.data(), remaining);
-		count = int(file.gcount());
-		remaining -= count;
-		offset += count;
-	}
-
-	bool eof = file.eof();
-
-	std::string formatName((char*)header + 80, 4);
 
 	int BlockSize = 16;
 
@@ -497,17 +467,17 @@ bool HelloVulkan::loadDDS(const VkCommandBuffer& cmdBuf, const std::string& path
 		format = VkFormat::VK_FORMAT_BC3_UNORM_BLOCK;
 	else
 	{
-		std::cout << ("unsupported DDS: '" + std::string(path) + "'");
+		std::cout << ("unsupported DDS: '" + path.string() + "'");
 
 		return false;
 	}
 
 	VkDeviceSize bufferSize = size;//static_cast<uint64_t>(texWidth) * texHeight * sizeof(uint8_t) * 4;
-	auto         imgSize = VkExtent2D{ (uint32_t)texWidth, (uint32_t)texHeight };
+	auto         imgSize = VkExtent2D{ (uint32_t)ddsHeader->dwWidth, (uint32_t)ddsHeader->dwHeight };
 	auto         imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, format, VK_IMAGE_USAGE_SAMPLED_BIT, mipLevels);
 
 	{
-		nvvk::Image image = m_alloc.createImageDDS(cmdBuf, bufferSize, data.data(), imageCreateInfo, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, BlockSize);
+		nvvk::Image image = m_alloc.createImageDDS(cmdBuf, bufferSize, bufferData, imageCreateInfo, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, BlockSize);
 		VkImageViewCreateInfo ivInfo = nvvk::makeImageViewCreateInfo(image.image, imageCreateInfo);
 		nvvk::Texture         texture = m_alloc.createTexture(image, ivInfo, samplerCreateInfo);
 
@@ -526,9 +496,34 @@ int HelloVulkan::GetTexture(const std::string& name, VkFormat format, VkSamplerC
 
 		if (cached == textureCache.end())
 		{
-			textureNames.push_back(name);
+			std::vector<const Archive::Metadata::Entry*> entries;
+			const Archive::Metadata::Entry* entry = nullptr;
+
+			if (strncmp(lower(name).data(), "resource/", 9) == 0)
+			{
+				entry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(name.c_str() + 8, "image");
+			}
+			else
+			{
+				Archive::Metadata::Entry::FindEntriesByTags(name, "image", [this, &entry](const auto& newEntry)
+					{
+						if (entry == nullptr && Reader->GetPath("Resource" + newEntry.RelativePath.string()).Loaded())
+						entry = &newEntry;
+					}
+				);
+			}
+
+			//if (entries.size() != 1)
+			//{
+			//	int i = 0;
+			//	++i;
+			//}
+
+
+
+			textureEntries.push_back(entry);
 			textureFormats.push_back(format);
-			int id = static_cast<int>(textureNames.size()) - 1;
+			int id = static_cast<int>(textureEntries.size()) - 1;
 			textureCache[name] = id;
 			textureSamplers.push_back(samplerInfo);
 
@@ -545,7 +540,7 @@ void HelloVulkan::flushNewTextures()
 {
 	nvvk::CommandPool  cmdBufGet(m_device, m_graphicsQueueIndex);
 	VkCommandBuffer    cmdBuf = cmdBufGet.createCommandBuffer();
-	createTextureImages(cmdBuf, textureNames);
+	createTextureImages(cmdBuf);
 	cmdBufGet.submitAndWait(cmdBuf);
 	m_alloc.finalizeAndReleaseStaging();
 }
@@ -564,7 +559,7 @@ VkSamplerCreateInfo HelloVulkan::GetDefaultSampler()
 //--------------------------------------------------------------------------------------------------
 // Creating all textures and samplers
 //
-void HelloVulkan::createTextureImages(const VkCommandBuffer& cmdBuf, const std::vector<std::string>& textures)
+void HelloVulkan::createTextureImages(const VkCommandBuffer& cmdBuf)
 {
 	VkSamplerCreateInfo samplerCreateInfo = GetDefaultSampler();
 
@@ -591,68 +586,40 @@ void HelloVulkan::createTextureImages(const VkCommandBuffer& cmdBuf, const std::
 	}
 	
 	{
+		std::array<stbi_uc, 4> color{ 255u, 0u, 255u, 255u };
 	// Uploading all images
-	for(size_t i = m_textures.size(); i < textures.size(); ++i)
+	for(size_t i = m_textures.size(); i < textureEntries.size(); ++i)
 	{
-		const auto& texture = textures[i];
-		const auto& cached = textureCache.find(texture);
-
-		if (cached == textureCache.end() || cached->second > m_textures.size())
-		{
-			throw "wut";
-		}
-
-		if (cached != textureCache.end() && cached->second < m_textures.size()) continue;
-
-		//textureNames.push_back(texture);
-		//textureCache[texture] = (int)m_textures.size();
-		std::stringstream o;
+		const auto& texture = textureEntries[i];
 		int               texWidth, texHeight, texChannels;
-		std::string textureLower = lower(texture);
-		const auto& path = pathMap.find(textureLower);
 
-		if (path != pathMap.end())
+		stbi_uc* stbi_pixels = nullptr;
+		stbi_uc* pixels = nullptr;
+
+		if (texture != nullptr)
 		{
-			o << "Resource/" + path->second;
+			std::string extensionText = texture->LogPath.extension().string();
 
-			if (std::filesystem::path(path->second).extension() == "")
-				o << ".dds";
-		}
-		else if (textureLower.substr(0, 9) == "resource/")
-		{
-			o << textureLower;
+			Archive::ArchivePath textureFile = Reader->GetPath("Resource" + texture->RelativePath.string());
 
-			if (std::filesystem::path(textureLower).extension() == "")
-				o << ".dds";
-		}
-		else
-			o << "media/textures/" << texture;
+			if (textureFile.Loaded())
+			{
+				textureFile.Read(textureBuffer);
 
-		std::string txtFile = nvh::findFile(o.str(), defaultSearchPaths, true);
+				if (extensionText == ".dds")
+				{
+					if (loadDDS(cmdBuf, textureFile.GetPath(), textureBuffer, textureSamplers[i]))
+						continue;
+				}
+				else
+				{
+					stbi_load_from_memory(reinterpret_cast<stbi_uc*>(textureBuffer.data()),(int)textureBuffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
-		std::string extensionText = txtFile.substr(txtFile.size() - 4, 4);
-
-		char extension[5] = { 0 };
-
-		for (int i = 0; i < 4; ++i)
-		{
-			extension[i] = extensionText[i];
-
-			if (extension[i] >= 'A' && extension[i] <= 'Z')
-				extension[i] += 'a' - 'A';
+					pixels = stbi_pixels;
+				}
+			}
 		}
 
-		if (std::string(extension) == ".dds")
-		{
-			if (loadDDS(cmdBuf, txtFile, textureSamplers[i]))
-				continue;
-		}
-
-		stbi_uc* stbi_pixels = stbi_load(txtFile.c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-		std::array<stbi_uc, 4> color{255u, 0u, 255u, 255u};
-
-		stbi_uc* pixels = stbi_pixels;
 		// Handle failure
 		if(!stbi_pixels)
 		{

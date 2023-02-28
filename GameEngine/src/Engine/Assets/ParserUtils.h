@@ -3,6 +3,8 @@
 #include <bit>
 #include <istream>
 
+void advanceStream(std::string_view& stream, size_t amount);
+
 struct Endian
 {
 	bool ShouldSwap = false;
@@ -30,6 +32,16 @@ struct Endian
 		char bytes[sizeof(T)] = {};
 
 		input.read(bytes, sizeof(T));
+
+		return read<T>(bytes);
+	}
+	
+	template <typename T>
+	T read(std::string_view& input) const
+	{
+		const char* bytes = input.data();
+
+		advanceStream(input, sizeof(T));
 
 		return read<T>(bytes);
 	}

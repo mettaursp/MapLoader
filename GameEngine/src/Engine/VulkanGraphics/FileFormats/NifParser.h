@@ -27,5 +27,5 @@ public:
 	Engine::Graphics::ModelPackage* Package = nullptr;
 
 	void Parse(std::istream& stream);
-	void Parse(const std::string_view& stream);
+	void Parse(std::string_view stream);
 };

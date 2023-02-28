@@ -262,7 +262,7 @@ Image ResourceAllocator::createImageDDS(const VkCommandBuffer& cmdBuf,
       extent.depth = std::max(one, (uint32_t)extent.depth >> 1);
     }
 
-    m_staging->cmdToImageDDS(cmdBuf, resultImage.image, size_, data_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipCopies);
+    m_staging->cmdToImageDDS(cmdBuf, resultImage.image, bufferOffset, data_, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, mipCopies);
 
     // Setting final image layout
     nvvk::cmdBarrierImageLayout(cmdBuf, resultImage.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, layout_);

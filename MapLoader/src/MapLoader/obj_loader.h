@@ -97,7 +97,7 @@ struct shapeObj
 class ObjLoader
 {
 public:
-		ObjLoader(std::vector<std::string>& textures, std::unordered_map<std::string, int>& cache, std::vector<VkFormat>& textureFormats, std::vector<VkSamplerCreateInfo>& textureSamplers) : m_textures(textures), textureCache(cache), textureFormats(textureFormats), textureSamplers(textureSamplers) {}
+		ObjLoader(std::unordered_map<std::string, int>& cache, std::vector<VkFormat>& textureFormats, std::vector<VkSamplerCreateInfo>& textureSamplers) : textureCache(cache), textureFormats(textureFormats), textureSamplers(textureSamplers) {}
 	void loadModel(const std::string& filename);
 	void loadModel(const tinyobj::attrib_t& attribs, const std::vector<tinyobj::material_t>& materials, const std::vector<tinyobj::shape_t>& shapes);
 	int GetTexture(const std::string& name, VkFormat format, const VkSamplerCreateInfo& sampler);
@@ -105,7 +105,7 @@ public:
 	std::vector<VertexObj>   m_vertices;
 	std::vector<uint32_t>    m_indices;
 	std::vector<MaterialObj> m_materials;
-	std::vector<std::string>& m_textures;
+	std::vector<std::string> m_textures;
 	std::vector<VkFormat>& textureFormats;
 	std::vector<VkSamplerCreateInfo>& textureSamplers;
 	std::unordered_map<std::string, int>& textureCache;

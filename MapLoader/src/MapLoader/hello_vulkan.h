@@ -29,6 +29,7 @@
 #include <host_device.h>
 #include <ArchiveParser/ArchiveReader.h>
 #include <ArchiveParser/ArchiveParser.h>
+#include <ArchiveParser/MetadataMapper.h>
 
 // #VKRay
 #include "nvvk/raytraceKHR_vk.hpp"
@@ -52,9 +53,8 @@ public:
 	void updateDescriptorSet();
 	void createUniformBuffer();
 	void createObjDescriptionBuffer();
-	std::unordered_map<std::string, std::string> pathMap;
-	bool loadDDS(const VkCommandBuffer& cmdBuf, const std::string& path, VkSamplerCreateInfo& samplerCreateInfo);
-	void createTextureImages(const VkCommandBuffer& cmdBuf, const std::vector<std::string>& textures);
+	bool loadDDS(const VkCommandBuffer& cmdBuf, const fs::path& path, const std::string& buffer, VkSamplerCreateInfo& samplerCreateInfo);
+	void createTextureImages(const VkCommandBuffer& cmdBuf);
 	int GetTexture(const std::string& name, VkFormat format, VkSamplerCreateInfo samplerInfo = GetDefaultSampler());
 	static VkSamplerCreateInfo GetDefaultSampler();
 	void flushNewTextures();
@@ -121,10 +121,11 @@ public:
 	Archive::ArchiveReader* Reader = nullptr;
 
 	std::vector<nvvk::Texture> m_textures;  // vector of all textures of the scene
-	std::vector<std::string> textureNames = { "" };
+	std::vector<const Archive::Metadata::Entry*> textureEntries = { nullptr };
 	std::vector<VkFormat> textureFormats = { VK_FORMAT_R8G8B8A8_SRGB };
 	std::vector<VkSamplerCreateInfo> textureSamplers = { GetDefaultSampler() };
 	std::unordered_map<std::string, int> textureCache = { { "", 0 } };
+	std::string textureBuffer;
 
 
 	nvvk::ResourceAllocatorDma m_alloc;  // Allocator for buffer, images, acceleration structures

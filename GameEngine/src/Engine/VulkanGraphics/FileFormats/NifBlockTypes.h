@@ -566,16 +566,16 @@ typedef RotationTypeEnum::RotationType RotationType;
 struct NifDocument;
 
 template <typename KeyType>
-KeyType ParseKey(NifDocument* document, std::istream& stream);
+KeyType ParseKey(NifDocument* document, std::string_view& stream);
 
 template <>
-float ParseKey<float>(NifDocument* document, std::istream& stream);
+float ParseKey<float>(NifDocument* document, std::string_view& stream);
 
 template <>
-Quaternion ParseKey<Quaternion>(NifDocument* document, std::istream& stream);
+Quaternion ParseKey<Quaternion>(NifDocument* document, std::string_view& stream);
 
 template <>
-Vector3F ParseKey<Vector3F>(NifDocument* document, std::istream& stream);
+Vector3F ParseKey<Vector3F>(NifDocument* document, std::string_view& stream);
 
 template <typename KeyType>
 struct LinearKey
@@ -585,7 +585,7 @@ struct LinearKey
 	float Time;
 	KeyType Value;
 
-	void Parse(NifDocument* document, std::istream& stream);
+	void Parse(NifDocument* document, std::string_view& stream);
 };
 
 template <typename KeyType>
@@ -598,7 +598,7 @@ struct QuadraticKey
 	KeyType Forward;
 	KeyType Backward;
 
-	void Parse(NifDocument* document, std::istream& stream);
+	void Parse(NifDocument* document, std::string_view& stream);
 };
 
 template <typename KeyType>
@@ -612,7 +612,7 @@ struct TbcKey
 	float Bias;
 	float Continuity;
 
-	void Parse(NifDocument* document, std::istream& stream);
+	void Parse(NifDocument* document, std::string_view& stream);
 };
 
 template <typename KeyType>
@@ -621,7 +621,7 @@ struct Keys
 	RotationType Interpolation;
 	std::vector<KeyType> KeysValues;
 
-	void Parse(NifDocument* document, std::istream& stream);
+	void Parse(NifDocument* document, std::string_view& stream);
 };
 
 template <typename KeyType>
@@ -633,8 +633,8 @@ struct AnyKeysNoRotate
 	std::vector<TbcKey<KeyType>> TbcKeys;
 
 	template <typename KeyContainer>
-	void ParseKeyVector(NifDocument* document, std::istream& stream, KeyContainer& container, unsigned int keys);
-	void Parse(NifDocument* document, std::istream& stream);
+	void ParseKeyVector(NifDocument* document, std::string_view& stream, KeyContainer& container, unsigned int keys);
+	void Parse(NifDocument* document, std::string_view& stream);
 };
 
 struct XyzKeys
@@ -645,7 +645,7 @@ struct XyzKeys
 	AnyKeysNoRotate<float> KeysY;
 	AnyKeysNoRotate<float> KeysZ;
 
-	void Parse(NifDocument* document, std::istream& stream)
+	void Parse(NifDocument* document, std::string_view& stream)
 	{
 		KeysX.Parse(document, stream);
 		KeysY.Parse(document, stream);
@@ -663,8 +663,8 @@ struct AnyKeys
 	std::vector<XyzKeys> XyzKeys;
 
 	template <typename KeyContainer>
-	void ParseKeyVector(NifDocument* document, std::istream& stream, KeyContainer& container, unsigned int keys);
-	void Parse(NifDocument* document, std::istream& stream);
+	void ParseKeyVector(NifDocument* document, std::string_view& stream, KeyContainer& container, unsigned int keys);
+	void Parse(NifDocument* document, std::string_view& stream);
 };
 
 struct NiTransformData : public NiDataBlock
@@ -691,7 +691,7 @@ struct NiTextKeyExtraData : public NiDataBlock
 
 struct NifDocument
 {
-	typedef void (NifDocument::* BlockParseFunction)(std::istream& stream, BlockData& block);
+	typedef void (NifDocument::* BlockParseFunction)(std::string_view& stream, BlockData& block);
 	typedef void (NifDocument::* BlockWriteFunction)(std::ostream& stream, BlockData& block);
 
 	std::vector<std::string> BlockTypes;
@@ -702,30 +702,30 @@ struct NifDocument
 	std::map<unsigned short, BlockData> BlockMap;
 	Endian Endian;
 
-	void ParserNoOp(std::istream& stream, BlockData& block);
-	void ParseStream(std::istream& stream, BlockData& block);
-	void ParseSourceTexture(std::istream& stream, BlockData& block);
-	void ParseTexturingProperty(std::istream& stream, BlockData& block);
-	void ParseTransform(std::istream& stream, NiTransform& transform, bool translationFirst = true, bool isQuaternion = false);
-	Color3 ParseColor3(std::istream& stream);
-	Color4 ParseColor4(std::istream& stream);
-	void ParseBounds(std::istream& stream, NiBounds& bounds);
-	void ParseMesh(std::istream& stream, BlockData& block);
-	void ParseNode(std::istream& stream, BlockData& block);
-	void ParseMaterialProperty(std::istream& stream, BlockData& block);
-	void ParseSkinningMeshModifier(std::istream& stream, BlockData& block);
-	void ParseSequenceData(std::istream& stream, BlockData& block);
-	void ParseBSplineCompTransformEvaluator(std::istream& stream, BlockData& block);
-	void ParseBSpineData(std::istream& stream, BlockData& block);
-	void ParseEvaluator(std::istream& stream, BlockData& block, NiEvaluator* data);
-	void ParseBSplineBasisData(std::istream& stream, BlockData& block);
-	void ParseTransformEvaluator(std::istream& stream, BlockData& block);
-	void ParseTransformData(std::istream& stream, BlockData& block);
-	void ParseTextKeyExtraData(std::istream& stream, BlockData& block);
-	void ParseColorExtraData(std::istream& stream, BlockData& block);
-	void ParseFloatExtraData(std::istream& stream, BlockData& block);
-	void ParseAlphaProperty(std::istream& stream, BlockData& block);
-	void ParseVertexColorProperty(std::istream& stream, BlockData& block);
+	void ParserNoOp(std::string_view& stream, BlockData& block);
+	void ParseStream(std::string_view& stream, BlockData& block);
+	void ParseSourceTexture(std::string_view& stream, BlockData& block);
+	void ParseTexturingProperty(std::string_view& stream, BlockData& block);
+	void ParseTransform(std::string_view& stream, NiTransform& transform, bool translationFirst = true, bool isQuaternion = false);
+	Color3 ParseColor3(std::string_view& stream);
+	Color4 ParseColor4(std::string_view& stream);
+	void ParseBounds(std::string_view& stream, NiBounds& bounds);
+	void ParseMesh(std::string_view& stream, BlockData& block);
+	void ParseNode(std::string_view& stream, BlockData& block);
+	void ParseMaterialProperty(std::string_view& stream, BlockData& block);
+	void ParseSkinningMeshModifier(std::string_view& stream, BlockData& block);
+	void ParseSequenceData(std::string_view& stream, BlockData& block);
+	void ParseBSplineCompTransformEvaluator(std::string_view& stream, BlockData& block);
+	void ParseBSpineData(std::string_view& stream, BlockData& block);
+	void ParseEvaluator(std::string_view& stream, BlockData& block, NiEvaluator* data);
+	void ParseBSplineBasisData(std::string_view& stream, BlockData& block);
+	void ParseTransformEvaluator(std::string_view& stream, BlockData& block);
+	void ParseTransformData(std::string_view& stream, BlockData& block);
+	void ParseTextKeyExtraData(std::string_view& stream, BlockData& block);
+	void ParseColorExtraData(std::string_view& stream, BlockData& block);
+	void ParseFloatExtraData(std::string_view& stream, BlockData& block);
+	void ParseAlphaProperty(std::string_view& stream, BlockData& block);
+	void ParseVertexColorProperty(std::string_view& stream, BlockData& block);
 
 	void WriteNode(std::ostream& stream, BlockData& block);
 	void WriteMesh(std::ostream& stream, BlockData& block);
@@ -773,23 +773,23 @@ struct NifDocument
 	BlockData& MakeBlock(const std::string& name);
 	BlockData& InitializeBlock(unsigned int blockIndex);
 	const BlockData* FetchRef(unsigned int ref);
-	const BlockData* FetchRef(std::istream& stream);
+	const BlockData* FetchRef(std::string_view& stream);
 	const std::string& FetchString(unsigned int ref);
-	const std::string& FetchString(std::istream& stream);
-	void ReadBlockRefs(std::istream& stream, BlockData& block, std::vector<const BlockData*>& refs);
+	const std::string& FetchString(std::string_view& stream);
+	void ReadBlockRefs(std::string_view& stream, BlockData& block, std::vector<const BlockData*>& refs);
 };
 
 std::shared_ptr<Engine::Graphics::MeshFormat> GetNiMeshFormat();
 
 template <typename KeyType>
-void LinearKey<KeyType>::Parse(NifDocument* document, std::istream& stream)
+void LinearKey<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 {
 	Time = document->Endian.read<float>(stream);
 	Value = ParseKey<KeyType>(document, stream);
 }
 
 template <typename KeyType>
-void QuadraticKey<KeyType>::Parse(NifDocument* document, std::istream& stream)
+void QuadraticKey<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 {
 	Time = document->Endian.read<float>(stream);
 	Value = ParseKey<KeyType>(document, stream);
@@ -798,7 +798,7 @@ void QuadraticKey<KeyType>::Parse(NifDocument* document, std::istream& stream)
 }
 
 template <typename KeyType>
-void TbcKey<KeyType>::Parse(NifDocument* document, std::istream& stream)
+void TbcKey<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 {
 	Time = document->Endian.read<float>(stream);
 	Value = ParseKey<KeyType>(document, stream);
@@ -808,7 +808,7 @@ void TbcKey<KeyType>::Parse(NifDocument* document, std::istream& stream)
 }
 
 template <typename KeyType>
-void Keys<KeyType>::Parse(NifDocument* document, std::istream& stream)
+void Keys<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 {
 	unsigned int length = document->Endian.read<unsigned int>(stream);
 
@@ -827,7 +827,7 @@ void Keys<KeyType>::Parse(NifDocument* document, std::istream& stream)
 
 template <typename KeyType>
 template <typename Vector>
-void AnyKeys<KeyType>::ParseKeyVector(NifDocument* document, std::istream& stream, Vector& vector, unsigned int keys)
+void AnyKeys<KeyType>::ParseKeyVector(NifDocument* document, std::string_view& stream, Vector& vector, unsigned int keys)
 {
 	vector.resize(keys);
 
@@ -848,7 +848,7 @@ constexpr bool IsQuaternion<Quaternion>()
 }
 
 template <typename KeyType>
-void AnyKeys<KeyType>::Parse(NifDocument* document, std::istream& stream)
+void AnyKeys<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 {
 	unsigned int length = document->Endian.read<unsigned int>(stream);
 
@@ -880,7 +880,7 @@ void AnyKeys<KeyType>::Parse(NifDocument* document, std::istream& stream)
 
 template <typename KeyType>
 template <typename Vector>
-void AnyKeysNoRotate<KeyType>::ParseKeyVector(NifDocument* document, std::istream& stream, Vector& vector, unsigned int keys)
+void AnyKeysNoRotate<KeyType>::ParseKeyVector(NifDocument* document, std::string_view& stream, Vector& vector, unsigned int keys)
 {
 	vector.resize(keys);
 
@@ -889,7 +889,7 @@ void AnyKeysNoRotate<KeyType>::ParseKeyVector(NifDocument* document, std::istrea
 }
 
 template <typename KeyType>
-void AnyKeysNoRotate<KeyType>::Parse(NifDocument* document, std::istream& stream)
+void AnyKeysNoRotate<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 {
 	unsigned int length = document->Endian.read<unsigned int>(stream);
 

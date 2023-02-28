@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Engine\Assets\ParserUtils.h" />
     <ClInclude Include="src\Engine\IdentifierHeap.h" />
     <ClInclude Include="src\Engine\Math\Color1.h" />
     <ClInclude Include="src\Engine\Math\Color1I.h" />

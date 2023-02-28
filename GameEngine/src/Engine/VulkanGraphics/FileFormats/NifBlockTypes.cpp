@@ -24,7 +24,7 @@ const BlockData* NifDocument::FetchRef(unsigned int ref)
 	return &Blocks[ref];
 }
 
-const BlockData* NifDocument::FetchRef(std::istream& stream)
+const BlockData* NifDocument::FetchRef(std::string_view& stream)
 {
 	return FetchRef(Endian.read<unsigned int>(stream));
 }
@@ -38,12 +38,12 @@ const std::string& NifDocument::FetchString(unsigned int ref)
 	return Strings[ref];
 }
 
-const std::string& NifDocument::FetchString(std::istream& stream)
+const std::string& NifDocument::FetchString(std::string_view& stream)
 {
 	return FetchString(Endian.read<unsigned int>(stream));
 }
 
-void NifDocument::ReadBlockRefs(std::istream& stream, BlockData& block, std::vector<const BlockData*>& refs)
+void NifDocument::ReadBlockRefs(std::string_view& stream, BlockData& block, std::vector<const BlockData*>& refs)
 {
 	unsigned int count = Endian.read<unsigned int>(stream);
 

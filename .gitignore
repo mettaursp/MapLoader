@@ -401,3 +401,5 @@ FodyWeavers.xsd
 MapLoader/log_MapLoader.txt
 
 !CryptoPP/lib/*
+log_*
+spv/

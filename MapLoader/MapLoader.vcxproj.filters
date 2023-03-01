@@ -42,4 +42,50 @@
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\wavefront.glsl">
+      <Filter>Shader Headers</Filter>
+    </None>
+    <None Include="shaders\raycommon.glsl">
+      <Filter>Shader Headers</Filter>
+    </None>
+    <None Include="shaders\raytrace-rahit.glsl">
+      <Filter>Shader Headers</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="shaders\vert_shader.vert">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\raytraceShadow.rmiss">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\raytraceShadow.rchit">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\raytraceShadow.rahit">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\raytrace.rmiss">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\raytrace.rgen">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\raytrace.rchit">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\raytrace.rahit">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\post.frag">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\passthrough.vert">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\frag_shader.frag">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+  </ItemGroup>
 </Project>

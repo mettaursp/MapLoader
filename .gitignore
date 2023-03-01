@@ -399,6 +399,5 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 MapLoader/log_MapLoader.txt
-MapLoader/log_MapLoader.txt
 
 !CryptoPP/lib/*

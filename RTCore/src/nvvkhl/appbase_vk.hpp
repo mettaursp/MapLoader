@@ -334,6 +334,7 @@ public:
   double mousePosYF = 0;
 
   GLFWwindow* getWindow() const { return m_window; }
+  bool desiredVSync = true;
 
 protected:
   uint32_t getMemoryType(uint32_t typeBits, const VkMemoryPropertyFlags& properties) const;
@@ -364,7 +365,7 @@ protected:
   VkRenderPass                 m_renderPass{VK_NULL_HANDLE};     // Base render pass
   VkExtent2D                   m_size{0, 0};                     // Size of the window
   VkPipelineCache              m_pipelineCache{VK_NULL_HANDLE};  // Cache for pipeline/shaders
-  bool                         m_vsync{false};                   // Swapchain with vsync
+  bool                         m_vsync{ desiredVSync };                   // Swapchain with vsync
   bool                         m_useNvlink{false};               // NVLINK usage
   GLFWwindow*                  m_window{nullptr};                // GLFW Window
 

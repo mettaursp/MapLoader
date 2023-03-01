@@ -385,6 +385,9 @@ void HelloVulkan::createObjDescriptionBuffer()
 	m_alloc.finalizeAndReleaseStaging();
 	m_debug.setObjectName(m_mouseIO.buffer, "MouseIODescs");
 
+	if (textureOverrides.size() == 0)
+		textureOverrides.push_back({});
+
 	auto cmdBuf6 = cmdGen.createCommandBuffer();
 	m_textureOverride = m_alloc.createBuffer(cmdBuf6, textureOverrides, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf6);

@@ -60,6 +60,22 @@ namespace Archive
 		return uuid;
 	}
 
+	unsigned int fnv1a32(const std::string& text)
+	{
+		const unsigned int offsetBasis = 0x811c9dc5;
+		const unsigned int prime = 0x01000193;
+
+		unsigned long long hash = offsetBasis;
+
+		for (size_t i = 0; i < text.size(); ++i)
+		{
+			hash ^= text[i];
+			hash *= prime;
+		}
+
+		return (unsigned int)hash;
+	}
+
 	namespace Metadata
 	{
 		std::vector<Tag> Entry::TagTypes = {};

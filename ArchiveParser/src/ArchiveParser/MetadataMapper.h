@@ -74,6 +74,7 @@ namespace Archive
 {
 	UUID ParseUUID(const std::string& value, int offset);
 	unsigned int ParseHexInt(const std::string& value, int offset);
+	unsigned int fnv1a32(const std::string& text);
 
 	class ArchiveReader;
 

@@ -554,9 +554,12 @@ void nvvkhl::AppBaseVk::onKeyboardChar(unsigned char key)
     return;
 
   // Toggling vsync
-  if(key == 'v')
+  if(key == 'v' || desiredVSync != m_vsync)
   {
-    m_vsync = !m_vsync;
+      if (key == 'v')
+          m_vsync = !m_vsync;
+      else
+          m_vsync = desiredVSync;
     vkDeviceWaitIdle(m_device);
     vkQueueWaitIdle(m_queue);
     m_swapChain.update(m_size.width, m_size.height, m_vsync);

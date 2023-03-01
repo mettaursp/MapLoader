@@ -237,6 +237,8 @@ bool loadFeatures(const Archive::ArchivePath& tablePath, const char* locale, con
 			if (featureLevelAttribute != nullptr)
 				featureLevel = featureLevelAttribute->IntValue();
 
+			std::cout << "env: " << env << "; locale: " << locale << "; level: " << featureLevel << std::endl;
+
 			break;
 		}
 	}
@@ -267,7 +269,11 @@ bool loadFeatures(const Archive::ArchivePath& tablePath, const char* locale, con
 		int level = featureLevelAttribute->IntValue();
 
 		if (level <= featureLevel)
+		{
 			features[featureNameAttribute->Value()] = level;
+
+			std::cout << featureNameAttribute->Value() << ": " << level << std::endl;
+		}
 	}
 
 	return true;

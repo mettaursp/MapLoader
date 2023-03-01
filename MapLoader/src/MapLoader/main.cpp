@@ -312,6 +312,7 @@ std::vector<DyeColorInfo> dyeColorsNA;
 std::unordered_map<std::string, DyeColorInfo*> dyeColorMap;
 std::unordered_map<std::string, Emotion> maleEmotions;
 std::unordered_map<std::string, Emotion> femaleEmotions;
+std::unordered_map<int, std::string> mapFileNames;
 
 std::unordered_map<std::string, int> materialTypeMap = {
 	{ "MS2StandardMaterial", 0 },
@@ -1807,43 +1808,57 @@ EntityData* loadFlat(const std::string& name)
 
 void loadMap(const std::string& mapId)
 {
-	Archive::ArchivePath mapFile = Reader.GetPath("Xml/map/" + padId(mapId) + ".xml");
-
-	if (!mapFile.Loaded())
-	{
-		std::cout << "failed to load map: " << mapFile.GetPath().string() << std::endl;
-		return;
-	}
-
 	std::string xblockName;
-
+	const auto& xblockNameIndex = mapFileNames.find(atoi(mapId.c_str()));
+	
+	if (xblockNameIndex != mapFileNames.end())
 	{
-		tinyxml2::XMLDocument document;
+		xblockName = xblockNameIndex->second;
 
-		mapFile.Read(documentBuffer);
-		document.Parse(documentBuffer.data(), documentBuffer.size());
+		std::cout << "found map " << mapId << ": " << xblockName << std::endl;
+	}
+	else
+	{
+		Archive::ArchivePath mapFile = Reader.GetPath("Xml/map/" + padId(mapId) + ".xml");
 
-		tinyxml2::XMLElement* rootElement = document.RootElement();
-
-		SupportSettings feature;
-		SupportSettings locale;
-
-		for (tinyxml2::XMLElement* envElement = rootElement->FirstChildElement(); envElement; envElement = envElement->NextSiblingElement())
+		if (!mapFile.Loaded())
 		{
-			if (!isNodeEnabled(envElement, &feature, &locale))
-				continue;
+			std::cout << "failed to load map: " << mapFile.GetPath().string() << std::endl;
+			return;
+		}
 
-			tinyxml2::XMLElement* xblock = envElement->FirstChildElement("xblock");
+		{
+			tinyxml2::XMLDocument document;
 
-			if (xblock != nullptr)
-				xblockName = readAttribute<std::string>(xblock, "name", "");
+			mapFile.Read(documentBuffer);
+			document.Parse(documentBuffer.data(), documentBuffer.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			SupportSettings feature;
+			SupportSettings locale;
+
+			for (tinyxml2::XMLElement* envElement = rootElement->FirstChildElement(); envElement; envElement = envElement->NextSiblingElement())
+			{
+				if (!isNodeEnabled(envElement, &feature, &locale))
+					continue;
+
+				tinyxml2::XMLElement* xblock = envElement->FirstChildElement("xblock");
+
+				if (xblock != nullptr)
+					xblockName = readAttribute<std::string>(xblock, "name", "");
+			}
 		}
 	}
 
 	const Archive::Metadata::Entry* entry = Archive::Metadata::Entry::FindFirstEntryByTags(xblockName, "emergent-world");
 
 	if (entry == nullptr)
+	{
+		std::cout << "no map entry found" << std::endl;
+
 		return;
+	}
 
 	Archive::ArchivePath xblockFile = Reader.GetPath("Resource/" + entry->RelativePath.string());
 
@@ -1990,6 +2005,43 @@ void loadMapNames(const Archive::ArchivePath& file)
 	for (tinyxml2::XMLElement* keyElement = rootElement->FirstChildElement(); keyElement; keyElement = keyElement->NextSiblingElement())
 	{
 		mapNames[readAttribute<std::string>(keyElement, "id", "")] = readAttribute<std::string>(keyElement, "name", "");
+	}
+}
+
+void loadMapFileNames(const Archive::ArchivePath& file)
+{
+	if (!file.Loaded())
+	{
+		std::cout << "failed to load fielddata.xml " << file.GetPath().string() << std::endl;
+		return;
+	}
+
+	tinyxml2::XMLDocument document;
+
+	file.Read(documentBuffer);
+	document.Parse(documentBuffer.data(), documentBuffer.size());
+
+	tinyxml2::XMLElement* rootElement = document.RootElement();
+
+	for (tinyxml2::XMLElement* fieldDataElement = rootElement->FirstChildElement(); fieldDataElement; fieldDataElement = fieldDataElement->NextSiblingElement())
+	{
+		int id = readAttribute<int>(fieldDataElement, "id", 0);
+
+		tinyxml2::XMLElement* envElement = fieldDataElement->FirstChildElement();
+
+		if (envElement == nullptr || strcmp(envElement->Name(), "environment") != 0) continue;
+
+		for (tinyxml2::XMLElement* componentElement = envElement->FirstChildElement(); componentElement; componentElement = componentElement->NextSiblingElement())
+		{
+			const char* name = componentElement->Name();
+
+			if (strcmp(name, "xblock") == 0)
+			{
+				mapFileNames[id] = readAttribute<std::string>(componentElement, "name", "");
+
+				continue;
+			}
+		}
 	}
 }
 
@@ -2263,13 +2315,32 @@ int main(int argc, char** argv)
 
 	Reader.Load(ms2Root / "Data", true);
 
-	fs::path webMetaCache = "./cache/asset-web-metadata-cache";
+	std::cout << "archives loaded, indexing asset-web-metadata" << std::endl;
+
+	fs::path webMetaCache = "./cache/asset-web-metadata-cache-";
+
+	unsigned int hash = Archive::fnv1a32(ms2Root.string());
+	char hashBuffer[9] = { 0 };
+
+	for (size_t i = 0; i < 8; ++i)
+	{
+		char data = hash & 0xF;
+		hash >>= 4;
+		
+		hashBuffer[7 - i] = (data < 0xA) ? '0' + data : 'A' + data - 0xA;
+	}
+
+	webMetaCache += hashBuffer;
 
 	if (!Archive::Metadata::Entry::LoadCached(webMetaCache))
 	{
+		std::cout << "no asset-web-metadata cache found, loading" << std::endl;
 		Archive::Metadata::Entry::LoadEntries(Reader, "Resource/asset-web-metadata", documentBuffer);
+		std::cout << "caching asset-web-metadata" << std::endl;
 		Archive::Metadata::Entry::Cache(webMetaCache);
 	}
+	else
+		std::cout << "asset-web-metadata cache found and loaded" << std::endl;
 
 	if (!loadFeatures(Reader.GetPath("Xml/table"), localeName, environmentName, documentBuffer)) return -1;
 
@@ -2364,6 +2435,7 @@ int main(int argc, char** argv)
 	loadEmotions(Reader.GetPath("Xml/emotion/common/malecustom.xml"), maleEmotions);
 
 	loadMapNames(Reader.GetPath("Xml/string/en/mapname.xml"));
+	loadMapFileNames(Reader.GetPath("Xml/table/fielddata.xml"));
 
 	std::vector<Engine::Graphics::VertexAttributeFormat> attributes;
 
@@ -2669,389 +2741,393 @@ int main(int argc, char** argv)
 	// Main loop
 	while(!glfwWindowShouldClose(window))
 	{
-	glfwPollEvents();
-	if(helloVk.isMinimized())
-		continue;
+		glfwPollEvents();
+		if(helloVk.isMinimized())
+			continue;
 
-	// Start the Dear ImGui frame
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
+		double frameStart = glfwGetTime();
+
+		// Start the Dear ImGui frame
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
 
 
-	// Show UI window.
-	if(helloVk.showGui())
-	{
-		ImGuiH::Panel::Begin();
-		ImGui::ColorEdit3("Clear color", reinterpret_cast<float*>(&clearColor));
-		ImGui::Checkbox("Ray Tracer mode", &useRaytracer);  // Switch between raster and ray tracing
-
-		if (ImGui::BeginTabBar("Render"))
+		// Show UI window.
+		if(helloVk.showGui())
 		{
-			if (ImGui::BeginTabItem("Debug Info"))
+			ImGuiH::Panel::Begin();
+			ImGui::ColorEdit3("Clear color", reinterpret_cast<float*>(&clearColor));
+			//ImGui::Checkbox("Ray Tracer mode", &useRaytracer);  // Switch between raster and ray tracing
+
+			if (ImGui::BeginTabBar("Render"))
 			{
-				int modelId = helloVk.mouseIO.objectIndex;
-
-				ImGui::Text("Mouse Hit: %d", modelId);
-				ImGui::Text("Mouse Hit Pos: %.3f, %.3f, %.3f", helloVk.mouseIO.hitPosition[0], helloVk.mouseIO.hitPosition[1], helloVk.mouseIO.hitPosition[2]);
-				ImGui::Text("Mouse Intersection: %d", helloVk.hostUBO.hitIndex);
-
-				if (ImGui::IsKeyPressed(ImGuiKey_PageDown))
-					helloVk.hostUBO.hitIndex = std::max(0, helloVk.hostUBO.hitIndex - 1);
-				if (ImGui::IsKeyPressed(ImGuiKey_PageUp))
-					helloVk.hostUBO.hitIndex = std::min(10, helloVk.hostUBO.hitIndex + 1);
-
-				helloVk.hostUBO.mouseX = (int)helloVk.mousePosXF;
-				helloVk.hostUBO.mouseY = (int)helloVk.mousePosYF;
-				ImGui::Text("Mouse: %d, %d", helloVk.hostUBO.mouseX, helloVk.hostUBO.mouseY);
-
-				if (modelId >= 0 && modelId < (int)spawnedModels.size())
+				if (ImGui::BeginTabItem("Debug Info"))
 				{
-					int entityId = spawnedModels[modelId].EntityId;
+					int modelId = helloVk.mouseIO.objectIndex;
 
-					const SpawnedEntity& entity = spawnedEntities[entityId];
+					ImGui::Text("Mouse Hit: %d", modelId);
+					ImGui::Text("Mouse Hit Pos: %.3f, %.3f, %.3f", helloVk.mouseIO.hitPosition[0], helloVk.mouseIO.hitPosition[1], helloVk.mouseIO.hitPosition[2]);
+					ImGui::Text("Mouse Intersection: %d", helloVk.hostUBO.hitIndex);
 
+					if (ImGui::IsKeyPressed(ImGuiKey_PageDown))
+						helloVk.hostUBO.hitIndex = std::max(0, helloVk.hostUBO.hitIndex - 1);
+					if (ImGui::IsKeyPressed(ImGuiKey_PageUp))
+						helloVk.hostUBO.hitIndex = std::min(10, helloVk.hostUBO.hitIndex + 1);
 
-					struct ModifierKeysEnum
+					helloVk.hostUBO.mouseX = (int)helloVk.mousePosXF;
+					helloVk.hostUBO.mouseY = (int)helloVk.mousePosYF;
+					ImGui::Text("Mouse: %d, %d", helloVk.hostUBO.mouseX, helloVk.hostUBO.mouseY);
+
+					if (modelId >= 0 && modelId < (int)spawnedModels.size())
 					{
-						enum Modifiers : byte
+						int entityId = spawnedModels[modelId].EntityId;
+
+						const SpawnedEntity& entity = spawnedEntities[entityId];
+
+
+						struct ModifierKeysEnum
 						{
-							None = 0,
-							Ctrl = 1,
-							Shift = 2,
-							Alt = 4,
-							Tab = 8
-						};
-					};
-
-					typedef ModifierKeysEnum::Modifiers ModifierKeys;
-
-					int modifiers = 0;
-
-					if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
-						modifiers = modifiers | ModifierKeys::Ctrl;
-
-					if (ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift))
-						modifiers |= ModifierKeys::Shift;
-
-					if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt))
-						modifiers |= ModifierKeys::Alt;
-
-					if (ImGui::IsKeyDown(ImGuiKey_Tab))
-						modifiers |= ModifierKeys::Tab;
-
-					if (entity.MapIndex != -1)
-					{
-						ImGui::Text("Map: [%s] %s", loadedMaps[entity.MapIndex].Id.c_str(), loadedMaps[entity.MapIndex].Name.c_str());
-					}
-
-					int spawnedModelId = spawnedModels[modelId].ModelId;
-
-					ImGui::Text("Entity Name: %s", entity.Name.c_str());
-
-					if (entity.Flat != nullptr)
-					{
-						ImGui::Text("Entity Flat Name: %s", entity.Flat->Entry->Name.c_str());
-						ImGui::Text("Entity Flat Path: %s", entity.Flat->Entry->RelativePath.string().c_str());
-					}
-
-					ImGui::Text("Entity Model Name: %s", entity.Model->Entry->Name.c_str());
-					ImGui::Text("Entity Model Path: %s", entity.Model->Entry->RelativePath.string().c_str());
-					ImGui::Text("Entity Id: %s", entity.Id.c_str());
-					ImGui::Text("Spawned Entity Position: %.3f, %.3f, %.3f", entity.WorldPosition.X, entity.WorldPosition.Y, entity.WorldPosition.Z);
-					ImGui::Text("Entity Coordinates: %.3f, %.3f, %.3f", entity.Position.X, entity.Position.Y, entity.Position.Z);
-					ImGui::Text("NiMesh Index: %d", spawnedModelId);
-
-					ImGui::Text("Shader: %s", entity.Model->Shaders[spawnedModelId].c_str());
-					ImGui::Text("Material: %s", entity.Model->MaterialNames[spawnedModelId].c_str());
-
-					ImGui::ColorEdit3("Diffuse", &entity.Model->Materials[spawnedModelId].diffuse[0], ImGuiColorEditFlags_NoPicker);
-					ImGui::ColorEdit3("Specular", &entity.Model->Materials[spawnedModelId].specular[0], ImGuiColorEditFlags_NoPicker);
-					ImGui::ColorEdit3("Ambient", &entity.Model->Materials[spawnedModelId].ambient[0], ImGuiColorEditFlags_NoPicker);
-					ImGui::ColorEdit3("Emission", &entity.Model->Materials[spawnedModelId].emission[0], ImGuiColorEditFlags_NoPicker);
-					ImGui::Text("Alpha: %.2f", entity.Model->Materials[spawnedModelId].dissolve);
-					ImGui::Text("Shininess: %.2f", entity.Model->Materials[spawnedModelId].shininess);
-
-					if (ImGui::IsKeyPressed(ImGuiKey_Insert) && fs::exists(ms2RootExtracted))
-					{
-						std::cout << modifiers << std::endl;
-						fs::path path = ms2RootExtracted / "Resource/";
-						std::string editor = "cmd.exe /q /c start /b code --goto ";
-						int line = -1;
-						DWORD flags = 0;
-
-						if (modifiers == (ModifierKeys::Shift | ModifierKeys::Ctrl) && entity.Flat != nullptr)
-						{
-							flags = CREATE_NO_WINDOW;
-
-							path = path / entity.Flat->Entry->RelativePath;
-						}
-						else if (modifiers == ModifierKeys::Alt)
-						{
-							editor = "\"B:/Files/NifSkope_2_0_2020-07-09-x64/NifSkope.exe\"";
-							path = path / entity.Model->Entry->RelativePath;
-						}
-						else if (modifiers == ModifierKeys::Ctrl)
-						{
-							flags = CREATE_NO_WINDOW;
-
-							path = loadedMaps[entity.MapIndex].XBlockPath;
-
-							line = entity.LineNumber;
-						}
-						else
-						{
-							path = "err";
-						}
-
-						if (fs::exists(path))
-						{
-							std::stringstream openNotepad;
-
-							openNotepad << "\"" << path.string();
-
-							if (line != -1)
+							enum Modifiers : byte
 							{
-								openNotepad << ":" << line;
+								None = 0,
+								Ctrl = 1,
+								Shift = 2,
+								Alt = 4,
+								Tab = 8
+							};
+						};
+
+						typedef ModifierKeysEnum::Modifiers ModifierKeys;
+
+						int modifiers = 0;
+
+						if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) || ImGui::IsKeyDown(ImGuiKey_RightCtrl))
+							modifiers = modifiers | ModifierKeys::Ctrl;
+
+						if (ImGui::IsKeyDown(ImGuiKey_LeftShift) || ImGui::IsKeyDown(ImGuiKey_RightShift))
+							modifiers |= ModifierKeys::Shift;
+
+						if (ImGui::IsKeyDown(ImGuiKey_LeftAlt) || ImGui::IsKeyDown(ImGuiKey_RightAlt))
+							modifiers |= ModifierKeys::Alt;
+
+						if (ImGui::IsKeyDown(ImGuiKey_Tab))
+							modifiers |= ModifierKeys::Tab;
+
+						if (entity.MapIndex != -1)
+						{
+							ImGui::Text("Map: [%s] %s", loadedMaps[entity.MapIndex].Id.c_str(), loadedMaps[entity.MapIndex].Name.c_str());
+						}
+
+						int spawnedModelId = spawnedModels[modelId].ModelId;
+
+						ImGui::Text("Entity Name: %s", entity.Name.c_str());
+
+						if (entity.Flat != nullptr)
+						{
+							ImGui::Text("Entity Flat Name: %s", entity.Flat->Entry->Name.c_str());
+							ImGui::Text("Entity Flat Path: %s", entity.Flat->Entry->RelativePath.string().c_str());
+						}
+
+						ImGui::Text("Entity Model Name: %s", entity.Model->Entry->Name.c_str());
+						ImGui::Text("Entity Model Path: %s", entity.Model->Entry->RelativePath.string().c_str());
+						ImGui::Text("Entity Id: %s", entity.Id.c_str());
+						ImGui::Text("Spawned Entity Position: %.3f, %.3f, %.3f", entity.WorldPosition.X, entity.WorldPosition.Y, entity.WorldPosition.Z);
+						ImGui::Text("Entity Coordinates: %.3f, %.3f, %.3f", entity.Position.X, entity.Position.Y, entity.Position.Z);
+						ImGui::Text("NiMesh Index: %d", spawnedModelId);
+
+						ImGui::Text("Shader: %s", entity.Model->Shaders[spawnedModelId].c_str());
+						ImGui::Text("Material: %s", entity.Model->MaterialNames[spawnedModelId].c_str());
+
+						ImGui::ColorEdit3("Diffuse", &entity.Model->Materials[spawnedModelId].diffuse[0], ImGuiColorEditFlags_NoPicker);
+						ImGui::ColorEdit3("Specular", &entity.Model->Materials[spawnedModelId].specular[0], ImGuiColorEditFlags_NoPicker);
+						ImGui::ColorEdit3("Ambient", &entity.Model->Materials[spawnedModelId].ambient[0], ImGuiColorEditFlags_NoPicker);
+						ImGui::ColorEdit3("Emission", &entity.Model->Materials[spawnedModelId].emission[0], ImGuiColorEditFlags_NoPicker);
+						ImGui::Text("Alpha: %.2f", entity.Model->Materials[spawnedModelId].dissolve);
+						ImGui::Text("Shininess: %.2f", entity.Model->Materials[spawnedModelId].shininess);
+
+						if (ImGui::IsKeyPressed(ImGuiKey_Insert) && fs::exists(ms2RootExtracted))
+						{
+							std::cout << modifiers << std::endl;
+							fs::path path = ms2RootExtracted / "Resource/";
+							std::string editor = "cmd.exe /q /c start /b code --goto ";
+							int line = -1;
+							DWORD flags = 0;
+
+							if (modifiers == (ModifierKeys::Shift | ModifierKeys::Ctrl) && entity.Flat != nullptr)
+							{
+								flags = CREATE_NO_WINDOW;
+
+								path = path / entity.Flat->Entry->RelativePath;
+							}
+							else if (modifiers == ModifierKeys::Alt)
+							{
+								editor = "\"B:/Files/NifSkope_2_0_2020-07-09-x64/NifSkope.exe\"";
+								path = path / entity.Model->Entry->RelativePath;
+							}
+							else if (modifiers == ModifierKeys::Ctrl)
+							{
+								flags = CREATE_NO_WINDOW;
+
+								path = loadedMaps[entity.MapIndex].XBlockPath;
+
+								line = entity.LineNumber;
+							}
+							else
+							{
+								path = "err";
 							}
 
-							openNotepad << "\"";
-
-
-							//std::system((openNotepad.str()).c_str());
-							//WinExec(openNotepad.str().c_str(), SW_HIDE);
-							if (true)
+							if (fs::exists(path))
 							{
-								STARTUPINFOA startInfo;
-								startInfo.cb = sizeof(startInfo);
-								PROCESS_INFORMATION processInfo;
+								std::stringstream openNotepad;
 
-								ZeroMemory(&startInfo, sizeof(startInfo));
-								ZeroMemory(&processInfo, sizeof(processInfo));
+								openNotepad << "\"" << path.string();
 
-								//if (flags == CREATE_NO_WINDOW)
-								//{
-								startInfo.wShowWindow = SW_HIDE;
-								startInfo.dwFlags = STARTF_USESHOWWINDOW;
-								//}
-
-								std::string args = editor + openNotepad.str();
-
-								if (CreateProcessA(NULL, const_cast<LPSTR>(args.c_str()), NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &startInfo, &processInfo))
+								if (line != -1)
 								{
-									CloseHandle(processInfo.hThread);
-									CloseHandle(processInfo.hProcess);
+									openNotepad << ":" << line;
+								}
+
+								openNotepad << "\"";
+
+
+								//std::system((openNotepad.str()).c_str());
+								//WinExec(openNotepad.str().c_str(), SW_HIDE);
+								if (true)
+								{
+									STARTUPINFOA startInfo;
+									startInfo.cb = sizeof(startInfo);
+									PROCESS_INFORMATION processInfo;
+
+									ZeroMemory(&startInfo, sizeof(startInfo));
+									ZeroMemory(&processInfo, sizeof(processInfo));
+
+									//if (flags == CREATE_NO_WINDOW)
+									//{
+									startInfo.wShowWindow = SW_HIDE;
+									startInfo.dwFlags = STARTF_USESHOWWINDOW;
+									//}
+
+									std::string args = editor + openNotepad.str();
+
+									if (CreateProcessA(NULL, const_cast<LPSTR>(args.c_str()), NULL, NULL, FALSE, CREATE_NEW_CONSOLE, NULL, NULL, &startInfo, &processInfo))
+									{
+										CloseHandle(processInfo.hThread);
+										CloseHandle(processInfo.hProcess);
+									}
 								}
 							}
 						}
-					}
 
-					if (entity.PortalIndex != -1)
-					{
-						const SpawnedPortal& portal = spawnedPortals[entity.PortalIndex];
-
-						ImGui::Text("Portal Id: %d", portal.PortalId);
-
-						if (portal.TargetField != "")
-							ImGui::Text("Target Map: [%s] %s", portal.TargetField.c_str(), mapNames[portal.TargetField].c_str());
-
-						if (portal.TargetPortal != -1)
+						if (entity.PortalIndex != -1)
 						{
-							ImGui::Text("Target Portal Id: %d", portal.TargetPortal);
+							const SpawnedPortal& portal = spawnedPortals[entity.PortalIndex];
 
-							int mapIndex = portal.TargetField != "" && mapIndices.contains(portal.TargetField) ? mapIndices[portal.TargetField] : (portal.TargetField != "" ? -1 : entity.MapIndex);
+							ImGui::Text("Portal Id: %d", portal.PortalId);
 
-							if (mapIndex != -1)
+							if (portal.TargetField != "")
+								ImGui::Text("Target Map: [%s] %s", portal.TargetField.c_str(), mapNames[portal.TargetField].c_str());
+
+							if (portal.TargetPortal != -1)
 							{
-								LoadedMap& map = loadedMaps[mapIndex];
+								ImGui::Text("Target Portal Id: %d", portal.TargetPortal);
 
-								const auto& targetPortalIndex = map.Portals.find(portal.TargetPortal);
+								int mapIndex = portal.TargetField != "" && mapIndices.contains(portal.TargetField) ? mapIndices[portal.TargetField] : (portal.TargetField != "" ? -1 : entity.MapIndex);
 
-								if (targetPortalIndex != map.Portals.end())
+								if (mapIndex != -1)
 								{
-									const SpawnedEntity& targetPortal = spawnedEntities[targetPortalIndex->second];
+									LoadedMap& map = loadedMaps[mapIndex];
 
-									ImGui::Text("Target Portal Entity Name: %s", targetPortal.Name.c_str());
+									const auto& targetPortalIndex = map.Portals.find(portal.TargetPortal);
 
-									if (targetPortal.Flat != nullptr)
+									if (targetPortalIndex != map.Portals.end())
 									{
-										ImGui::Text("Target Portal Entity Flat Name: %s", targetPortal.Flat->Entry->Name.c_str());
-										ImGui::Text("Target Portal Entity Flat Path: %s", targetPortal.Flat->Entry->RelativePath.string().c_str());
-									}
+										const SpawnedEntity& targetPortal = spawnedEntities[targetPortalIndex->second];
 
-									ImGui::Text("Target Portal Entity Model Name: %s", targetPortal.Model->Entry->Name.c_str());
-									ImGui::Text("Target Portal Entity Model Path: %s", targetPortal.Model->Entry->RelativePath.string().c_str());
-									ImGui::Text("Target Portal Entity Id: %s", targetPortal.Id.c_str());
-									ImGui::Text("Target Portal Spawned Entity Position: %.3f, %.3f, %.3f", targetPortal.WorldPosition.X, targetPortal.WorldPosition.Y, targetPortal.WorldPosition.Z);
-									ImGui::Text("Target Portal Entity Coordinates: %.3f, %.3f, %.3f", targetPortal.Position.X, targetPortal.Position.Y, targetPortal.Position.Z);
+										ImGui::Text("Target Portal Entity Name: %s", targetPortal.Name.c_str());
 
-									if (ImGui::IsKeyPressed(ImGuiKey_Enter) && modifiers == ModifierKeys::Shift)
-									{
-										std::stringstream str;
-										str << targetPortal.WorldPosition;
-										std::string positionString = str.str();
-
-										glfwSetClipboardString(helloVk.getWindow(), positionString.c_str());
-									}
-
-									if (ImGui::IsKeyPressed(ImGuiKey_Enter) && modifiers == ModifierKeys::Ctrl)
-									{
-										std::stringstream str;
-
-										Vector3SF position = entity.WorldPosition;
-
-										if (entity.MapIndex != -1)
+										if (targetPortal.Flat != nullptr)
 										{
-											position = loadedMaps[entity.MapIndex].MapTransform * Vector3F(entity.Position, 1) - loadedMaps[entity.MapIndex].MapTransform.Translation();
+											ImGui::Text("Target Portal Entity Flat Name: %s", targetPortal.Flat->Entry->Name.c_str());
+											ImGui::Text("Target Portal Entity Flat Path: %s", targetPortal.Flat->Entry->RelativePath.string().c_str());
 										}
 
-										str << targetPortal.WorldPosition - position;
-										std::string positionString = str.str();
+										ImGui::Text("Target Portal Entity Model Name: %s", targetPortal.Model->Entry->Name.c_str());
+										ImGui::Text("Target Portal Entity Model Path: %s", targetPortal.Model->Entry->RelativePath.string().c_str());
+										ImGui::Text("Target Portal Entity Id: %s", targetPortal.Id.c_str());
+										ImGui::Text("Target Portal Spawned Entity Position: %.3f, %.3f, %.3f", targetPortal.WorldPosition.X, targetPortal.WorldPosition.Y, targetPortal.WorldPosition.Z);
+										ImGui::Text("Target Portal Entity Coordinates: %.3f, %.3f, %.3f", targetPortal.Position.X, targetPortal.Position.Y, targetPortal.Position.Z);
 
-										glfwSetClipboardString(helloVk.getWindow(), positionString.c_str());
-									}
+										if (ImGui::IsKeyPressed(ImGuiKey_Enter) && modifiers == ModifierKeys::Shift)
+										{
+											std::stringstream str;
+											str << targetPortal.WorldPosition;
+											std::string positionString = str.str();
 
-									if (ImGui::IsKeyPressed(ImGuiKey_Home))
-									{
-										nvh::CameraManipulator::Camera camera = CameraManip.getCamera();
+											glfwSetClipboardString(helloVk.getWindow(), positionString.c_str());
+										}
 
-										vec3 ctr = camera.ctr;
-										vec3 ey = camera.eye;
+										if (ImGui::IsKeyPressed(ImGuiKey_Enter) && modifiers == ModifierKeys::Ctrl)
+										{
+											std::stringstream str;
 
-										Vector3SF center(ctr[0], ctr[1], ctr[2]);
-										Vector3SF eye(ey[0], ey[1], ey[2]);
+											Vector3SF position = entity.WorldPosition;
 
-										Vector3SF offset = targetPortal.WorldPosition - entity.WorldPosition;
+											if (entity.MapIndex != -1)
+											{
+												position = loadedMaps[entity.MapIndex].MapTransform * Vector3F(entity.Position, 1) - loadedMaps[entity.MapIndex].MapTransform.Translation();
+											}
 
-										center += offset;
-										eye += offset;
+											str << targetPortal.WorldPosition - position;
+											std::string positionString = str.str();
 
-										camera.ctr = vec3(center.X, center.Y, center.Z);
-										camera.eye = vec3(eye.X, eye.Y, eye.Z);
+											glfwSetClipboardString(helloVk.getWindow(), positionString.c_str());
+										}
 
-										CameraManip.setCamera(camera);
+										if (ImGui::IsKeyPressed(ImGuiKey_Home))
+										{
+											nvh::CameraManipulator::Camera camera = CameraManip.getCamera();
+
+											vec3 ctr = camera.ctr;
+											vec3 ey = camera.eye;
+
+											Vector3SF center(ctr[0], ctr[1], ctr[2]);
+											Vector3SF eye(ey[0], ey[1], ey[2]);
+
+											Vector3SF offset = targetPortal.WorldPosition - entity.WorldPosition;
+
+											center += offset;
+											eye += offset;
+
+											camera.ctr = vec3(center.X, center.Y, center.Z);
+											camera.eye = vec3(eye.X, eye.Y, eye.Z);
+
+											CameraManip.setCamera(camera);
+										}
 									}
 								}
 							}
 						}
+
+						if (ImGui::IsKeyPressed(ImGuiKey_Enter) && modifiers == ModifierKeys::None)
+						{
+							std::stringstream str;
+							str << entity.WorldPosition;
+							std::string positionString = str.str();
+
+							glfwSetClipboardString(helloVk.getWindow(), positionString.c_str());
+						}
 					}
 
-					if (ImGui::IsKeyPressed(ImGuiKey_Enter) && modifiers == ModifierKeys::None)
+					if (ImGui::CollapsingHeader("Unmapped Materials Found:"))
 					{
-						std::stringstream str;
-						str << entity.WorldPosition;
-						std::string positionString = str.str();
-
-						glfwSetClipboardString(helloVk.getWindow(), positionString.c_str());
+						for (const std::string& name : unmappedMaterials)
+						{
+							ImGui::Text(("\t" + name).c_str());
+						}
 					}
+					ImGui::EndTabItem();
 				}
 
-				if (ImGui::CollapsingHeader("Unmapped Materials Found:"))
+				if (ImGui::BeginTabItem("Settings"))
 				{
-					for (const std::string& name : unmappedMaterials)
+					ImGui::Text("Lighting Model:");
+					ImGui::RadioButton("Phong", &helloVk.hostUBO.lightingModel, 0);
+					ImGui::RadioButton("MS2 Phong", &helloVk.hostUBO.lightingModel, 1);
+
+					ImGui::Text("Sky Light:");
+					ImGui::RadioButton("Map Lights", &helloVk.hostUBO.skyLightMode, 0);
+					ImGui::RadioButton("Dynamic Sky", &helloVk.hostUBO.skyLightMode, 1);
+
+					if (helloVk.hostUBO.skyLightMode == 1)
 					{
-						ImGui::Text(("\t" + name).c_str());
+
 					}
+
+					bool drawInvisible = (helloVk.hostUBO.drawMode & 1) != 0;
+					bool drawDebug = (helloVk.hostUBO.drawMode & 2) != 0;
+
+					ImGui::Checkbox("Draw Invisible Objects", &drawInvisible);
+					ImGui::Checkbox("Draw Debug Objects", &drawDebug);
+
+					helloVk.hostUBO.drawMode &= -1 ^ 3;
+					helloVk.hostUBO.drawMode |= (drawDebug ? 2 : 0) | (drawInvisible ? 1 : 0);
+
+					ImGui::Checkbox("Limit Frame Rate", &helloVk.desiredVSync);
+
+					ImGui::EndTabItem();
 				}
-				ImGui::EndTabItem();
+
+				ImGui::EndTabBar();
 			}
 
-			if (ImGui::BeginTabItem("Settings"))
+			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+			ImGuiH::Control::Info("", "", "(F10) Toggle Pane", ImGuiH::Control::Flags::Disabled);
+			ImGuiH::Panel::End();
+		}
+
+		// Start rendering the scene
+		helloVk.prepareFrame();
+
+		// Start command buffer of this frame
+		auto                   curFrame = helloVk.getCurFrame();
+		const VkCommandBuffer& cmdBuf   = helloVk.getCommandBuffers()[curFrame];
+
+		VkCommandBufferBeginInfo beginInfo{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
+		beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+		vkBeginCommandBuffer(cmdBuf, &beginInfo);
+
+		// Updating camera buffer
+		helloVk.updateUniformBuffer(cmdBuf);
+
+		// Clearing screen
+		std::array<VkClearValue, 2> clearValues{};
+		clearValues[0].color        = {{clearColor[0], clearColor[1], clearColor[2], clearColor[3]}};
+		clearValues[1].depthStencil = {1.0f, 0};
+
+		// Offscreen render pass
+		{
+			VkRenderPassBeginInfo offscreenRenderPassBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+			offscreenRenderPassBeginInfo.clearValueCount = 2;
+			offscreenRenderPassBeginInfo.pClearValues    = clearValues.data();
+			offscreenRenderPassBeginInfo.renderPass      = helloVk.m_offscreenRenderPass;
+			offscreenRenderPassBeginInfo.framebuffer     = helloVk.m_offscreenFramebuffer;
+			offscreenRenderPassBeginInfo.renderArea      = {{0, 0}, helloVk.getSize()};
+
+			// Rendering Scene
+			if(useRaytracer)
 			{
-				ImGui::Text("Lighting Model:");
-				ImGui::RadioButton("Phong", &helloVk.hostUBO.lightingModel, 0);
-				ImGui::RadioButton("MS2 Phong", &helloVk.hostUBO.lightingModel, 1);
-
-				ImGui::Text("Sky Light:");
-				ImGui::RadioButton("Map Lights", &helloVk.hostUBO.skyLightMode, 0);
-				ImGui::RadioButton("Dynamic Sky", &helloVk.hostUBO.skyLightMode, 1);
-
-				if (helloVk.hostUBO.skyLightMode == 1)
-				{
-
-				}
-
-				bool drawInvisible = (helloVk.hostUBO.drawMode & 1) != 0;
-				bool drawDebug = (helloVk.hostUBO.drawMode & 2) != 0;
-
-				ImGui::Checkbox("Draw Invisible Objects", &drawInvisible);
-				ImGui::Checkbox("Draw Debug Objects", &drawDebug);
-
-				helloVk.hostUBO.drawMode &= -1 ^ 3;
-				helloVk.hostUBO.drawMode |= (drawDebug ? 2 : 0) | (drawInvisible ? 1 : 0);
-
-				ImGui::EndTabItem();
+			helloVk.raytrace(cmdBuf, clearColor);
 			}
-
-			ImGui::EndTabBar();
+			else
+			{
+			vkCmdBeginRenderPass(cmdBuf, &offscreenRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+			helloVk.rasterize(cmdBuf);
+			vkCmdEndRenderPass(cmdBuf);
+			}
 		}
 
-		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-		ImGuiH::Control::Info("", "", "(F10) Toggle Pane", ImGuiH::Control::Flags::Disabled);
-		ImGuiH::Panel::End();
-	}
-
-	// Start rendering the scene
-	helloVk.prepareFrame();
-
-	// Start command buffer of this frame
-	auto                   curFrame = helloVk.getCurFrame();
-	const VkCommandBuffer& cmdBuf   = helloVk.getCommandBuffers()[curFrame];
-
-	VkCommandBufferBeginInfo beginInfo{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
-	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-	vkBeginCommandBuffer(cmdBuf, &beginInfo);
-
-	// Updating camera buffer
-	helloVk.updateUniformBuffer(cmdBuf);
-
-	// Clearing screen
-	std::array<VkClearValue, 2> clearValues{};
-	clearValues[0].color        = {{clearColor[0], clearColor[1], clearColor[2], clearColor[3]}};
-	clearValues[1].depthStencil = {1.0f, 0};
-
-	// Offscreen render pass
-	{
-		VkRenderPassBeginInfo offscreenRenderPassBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
-		offscreenRenderPassBeginInfo.clearValueCount = 2;
-		offscreenRenderPassBeginInfo.pClearValues    = clearValues.data();
-		offscreenRenderPassBeginInfo.renderPass      = helloVk.m_offscreenRenderPass;
-		offscreenRenderPassBeginInfo.framebuffer     = helloVk.m_offscreenFramebuffer;
-		offscreenRenderPassBeginInfo.renderArea      = {{0, 0}, helloVk.getSize()};
-
-		// Rendering Scene
-		if(useRaytracer)
+		// 2nd rendering pass: tone mapper, UI
 		{
-		helloVk.raytrace(cmdBuf, clearColor);
+			VkRenderPassBeginInfo postRenderPassBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+			postRenderPassBeginInfo.clearValueCount = 2;
+			postRenderPassBeginInfo.pClearValues    = clearValues.data();
+			postRenderPassBeginInfo.renderPass      = helloVk.getRenderPass();
+			postRenderPassBeginInfo.framebuffer     = helloVk.getFramebuffers()[curFrame];
+			postRenderPassBeginInfo.renderArea      = {{0, 0}, helloVk.getSize()};
+
+			// Rendering tonemapper
+			vkCmdBeginRenderPass(cmdBuf, &postRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+			helloVk.drawPost(cmdBuf);
+			// Rendering UI
+			ImGui::Render();
+			ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmdBuf);
+			vkCmdEndRenderPass(cmdBuf);
 		}
-		else
-		{
-		vkCmdBeginRenderPass(cmdBuf, &offscreenRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-		helloVk.rasterize(cmdBuf);
-		vkCmdEndRenderPass(cmdBuf);
-		}
-	}
 
-	// 2nd rendering pass: tone mapper, UI
-	{
-		VkRenderPassBeginInfo postRenderPassBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
-		postRenderPassBeginInfo.clearValueCount = 2;
-		postRenderPassBeginInfo.pClearValues    = clearValues.data();
-		postRenderPassBeginInfo.renderPass      = helloVk.getRenderPass();
-		postRenderPassBeginInfo.framebuffer     = helloVk.getFramebuffers()[curFrame];
-		postRenderPassBeginInfo.renderArea      = {{0, 0}, helloVk.getSize()};
-
-		// Rendering tonemapper
-		vkCmdBeginRenderPass(cmdBuf, &postRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-		helloVk.drawPost(cmdBuf);
-		// Rendering UI
-		ImGui::Render();
-		ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmdBuf);
-		vkCmdEndRenderPass(cmdBuf);
-	}
-
-	// Submit for display
-	vkEndCommandBuffer(cmdBuf);
-	helloVk.submitFrame();
+		// Submit for display
+		vkEndCommandBuffer(cmdBuf);
+		helloVk.submitFrame();
 	}
 
 	// Cleanup

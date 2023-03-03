@@ -62,6 +62,16 @@ public:
 	void onResize(int /*w*/, int /*h*/) override;
 	void destroyResources();
 	void rasterize(const VkCommandBuffer& cmdBuff);
+	void screenshot();
+	bool startScreenshot();
+
+	VkExtent2D m_offscreenSize{ 0, 0 };
+	VkExtent2D m_batch{ 0, 0 };
+	VkExtent2D m_batchSize{ 4, 4 };
+	bool takingScreenshot = false;
+	bool combineScreenshot = true;
+	std::vector<char> screenshotBuffer;
+	nvvk::Image screenshotImage;
 
 
 	// The OBJ model

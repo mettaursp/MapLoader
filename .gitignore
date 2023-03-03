@@ -403,3 +403,5 @@ MapLoader/log_MapLoader.txt
 !CryptoPP/lib/*
 log_*
 spv/
+screenshot.png
+screenshots/

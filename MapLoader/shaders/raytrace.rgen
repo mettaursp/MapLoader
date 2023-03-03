@@ -40,8 +40,10 @@ layout(push_constant) uniform _PushConstantRay { PushConstantRay pcRay; };
 
 void main()
 {
-	const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5);
-	const vec2 inUV        = pixelCenter / vec2(gl_LaunchSizeEXT.xy);
+	const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(pcRay.offsetX, pcRay.offsetY) + vec2(0.5);
+	//const vec2 pixelCenter = vec2(gl_LaunchIDEXT.xy) + vec2(0.5);
+	const vec2 inUV        = pixelCenter / vec2(pcRay.width, pcRay.height);//gl_LaunchSizeEXT.xy);
+	//const vec2 inUV        = pixelCenter / vec2(gl_LaunchSizeEXT.xy);
 	vec2       d           = inUV * 2.0 - 1.0;
 
 	vec4 origin    = uni.viewInverse * vec4(0, 0, 0, 1);

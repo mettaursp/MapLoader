@@ -70,7 +70,6 @@
 #include <ArchiveParser/ArchiveParser.h>
 #include <ArchiveParser/MetadataMapper.h>
 
-
 const auto PROJECT_NAME = "MapLoader";
 
 //////////////////////////////////////////////////////////////////////////
@@ -2738,6 +2737,8 @@ int main(int argc, char** argv)
 	helloVk.setupGlfwCallbacks(window);
 	ImGui_ImplGlfw_InitForVulkan(window, true);
 
+	bool takingLargeScreenshot = false;
+
 	// Main loop
 	while(!glfwWindowShouldClose(window))
 	{
@@ -2751,6 +2752,7 @@ int main(int argc, char** argv)
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
+		bool takeScreenshot = false;
 
 		// Show UI window.
 		if(helloVk.showGui())
@@ -3054,6 +3056,13 @@ int main(int argc, char** argv)
 					helloVk.hostUBO.drawMode |= (drawDebug ? 2 : 0) | (drawInvisible ? 1 : 0);
 
 					ImGui::Checkbox("Limit Frame Rate", &helloVk.desiredVSync);
+					takeScreenshot = ImGui::Button("Screenshot");
+					takingLargeScreenshot |= ImGui::Button("Large Screenshot");
+
+					if (!helloVk.takingScreenshot)
+					{
+						ImGui::Checkbox("Combine Large Screenshot", &helloVk.combineScreenshot);
+					}
 
 					ImGui::EndTabItem();
 				}
@@ -3068,6 +3077,18 @@ int main(int argc, char** argv)
 
 		// Start rendering the scene
 		helloVk.prepareFrame();
+
+		if (helloVk.takingScreenshot || (takeScreenshot && !takingLargeScreenshot))
+		{
+			helloVk.screenshot();
+		}
+
+		if (takingLargeScreenshot)
+		{
+			helloVk.startScreenshot();
+
+			takingLargeScreenshot = false;
+		}
 
 		// Start command buffer of this frame
 		auto                   curFrame = helloVk.getCurFrame();
@@ -3128,6 +3149,7 @@ int main(int argc, char** argv)
 		// Submit for display
 		vkEndCommandBuffer(cmdBuf);
 		helloVk.submitFrame();
+
 	}
 
 	// Cleanup

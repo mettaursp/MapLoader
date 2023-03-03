@@ -21,9 +21,11 @@
 #include <sstream>
 #include <filesystem>
 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #include "obj_loader.h"
 #include <tinygltf/stb_image.h>
+#include <tinygltf/stb_image_write.h>
 
 #include "hello_vulkan.h"
 #include "nvh/alignment.hpp"
@@ -39,6 +41,8 @@
 #include "nvvk/memorymanagement_vk.hpp"
 #include <ArchiveParser/ParserUtils.h>
 #include <ArchiveParser/MetadataMapper.h>
+#include <Engine/Math/Color4.h>
+#include <Engine/Math/Color3I.h>
 
 extern std::vector<std::string> defaultSearchPaths;
 
@@ -646,6 +650,145 @@ void HelloVulkan::createTextureImages(const VkCommandBuffer& cmdBuf)
 
 		stbi_image_free(stbi_pixels);
 	}
+	}
+}
+
+bool HelloVulkan::startScreenshot()
+{
+	if (takingScreenshot) return false;
+
+	takingScreenshot = true;
+
+	m_offscreenSize = { m_batchSize.width * m_size.width, m_batchSize.height * m_size.height };
+
+	auto         imgSize = VkExtent2D{ (uint32_t)m_size.width, (uint32_t)m_size.height };
+
+	auto         imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, VK_FORMAT_R32G32B32A32_SFLOAT, VK_IMAGE_USAGE_TRANSFER_DST_BIT, true);
+	imageCreateInfo.mipLevels = 1;
+	imageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
+
+	screenshotImage = m_alloc.createImage(imageCreateInfo, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+
+	VkExtent2D size = m_size;
+
+	if (combineScreenshot)
+	{
+		size.width *= m_batchSize.width;
+		size.height *= m_batchSize.height;
+	}
+
+	VkDeviceSize bufferSize = static_cast<uint64_t>(size.width) * size.height * sizeof(uint8_t) * 3;
+	screenshotBuffer.resize(bufferSize);
+
+	std::cout << "starting screenshot" << std::endl;
+
+	return true;
+}
+
+void HelloVulkan::screenshot()
+{
+	VkExtent2D nextBatch = m_batch;
+
+	nextBatch.width++;
+
+	if (nextBatch.width >= m_batchSize.width)
+	{
+		nextBatch.width = 0;
+		nextBatch.height++;
+	}
+
+	bool flush = !takingScreenshot || nextBatch.height >= m_batchSize.height;
+
+	nvvk::CommandPool  cmdBufGet(m_device, m_graphicsQueueIndex);
+	VkCommandBuffer    copyCmd = cmdBufGet.createCommandBuffer();
+
+	bool justStarted = startScreenshot();
+
+	nvvk::cmdBarrierImageLayout(copyCmd, m_offscreenColor.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+	nvvk::cmdBarrierImageLayout(copyCmd, screenshotImage.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+	// Otherwise use image copy (requires us to manually flip components)
+	VkImageCopy imageCopyRegion{};
+	imageCopyRegion.srcSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imageCopyRegion.srcSubresource.layerCount = 1;
+	imageCopyRegion.dstSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	imageCopyRegion.dstSubresource.layerCount = 1;
+	imageCopyRegion.extent.width = m_size.width;
+	imageCopyRegion.extent.height = m_size.height;
+	imageCopyRegion.extent.depth = 1;
+
+	// Issue the copy command
+	vkCmdCopyImage(
+		copyCmd,
+		m_offscreenColor.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+		screenshotImage.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+		1,
+		&imageCopyRegion);
+
+	nvvk::cmdBarrierImageLayout(copyCmd, m_offscreenColor.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL, VK_IMAGE_LAYOUT_GENERAL);
+	nvvk::cmdBarrierImageLayout(copyCmd, screenshotImage.image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_GENERAL);
+
+	cmdBufGet.submitAndWait(copyCmd);
+
+	VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
+	VkSubresourceLayout subResourceLayout;
+	vkGetImageSubresourceLayout(m_device, screenshotImage.image, &subResource, &subResourceLayout);
+
+	const char* data = reinterpret_cast<const char*>(m_alloc.map(screenshotImage));
+
+	data += subResourceLayout.offset;
+
+	for (uint32_t y = 0; y < m_size.height; y++)
+	{
+		const Color4* row = reinterpret_cast<const Color4*>(data);
+		uint32_t yOffset = y;
+
+		if (combineScreenshot)
+			yOffset += m_batch.height * m_size.height;
+
+		Color3I* outRow = reinterpret_cast<Color3I*>(screenshotBuffer.data()) + (yOffset) *m_offscreenSize.width;
+
+		for (uint32_t x = 0; x < m_size.width; x++)
+		{
+			if (combineScreenshot)
+				outRow[x + m_batch.width * m_size.width] = row[x];
+			else
+				outRow[x] = row[x];
+		}
+		data += subResourceLayout.rowPitch;
+	}
+
+	if (takingScreenshot && !combineScreenshot)
+	{
+		std::stringstream outPath;
+		outPath << "./screenshots/screenshot_";
+		outPath << m_batch.width << "_" << m_batch.height << ".png";
+
+		stbi_write_png(outPath.str().c_str(), (int)m_size.width, (int)m_size.height, 3, screenshotBuffer.data(), (int)(m_size.width * sizeof(Color3I)));
+	}
+	else if (flush)
+	{
+		stbi_write_png("./screenshot.png", (int)m_offscreenSize.width, (int)m_offscreenSize.height, 3, screenshotBuffer.data(), (int)(m_offscreenSize.width * sizeof(Color3I)));
+		std::cout << "saved screenshot" << std::endl;
+	}
+
+	if (flush)
+	{
+		screenshotBuffer.clear();
+		screenshotBuffer.shrink_to_fit();
+
+		m_alloc.unmap(screenshotImage);
+		m_alloc.destroy(screenshotImage);
+
+		takingScreenshot = false;
+		std::cout << "finished screenshot" << std::endl;
+		m_batch = { 0, 0 };
+	}
+	else
+	{
+		std::cout << "wrote batch " << m_batch.width << ", " << m_batch.height << std::endl;
+
+		m_batch = nextBatch;
 	}
 }
 
@@ -1281,6 +1424,11 @@ void HelloVulkan::raytrace(const VkCommandBuffer& cmdBuf, const vec4& clearColor
 	m_pcRay.mouseX = hostUBO.mouseX;
 	m_pcRay.mouseY = hostUBO.mouseY;
 	m_pcRay.hitIndex = 0;
+	const VkExtent2D& size = takingScreenshot ? m_offscreenSize : m_size;
+	m_pcRay.width = size.width;
+	m_pcRay.height = size.height;
+	m_pcRay.offsetX = m_batch.width * m_size.width;
+	m_pcRay.offsetY = m_batch.height * m_size.height;
 
 	std::vector<VkDescriptorSet> descSets{m_rtDescSet, m_descSet};
 	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, m_rtPipeline);
@@ -1289,7 +1437,6 @@ void HelloVulkan::raytrace(const VkCommandBuffer& cmdBuf, const vec4& clearColor
 	vkCmdPushConstants(cmdBuf, m_rtPipelineLayout,
 					 VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR | VK_SHADER_STAGE_MISS_BIT_KHR |VK_SHADER_STAGE_ANY_HIT_BIT_KHR,
 					 0, sizeof(PushConstantRay), &m_pcRay);
-
 
 	vkCmdTraceRaysKHR(cmdBuf, &m_rgenRegion, &m_missRegion, &m_hitRegion, &m_callRegion, m_size.width, m_size.height, 1);
 

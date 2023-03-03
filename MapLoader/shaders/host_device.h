@@ -139,6 +139,10 @@ struct PushConstantRay
 	int mouseX;
 	int mouseY;
 	int hitIndex;
+	int width;
+	int height;
+	int offsetX;
+	int offsetY;
 };
 
 struct TextureTransform

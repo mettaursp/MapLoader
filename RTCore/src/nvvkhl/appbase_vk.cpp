@@ -47,17 +47,17 @@ void nvvkhl::AppBaseVk::create(const AppBaseVkCreateInfo& info)
 void nvvkhl::AppBaseVk::setup(const VkInstance& instance, const VkDevice& device, const VkPhysicalDevice& physicalDevice, uint32_t graphicsQueueIndex)
 {
   m_instance           = instance;
-  m_device             = device;
   m_physicalDevice     = physicalDevice;
-  m_graphicsQueueIndex = graphicsQueueIndex;
-  vkGetDeviceQueue(m_device, m_graphicsQueueIndex, 0, &m_queue);
+  VulkanContext->Device = device;
+  VulkanContext->GraphicsQueueIndex = graphicsQueueIndex;
+  vkGetDeviceQueue(VulkanContext->Device, VulkanContext->GraphicsQueueIndex, 0, &m_queue);
 
   VkCommandPoolCreateInfo poolCreateInfo{VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO};
   poolCreateInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT;
-  vkCreateCommandPool(m_device, &poolCreateInfo, nullptr, &m_cmdPool);
+  vkCreateCommandPool(VulkanContext->Device, &poolCreateInfo, nullptr, &m_cmdPool);
 
   VkPipelineCacheCreateInfo pipelineCacheInfo{VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO};
-  vkCreatePipelineCache(m_device, &pipelineCacheInfo, nullptr, &m_pipelineCache);
+  vkCreatePipelineCache(VulkanContext->Device, &pipelineCacheInfo, nullptr, &m_pipelineCache);
 
   ImGuiH::SetCameraJsonFile(getProjectName());
 }
@@ -67,7 +67,7 @@ void nvvkhl::AppBaseVk::setup(const VkInstance& instance, const VkDevice& device
 //
 void nvvkhl::AppBaseVk::destroy()
 {
-  vkDeviceWaitIdle(m_device);
+  vkDeviceWaitIdle(VulkanContext->Device);
 
   if(ImGui::GetCurrentContext() != nullptr)
   {
@@ -76,25 +76,25 @@ void nvvkhl::AppBaseVk::destroy()
   }
 
   if(!m_useDynamicRendering)
-    vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+    vkDestroyRenderPass(VulkanContext->Device, m_renderPass, nullptr);
 
-  vkDestroyImageView(m_device, m_depthView, nullptr);
-  vkDestroyImage(m_device, m_depthImage, nullptr);
-  vkFreeMemory(m_device, m_depthMemory, nullptr);
-  vkDestroyPipelineCache(m_device, m_pipelineCache, nullptr);
+  vkDestroyImageView(VulkanContext->Device, m_depthView, nullptr);
+  vkDestroyImage(VulkanContext->Device, m_depthImage, nullptr);
+  vkFreeMemory(VulkanContext->Device, m_depthMemory, nullptr);
+  vkDestroyPipelineCache(VulkanContext->Device, m_pipelineCache, nullptr);
 
   for(uint32_t i = 0; i < m_swapChain.getImageCount(); i++)
   {
-    vkDestroyFence(m_device, m_waitFences[i], nullptr);
+    vkDestroyFence(VulkanContext->Device, m_waitFences[i], nullptr);
 
     if(!m_useDynamicRendering)
-      vkDestroyFramebuffer(m_device, m_framebuffers[i], nullptr);
+      vkDestroyFramebuffer(VulkanContext->Device, m_framebuffers[i], nullptr);
 
-    vkFreeCommandBuffers(m_device, m_cmdPool, 1, &m_commandBuffers[i]);
+    vkFreeCommandBuffers(VulkanContext->Device, m_cmdPool, 1, &m_commandBuffers[i]);
   }
   m_swapChain.deinit();
-  vkDestroyDescriptorPool(m_device, m_imguiDescPool, nullptr);
-  vkDestroyCommandPool(m_device, m_cmdPool, nullptr);
+  vkDestroyDescriptorPool(VulkanContext->Device, m_imguiDescPool, nullptr);
+  vkDestroyCommandPool(VulkanContext->Device, m_cmdPool, nullptr);
 
   if(m_surface)
     vkDestroySurfaceKHR(m_instance, m_surface, nullptr);
@@ -150,7 +150,7 @@ void nvvkhl::AppBaseVk::createSwapchain(const VkSurfaceKHR& surface,
     }
   }
 
-  m_swapChain.init(m_device, m_physicalDevice, m_queue, m_graphicsQueueIndex, surface, static_cast<VkFormat>(colorFormat));
+  m_swapChain.init(VulkanContext->Device, m_physicalDevice, m_queue, VulkanContext->GraphicsQueueIndex, surface, static_cast<VkFormat>(colorFormat));
   m_size        = m_swapChain.update(m_size.width, m_size.height, vsync);
   m_colorFormat = static_cast<VkFormat>(m_swapChain.getFormat());
 
@@ -160,7 +160,7 @@ void nvvkhl::AppBaseVk::createSwapchain(const VkSurfaceKHR& surface,
   {
     VkFenceCreateInfo fenceCreateInfo{VK_STRUCTURE_TYPE_FENCE_CREATE_INFO};
     fenceCreateInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
-    vkCreateFence(m_device, &fenceCreateInfo, nullptr, &fence);
+    vkCreateFence(VulkanContext->Device, &fenceCreateInfo, nullptr, &fence);
   }
 
   // Command buffers store a reference to the frame buffer inside their render pass info
@@ -170,7 +170,7 @@ void nvvkhl::AppBaseVk::createSwapchain(const VkSurfaceKHR& surface,
   allocateInfo.commandBufferCount = m_swapChain.getImageCount();
   allocateInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
   m_commandBuffers.resize(m_swapChain.getImageCount());
-  vkAllocateCommandBuffers(m_device, &allocateInfo, m_commandBuffers.data());
+  vkAllocateCommandBuffers(VulkanContext->Device, &allocateInfo, m_commandBuffers.data());
 
   auto cmdBuffer = createTempCmdBuffer();
   m_swapChain.cmdUpdateBarriers(cmdBuffer);
@@ -185,7 +185,7 @@ void nvvkhl::AppBaseVk::createSwapchain(const VkSurfaceKHR& surface,
     nameInfo.objectHandle = (uint64_t)m_commandBuffers[i];
     nameInfo.objectType   = VK_OBJECT_TYPE_COMMAND_BUFFER;
     nameInfo.pObjectName  = name.c_str();
-    vkSetDebugUtilsObjectNameEXT(m_device, &nameInfo);
+    vkSetDebugUtilsObjectNameEXT(VulkanContext->Device, &nameInfo);
   }
 #endif  // _DEBUG
 
@@ -204,7 +204,7 @@ void nvvkhl::AppBaseVk::createFrameBuffers()
 
   // Recreate the frame buffers
   for(auto framebuffer : m_framebuffers)
-    vkDestroyFramebuffer(m_device, framebuffer, nullptr);
+    vkDestroyFramebuffer(VulkanContext->Device, framebuffer, nullptr);
 
   // Array of attachment (color, depth)
   std::array<VkImageView, 2> attachments{};
@@ -224,7 +224,7 @@ void nvvkhl::AppBaseVk::createFrameBuffers()
   {
     attachments[0] = m_swapChain.getImageView(i);
     attachments[1] = m_depthView;
-    vkCreateFramebuffer(m_device, &framebufferCreateInfo, nullptr, &m_framebuffers[i]);
+    vkCreateFramebuffer(VulkanContext->Device, &framebufferCreateInfo, nullptr, &m_framebuffers[i]);
   }
 
 
@@ -236,7 +236,7 @@ void nvvkhl::AppBaseVk::createFrameBuffers()
     nameInfo.objectHandle = (uint64_t)m_framebuffers[i];
     nameInfo.objectType   = VK_OBJECT_TYPE_FRAMEBUFFER;
     nameInfo.pObjectName  = name.c_str();
-    vkSetDebugUtilsObjectNameEXT(m_device, &nameInfo);
+    vkSetDebugUtilsObjectNameEXT(VulkanContext->Device, &nameInfo);
   }
 #endif  // _DEBUG
 }
@@ -251,7 +251,7 @@ void nvvkhl::AppBaseVk::createRenderPass()
     return;
 
   if(m_renderPass)
-    vkDestroyRenderPass(m_device, m_renderPass, nullptr);
+    vkDestroyRenderPass(VulkanContext->Device, m_renderPass, nullptr);
 
   std::array<VkAttachmentDescription, 2> attachments{};
   // Color attachment
@@ -295,14 +295,14 @@ void nvvkhl::AppBaseVk::createRenderPass()
   renderPassInfo.dependencyCount = static_cast<uint32_t>(subpassDependencies.size());
   renderPassInfo.pDependencies   = subpassDependencies.data();
 
-  vkCreateRenderPass(m_device, &renderPassInfo, nullptr, &m_renderPass);
+  vkCreateRenderPass(VulkanContext->Device, &renderPassInfo, nullptr, &m_renderPass);
 
 #ifdef _DEBUG
   VkDebugUtilsObjectNameInfoEXT nameInfo{VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT};
   nameInfo.objectHandle = (uint64_t)m_renderPass;
   nameInfo.objectType   = VK_OBJECT_TYPE_RENDER_PASS;
   nameInfo.pObjectName  = R"(AppBaseVk)";
-  vkSetDebugUtilsObjectNameEXT(m_device, &nameInfo);
+  vkSetDebugUtilsObjectNameEXT(VulkanContext->Device, &nameInfo);
 #endif  // _DEBUG
 }
 
@@ -312,13 +312,13 @@ void nvvkhl::AppBaseVk::createRenderPass()
 void nvvkhl::AppBaseVk::createDepthBuffer()
 {
   if(m_depthView)
-    vkDestroyImageView(m_device, m_depthView, nullptr);
+    vkDestroyImageView(VulkanContext->Device, m_depthView, nullptr);
 
   if(m_depthImage)
-    vkDestroyImage(m_device, m_depthImage, nullptr);
+    vkDestroyImage(VulkanContext->Device, m_depthImage, nullptr);
 
   if(m_depthMemory)
-    vkFreeMemory(m_device, m_depthMemory, nullptr);
+    vkFreeMemory(VulkanContext->Device, m_depthMemory, nullptr);
 
   // Depth information
   const VkImageAspectFlags aspect = VK_IMAGE_ASPECT_DEPTH_BIT | VK_IMAGE_ASPECT_STENCIL_BIT;
@@ -331,7 +331,7 @@ void nvvkhl::AppBaseVk::createDepthBuffer()
   depthStencilCreateInfo.samples     = VK_SAMPLE_COUNT_1_BIT;
   depthStencilCreateInfo.usage       = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT;
   // Create the depth image
-  vkCreateImage(m_device, &depthStencilCreateInfo, nullptr, &m_depthImage);
+  vkCreateImage(VulkanContext->Device, &depthStencilCreateInfo, nullptr, &m_depthImage);
 
 #ifdef _DEBUG
   std::string                   name = std::string("AppBaseDepth");
@@ -339,19 +339,19 @@ void nvvkhl::AppBaseVk::createDepthBuffer()
   nameInfo.objectHandle = (uint64_t)m_depthImage;
   nameInfo.objectType   = VK_OBJECT_TYPE_IMAGE;
   nameInfo.pObjectName  = R"(AppBase)";
-  vkSetDebugUtilsObjectNameEXT(m_device, &nameInfo);
+  vkSetDebugUtilsObjectNameEXT(VulkanContext->Device, &nameInfo);
 #endif  // _DEBUG
 
   // Allocate the memory
   VkMemoryRequirements memReqs;
-  vkGetImageMemoryRequirements(m_device, m_depthImage, &memReqs);
+  vkGetImageMemoryRequirements(VulkanContext->Device, m_depthImage, &memReqs);
   VkMemoryAllocateInfo memAllocInfo{VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO};
   memAllocInfo.allocationSize  = memReqs.size;
   memAllocInfo.memoryTypeIndex = getMemoryType(memReqs.memoryTypeBits, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-  vkAllocateMemory(m_device, &memAllocInfo, nullptr, &m_depthMemory);
+  vkAllocateMemory(VulkanContext->Device, &memAllocInfo, nullptr, &m_depthMemory);
 
   // Bind image and memory
-  vkBindImageMemory(m_device, m_depthImage, m_depthMemory, 0);
+  vkBindImageMemory(VulkanContext->Device, m_depthImage, m_depthMemory, 0);
 
   auto cmdBuffer = createTempCmdBuffer();
 
@@ -380,7 +380,7 @@ void nvvkhl::AppBaseVk::createDepthBuffer()
   depthStencilView.format           = m_depthFormat;
   depthStencilView.subresourceRange = subresourceRange;
   depthStencilView.image            = m_depthImage;
-  vkCreateImageView(m_device, &depthStencilView, nullptr, &m_depthView);
+  vkCreateImageView(VulkanContext->Device, &depthStencilView, nullptr, &m_depthView);
 }
 
 
@@ -407,7 +407,7 @@ void nvvkhl::AppBaseVk::prepareFrame()
   VkResult result{VK_SUCCESS};
   do
   {
-    result = vkWaitForFences(m_device, 1, &m_waitFences[imageIndex], VK_TRUE, 1'000'000);
+    result = vkWaitForFences(VulkanContext->Device, 1, &m_waitFences[imageIndex], VK_TRUE, 1'000'000);
   } while(result == VK_TIMEOUT);
   if(result != VK_SUCCESS)
   {  // This allows Aftermath to do things and later assert below
@@ -431,7 +431,7 @@ void nvvkhl::AppBaseVk::prepareFrame()
 void nvvkhl::AppBaseVk::submitFrame()
 {
   uint32_t imageIndex = m_swapChain.getActiveImageIndex();
-  vkResetFences(m_device, 1, &m_waitFences[imageIndex]);
+  vkResetFences(VulkanContext->Device, 1, &m_waitFences[imageIndex]);
 
   // In case of using NVLINK
   const uint32_t                deviceMask  = m_useNvlink ? 0b0000'0011 : 0b0000'0001;
@@ -498,7 +498,7 @@ void nvvkhl::AppBaseVk::onFramebufferSize(int w, int h)
   }
 
   // Wait to finish what is currently drawing
-  vkDeviceWaitIdle(m_device);
+  vkDeviceWaitIdle(VulkanContext->Device);
   vkQueueWaitIdle(m_queue);
 
   // Request new swapchain image size
@@ -560,7 +560,7 @@ void nvvkhl::AppBaseVk::onKeyboardChar(unsigned char key)
           m_vsync = !m_vsync;
       else
           m_vsync = desiredVSync;
-    vkDeviceWaitIdle(m_device);
+    vkDeviceWaitIdle(VulkanContext->Device);
     vkQueueWaitIdle(m_queue);
     m_swapChain.update(m_size.width, m_size.height, m_vsync);
     auto cmdBuffer = createTempCmdBuffer();
@@ -708,14 +708,14 @@ void nvvkhl::AppBaseVk::initGUI(uint32_t subpassID /*= 0*/)
   poolInfo.maxSets       = 2;
   poolInfo.poolSizeCount = 2;
   poolInfo.pPoolSizes    = poolSize.data();
-  vkCreateDescriptorPool(m_device, &poolInfo, nullptr, &m_imguiDescPool);
+  vkCreateDescriptorPool(VulkanContext->Device, &poolInfo, nullptr, &m_imguiDescPool);
 
   // Setup Platform/Renderer back ends
   ImGui_ImplVulkan_InitInfo init_info = {};
   init_info.Instance                  = m_instance;
   init_info.PhysicalDevice            = m_physicalDevice;
-  init_info.Device                    = m_device;
-  init_info.QueueFamily               = m_graphicsQueueIndex;
+  init_info.Device                    = VulkanContext->Device;
+  init_info.QueueFamily               = VulkanContext->GraphicsQueueIndex;
   init_info.Queue                     = m_queue;
   init_info.PipelineCache             = VK_NULL_HANDLE;
   init_info.DescriptorPool            = m_imguiDescPool;
@@ -864,7 +864,7 @@ VkCommandBuffer nvvkhl::AppBaseVk::createTempCmdBuffer()
   allocateInfo.commandPool        = m_cmdPool;
   allocateInfo.level              = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
   VkCommandBuffer cmdBuffer;
-  vkAllocateCommandBuffers(m_device, &allocateInfo, &cmdBuffer);
+  vkAllocateCommandBuffers(VulkanContext->Device, &allocateInfo, &cmdBuffer);
 
   VkCommandBufferBeginInfo beginInfo{VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO};
   beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
@@ -881,5 +881,5 @@ void nvvkhl::AppBaseVk::submitTempCmdBuffer(VkCommandBuffer cmdBuffer)
   submitInfo.pCommandBuffers    = &cmdBuffer;
   vkQueueSubmit(m_queue, 1, &submitInfo, {});
   vkQueueWaitIdle(m_queue);
-  vkFreeCommandBuffers(m_device, m_cmdPool, 1, &cmdBuffer);
+  vkFreeCommandBuffers(VulkanContext->Device, m_cmdPool, 1, &cmdBuffer);
 }

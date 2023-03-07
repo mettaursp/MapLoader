@@ -19,6 +19,12 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{e23cb4d8-05b6-4e9c-b653-bfe9ca5b9109}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Assets">
+      <UniqueIdentifier>{15991550-9069-4579-9a28-4b2a26b49c21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Vulkan">
+      <UniqueIdentifier>{d38dddd3-f25e-4541-9e52-5d3c4e95fdbf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MapLoader\hello_vulkan.cpp">
@@ -30,6 +36,21 @@
     <ClCompile Include="src\MapLoader\obj_loader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\MapLoader\Assets\ModelData.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Assets\ModelLibrary.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Assets\TextureLibrary.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Assets\TextureAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Vulkan\VulkanContext.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MapLoader\hello_vulkan.h">
@@ -40,6 +61,21 @@
     </ClInclude>
     <ClInclude Include="src\MapLoader\obj_loader.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Assets\ModelData.h">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Assets\ModelLibrary.h">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Assets\TextureLibrary.h">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Assets\TextureAsset.h">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Vulkan\VulkanContext.h">
+      <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

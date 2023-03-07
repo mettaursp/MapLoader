@@ -30,6 +30,9 @@
 #include <ArchiveParser/ArchiveReader.h>
 #include <ArchiveParser/ArchiveParser.h>
 #include <ArchiveParser/MetadataMapper.h>
+#include <MapLoader/Vulkan/VulkanContext.h>
+#include "Assets/ModelLibrary.h"
+#include "Assets/TextureLibrary.h"
 
 // #VKRay
 #include "nvvk/raytraceKHR_vk.hpp"
@@ -47,17 +50,10 @@ public:
 	void setup(const VkInstance& instance, const VkDevice& device, const VkPhysicalDevice& physicalDevice, uint32_t queueFamily) override;
 	void createDescriptorSetLayout();
 	void createGraphicsPipeline();
-	void loadModel(const std::string& filename, mat4 transform = mat4(1));
-	uint32_t loadModel(class ObjLoader& loader, mat4 transform = mat4(1), bool invisible = false);
 	void loadModelInstance(uint32_t index, mat4 transform = mat4(1));
 	void updateDescriptorSet();
 	void createUniformBuffer();
 	void createObjDescriptionBuffer();
-	bool loadDDS(const VkCommandBuffer& cmdBuf, const fs::path& path, const std::string& buffer, VkSamplerCreateInfo& samplerCreateInfo);
-	void createTextureImages(const VkCommandBuffer& cmdBuf);
-	int GetTexture(const std::string& name, VkFormat format, VkSamplerCreateInfo samplerInfo = GetDefaultSampler());
-	static VkSamplerCreateInfo GetDefaultSampler();
-	void flushNewTextures();
 	void updateUniformBuffer(const VkCommandBuffer& cmdBuf);
 	void onResize(int /*w*/, int /*h*/) override;
 	void destroyResources();
@@ -73,24 +69,11 @@ public:
 	std::vector<char> screenshotBuffer;
 	nvvk::Image screenshotImage;
 
-
-	// The OBJ model
-	struct ObjModel
-	{
-		uint32_t     nbIndices{0};
-		uint32_t     nbVertices{0};
-		nvvk::Buffer vertexBuffer;    // Device buffer of all 'Vertex'
-		nvvk::Buffer indexBuffer;     // Device buffer of the indices forming triangles
-		nvvk::Buffer matColorBuffer;  // Device buffer of array of 'Wavefront material'
-		nvvk::Buffer matIndexBuffer;  // Device buffer of array of 'Wavefront material'
-	};
-
 	struct ObjInstance
 	{
 		mat4 transform;    // Matrix of the instance
-		uint32_t      objIndex{0};  // Model index reference
+		uint32_t      objIndex{ 0 };  // Model index reference
 	};
-
 
 	// Information pushed at each draw call
 	PushConstantRaster m_pcRaster{
@@ -102,11 +85,8 @@ public:
 	};
 
 	// Array of objects and instances in the scene
-	std::vector<ObjModel>    m_objModel;   // Model on host
-	std::vector<ObjDesc>     m_objDesc;    // Model description for device access
 	std::vector<ObjInstance> m_instances;  // Scene model instances
 	std::vector<LightDesc>   lights;
-	std::vector<TextureTransform> textureTransforms;
 	std::vector<InstDesc> instanceDescriptions;
 	std::vector<MaterialTextures> textureOverrides;
 	MouseRayOut mouseIO = { vec3(), -1 };
@@ -130,17 +110,8 @@ public:
 	GlobalUniforms hostUBO;
 	Archive::ArchiveReader* Reader = nullptr;
 
-	std::vector<nvvk::Texture> m_textures;  // vector of all textures of the scene
-	std::vector<const Archive::Metadata::Entry*> textureEntries = { nullptr };
-	std::vector<VkFormat> textureFormats = { VK_FORMAT_R8G8B8A8_SRGB };
-	std::vector<VkSamplerCreateInfo> textureSamplers = { GetDefaultSampler() };
-	std::unordered_map<std::string, int> textureCache = { { "", 0 } };
-	std::string textureBuffer;
-
-
-	nvvk::ResourceAllocatorDma m_alloc;  // Allocator for buffer, images, acceleration structures
-	nvvk::DebugUtil            m_debug;  // Utility to name objects
-
+	std::shared_ptr<MapLoader::ModelLibrary> ModelLibrary;
+	std::shared_ptr<MapLoader::TextureLibrary> TextureLibrary;
 
 	// #Post - Draw the rendered image on a quad using a tonemapper
 	void createOffscreenRender();
@@ -164,7 +135,7 @@ public:
 
 	// #VKRay
 	void initRayTracing();
-	auto objectToVkGeometryKHR(const ObjModel& model);
+	auto objectToVkGeometryKHR(const MapLoader::MeshDescription& model);
 	void createBottomLevelAS();
 	void createTopLevelAS();
 	void createRtDescriptorSet();

@@ -53,8 +53,8 @@ extern std::vector<std::string> defaultSearchPaths;
 void HelloVulkan::setup(const VkInstance& instance, const VkDevice& device, const VkPhysicalDevice& physicalDevice, uint32_t queueFamily)
 {
 	AppBaseVk::setup(instance, device, physicalDevice, queueFamily);
-	m_alloc.init(instance, device, physicalDevice);
-	m_debug.setup(m_device);
+	VulkanContext->Allocator.init(instance, device, physicalDevice);
+	VulkanContext->Debug.setup(VulkanContext->Device);
 	m_offscreenDepthFormat = nvvk::findDepthFormat(physicalDevice);
 }
 
@@ -76,10 +76,10 @@ void HelloVulkan::updateUniformBuffer(const VkCommandBuffer& cmdBuf)
 
 	if (m_mouseIO.memHandle != nullptr)
 	{
-		mouseIOPtr = reinterpret_cast<MouseRayOut*>(m_alloc.map(m_mouseIO));
+		mouseIOPtr = reinterpret_cast<MouseRayOut*>(VulkanContext->Allocator.map(m_mouseIO));
 		if (mouseIOPtr != nullptr)
 			mouseIO = *mouseIOPtr;
-		m_alloc.unmap(m_mouseIO);
+		VulkanContext->Allocator.unmap(m_mouseIO);
 	}
 
 	// UBO on the device, and what stages access it.
@@ -117,7 +117,7 @@ void HelloVulkan::updateUniformBuffer(const VkCommandBuffer& cmdBuf)
 //
 void HelloVulkan::createDescriptorSetLayout()
 {
-	auto nbTxt = static_cast<uint32_t>(m_textures.size());
+	auto nbTxt = static_cast<uint32_t>(TextureLibrary->GetAssets().size());
 
 	// Camera matrices
 	m_descSetLayoutBind.addBinding(SceneBindings::eGlobals, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1,
@@ -147,9 +147,9 @@ void HelloVulkan::createDescriptorSetLayout()
 	// Textures
 
 
-	m_descSetLayout = m_descSetLayoutBind.createLayout(m_device);
-	m_descPool      = m_descSetLayoutBind.createPool(m_device, 1);
-	m_descSet       = nvvk::allocateDescriptorSet(m_device, m_descPool, m_descSetLayout);
+	m_descSetLayout = m_descSetLayoutBind.createLayout(VulkanContext->Device);
+	m_descPool      = m_descSetLayoutBind.createPool(VulkanContext->Device, 1);
+	m_descSet       = nvvk::allocateDescriptorSet(VulkanContext->Device, m_descPool, m_descSetLayout);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -157,6 +157,7 @@ void HelloVulkan::createDescriptorSetLayout()
 //
 void HelloVulkan::updateDescriptorSet()
 {
+	TextureLibrary->FlushLoadingQueue();
 	std::vector<VkWriteDescriptorSet> writes;
 
 	// Camera matrices and scene description
@@ -168,9 +169,9 @@ void HelloVulkan::updateDescriptorSet()
 
 	// All texture samplers
 	std::vector<VkDescriptorImageInfo> diit;
-	for(auto& texture : m_textures)
+	for(auto& texture : TextureLibrary->GetAssets())
 	{
-	diit.emplace_back(texture.descriptor);
+	diit.emplace_back(texture.Data.descriptor);
 	}
 	writes.emplace_back(m_descSetLayoutBind.makeWriteArray(m_descSet, SceneBindings::eTextures, diit.data()));
 
@@ -191,14 +192,14 @@ void HelloVulkan::updateDescriptorSet()
 
 	if (m_mouseIO.memHandle != nullptr)
 	{
-		//mouseIOPtr = reinterpret_cast<MouseRayOut*>(m_alloc.map(m_mouseIO));
+		//mouseIOPtr = reinterpret_cast<MouseRayOut*>(VulkanContext->Allocator.map(m_mouseIO));
 		//if (mouseIOPtr != nullptr)
 		//	mouseIO = *mouseIOPtr;
-		//m_alloc.unmap(m_mouseIO);
+		//VulkanContext->Allocator.unmap(m_mouseIO);
 	}
 
 	// Writing the information
-	vkUpdateDescriptorSets(m_device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+	vkUpdateDescriptorSets(VulkanContext->Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
 }
 
 
@@ -215,12 +216,12 @@ void HelloVulkan::createGraphicsPipeline()
 	createInfo.pSetLayouts            = &m_descSetLayout;
 	createInfo.pushConstantRangeCount = 1;
 	createInfo.pPushConstantRanges    = &pushConstantRanges;
-	vkCreatePipelineLayout(m_device, &createInfo, nullptr, &m_pipelineLayout);
+	vkCreatePipelineLayout(VulkanContext->Device, &createInfo, nullptr, &m_pipelineLayout);
 
 
 	// Creating the Pipeline
 	std::vector<std::string>                paths = defaultSearchPaths;
-	nvvk::GraphicsPipelineGeneratorCombined gpb(m_device, m_pipelineLayout, m_offscreenRenderPass);
+	nvvk::GraphicsPipelineGeneratorCombined gpb(VulkanContext->Device, m_pipelineLayout, m_offscreenRenderPass);
 	gpb.depthStencilState.depthTestEnable = true;
 	gpb.addShader(nvh::loadFile("spv/vert_shader.vert.spv", true, paths, true), VK_SHADER_STAGE_VERTEX_BIT);
 	gpb.addShader(nvh::loadFile("spv/frag_shader.frag.spv", true, paths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
@@ -233,25 +234,7 @@ void HelloVulkan::createGraphicsPipeline()
 	});
 
 	m_graphicsPipeline = gpb.createPipeline();
-	m_debug.setObjectName(m_graphicsPipeline, "Graphics");
-}
-
-//--------------------------------------------------------------------------------------------------
-// Loading the OBJ file and setting up all buffers
-//
-void HelloVulkan::loadModel(const std::string& filename, mat4 transform)
-{
-	//LOGI("Loading File:  %s \n", filename.c_str());
-	//ObjLoader loader(textureNames, textureCache, textureFormats, textureSamplers);
-	//loader.loadModel(filename);
-	//
-	//uint32_t index = loadModel(loader, transform);
-	//
-	//// Keeping transformation matrix of the instance
-	//ObjInstance instance;
-	//instance.transform = transform;
-	//instance.objIndex = index;
-	//m_instances.push_back(instance);
+	VulkanContext->Debug.setObjectName(m_graphicsPipeline, "Graphics");
 }
 
 void HelloVulkan::loadModelInstance(uint32_t index, mat4 transform)
@@ -262,71 +245,15 @@ void HelloVulkan::loadModelInstance(uint32_t index, mat4 transform)
 	m_instances.push_back(instance);
 }
 
-uint32_t HelloVulkan::loadModel(ObjLoader& loader, mat4 transform, bool invisible)
-{
-	// Converting from Srgb to linear
-	for(auto& m : loader.m_materials)
-	{
-		//const auto pow = [](const vec3 & vec, float exp)
-		//{
-		//	return vec3(std::pow(vec.X, exp), std::pow(vec.Y, exp), std::pow(vec.Z, exp));
-		//};
-	m.ambient  = pow(m.ambient, 2.2f);
-	m.diffuse  = pow(m.diffuse, 2.2f);
-	m.specular = pow(m.specular, 2.2f);
-	}
-
-	ObjModel model;
-	model.nbIndices  = static_cast<uint32_t>(loader.m_indices.size());
-	model.nbVertices = static_cast<uint32_t>(loader.m_vertices.size());
-
-	// Create the buffers on Device and copy vertices, indices and materials
-	nvvk::CommandPool  cmdBufGet(m_device, m_graphicsQueueIndex);
-	VkCommandBuffer    cmdBuf          = cmdBufGet.createCommandBuffer();
-	VkBufferUsageFlags flag            = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
-	VkBufferUsageFlags rayTracingFlags =  // used also for building acceleration structures
-		flag | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-	model.vertexBuffer = m_alloc.createBuffer(cmdBuf, loader.m_vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | rayTracingFlags);
-	model.indexBuffer = m_alloc.createBuffer(cmdBuf, loader.m_indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
-	model.matColorBuffer = m_alloc.createBuffer(cmdBuf, loader.m_materials, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
-	model.matIndexBuffer = m_alloc.createBuffer(cmdBuf, loader.m_matIndx, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
-	// Creates all textures found and find the offset for this model
-	auto txtOffset = 0;
-	createTextureImages(cmdBuf);
-	cmdBufGet.submitAndWait(cmdBuf);
-	m_alloc.finalizeAndReleaseStaging();
-
-	std::string objNb = std::to_string(m_objModel.size());
-	m_debug.setObjectName(model.vertexBuffer.buffer, (std::string("vertex_" + objNb)));
-	m_debug.setObjectName(model.indexBuffer.buffer, (std::string("index_" + objNb)));
-	m_debug.setObjectName(model.matColorBuffer.buffer, (std::string("mat_" + objNb)));
-	m_debug.setObjectName(model.matIndexBuffer.buffer, (std::string("matIdx_" + objNb)));
-
-	// Creating information for device access
-	ObjDesc desc;
-	desc.txtOffset            = txtOffset | (invisible ? 0x80000000 : 0);
-	desc.vertexAddress        = nvvk::getBufferDeviceAddress(m_device, model.vertexBuffer.buffer);
-	desc.indexAddress         = nvvk::getBufferDeviceAddress(m_device, model.indexBuffer.buffer);
-	desc.materialAddress      = nvvk::getBufferDeviceAddress(m_device, model.matColorBuffer.buffer);
-	desc.materialIndexAddress = nvvk::getBufferDeviceAddress(m_device, model.matIndexBuffer.buffer);
-
-	// Keeping the obj host model and device description
-	m_objModel.emplace_back(model);
-	m_objDesc.emplace_back(desc);
-
-	return static_cast<uint32_t>(m_objModel.size()) - 1;
-}
-
-
 //--------------------------------------------------------------------------------------------------
 // Creating the uniform buffer holding the camera matrices
 // - Buffer is host visible
 //
 void HelloVulkan::createUniformBuffer()
 {
-	m_bGlobals = m_alloc.createBuffer(sizeof(GlobalUniforms), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
+	m_bGlobals = VulkanContext->Allocator.createBuffer(sizeof(GlobalUniforms), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT,
 									VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
-	m_debug.setObjectName(m_bGlobals.buffer, "Globals");
+	VulkanContext->Debug.setObjectName(m_bGlobals.buffer, "Globals");
 }
 
 namespace nvvk
@@ -342,315 +269,62 @@ namespace nvvk
 //
 void HelloVulkan::createObjDescriptionBuffer()
 {
-	nvvk::CommandPool cmdGen(m_device, m_graphicsQueueIndex);
+	nvvk::CommandPool cmdGen(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
 
 	auto cmdBuf = cmdGen.createCommandBuffer();
-	m_bObjDesc  = m_alloc.createBuffer(cmdBuf, m_objDesc, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+	m_bObjDesc  = VulkanContext->Allocator.createBuffer(cmdBuf, ModelLibrary->GetGpuData(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf);
-	m_alloc.finalizeAndReleaseStaging();
-	m_debug.setObjectName(m_bObjDesc.buffer, "ObjDescs");
+	VulkanContext->Allocator.finalizeAndReleaseStaging();
+	VulkanContext->Debug.setObjectName(m_bObjDesc.buffer, "ObjDescs");
 
 	if (lights.size() == 0)
 		lights.push_back(LightDesc());
 
 	auto cmdBuf2 = cmdGen.createCommandBuffer();
-	m_lightDesc = m_alloc.createBuffer(cmdBuf2, lights, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+	m_lightDesc = VulkanContext->Allocator.createBuffer(cmdBuf2, lights, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf2);
-	m_alloc.finalizeAndReleaseStaging();
-	m_debug.setObjectName(m_lightDesc.buffer, "LightDescs");
+	VulkanContext->Allocator.finalizeAndReleaseStaging();
+	VulkanContext->Debug.setObjectName(m_lightDesc.buffer, "LightDescs");
 
-	if (textureTransforms.size() == 0)
-		textureTransforms.push_back(TextureTransform{});
+	const auto& libraryTextureTransforms = ModelLibrary->GetTextureTransforms();
+	static const std::vector<TextureTransform> defaultTextureTransforms{ {} };
+	const auto& textureTransforms = libraryTextureTransforms.size() != 0 ? libraryTextureTransforms : defaultTextureTransforms;
 
 	auto cmdBuf3 = cmdGen.createCommandBuffer();
-	m_textureTransformDesc = m_alloc.createBuffer(cmdBuf3, textureTransforms, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+		m_textureTransformDesc = VulkanContext->Allocator.createBuffer(cmdBuf3, textureTransforms, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf3);
-	m_alloc.finalizeAndReleaseStaging();
-	m_debug.setObjectName(m_textureTransformDesc.buffer, "TextureTransformDescs");
+	VulkanContext->Allocator.finalizeAndReleaseStaging();
+	VulkanContext->Debug.setObjectName(m_textureTransformDesc.buffer, "TextureTransformDescs");
 
 	auto cmdBuf4 = cmdGen.createCommandBuffer();
-	m_InstDesc = m_alloc.createBuffer(cmdBuf4, instanceDescriptions, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+	m_InstDesc = VulkanContext->Allocator.createBuffer(cmdBuf4, instanceDescriptions, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf4);
-	m_alloc.finalizeAndReleaseStaging();
-	m_debug.setObjectName(m_InstDesc.buffer, "InstanceDescs");
+	VulkanContext->Allocator.finalizeAndReleaseStaging();
+	VulkanContext->Debug.setObjectName(m_InstDesc.buffer, "InstanceDescs");
 
 	auto cmdBuf5 = cmdGen.createCommandBuffer();
 
 	std::vector<MouseRayOut> out = { { vec3(), -1 } };
 
-	//m_mouseIO = m_alloc.createBuffer(sizeof(mouseIO), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	//m_mouseIO = VulkanContext->Allocator.createBuffer(sizeof(mouseIO), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 	//cmdGen.submitAndWait(cmdBuf4);
-	//m_alloc.getDMA()->map(m_mouseIO.memHandle, 0, sizeof(mouseIO), &mouseIO);
-	//m_alloc.finalizeAndReleaseStaging();
-	m_mouseIO = m_alloc.createBuffer(cmdBuf5, out, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
+	//VulkanContext->Allocator.getDMA()->map(m_mouseIO.memHandle, 0, sizeof(mouseIO), &mouseIO);
+	//VulkanContext->Allocator.finalizeAndReleaseStaging();
+	m_mouseIO = VulkanContext->Allocator.createBuffer(cmdBuf5, out, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
 	cmdGen.submitAndWait(cmdBuf5);
-	m_alloc.finalizeAndReleaseStaging();
+	VulkanContext->Allocator.finalizeAndReleaseStaging();
 
-	m_alloc.finalizeAndReleaseStaging();
-	m_debug.setObjectName(m_mouseIO.buffer, "MouseIODescs");
+	VulkanContext->Allocator.finalizeAndReleaseStaging();
+	VulkanContext->Debug.setObjectName(m_mouseIO.buffer, "MouseIODescs");
 
 	if (textureOverrides.size() == 0)
 		textureOverrides.push_back({});
 
 	auto cmdBuf6 = cmdGen.createCommandBuffer();
-	m_textureOverride = m_alloc.createBuffer(cmdBuf6, textureOverrides, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+	m_textureOverride = VulkanContext->Allocator.createBuffer(cmdBuf6, textureOverrides, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf6);
-	m_alloc.finalizeAndReleaseStaging();
-	m_debug.setObjectName(m_textureOverride.buffer, "TextureOverrides");
-}
-
-struct DDS_PIXELFORMAT {
-	DWORD dwSize;
-	DWORD dwFlags;
-	DWORD dwFourCC;
-	DWORD dwRGBBitCount;
-	DWORD dwRBitMask;
-	DWORD dwGBitMask;
-	DWORD dwBBitMask;
-	DWORD dwABitMask;
-};
-
-struct DDS_HEADER
-{
-	DWORD           dwSize;
-	DWORD           dwFlags;
-	DWORD           dwHeight;
-	DWORD           dwWidth;
-	DWORD           dwPitchOrLinearSize;
-	DWORD           dwDepth;
-	DWORD           dwMipMapCount;
-	DWORD           dwReserved1[11];
-	DDS_PIXELFORMAT ddspf;
-	DWORD           dwCaps;
-	DWORD           dwCaps2;
-	DWORD           dwCaps3;
-	DWORD           dwCaps4;
-	DWORD           dwReserved2;
-};
-
-bool HelloVulkan::loadDDS(const VkCommandBuffer& cmdBuf, const fs::path& path, const std::string& buffer, VkSamplerCreateInfo& samplerCreateInfo)
-{
-	const char* bufferData = buffer.data();
-
-	if (strncmp(bufferData, "DDS ", 4) != 0)
-	{
-		std::cout << std::string("not a valid DDS: '" + path.string() + "'");
-
-		return false;
-	}
-
-	bufferData += 4;
-
-	std::string formatName(bufferData + 80, 4);
-	const DDS_HEADER* ddsHeader = reinterpret_cast<const DDS_HEADER*>(bufferData);
-	const char* header = bufferData;
-
-	bufferData += sizeof(DDS_HEADER);
-
-	unsigned int linearSize = ddsHeader->dwPitchOrLinearSize;
-	int mipLevels = ddsHeader->dwMipMapCount;
-
-	if (ddsHeader->dwWidth == 0 && ddsHeader->dwHeight == 0)
-		bufferData += 0;
-
-	if (mipLevels == 0)
-		mipLevels = 1;
-
-	unsigned int size = (mipLevels > 1 ? linearSize + linearSize : linearSize);
-
-
-	int BlockSize = 16;
-
-	VkFormat format;
-
-	if (formatName == std::string("DXT1", 4))
-	{
-		BlockSize = 8;
-		format = VkFormat::VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
-	}
-	else if (formatName == std::string("DXT3", 4))
-		format = VkFormat::VK_FORMAT_BC2_UNORM_BLOCK;
-	else if (formatName == std::string("DXT5", 4))
-		format = VkFormat::VK_FORMAT_BC3_UNORM_BLOCK;
-	else
-	{
-		std::cout << ("unsupported DDS: '" + path.string() + "'");
-
-		return false;
-	}
-
-	VkDeviceSize bufferSize = size;//static_cast<uint64_t>(texWidth) * texHeight * sizeof(uint8_t) * 4;
-	auto         imgSize = VkExtent2D{ (uint32_t)ddsHeader->dwWidth, (uint32_t)ddsHeader->dwHeight };
-	auto         imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, format, VK_IMAGE_USAGE_SAMPLED_BIT, mipLevels);
-
-	{
-		nvvk::Image image = m_alloc.createImageDDS(cmdBuf, bufferSize, bufferData, imageCreateInfo, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, BlockSize);
-		VkImageViewCreateInfo ivInfo = nvvk::makeImageViewCreateInfo(image.image, imageCreateInfo);
-		nvvk::Texture         texture = m_alloc.createTexture(image, ivInfo, samplerCreateInfo);
-
-		m_textures.push_back(texture);
-	}
-
-
-	return true;
-}
-
-int HelloVulkan::GetTexture(const std::string& name, VkFormat format, VkSamplerCreateInfo samplerInfo)
-{
-	if (!name.empty())
-	{
-		const auto& cached = textureCache.find(name);
-
-		if (cached == textureCache.end())
-		{
-			std::vector<const Archive::Metadata::Entry*> entries;
-			const Archive::Metadata::Entry* entry = nullptr;
-
-			if (strncmp(lower(name).data(), "resource/", 9) == 0)
-			{
-				entry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(name.c_str() + 8, "image");
-			}
-			else
-			{
-				Archive::Metadata::Entry::FindEntriesByTags(name, "image", [this, &entry](const auto& newEntry)
-					{
-						if (entry == nullptr && Reader->GetPath("Resource" + newEntry.RelativePath.string()).Loaded())
-						entry = &newEntry;
-					}
-				);
-			}
-
-			//if (entries.size() != 1)
-			//{
-			//	int i = 0;
-			//	++i;
-			//}
-
-
-
-			textureEntries.push_back(entry);
-			textureFormats.push_back(format);
-			int id = static_cast<int>(textureEntries.size()) - 1;
-			textureCache[name] = id;
-			textureSamplers.push_back(samplerInfo);
-
-			return id;
-		}
-		else
-			return cached->second;
-	}
-
-	return -1;
-}
-
-void HelloVulkan::flushNewTextures()
-{
-	nvvk::CommandPool  cmdBufGet(m_device, m_graphicsQueueIndex);
-	VkCommandBuffer    cmdBuf = cmdBufGet.createCommandBuffer();
-	createTextureImages(cmdBuf);
-	cmdBufGet.submitAndWait(cmdBuf);
-	m_alloc.finalizeAndReleaseStaging();
-}
-
-VkSamplerCreateInfo HelloVulkan::GetDefaultSampler()
-{
-	VkSamplerCreateInfo samplerCreateInfo{ VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO };
-	samplerCreateInfo.minFilter = VK_FILTER_LINEAR;
-	samplerCreateInfo.magFilter = VK_FILTER_LINEAR;
-	samplerCreateInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-	samplerCreateInfo.maxLod = FLT_MAX;
-
-	return samplerCreateInfo;
-}
-
-//--------------------------------------------------------------------------------------------------
-// Creating all textures and samplers
-//
-void HelloVulkan::createTextureImages(const VkCommandBuffer& cmdBuf)
-{
-	VkSamplerCreateInfo samplerCreateInfo = GetDefaultSampler();
-
-	VkFormat format = VK_FORMAT_R8G8B8A8_SRGB;
-
-	// If no textures are present, create a dummy one to accommodate the pipeline layout
-	if (m_textures.empty())
-	{
-	nvvk::Texture texture;
-
-	std::array<uint8_t, 4> color{255u, 255u, 255u, 255u};
-	VkDeviceSize           bufferSize      = sizeof(color);
-	auto                   imgSize         = VkExtent2D{1, 1};
-	auto                   imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, format);
-
-	// Creating the dummy texture
-	nvvk::Image           image  = m_alloc.createImage(cmdBuf, bufferSize, color.data(), imageCreateInfo);
-	VkImageViewCreateInfo ivInfo = nvvk::makeImageViewCreateInfo(image.image, imageCreateInfo);
-	texture                      = m_alloc.createTexture(image, ivInfo, samplerCreateInfo);
-
-	// The image format must be in VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
-	nvvk::cmdBarrierImageLayout(cmdBuf, texture.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-	m_textures.push_back(texture);
-	}
-	
-	{
-		std::array<stbi_uc, 4> color{ 255u, 0u, 255u, 255u };
-	// Uploading all images
-	for(size_t i = m_textures.size(); i < textureEntries.size(); ++i)
-	{
-		const auto& texture = textureEntries[i];
-		int               texWidth, texHeight, texChannels;
-
-		stbi_uc* stbi_pixels = nullptr;
-		stbi_uc* pixels = nullptr;
-
-		if (texture != nullptr)
-		{
-			std::string extensionText = texture->LogPath.extension().string();
-
-			Archive::ArchivePath textureFile = Reader->GetPath("Resource" + texture->RelativePath.string());
-
-			if (textureFile.Loaded())
-			{
-				textureFile.Read(textureBuffer);
-
-				if (extensionText == ".dds")
-				{
-					if (loadDDS(cmdBuf, textureFile.GetPath(), textureBuffer, textureSamplers[i]))
-						continue;
-				}
-				else
-				{
-					stbi_load_from_memory(reinterpret_cast<stbi_uc*>(textureBuffer.data()),(int)textureBuffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-
-					pixels = stbi_pixels;
-				}
-			}
-		}
-
-		// Handle failure
-		if(!stbi_pixels)
-		{
-		texWidth = texHeight = 1;
-		texChannels          = 4;
-		pixels               = reinterpret_cast<stbi_uc*>(color.data());
-		}
-
-		VkDeviceSize bufferSize      = static_cast<uint64_t>(texWidth) * texHeight * sizeof(uint8_t) * 4;
-		auto         imgSize         = VkExtent2D{(uint32_t)texWidth, (uint32_t)texHeight};
-		auto         imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, textureFormats[i], VK_IMAGE_USAGE_SAMPLED_BIT, true);
-
-		{
-		nvvk::Image image = m_alloc.createImage(cmdBuf, bufferSize, pixels, imageCreateInfo);
-		nvvk::cmdGenerateMipmaps(cmdBuf, image.image, textureFormats[i], imgSize, imageCreateInfo.mipLevels);
-		VkImageViewCreateInfo ivInfo  = nvvk::makeImageViewCreateInfo(image.image, imageCreateInfo);
-		nvvk::Texture         texture = m_alloc.createTexture(image, ivInfo, textureSamplers[i]);
-
-		m_textures.push_back(texture);
-		}
-
-		stbi_image_free(stbi_pixels);
-	}
-	}
+	VulkanContext->Allocator.finalizeAndReleaseStaging();
+	VulkanContext->Debug.setObjectName(m_textureOverride.buffer, "TextureOverrides");
 }
 
 bool HelloVulkan::startScreenshot()
@@ -667,7 +341,7 @@ bool HelloVulkan::startScreenshot()
 	imageCreateInfo.mipLevels = 1;
 	imageCreateInfo.tiling = VK_IMAGE_TILING_LINEAR;
 
-	screenshotImage = m_alloc.createImage(imageCreateInfo, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+	screenshotImage = VulkanContext->Allocator.createImage(imageCreateInfo, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
 
 	VkExtent2D size = m_size;
 
@@ -699,7 +373,7 @@ void HelloVulkan::screenshot()
 
 	bool flush = !takingScreenshot || nextBatch.height >= m_batchSize.height;
 
-	nvvk::CommandPool  cmdBufGet(m_device, m_graphicsQueueIndex);
+	nvvk::CommandPool  cmdBufGet(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
 	VkCommandBuffer    copyCmd = cmdBufGet.createCommandBuffer();
 
 	bool justStarted = startScreenshot();
@@ -732,9 +406,9 @@ void HelloVulkan::screenshot()
 
 	VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
 	VkSubresourceLayout subResourceLayout;
-	vkGetImageSubresourceLayout(m_device, screenshotImage.image, &subResource, &subResourceLayout);
+	vkGetImageSubresourceLayout(VulkanContext->Device, screenshotImage.image, &subResource, &subResourceLayout);
 
-	const char* data = reinterpret_cast<const char*>(m_alloc.map(screenshotImage));
+	const char* data = reinterpret_cast<const char*>(VulkanContext->Allocator.map(screenshotImage));
 
 	data += subResourceLayout.offset;
 
@@ -777,8 +451,8 @@ void HelloVulkan::screenshot()
 		screenshotBuffer.clear();
 		screenshotBuffer.shrink_to_fit();
 
-		m_alloc.unmap(screenshotImage);
-		m_alloc.destroy(screenshotImage);
+		VulkanContext->Allocator.unmap(screenshotImage);
+		VulkanContext->Allocator.destroy(screenshotImage);
 
 		takingScreenshot = false;
 		std::cout << "finished screenshot" << std::endl;
@@ -797,52 +471,42 @@ void HelloVulkan::screenshot()
 //
 void HelloVulkan::destroyResources()
 {
-	vkDestroyPipeline(m_device, m_graphicsPipeline, nullptr);
-	vkDestroyPipelineLayout(m_device, m_pipelineLayout, nullptr);
-	vkDestroyDescriptorPool(m_device, m_descPool, nullptr);
-	vkDestroyDescriptorSetLayout(m_device, m_descSetLayout, nullptr);
+	vkDestroyPipeline(VulkanContext->Device, m_graphicsPipeline, nullptr);
+	vkDestroyPipelineLayout(VulkanContext->Device, m_pipelineLayout, nullptr);
+	vkDestroyDescriptorPool(VulkanContext->Device, m_descPool, nullptr);
+	vkDestroyDescriptorSetLayout(VulkanContext->Device, m_descSetLayout, nullptr);
 
-	m_alloc.destroy(m_bGlobals);
-	m_alloc.destroy(m_bObjDesc);
-	m_alloc.destroy(m_lightDesc);
-	m_alloc.destroy(m_textureTransformDesc);
-	m_alloc.destroy(m_mouseIO);
-	m_alloc.destroy(m_InstDesc);
-	m_alloc.destroy(m_textureOverride);
+	VulkanContext->Allocator.destroy(m_bGlobals);
+	VulkanContext->Allocator.destroy(m_bObjDesc);
+	VulkanContext->Allocator.destroy(m_lightDesc);
+	VulkanContext->Allocator.destroy(m_textureTransformDesc);
+	VulkanContext->Allocator.destroy(m_mouseIO);
+	VulkanContext->Allocator.destroy(m_InstDesc);
+	VulkanContext->Allocator.destroy(m_textureOverride);
 
-	for(auto& m : m_objModel)
-	{
-	m_alloc.destroy(m.vertexBuffer);
-	m_alloc.destroy(m.indexBuffer);
-	m_alloc.destroy(m.matColorBuffer);
-	m_alloc.destroy(m.matIndexBuffer);
-	}
-
-	for(auto& t : m_textures)
-	{
-	m_alloc.destroy(t);
-	}
+	ModelLibrary->FreeResources();
+	TextureLibrary->FreeResources();
 
 	//#Post
-	m_alloc.destroy(m_offscreenColor);
-	m_alloc.destroy(m_offscreenDepth);
-	vkDestroyPipeline(m_device, m_postPipeline, nullptr);
-	vkDestroyPipelineLayout(m_device, m_postPipelineLayout, nullptr);
-	vkDestroyDescriptorPool(m_device, m_postDescPool, nullptr);
-	vkDestroyDescriptorSetLayout(m_device, m_postDescSetLayout, nullptr);
-	vkDestroyRenderPass(m_device, m_offscreenRenderPass, nullptr);
-	vkDestroyFramebuffer(m_device, m_offscreenFramebuffer, nullptr);
+	VulkanContext->Allocator.destroy(m_offscreenColor);
+	VulkanContext->Allocator.destroy(m_offscreenDepth);
+	vkDestroyPipeline(VulkanContext->Device, m_postPipeline, nullptr);
+	vkDestroyPipelineLayout(VulkanContext->Device, m_postPipelineLayout, nullptr);
+	vkDestroyDescriptorPool(VulkanContext->Device, m_postDescPool, nullptr);
+	vkDestroyDescriptorSetLayout(VulkanContext->Device, m_postDescSetLayout, nullptr);
+	vkDestroyRenderPass(VulkanContext->Device, m_offscreenRenderPass, nullptr);
+	vkDestroyFramebuffer(VulkanContext->Device, m_offscreenFramebuffer, nullptr);
 
 
 	// #VKRay
 	m_rtBuilder.destroy();
-	vkDestroyPipeline(m_device, m_rtPipeline, nullptr);
-	vkDestroyPipelineLayout(m_device, m_rtPipelineLayout, nullptr);
-	vkDestroyDescriptorPool(m_device, m_rtDescPool, nullptr);
-	vkDestroyDescriptorSetLayout(m_device, m_rtDescSetLayout, nullptr);
-	m_alloc.destroy(m_rtSBTBuffer);
+	vkDestroyPipeline(VulkanContext->Device, m_rtPipeline, nullptr);
+	vkDestroyPipelineLayout(VulkanContext->Device, m_rtPipelineLayout, nullptr);
+	vkDestroyDescriptorPool(VulkanContext->Device, m_rtDescPool, nullptr);
+	vkDestroyDescriptorSetLayout(VulkanContext->Device, m_rtDescSetLayout, nullptr);
+	VulkanContext->Allocator.destroy(m_rtSBTBuffer);
 
-	m_alloc.deinit();
+	VulkanContext->Allocator.deinit();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -852,7 +516,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 {
 	VkDeviceSize offset{0};
 
-	m_debug.beginLabel(cmdBuf, "Rasterize");
+	VulkanContext->Debug.beginLabel(cmdBuf, "Rasterize");
 
 	// Dynamic Viewport
 	setViewport(cmdBuf);
@@ -864,17 +528,17 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 
 	for(const HelloVulkan::ObjInstance& inst : m_instances)
 	{
-	auto& model            = m_objModel[inst.objIndex];
+	auto& model            = ModelLibrary->GetMeshDescriptions()[inst.objIndex];
 	m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
 	m_pcRaster.modelMatrix = inst.transform;
 
 	vkCmdPushConstants(cmdBuf, m_pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
 						 sizeof(PushConstantRaster), &m_pcRaster);
-	vkCmdBindVertexBuffers(cmdBuf, 0, 1, &model.vertexBuffer.buffer, &offset);
-	vkCmdBindIndexBuffer(cmdBuf, model.indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-	vkCmdDrawIndexed(cmdBuf, model.nbIndices, 1, 0, 0, 0);
+	vkCmdBindVertexBuffers(cmdBuf, 0, 1, &model.VertexBuffer.buffer, &offset);
+	vkCmdBindIndexBuffer(cmdBuf, model.IndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdDrawIndexed(cmdBuf, model.IndexCount, 1, 0, 0, 0);
 	}
-	m_debug.endLabel(cmdBuf);
+	VulkanContext->Debug.endLabel(cmdBuf);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -898,8 +562,8 @@ void HelloVulkan::onResize(int /*w*/, int /*h*/)
 //
 void HelloVulkan::createOffscreenRender()
 {
-	m_alloc.destroy(m_offscreenColor);
-	m_alloc.destroy(m_offscreenDepth);
+	VulkanContext->Allocator.destroy(m_offscreenColor);
+	VulkanContext->Allocator.destroy(m_offscreenDepth);
 
 	// Creating the color image
 	{
@@ -908,17 +572,17 @@ void HelloVulkan::createOffscreenRender()
 												             | VK_IMAGE_USAGE_STORAGE_BIT);
 
 
-	nvvk::Image           image  = m_alloc.createImage(colorCreateInfo);
+	nvvk::Image           image  = VulkanContext->Allocator.createImage(colorCreateInfo);
 	VkImageViewCreateInfo ivInfo = nvvk::makeImageViewCreateInfo(image.image, colorCreateInfo);
 	VkSamplerCreateInfo   sampler{VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO};
-	m_offscreenColor                        = m_alloc.createTexture(image, ivInfo, sampler);
+	m_offscreenColor                        = VulkanContext->Allocator.createTexture(image, ivInfo, sampler);
 	m_offscreenColor.descriptor.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 	}
 
 	// Creating the depth buffer
 	auto depthCreateInfo = nvvk::makeImage2DCreateInfo(m_size, m_offscreenDepthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	{
-	nvvk::Image image = m_alloc.createImage(depthCreateInfo);
+	nvvk::Image image = VulkanContext->Allocator.createImage(depthCreateInfo);
 
 
 	VkImageViewCreateInfo depthStencilView{VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO};
@@ -927,12 +591,12 @@ void HelloVulkan::createOffscreenRender()
 	depthStencilView.subresourceRange = {VK_IMAGE_ASPECT_DEPTH_BIT, 0, 1, 0, 1};
 	depthStencilView.image            = image.image;
 
-	m_offscreenDepth = m_alloc.createTexture(image, depthStencilView);
+	m_offscreenDepth = VulkanContext->Allocator.createTexture(image, depthStencilView);
 	}
 
 	// Setting the image layout for both color and depth
 	{
-	nvvk::CommandPool genCmdBuf(m_device, m_graphicsQueueIndex);
+	nvvk::CommandPool genCmdBuf(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
 	auto              cmdBuf = genCmdBuf.createCommandBuffer();
 	nvvk::cmdBarrierImageLayout(cmdBuf, m_offscreenColor.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
 	nvvk::cmdBarrierImageLayout(cmdBuf, m_offscreenDepth.image, VK_IMAGE_LAYOUT_UNDEFINED,
@@ -944,7 +608,7 @@ void HelloVulkan::createOffscreenRender()
 	// Creating a renderpass for the offscreen
 	if(!m_offscreenRenderPass)
 	{
-	m_offscreenRenderPass = nvvk::createRenderPass(m_device, {m_offscreenColorFormat}, m_offscreenDepthFormat, 1, true,
+	m_offscreenRenderPass = nvvk::createRenderPass(VulkanContext->Device, {m_offscreenColorFormat}, m_offscreenDepthFormat, 1, true,
 												     true, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
 	}
 
@@ -952,7 +616,7 @@ void HelloVulkan::createOffscreenRender()
 	// Creating the frame buffer for offscreen
 	std::vector<VkImageView> attachments = {m_offscreenColor.descriptor.imageView, m_offscreenDepth.descriptor.imageView};
 
-	vkDestroyFramebuffer(m_device, m_offscreenFramebuffer, nullptr);
+	vkDestroyFramebuffer(VulkanContext->Device, m_offscreenFramebuffer, nullptr);
 	VkFramebufferCreateInfo info{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
 	info.renderPass      = m_offscreenRenderPass;
 	info.attachmentCount = 2;
@@ -960,7 +624,7 @@ void HelloVulkan::createOffscreenRender()
 	info.width           = m_size.width;
 	info.height          = m_size.height;
 	info.layers          = 1;
-	vkCreateFramebuffer(m_device, &info, nullptr, &m_offscreenFramebuffer);
+	vkCreateFramebuffer(VulkanContext->Device, &info, nullptr, &m_offscreenFramebuffer);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -977,16 +641,16 @@ void HelloVulkan::createPostPipeline()
 	createInfo.pSetLayouts            = &m_postDescSetLayout;
 	createInfo.pushConstantRangeCount = 1;
 	createInfo.pPushConstantRanges    = &pushConstantRanges;
-	vkCreatePipelineLayout(m_device, &createInfo, nullptr, &m_postPipelineLayout);
+	vkCreatePipelineLayout(VulkanContext->Device, &createInfo, nullptr, &m_postPipelineLayout);
 
 
 	// Pipeline: completely generic, no vertices
-	nvvk::GraphicsPipelineGeneratorCombined pipelineGenerator(m_device, m_postPipelineLayout, m_renderPass);
+	nvvk::GraphicsPipelineGeneratorCombined pipelineGenerator(VulkanContext->Device, m_postPipelineLayout, m_renderPass);
 	pipelineGenerator.addShader(nvh::loadFile("spv/passthrough.vert.spv", true, defaultSearchPaths, true), VK_SHADER_STAGE_VERTEX_BIT);
 	pipelineGenerator.addShader(nvh::loadFile("spv/post.frag.spv", true, defaultSearchPaths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
 	pipelineGenerator.rasterizationState.cullMode = VK_CULL_MODE_NONE;
 	m_postPipeline                                = pipelineGenerator.createPipeline();
-	m_debug.setObjectName(m_postPipeline, "post");
+	VulkanContext->Debug.setObjectName(m_postPipeline, "post");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -999,9 +663,9 @@ void HelloVulkan::createPostDescriptor()
 	// Camera matrices
 	m_postDescSetLayoutBind.addBinding(1, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1,
 		VK_SHADER_STAGE_FRAGMENT_BIT);
-	m_postDescSetLayout = m_postDescSetLayoutBind.createLayout(m_device);
-	m_postDescPool      = m_postDescSetLayoutBind.createPool(m_device);
-	m_postDescSet       = nvvk::allocateDescriptorSet(m_device, m_postDescPool, m_postDescSetLayout);
+	m_postDescSetLayout = m_postDescSetLayoutBind.createLayout(VulkanContext->Device);
+	m_postDescPool      = m_postDescSetLayoutBind.createPool(VulkanContext->Device);
+	m_postDescSet       = nvvk::allocateDescriptorSet(VulkanContext->Device, m_postDescPool, m_postDescSetLayout);
 }
 
 
@@ -1015,7 +679,7 @@ void HelloVulkan::updatePostDescriptorSet()
 		m_postDescSetLayoutBind.makeWrite(m_postDescSet, 0, &m_offscreenColor.descriptor),
 		m_postDescSetLayoutBind.makeWrite(m_postDescSet, 1, &dbiUnif)
 	};
-	vkUpdateDescriptorSets(m_device, sizeof(writeDescriptorSets) / sizeof(writeDescriptorSets[0]), writeDescriptorSets, 0, nullptr);
+	vkUpdateDescriptorSets(VulkanContext->Device, sizeof(writeDescriptorSets) / sizeof(writeDescriptorSets[0]), writeDescriptorSets, 0, nullptr);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1023,7 +687,7 @@ void HelloVulkan::updatePostDescriptorSet()
 //
 void HelloVulkan::drawPost(VkCommandBuffer cmdBuf)
 {
-	m_debug.beginLabel(cmdBuf, "Post");
+	VulkanContext->Debug.beginLabel(cmdBuf, "Post");
 
 	setViewport(cmdBuf);
 
@@ -1033,7 +697,7 @@ void HelloVulkan::drawPost(VkCommandBuffer cmdBuf)
 	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_postPipelineLayout, 0, 1, &m_postDescSet, 0, nullptr);
 	vkCmdDraw(cmdBuf, 3, 1, 0, 0);
 
-	m_debug.endLabel(cmdBuf);
+	VulkanContext->Debug.endLabel(cmdBuf);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1050,19 +714,19 @@ void HelloVulkan::initRayTracing()
 	prop2.pNext = &m_rtProperties;
 	vkGetPhysicalDeviceProperties2(m_physicalDevice, &prop2);
 
-	m_rtBuilder.setup(m_device, &m_alloc, m_graphicsQueueIndex);
+	m_rtBuilder.setup(VulkanContext->Device, &VulkanContext->Allocator, VulkanContext->GraphicsQueueIndex);
 }
 
 //--------------------------------------------------------------------------------------------------
 // Convert an OBJ model into the ray tracing geometry used to build the BLAS
 //
-auto HelloVulkan::objectToVkGeometryKHR(const ObjModel& model)
+auto HelloVulkan::objectToVkGeometryKHR(const MapLoader::MeshDescription& model)
 {
 	// BLAS builder requires raw device addresses.
-	VkDeviceAddress vertexAddress = nvvk::getBufferDeviceAddress(m_device, model.vertexBuffer.buffer);
-	VkDeviceAddress indexAddress  = nvvk::getBufferDeviceAddress(m_device, model.indexBuffer.buffer);
+	VkDeviceAddress vertexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, model.VertexBuffer.buffer);
+	VkDeviceAddress indexAddress  = nvvk::getBufferDeviceAddress(VulkanContext->Device, model.IndexBuffer.buffer);
 
-	uint32_t maxPrimitiveCount = model.nbIndices / 3;
+	uint32_t maxPrimitiveCount = model.IndexCount / 3;
 
 	// Describe buffer as array of VertexObj.
 	VkAccelerationStructureGeometryTrianglesDataKHR triangles{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR};
@@ -1074,7 +738,7 @@ auto HelloVulkan::objectToVkGeometryKHR(const ObjModel& model)
 	triangles.indexData.deviceAddress = indexAddress;
 	// Indicate identity transform by setting transformData to null device pointer.
 	//triangles.transformData = {};
-	triangles.maxVertex = model.nbVertices;
+	triangles.maxVertex = model.VertexCount;
 
 	// Identify the above data as containing opaque triangles.
 	VkAccelerationStructureGeometryKHR asGeom{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR};
@@ -1104,8 +768,8 @@ void HelloVulkan::createBottomLevelAS()
 {
 	// BLAS - Storing each primitive in a geometry
 	std::vector<nvvk::RaytracingBuilderKHR::BlasInput> allBlas;
-	allBlas.reserve(m_objModel.size());
-	for(const auto& obj : m_objModel)
+	allBlas.reserve(ModelLibrary->GetMeshDescriptions().size());
+	for(const auto& obj : ModelLibrary->GetMeshDescriptions())
 	{
 	auto blas = objectToVkGeometryKHR(obj);
 
@@ -1147,14 +811,14 @@ void HelloVulkan::createRtDescriptorSet()
 	m_rtDescSetLayoutBind.addBinding(RtxBindings::eOutImage, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1,
 									 VK_SHADER_STAGE_RAYGEN_BIT_KHR);  // Output image
 
-	m_rtDescPool      = m_rtDescSetLayoutBind.createPool(m_device);
-	m_rtDescSetLayout = m_rtDescSetLayoutBind.createLayout(m_device);
+	m_rtDescPool      = m_rtDescSetLayoutBind.createPool(VulkanContext->Device);
+	m_rtDescSetLayout = m_rtDescSetLayoutBind.createLayout(VulkanContext->Device);
 
 	VkDescriptorSetAllocateInfo allocateInfo{VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO};
 	allocateInfo.descriptorPool     = m_rtDescPool;
 	allocateInfo.descriptorSetCount = 1;
 	allocateInfo.pSetLayouts        = &m_rtDescSetLayout;
-	vkAllocateDescriptorSets(m_device, &allocateInfo, &m_rtDescSet);
+	vkAllocateDescriptorSets(VulkanContext->Device, &allocateInfo, &m_rtDescSet);
 
 
 	VkAccelerationStructureKHR                   tlas = m_rtBuilder.getAccelerationStructure();
@@ -1166,7 +830,7 @@ void HelloVulkan::createRtDescriptorSet()
 	std::vector<VkWriteDescriptorSet> writes;
 	writes.emplace_back(m_rtDescSetLayoutBind.makeWrite(m_rtDescSet, RtxBindings::eTlas, &descASInfo));
 	writes.emplace_back(m_rtDescSetLayoutBind.makeWrite(m_rtDescSet, RtxBindings::eOutImage, &imageInfo));
-	vkUpdateDescriptorSets(m_device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+	vkUpdateDescriptorSets(VulkanContext->Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
 }
 
 
@@ -1179,7 +843,7 @@ void HelloVulkan::updateRtDescriptorSet()
 	// (1) Output buffer
 	VkDescriptorImageInfo imageInfo{{}, m_offscreenColor.descriptor.imageView, VK_IMAGE_LAYOUT_GENERAL};
 	VkWriteDescriptorSet  wds = m_rtDescSetLayoutBind.makeWrite(m_rtDescSet, RtxBindings::eOutImage, &imageInfo);
-	vkUpdateDescriptorSets(m_device, 1, &wds, 0, nullptr);
+	vkUpdateDescriptorSets(VulkanContext->Device, 1, &wds, 0, nullptr);
 }
 
 
@@ -1214,33 +878,33 @@ void HelloVulkan::createRtPipeline()
 	VkPipelineShaderStageCreateInfo stage{VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO};
 	stage.pName = "main";  // All the same entry point
 	// Raygen
-	stage.module = nvvk::createShaderModule(m_device, nvh::loadFile("spv/raytrace.rgen.spv", true, defaultSearchPaths, true));
+	stage.module = nvvk::createShaderModule(VulkanContext->Device, nvh::loadFile("spv/raytrace.rgen.spv", true, defaultSearchPaths, true));
 	stage.stage     = VK_SHADER_STAGE_RAYGEN_BIT_KHR;
 	stages[eRaygen] = stage;
 	// Miss
-	stage.module = nvvk::createShaderModule(m_device, nvh::loadFile("spv/raytrace.rmiss.spv", true, defaultSearchPaths, true));
+	stage.module = nvvk::createShaderModule(VulkanContext->Device, nvh::loadFile("spv/raytrace.rmiss.spv", true, defaultSearchPaths, true));
 	stage.stage   = VK_SHADER_STAGE_MISS_BIT_KHR;
 	stages[eMiss] = stage;
 	// The second miss shader is invoked when a shadow ray misses the geometry. It simply indicates that no occlusion has been found
 	stage.module =
-		nvvk::createShaderModule(m_device, nvh::loadFile("spv/raytraceShadow.rmiss.spv", true, defaultSearchPaths, true));
+		nvvk::createShaderModule(VulkanContext->Device, nvh::loadFile("spv/raytraceShadow.rmiss.spv", true, defaultSearchPaths, true));
 	stage.stage    = VK_SHADER_STAGE_MISS_BIT_KHR;
 	stages[eMiss2] = stage;
 	// Hit Group - Closest Hit
-	stage.module = nvvk::createShaderModule(m_device, nvh::loadFile("spv/raytrace.rchit.spv", true, defaultSearchPaths, true));
+	stage.module = nvvk::createShaderModule(VulkanContext->Device, nvh::loadFile("spv/raytrace.rchit.spv", true, defaultSearchPaths, true));
 	stage.stage         = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
 	stages[eClosestHit] = stage;
 
-	stage.module = nvvk::createShaderModule(m_device, nvh::loadFile("spv/raytrace.rahit.spv", true, defaultSearchPaths, true));
+	stage.module = nvvk::createShaderModule(VulkanContext->Device, nvh::loadFile("spv/raytrace.rahit.spv", true, defaultSearchPaths, true));
 	stage.stage = VK_SHADER_STAGE_ANY_HIT_BIT_KHR;
 	stages[eAnyHit] = stage;
 
 	// Hit Group - Closest Hit
-	stage.module = nvvk::createShaderModule(m_device, nvh::loadFile("spv/raytraceShadow.rchit.spv", true, defaultSearchPaths, true));
+	stage.module = nvvk::createShaderModule(VulkanContext->Device, nvh::loadFile("spv/raytraceShadow.rchit.spv", true, defaultSearchPaths, true));
 	stage.stage = VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
 	stages[eShadowClosestHit] = stage;
 
-	stage.module = nvvk::createShaderModule(m_device, nvh::loadFile("spv/raytraceShadow.rahit.spv", true, defaultSearchPaths, true));
+	stage.module = nvvk::createShaderModule(VulkanContext->Device, nvh::loadFile("spv/raytraceShadow.rahit.spv", true, defaultSearchPaths, true));
 	stage.stage = VK_SHADER_STAGE_ANY_HIT_BIT_KHR;
 	stages[eAnyHit2] = stage;
 
@@ -1295,7 +959,7 @@ void HelloVulkan::createRtPipeline()
 	pipelineLayoutCreateInfo.setLayoutCount             = static_cast<uint32_t>(rtDescSetLayouts.size());
 	pipelineLayoutCreateInfo.pSetLayouts                = rtDescSetLayouts.data();
 
-	vkCreatePipelineLayout(m_device, &pipelineLayoutCreateInfo, nullptr, &m_rtPipelineLayout);
+	vkCreatePipelineLayout(VulkanContext->Device, &pipelineLayoutCreateInfo, nullptr, &m_rtPipelineLayout);
 
 
 	// Assemble the shader stages and recursion depth info into the ray tracing pipeline
@@ -1315,7 +979,7 @@ void HelloVulkan::createRtPipeline()
 	rayPipelineInfo.maxPipelineRayRecursionDepth = 2;  // Ray depth
 	rayPipelineInfo.layout                       = m_rtPipelineLayout;
 
-	vkCreateRayTracingPipelinesKHR(m_device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_rtPipeline);
+	vkCreateRayTracingPipelinesKHR(VulkanContext->Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_rtPipeline);
 
 
 	// Spec only guarantees 1 level of "recursion". Check for that sad possibility here.
@@ -1327,7 +991,7 @@ void HelloVulkan::createRtPipeline()
 	//createRtShaderBindingTable();
 
 	for(auto& s : stages)
-	vkDestroyShaderModule(m_device, s.module, nullptr);
+	vkDestroyShaderModule(VulkanContext->Device, s.module, nullptr);
 }
 
 
@@ -1366,20 +1030,20 @@ void HelloVulkan::createRtShaderBindingTable()
 	// Get the shader group handles
 	uint32_t             dataSize = handleCount * handleSize;
 	std::vector<uint8_t> handles(dataSize);
-	auto result = vkGetRayTracingShaderGroupHandlesKHR(m_device, m_rtPipeline, 0, handleCount, dataSize, handles.data());
+	auto result = vkGetRayTracingShaderGroupHandlesKHR(VulkanContext->Device, m_rtPipeline, 0, handleCount, dataSize, handles.data());
 	assert(result == VK_SUCCESS);
 
 	// Allocate a buffer for storing the SBT.
 	VkDeviceSize sbtSize = m_rgenRegion.size + m_missRegion.size + m_hitRegion.size + m_callRegion.size;
-	m_rtSBTBuffer        = m_alloc.createBuffer(sbtSize,
+	m_rtSBTBuffer        = VulkanContext->Allocator.createBuffer(sbtSize,
 										 VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT
 											 | VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR,
 										 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-	m_debug.setObjectName(m_rtSBTBuffer.buffer, std::string("SBT"));  // Give it a debug name for NSight.
+	VulkanContext->Debug.setObjectName(m_rtSBTBuffer.buffer, std::string("SBT"));  // Give it a debug name for NSight.
 
 	// Find the SBT addresses of each group
 	VkBufferDeviceAddressInfo info{VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO, nullptr, m_rtSBTBuffer.buffer};
-	VkDeviceAddress           sbtAddress = vkGetBufferDeviceAddress(m_device, &info);
+	VkDeviceAddress           sbtAddress = vkGetBufferDeviceAddress(VulkanContext->Device, &info);
 	m_rgenRegion.deviceAddress           = sbtAddress;
 	m_missRegion.deviceAddress           = sbtAddress + m_rgenRegion.size;
 	m_hitRegion.deviceAddress            = sbtAddress + m_rgenRegion.size + m_missRegion.size;
@@ -1388,7 +1052,7 @@ void HelloVulkan::createRtShaderBindingTable()
 	auto getHandle = [&](int i) { return handles.data() + i * handleSize; };
 
 	// Map the SBT buffer and write in the handles.
-	auto*    pSBTBuffer = reinterpret_cast<uint8_t*>(m_alloc.map(m_rtSBTBuffer));
+	auto*    pSBTBuffer = reinterpret_cast<uint8_t*>(VulkanContext->Allocator.map(m_rtSBTBuffer));
 	uint8_t* pData{nullptr};
 	uint32_t handleIdx{0};
 	// Raygen
@@ -1409,8 +1073,8 @@ void HelloVulkan::createRtShaderBindingTable()
 	pData += m_hitRegion.stride;
 	}
 
-	m_alloc.unmap(m_rtSBTBuffer);
-	m_alloc.finalizeAndReleaseStaging();
+	VulkanContext->Allocator.unmap(m_rtSBTBuffer);
+	VulkanContext->Allocator.finalizeAndReleaseStaging();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1418,7 +1082,7 @@ void HelloVulkan::createRtShaderBindingTable()
 //
 void HelloVulkan::raytrace(const VkCommandBuffer& cmdBuf, const vec4& clearColor)
 {
-	m_debug.beginLabel(cmdBuf, "Ray trace");
+	VulkanContext->Debug.beginLabel(cmdBuf, "Ray trace");
 	// Initializing push constant values
 	m_pcRay.clearColor     = clearColor;
 	m_pcRay.mouseX = hostUBO.mouseX;
@@ -1441,5 +1105,5 @@ void HelloVulkan::raytrace(const VkCommandBuffer& cmdBuf, const vec4& clearColor
 	vkCmdTraceRaysKHR(cmdBuf, &m_rgenRegion, &m_missRegion, &m_hitRegion, &m_callRegion, m_size.width, m_size.height, 1);
 
 
-	m_debug.endLabel(cmdBuf);
+	VulkanContext->Debug.endLabel(cmdBuf);
 }

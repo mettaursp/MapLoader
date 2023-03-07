@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>$(SolutionDir)\MapLoader\shaders;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)\MapLoader\shaders;$(SolutionDir)\MapLoader\src;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup />
   <ItemGroup />

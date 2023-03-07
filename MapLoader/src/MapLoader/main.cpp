@@ -69,6 +69,10 @@
 #include <ArchiveParser/ArchiveReader.h>
 #include <ArchiveParser/ArchiveParser.h>
 #include <ArchiveParser/MetadataMapper.h>
+#include "Assets/ModelLibrary.h"
+#include "Assets/TextureLibrary.h"
+#include "Assets/TextureAsset.h"
+#include "Vulkan/VulkanContext.h"
 
 const auto PROJECT_NAME = "MapLoader";
 
@@ -114,36 +118,11 @@ mat4 convert(const Matrix4F& matrix)
 	return *reinterpret_cast<const mat4*>(&matrix);
 }
 
-struct LoadedModel
-{
-	std::vector<int> ModelIds;
-	std::vector<Matrix4F> Transformations;
-	std::vector<std::string> Shaders;
-	std::vector<std::string> MaterialNames;
-	std::vector<std::string> NodeNames;
-	std::vector<MaterialObj> Materials;
-	std::vector<std::shared_ptr<Engine::Graphics::MeshData>> Meshes;
-	const Archive::Metadata::Entry* Entry = nullptr;
-
-	bool IsLoaded(size_t index)
-	{
-		if (index < 0 || index >= ModelIds.size())
-			return false;
-
-		return ModelIds[index] != -1;
-	}
-
-	uint32_t GetId(size_t index)
-	{
-		return (uint32_t)ModelIds[index];
-	}
-};
-
 struct EntityData;
 
 struct SpawnedEntity
 {
-	LoadedModel* Model = nullptr;
+	MapLoader::ModelData* Model = nullptr;
 	const EntityData* Flat = nullptr;
 	std::string Id;
 	std::string Name;
@@ -282,10 +261,11 @@ struct Emotion
 	std::vector<EmotionTexture> Faces;
 };
 
-std::map<const Archive::Metadata::Entry*, std::unique_ptr<LoadedModel>> models;
-
 HelloVulkan* helloVkPtr = nullptr;
-Archive::ArchiveReader Reader;
+std::shared_ptr<Archive::ArchiveReader> Reader = std::make_shared<Archive::ArchiveReader>();
+std::shared_ptr<Graphics::VulkanContext> VulkanContext;
+std::shared_ptr<MapLoader::TextureLibrary> TextureLibrary;
+std::shared_ptr<MapLoader::ModelLibrary> ModelLibrary;
 std::string documentBuffer;
 std::string flatDocumentBuffer;
 std::string nifDocumentBuffer;
@@ -296,10 +276,6 @@ fs::path ms2Root = "B:/Files/Maplstory 2 Client/appdata";
 fs::path ms2RootExtracted = "B:/Files/ms2export/export/";
 fs::path tableroot = fs::path("Xml/table/");
 bool loadLights = true;
-std::shared_ptr<Engine::Graphics::MeshFormat> importFormat;
-std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithColor;
-std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithBinormal;
-std::shared_ptr<Engine::Graphics::MeshFormat> importFormatWithColorAndBinormal;
 std::vector<SpawnedModel> spawnedModels;
 std::vector<SpawnedEntity> spawnedEntities;
 std::vector<LoadedMap> loadedMaps;
@@ -312,17 +288,6 @@ std::unordered_map<std::string, DyeColorInfo*> dyeColorMap;
 std::unordered_map<std::string, Emotion> maleEmotions;
 std::unordered_map<std::string, Emotion> femaleEmotions;
 std::unordered_map<int, std::string> mapFileNames;
-
-std::unordered_map<std::string, int> materialTypeMap = {
-	{ "MS2StandardMaterial", 0 },
-	//{ "MS2ShimmerMaterial", 1 },
-	//{ "MS2GlowMaterial", 2 },
-	{ "MS2CharacterSkinMaterial", 3 },
-	{ "MS2CharacterMaterial", 4 },
-	//{ "MS2CharacterHairMaterial", 5 },
-	{ "MS2GlassMaterial", 6 },
-};
-std::unordered_set<std::string> unmappedMaterials;
 
 const float PI = 3.14159265359f;
 
@@ -344,7 +309,7 @@ std::string padId(std::string id)
 	return id;
 }
 
-RayHit castRay(const LoadedModel* model, Vector3SF rayStart, Vector3SF rayDirection)
+RayHit castRay(const MapLoader::ModelData* model, Vector3SF rayStart, Vector3SF rayDirection)
 {
 	RayHit hit;
 
@@ -419,7 +384,7 @@ struct Bounds
 	Vector3SF Max = { -std::numeric_limits<float>::max(), -std::numeric_limits<float>::max() , -std::numeric_limits<float>::max() };
 };
 
-void getBounds(const LoadedModel* model, Bounds& bounds)
+void getBounds(const MapLoader::ModelData* model, Bounds& bounds)
 {
 	for (const std::shared_ptr<Engine::Graphics::MeshData>& mesh : model->Meshes)
 	{
@@ -436,321 +401,6 @@ void getBounds(const LoadedModel* model, Bounds& bounds)
 			}
 		);
 	}
-}
-
-bool getModel(const Archive::ArchivePath& file, LoadedModel& loadedModel, bool saveMesh = false)
-{
-	if (!file.Loaded())
-	{
-		std::cout << "failed to load model " << file.GetPath().string() << std::endl;
-		return false;
-	}
-
-	Engine::Graphics::ModelPackage package;
-
-	NifParser parser;
-	parser.Package = &package;
-
-	file.Read(nifDocumentBuffer);
-	parser.Parse(nifDocumentBuffer);
-
-	loadedModel.ModelIds.resize(parser.Package->Nodes.size());
-	loadedModel.Transformations.resize(parser.Package->Nodes.size());
-	loadedModel.Materials.resize(parser.Package->Nodes.size());
-	loadedModel.Shaders.resize(parser.Package->Nodes.size());
-	loadedModel.MaterialNames.resize(parser.Package->Nodes.size());
-	loadedModel.NodeNames.resize(parser.Package->Nodes.size());
-	loadedModel.Meshes.resize(parser.Package->Nodes.size());
-
-	if (parser.Package->Nodes.size() > 0)
-	{
-		parser.Package->Nodes[0].Transform->Update(0);
-	}
-
-	for (size_t i = 0; i < parser.Package->Nodes.size(); ++i)
-	{
-		Engine::Graphics::ModelPackageNode& node = parser.Package->Nodes[i];
-
-		loadedModel.ModelIds[i] = -1;
-		loadedModel.NodeNames[i] = node.Name;
-
-		if (node.Transform != nullptr)
-			loadedModel.Transformations[i] = node.Transform->GetWorldTransformation();
-
-		if (node.Mesh != nullptr)
-		{
-			if (saveMesh)
-				loadedModel.Meshes[i] = node.Mesh;
-
-			tinyobj::attrib_t attrib;
-
-			bool hasColor = node.Format->GetAttribute("COLOR") != nullptr;
-			bool hasBinormal = node.Format->GetAttribute("binormal") != nullptr;
-
-			size_t vertices = node.Mesh->GetVertices();
-			size_t indices = node.Mesh->GetTriangleVertices();
-
-			if (vertices == 0 || indices == 0 || (indices % 3) != 0)
-				vertices += 0;
-
-			attrib.vertices.resize(vertices * 3);
-			attrib.texcoords.resize(vertices * 2);
-			attrib.normals.resize(vertices * 3);
-
-			std::vector<Color4I> colors;
-			std::vector<Vector3> binormal;
-			std::vector<Vector3> tangent;
-
-			if (hasColor)
-			{
-				colors.resize(vertices);
-				attrib.colors.resize(vertices * 4);
-			}
-
-			if (hasBinormal)
-			{
-				binormal.resize(vertices);
-				tangent.resize(vertices);
-				attrib.binormals.resize(vertices * 3);
-				attrib.tangents.resize(vertices * 3);
-			}
-
-			std::vector<void*> data;
-
-			data.push_back(attrib.vertices.data());
-			data.push_back(attrib.texcoords.data());
-			data.push_back(attrib.normals.data());
-
-			if (hasColor)
-			{
-				data.push_back(colors.data());
-			}
-
-			if (hasBinormal)
-			{
-				data.push_back(attrib.binormals.data());
-				data.push_back(attrib.tangents.data());
-			}
-
-			struct MeshFormatRef
-			{
-				const std::shared_ptr<Engine::Graphics::MeshFormat>& Ref;
-			};
-
-			MeshFormatRef formats[4] = {
-				importFormat,
-				importFormatWithColor,
-				importFormatWithBinormal,
-				importFormatWithColorAndBinormal
-			};
-
-			int formatIndex = (hasColor ? 1 : 0) + (hasBinormal ? 2 : 0);
-
-			const std::shared_ptr<Engine::Graphics::MeshFormat>& format = formats[formatIndex].Ref;
-
-			node.Format->Copy(node.Mesh->GetData(), data.data(), format, vertices);
-
-			if (hasColor)
-			{
-				for (size_t i = 0; i < vertices; ++i)
-				{
-					Color4 color = colors[i];
-
-					attrib.colors[4 * i + 0] = color.R;
-					attrib.colors[4 * i + 1] = color.G;
-					attrib.colors[4 * i + 2] = color.B;
-					attrib.colors[4 * i + 3] = color.A;
-				}
-			}
-
-			ObjLoader loader(helloVkPtr->textureCache, helloVkPtr->textureFormats, helloVkPtr->textureSamplers); 
-
-			std::vector<MaterialObj>& materials = loader.m_materials;
-
-			if (node.MaterialIndex != -1)
-			{
-				const Engine::Graphics::ModelPackageMaterial& packageMaterial = parser.Package->Materials[node.MaterialIndex];
-
-				loadedModel.Shaders[i] = packageMaterial.ShaderName;
-				loadedModel.MaterialNames[i] = packageMaterial.Name;
-
-				MaterialObj material;
-
-				material.diffuse[0] = packageMaterial.DiffuseColor.R;
-				material.diffuse[1] = packageMaterial.DiffuseColor.G;
-				material.diffuse[2] = packageMaterial.DiffuseColor.B;
-
-				material.specular[0] = packageMaterial.SpecularColor.R;
-				material.specular[1] = packageMaterial.SpecularColor.G;
-				material.specular[2] = packageMaterial.SpecularColor.B;
-
-				material.ambient[0] = packageMaterial.AmbientColor.R;
-				material.ambient[1] = packageMaterial.AmbientColor.G;
-				material.ambient[2] = packageMaterial.AmbientColor.B;
-
-				material.emission[0] = packageMaterial.EmissiveColor.R;
-				material.emission[1] = packageMaterial.EmissiveColor.G;
-				material.emission[2] = packageMaterial.EmissiveColor.B;
-
-				material.shininess = packageMaterial.Shininess;
-				material.dissolve = packageMaterial.Alpha;
-				material.colorBoost = packageMaterial.ColorBoost;
-				material.fresnelBoost = packageMaterial.FresnelBoost;
-				material.fresnelExponent = packageMaterial.FresnelExponent;
-
-				int shaderType = 0;
-
-				const auto& materialTypeIndex = materialTypeMap.find(packageMaterial.ShaderName);
-
-				if (materialTypeIndex != materialTypeMap.end())
-				{
-					shaderType = materialTypeIndex->second;
-				}
-				else
-				{
-					if (!unmappedMaterials.contains(packageMaterial.ShaderName) && packageMaterial.ShaderName != "")
-						unmappedMaterials.insert(packageMaterial.ShaderName);
-				}
-
-				std::string diffuse = packageMaterial.Diffuse.substr(0, diffuse.size() - 4);
-
-				if (strcmp(diffuse.c_str() + diffuse.size() - 4, ".dds") == 0)
-				{
-					diffuse = diffuse;
-				}
-
-				VkSamplerCreateInfo sampler = HelloVulkan::GetDefaultSampler();
-
-				std::string anisotropic = fs::path(packageMaterial.Anisotropic).stem().string();
-
-				if (lower(anisotropic) == "hair_a")
-					anisotropic = "Resource/Model/Textures/item_hair/hair_a";
-
-				material.textures.diffuse.id = helloVkPtr->GetTexture(fs::path(packageMaterial.Diffuse).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-				material.textures.specular.id = helloVkPtr->GetTexture(fs::path(packageMaterial.Specular).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-				material.textures.normal.id = helloVkPtr->GetTexture(fs::path(packageMaterial.Normal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-				material.textures.colorOverride.id = helloVkPtr->GetTexture(fs::path(packageMaterial.OverrideColor).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-				material.textures.emissive.id = helloVkPtr->GetTexture(fs::path(packageMaterial.Glow).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-				material.textures.decal.id = helloVkPtr->GetTexture(fs::path(packageMaterial.Decal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-				material.textures.anisotropic.id = helloVkPtr->GetTexture(anisotropic, VK_FORMAT_R8G8B8A8_UNORM, sampler);
-
-				const auto getTransform = [](const Engine::Graphics::ModelPackageTextureTransform& modelTransform) -> int
-				{
-					if (!modelTransform.Active)
-					{
-						return -1;
-					}
-
-					int id = (int)helloVkPtr->textureTransforms.size();
-
-					helloVkPtr->textureTransforms.push_back(TextureTransform{});
-
-					TextureTransform& transform = helloVkPtr->textureTransforms.back();
-
-					transform.translation = vec2{ modelTransform.Translation.X, modelTransform.Translation.Y };
-					transform.scale = vec2{ modelTransform.Scale.X, modelTransform.Scale.Y };
-					transform.pivot = vec2{ modelTransform.Pivot.X, modelTransform.Pivot.Y };
-					transform.rotation = modelTransform.Rotation;
-					transform.mode = modelTransform.Mode;
-
-					return id;
-				};
-
-				material.textures.diffuse.transformId = getTransform(packageMaterial.DiffuseTransform);
-				material.textures.specular.transformId = getTransform(packageMaterial.SpecularTransform);
-				material.textures.normal.transformId = getTransform(packageMaterial.NormalTransform);
-				material.textures.colorOverride.transformId = getTransform(packageMaterial.OverrideColorTransform);
-				material.textures.emissive.transformId = getTransform(packageMaterial.GlowTransform);
-				material.textures.decal.transformId = getTransform(packageMaterial.DecalTransform);
-				material.textures.anisotropic.transformId = getTransform(packageMaterial.AnisotropicTransform);
-
-				//material.overrideColor0[0] = packageMaterial.OverrideColor0.R;
-				//material.overrideColor0[1] = packageMaterial.OverrideColor0.G;
-				//material.overrideColor0[2] = packageMaterial.OverrideColor0.B;
-				//
-				//material.overrideColor1[0] = packageMaterial.OverrideColor1.R;
-				//material.overrideColor1[1] = packageMaterial.OverrideColor1.G;
-				//material.overrideColor1[2] = packageMaterial.OverrideColor1.B;
-				//
-				//material.overrideColor2[0] = packageMaterial.OverrideColor2.R;
-				//material.overrideColor2[1] = packageMaterial.OverrideColor2.G;
-				//material.overrideColor2[2] = packageMaterial.OverrideColor2.B;
-
-				bool debugDrawObject = packageMaterial.Name == "" && packageMaterial.ShaderName == "";
-
-				material.shaderType = (shaderType << 16) | (int)debugDrawObject;
-
-				material.textureModes = (int)packageMaterial.TextureApplyMode; // 2 bits
-				material.textureModes |= ((int)packageMaterial.SourceVertexMode << 2); // 2 bits
-				material.textureModes |= ((int)packageMaterial.LightingMode << 4); // 1 bit
-				material.textureModes |= ((int)packageMaterial.SourceBlendMode << 5); // 4 bits
-				material.textureModes |= ((int)packageMaterial.DestBlendMode << 9); // 4 bits
-				material.textureModes |= ((int)packageMaterial.AlphaTestMode << 13); // 4 bits
-				material.textureModes |= ((int)packageMaterial.TestThreshold << 17); // 4 bits
-
-				materials.push_back(material);
-			}
-
-			if (node.MaterialIndex == -1)
-			{
-				i += 0;
-			}
-
-			std::vector<tinyobj::shape_t> shapes(1);
-
-			tinyobj::shape_t shape;
-
-			shape.mesh.indices.reserve(indices);
-
-			for (int index : node.Mesh->GetIndexBuffer())
-			{
-				shape.mesh.indices.push_back(tinyobj::index_t{ index, index, index, index });
-			}
-
-			shape.mesh.material_ids.reserve(indices / 3);
-
-			for (int i = 0; i < indices / 3; ++i)
-			{
-				shape.mesh.material_ids.push_back(0);
-			}
-
-			shapes.push_back(shape);
-
-			loader.loadModel(attrib, {}, shapes);
-
-			loadedModel.Materials[i] = loader.m_materials[0];
-			loadedModel.ModelIds[i] = (int)helloVkPtr->loadModel(loader);
-		}
-	}
-
-	return true;
-}
-
-LoadedModel* getModel(const Archive::Metadata::Entry* entry, bool saveMesh = false)
-{
-	if (entry == nullptr) return nullptr;
-
-	fs::path filepath = "Resource";
-	filepath += entry->RelativePath;
-
-	std::string name = lower(entry->Name);
-
-	const auto& asset = models.find(entry);
-
-	if (asset != models.end())
-	{
-		return asset->second.get();
-	}
-
-	models[entry] = std::move(std::make_unique<LoadedModel>());
-
-	LoadedModel& loadedModel = *models[entry];
-
-	loadedModel.Entry = entry;
-
-	getModel(Reader.GetPath(filepath), loadedModel, saveMesh);
-
-	return &loadedModel;
 }
 
 enum class EntityLightType
@@ -777,7 +427,7 @@ struct EntityLight
 
 struct EntityData
 {
-	LoadedModel* Model = nullptr;
+	MapLoader::ModelData* Model = nullptr;
 	const Archive::Metadata::Entry* Entry = nullptr;
 	Matrix4F Transformation;
 	Vector3SF VisualOffset;
@@ -796,9 +446,9 @@ struct EntityData
 	int PortalId = -1;
 };
 
-typedef std::function<bool(LoadedModel*, size_t, InstDesc&)> ModelSpawnCallback;
+typedef std::function<bool(MapLoader::ModelData*, size_t, InstDesc&)> ModelSpawnCallback;
 
-SpawnedEntity* spawnModel(LoadedModel* model, const Matrix4F& transform = Matrix4F(), const ModelSpawnCallback& callback = nullptr)
+SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform = Matrix4F(), const ModelSpawnCallback& callback = nullptr)
 {
 	if (model == nullptr)
 		return nullptr;
@@ -806,7 +456,7 @@ SpawnedEntity* spawnModel(LoadedModel* model, const Matrix4F& transform = Matrix
 	int entityId = (int)spawnedEntities.size();
 	spawnedEntities.push_back(SpawnedEntity{ model });
 
-	for (size_t i = 0; i < model->ModelIds.size(); ++i)
+	for (size_t i = 0; i < model->MeshIds.size(); ++i)
 	{
 		if (model->IsLoaded(i))
 		{
@@ -937,7 +587,7 @@ struct ItemAsset
 {
 	std::string NifPath;
 	const Archive::Metadata::Entry* ModelEntry = nullptr;
-	LoadedModel* Model = nullptr;
+	MapLoader::ModelData* Model = nullptr;
 	std::string SelfNode;
 	std::string TargetNode;
 	std::string AttachNode;
@@ -1032,7 +682,7 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 		0
 	};
 
-	Archive::ArchivePath file = Reader.GetPath("Xml/Item/" + std::string(itemDir) + (id + ".xml"));
+	Archive::ArchivePath file = Reader->GetPath("Xml/Item/" + std::string(itemDir) + (id + ".xml"));
 
 	if (!file.Loaded())
 	{
@@ -1108,7 +758,7 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 								if (asset.ModelEntry)
 								{
 									asset.NifPath = "Resource" + asset.ModelEntry->RelativePath.string();
-									asset.Model = getModel(asset.ModelEntry, slot.Name == "HR");
+									asset.Model = ModelLibrary->FetchModel(asset.ModelEntry, slot.Name == "HR");
 								}
 							}
 						}
@@ -1116,7 +766,7 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 						{
 							asset.NifPath = nifPath + 5;
 							asset.ModelEntry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(nifPath + 5 + 8, "gamebryo-scenegraph");
-							asset.Model = getModel(asset.ModelEntry, slot.Name == "HR");
+							asset.Model = ModelLibrary->FetchModel(asset.ModelEntry, slot.Name == "HR");
 						}
 
 						asset.SelfNode = readAttribute<const char*>(attributeElement, "selfnode", "");
@@ -1162,13 +812,15 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 
 							ItemDecalTransform& transform = decal.Transforms.back();
 
+							auto& textureTransforms = ModelLibrary->GetTextureTransforms();
+
 							transform.Position = readAttribute<Vector3SF>(customElement, "position", {});
 							transform.Rotation = readAttribute<Vector3SF>(customElement, "rotation", {});
-							transform.TextureTransformId = (int)helloVkPtr->textureTransforms.size();
+							transform.TextureTransformId = (int)textureTransforms.size();
 							
-							helloVkPtr->textureTransforms.push_back(TextureTransform{});
+							textureTransforms.push_back(TextureTransform{});
 							
-							TextureTransform& textureTransform = helloVkPtr->textureTransforms.back();
+							TextureTransform& textureTransform = textureTransforms.back();
 							textureTransform.scale = { 1, 1 };
 							textureTransform.translation = { -transform.Position.X, -transform.Position.Y };
 							textureTransform.pivot = { 0.5f, 0.5f };
@@ -1181,13 +833,13 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 							}
 						}
 
-						VkSamplerCreateInfo sampler = HelloVulkan::GetDefaultSampler();
+						VkSamplerCreateInfo sampler = MapLoader::TextureAsset::GetDefaultSampler();
 						sampler.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
 						sampler.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
 						sampler.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
 
-						decal.Texture = helloVkPtr->GetTexture(decal.TexturePath, VK_FORMAT_R8G8B8A8_UNORM, sampler);
-						decal.ControlTexture = helloVkPtr->GetTexture(decal.ControlTexturePath, VK_FORMAT_R8G8B8A8_UNORM, sampler);
+						decal.Texture = TextureLibrary->FetchTexture(decal.TexturePath, VK_FORMAT_R8G8B8A8_UNORM, sampler);
+						decal.ControlTexture = TextureLibrary->FetchTexture(decal.ControlTexturePath, VK_FORMAT_R8G8B8A8_UNORM, sampler);
 
 						continue;
 					}
@@ -1267,7 +919,7 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 		}
 	}
 
-	helloVkPtr->flushNewTextures();
+	TextureLibrary->FlushLoadingQueue();
 
 	return &model;
 }
@@ -1398,7 +1050,7 @@ void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 
 	const Archive::Metadata::Entry* rigEntry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(rigPath, "gamebryo-scenegraph");
 
-	LoadedModel* rig = getModel(rigEntry, true);
+	MapLoader::ModelData* rig = ModelLibrary->FetchModel(rigEntry, true);
 
 	if (character.HideEars)
 		character.CutMeshes.push_back("FA_EA");
@@ -1412,7 +1064,7 @@ void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 
 	EmotionTexture face = GetFace(data.Gender, data.Emotion, data.EmotionFrame, data.Face.Id);
 
-	const auto spawnCallback = [&character, &dyeColor, &spawningRig, &currentSlot, &faceDecor, &face](LoadedModel* model, size_t i, InstDesc& instance)
+	const auto spawnCallback = [&character, &dyeColor, &spawningRig, &currentSlot, &faceDecor, &face](MapLoader::ModelData* model, size_t i, InstDesc& instance)
 	{
 		const std::string& meshName = model->NodeNames[i];
 
@@ -1469,8 +1121,8 @@ void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 
 			if (currentSlot->Slot->Name == "FA" && model->NodeNames[i] == "FA")
 			{
-				int diffuseTexture = helloVkPtr->GetTexture("Resource/Model/Textures/" + face.File, VK_FORMAT_R8G8B8A8_UNORM);
-				int controlTexture = helloVkPtr->GetTexture("Resource/Model/Textures/" + face.Control, VK_FORMAT_R8G8B8A8_UNORM);
+				int diffuseTexture = TextureLibrary->FetchTexture("Resource/Model/Textures/" + face.File, VK_FORMAT_R8G8B8A8_UNORM);
+				int controlTexture = TextureLibrary->FetchTexture("Resource/Model/Textures/" + face.Control, VK_FORMAT_R8G8B8A8_UNORM);
 
 				if (diffuseTexture != -1)
 				{
@@ -1748,13 +1400,13 @@ void LoadEntity(EntityData& entity, tinyxml2::XMLElement* entityElement)
 
 	if (modelEntry != nullptr && modelEntry != entity.ModelEntry && entity.IsVisible)
 	{
-		entity.Model = getModel(modelEntry);
+		entity.Model = ModelLibrary->FetchModel(modelEntry);
 		entity.ModelEntry = modelEntry;
 	}
 
 	if (entity.IsVisible && entity.Model == nullptr && modelEntry != nullptr)
 	{
-		entity.Model = getModel(modelEntry);
+		entity.Model = ModelLibrary->FetchModel(modelEntry);
 	}
 
 	entity.Transformation = getMatrix(entity.Position, entity.Rotation, entity.Scale);
@@ -1780,7 +1432,7 @@ EntityData* loadFlat(const std::string& name)
 	if (entry == nullptr)
 		return nullptr;
 
-	Archive::ArchivePath flatFile = Reader.GetPath("Resource" + entry->RelativePath.string());
+	Archive::ArchivePath flatFile = Reader->GetPath("Resource" + entry->RelativePath.string());
 
 	if (!flatFile.Loaded())
 	{
@@ -1818,7 +1470,7 @@ void loadMap(const std::string& mapId)
 	}
 	else
 	{
-		Archive::ArchivePath mapFile = Reader.GetPath("Xml/map/" + padId(mapId) + ".xml");
+		Archive::ArchivePath mapFile = Reader->GetPath("Xml/map/" + padId(mapId) + ".xml");
 
 		if (!mapFile.Loaded())
 		{
@@ -1859,7 +1511,7 @@ void loadMap(const std::string& mapId)
 		return;
 	}
 
-	Archive::ArchivePath xblockFile = Reader.GetPath("Resource/" + entry->RelativePath.string());
+	Archive::ArchivePath xblockFile = Reader->GetPath("Resource/" + entry->RelativePath.string());
 
 	if (!xblockFile.Loaded())
 	{
@@ -1894,7 +1546,7 @@ void loadMap(const std::string& mapId)
 
 		if (flat == nullptr)
 			flat = loadFlat(modelName);
-		LoadedModel* model = flat->Model;
+		MapLoader::ModelData* model = flat->Model;
 
 		if (flat == nullptr)
 			continue;
@@ -1939,7 +1591,7 @@ void loadMap(const std::string& mapId)
 		if (model == nullptr)
 			continue;
 
-		SpawnedEntity* newModel = spawnModel(model, entity.Transformation, [&entity](LoadedModel* model, size_t i, InstDesc& instance)
+		SpawnedEntity* newModel = spawnModel(model, entity.Transformation, [&entity](MapLoader::ModelData* model, size_t i, InstDesc& instance)
 			{
 				instance.color = vec3(entity.MaterialColor.R, entity.MaterialColor.G, entity.MaterialColor.B);
 				instance.flags = entity.IsVisible ? 0 : 1;
@@ -2312,7 +1964,7 @@ int main(int argc, char** argv)
 	std::cout << "path found: " << fs::exists(ms2Root) << std::endl;
 	std::cout << "locale: " << localeName << "; env: " << environmentName << std::endl;
 
-	Reader.Load(ms2Root / "Data", true);
+	Reader->Load(ms2Root / "Data", true);
 
 	std::cout << "archives loaded, indexing asset-web-metadata" << std::endl;
 
@@ -2334,14 +1986,14 @@ int main(int argc, char** argv)
 	if (!Archive::Metadata::Entry::LoadCached(webMetaCache))
 	{
 		std::cout << "no asset-web-metadata cache found, loading" << std::endl;
-		Archive::Metadata::Entry::LoadEntries(Reader, "Resource/asset-web-metadata", documentBuffer);
+		Archive::Metadata::Entry::LoadEntries(*Reader, "Resource/asset-web-metadata", documentBuffer);
 		std::cout << "caching asset-web-metadata" << std::endl;
 		Archive::Metadata::Entry::Cache(webMetaCache);
 	}
 	else
 		std::cout << "asset-web-metadata cache found and loaded" << std::endl;
 
-	if (!loadFeatures(Reader.GetPath("Xml/table"), localeName, environmentName, documentBuffer)) return -1;
+	if (!loadFeatures(Reader->GetPath("Xml/table"), localeName, environmentName, documentBuffer)) return -1;
 
 	std::cout << "loaded features" << std::endl;
 	
@@ -2408,11 +2060,18 @@ int main(int argc, char** argv)
 	// Use a compatible device
 	vkctx.initDevice(compatibleDevices[0], contextInfo);
 
+	VulkanContext = std::make_shared<Graphics::VulkanContext>();
+	TextureLibrary = std::make_shared<MapLoader::TextureLibrary>(Reader, VulkanContext);
+	ModelLibrary = std::make_shared<MapLoader::ModelLibrary>(Reader, TextureLibrary, VulkanContext);
+
 	// Create example
 	HelloVulkan helloVk;
 
 	helloVkPtr = &helloVk;
-	helloVk.Reader = &Reader;
+	helloVk.Reader = Reader.get();
+	helloVk.ModelLibrary = ModelLibrary;
+	helloVk.TextureLibrary = TextureLibrary;
+	helloVk.VulkanContext = VulkanContext;
 
 	// Window need to be opened to get the surface on which to draw
 	const VkSurfaceKHR surface = helloVk.getVkSurface(vkctx.m_instance, window);
@@ -2427,39 +2086,14 @@ int main(int argc, char** argv)
 	// Setup Imgui
 	helloVk.initGUI(0);  // Using sub-pass 0
 
-	loadDyes(Reader.GetPath("Xml/table/colorpalette.xml"), dyeColors);
-	loadDyes(Reader.GetPath("Xml/table/na/colorpalette_achieve.xml"), dyeColorsNA);
-	loadDyeNames(Reader.GetPath("Xml/string/en/stringcolorpalette.xml"), dyeColorsNA);
-	loadEmotions(Reader.GetPath("Xml/emotion/common/femalecustom.xml"), femaleEmotions);
-	loadEmotions(Reader.GetPath("Xml/emotion/common/malecustom.xml"), maleEmotions);
+	loadDyes(Reader->GetPath("Xml/table/colorpalette.xml"), dyeColors);
+	loadDyes(Reader->GetPath("Xml/table/na/colorpalette_achieve.xml"), dyeColorsNA);
+	loadDyeNames(Reader->GetPath("Xml/string/en/stringcolorpalette.xml"), dyeColorsNA);
+	loadEmotions(Reader->GetPath("Xml/emotion/common/femalecustom.xml"), femaleEmotions);
+	loadEmotions(Reader->GetPath("Xml/emotion/common/malecustom.xml"), maleEmotions);
 
-	loadMapNames(Reader.GetPath("Xml/string/en/mapname.xml"));
-	loadMapFileNames(Reader.GetPath("Xml/table/fielddata.xml"));
-
-	std::vector<Engine::Graphics::VertexAttributeFormat> attributes;
-
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "position", 0 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 2, "textureCoords", 1 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "normal", 2 });
-
-	importFormat = Engine::Graphics::MeshFormat::GetFormat(attributes);
-
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "COLOR", 3 });
-
-	importFormatWithColor = Engine::Graphics::MeshFormat::GetFormat(attributes);
-
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 4 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 5 });
-
-	importFormatWithColorAndBinormal = Engine::Graphics::MeshFormat::GetFormat(attributes);
-
-	attributes.resize(3);
-
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 3 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 4 });
-
-	importFormatWithBinormal = Engine::Graphics::MeshFormat::GetFormat(attributes);
-
+	loadMapNames(Reader->GetPath("Xml/string/en/mapname.xml"));
+	loadMapFileNames(Reader->GetPath("Xml/table/fielddata.xml"));
 
 	struct mapPlacement
 	{
@@ -3023,7 +2657,7 @@ int main(int argc, char** argv)
 
 					if (ImGui::CollapsingHeader("Unmapped Materials Found:"))
 					{
-						for (const std::string& name : unmappedMaterials)
+						for (const std::string& name : ModelLibrary->GetUnmappedMaterials())
 						{
 							ImGui::Text(("\t" + name).c_str());
 						}

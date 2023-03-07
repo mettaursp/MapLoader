@@ -46,6 +46,8 @@
 #include <set>
 #include <vector>
 
+#include <MapLoader/Vulkan/VulkanContext.h>
+
 namespace nvvkhl {
 
 
@@ -311,12 +313,14 @@ public:
   static void char_cb(GLFWwindow* window, unsigned int key);
   static void drop_cb(GLFWwindow* window, int count, const char** paths);
 
+  std::shared_ptr<Graphics::VulkanContext> VulkanContext;
+
   // Getters
   VkInstance                          getInstance() { return m_instance; }
-  VkDevice                            getDevice() { return m_device; }
+  VkDevice                            getDevice() { return VulkanContext->Device; }
   VkPhysicalDevice                    getPhysicalDevice() { return m_physicalDevice; }
   VkQueue                             getQueue() { return m_queue; }
-  uint32_t                            getQueueFamily() { return m_graphicsQueueIndex; }
+  uint32_t                            getQueueFamily() { return VulkanContext->GraphicsQueueIndex; }
   VkCommandPool                       getCommandPool() { return m_cmdPool; }
   VkRenderPass                        getRenderPass() { return m_renderPass; }
   VkExtent2D                          getSize() { return m_size; }
@@ -346,11 +350,9 @@ protected:
 
   // Vulkan low level
   VkInstance       m_instance{};
-  VkDevice         m_device{};
   VkSurfaceKHR     m_surface{};
   VkPhysicalDevice m_physicalDevice{};
   VkQueue          m_queue{VK_NULL_HANDLE};
-  uint32_t         m_graphicsQueueIndex{VK_QUEUE_FAMILY_IGNORED};
   VkCommandPool    m_cmdPool{VK_NULL_HANDLE};
   VkDescriptorPool m_imguiDescPool{VK_NULL_HANDLE};
 

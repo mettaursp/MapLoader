@@ -64,10 +64,10 @@
     <Import Project="RTCoreInclude.props" />
     <Import Project="..\GameEngine\GameEngineInclude.props" />
     <Import Project="..\GLFW\GLFWInclude.props" />
-    <Import Project="..\DebugOptimization.props" />
     <Import Project="..\tinygltf\tinygltfInclude.props" />
     <Import Project="..\tinyobjloader\tinyobjloaderInclude.props" />
     <Import Project="..\Imgui\ImguiInclude.props" />
+    <Import Project="..\MapLoader\MapLoaderInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -80,6 +80,7 @@
     <Import Project="..\tinygltf\tinygltfInclude.props" />
     <Import Project="..\tinyobjloader\tinyobjloaderInclude.props" />
     <Import Project="..\Imgui\ImguiInclude.props" />
+    <Import Project="..\MapLoader\MapLoaderInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -88,10 +89,10 @@
     <Import Project="RTCoreInclude.props" />
     <Import Project="..\GameEngine\GameEngineInclude.props" />
     <Import Project="..\GLFW\GLFWInclude.props" />
-    <Import Project="..\DebugOptimization.props" />
     <Import Project="..\tinygltf\tinygltfInclude.props" />
     <Import Project="..\tinyobjloader\tinyobjloaderInclude.props" />
     <Import Project="..\Imgui\ImguiInclude.props" />
+    <Import Project="..\MapLoader\MapLoaderInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -104,6 +105,7 @@
     <Import Project="..\tinygltf\tinygltfInclude.props" />
     <Import Project="..\tinyobjloader\tinyobjloaderInclude.props" />
     <Import Project="..\Imgui\ImguiInclude.props" />
+    <Import Project="..\MapLoader\MapLoaderInclude.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

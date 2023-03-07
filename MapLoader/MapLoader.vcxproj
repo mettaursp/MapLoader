@@ -177,14 +177,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\MapLoader\Assets\ModelData.cpp" />
+    <ClCompile Include="src\MapLoader\Assets\ModelLibrary.cpp" />
+    <ClCompile Include="src\MapLoader\Assets\TextureAsset.cpp" />
+    <ClCompile Include="src\MapLoader\Assets\TextureLibrary.cpp" />
     <ClCompile Include="src\MapLoader\hello_vulkan.cpp" />
     <ClCompile Include="src\MapLoader\main.cpp" />
     <ClCompile Include="src\MapLoader\obj_loader.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\VulkanContext.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaders\host_device.h" />
+    <ClInclude Include="src\MapLoader\Assets\ModelData.h" />
+    <ClInclude Include="src\MapLoader\Assets\ModelLibrary.h" />
+    <ClInclude Include="src\MapLoader\Assets\TextureAsset.h" />
+    <ClInclude Include="src\MapLoader\Assets\TextureLibrary.h" />
     <ClInclude Include="src\MapLoader\hello_vulkan.h" />
     <ClInclude Include="src\MapLoader\obj_loader.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\VulkanContext.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">

@@ -38,29 +38,6 @@ void ObjLoader::loadModel(const std::string& filename)
 		loadModel(reader.GetAttrib(), reader.GetMaterials(), reader.GetShapes());
 }
 
-int ObjLoader::GetTexture(const std::string& name, VkFormat format, const VkSamplerCreateInfo& sampler)
-{
-		if (!name.empty())
-		{
-				const auto& cached = textureCache.find(name);
-
-				if (cached == textureCache.end())
-				{
-						m_textures.push_back(name);
-						textureFormats.push_back(format);
-						textureSamplers.push_back(sampler);
-						int id = static_cast<int>(m_textures.size()) - 1;
-						textureCache[name] = id;
-
-						return id;
-				}
-				else
-						return cached->second;
-		}
-
-		return -1;
-}
-
 void ObjLoader::loadModel(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::material_t>& materials, const std::vector<tinyobj::shape_t>& shapes)
 {
 	// Collecting the material in the scene
@@ -76,12 +53,12 @@ void ObjLoader::loadModel(const tinyobj::attrib_t& attrib, const std::vector<tin
 		m.ior           = material.ior;
 		m.shininess     = material.shininess;
 		m.shaderType = (material.shaderType << 16) | (int)material.debugDrawObject;
-		m.textures.diffuse.id = GetTexture(material.diffuse_texname, VK_FORMAT_R8G8B8A8_UNORM, material.diffuseSampler);
-		m.textures.specular.id = GetTexture(material.specular_texname, VK_FORMAT_R8G8B8A8_UNORM, material.specularSampler);
-		m.textures.normal.id = GetTexture(material.normal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.normalSampler);
-		m.textures.colorOverride.id = GetTexture(material.color_override_texname, VK_FORMAT_R8G8B8A8_UNORM, material.colorOverrideSampler);
-		m.textures.emissive.id = GetTexture(material.emissive_texname, VK_FORMAT_R8G8B8A8_UNORM, material.emissiveSampler);
-		m.textures.decal.id = GetTexture(material.decal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.decalSampler);
+		m.textures.diffuse.id = TextureLibrary->FetchTexture(material.diffuse_texname, VK_FORMAT_R8G8B8A8_UNORM, material.diffuseSampler);
+		m.textures.specular.id = TextureLibrary->FetchTexture(material.specular_texname, VK_FORMAT_R8G8B8A8_UNORM, material.specularSampler);
+		m.textures.normal.id = TextureLibrary->FetchTexture(material.normal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.normalSampler);
+		m.textures.colorOverride.id = TextureLibrary->FetchTexture(material.color_override_texname, VK_FORMAT_R8G8B8A8_UNORM, material.colorOverrideSampler);
+		m.textures.emissive.id = TextureLibrary->FetchTexture(material.emissive_texname, VK_FORMAT_R8G8B8A8_UNORM, material.emissiveSampler);
+		m.textures.decal.id = TextureLibrary->FetchTexture(material.decal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.decalSampler);
 		m.textures.diffuse.transformId = material.diffuseTransformId;
 		m.textures.specular.transformId = material.specularTransformId;
 		m.textures.normal.transformId = material.normalTransformId;

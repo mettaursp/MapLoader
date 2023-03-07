@@ -27,6 +27,13 @@
 
 #include "nvprint.hpp"
 
+#ifdef min
+#undef min
+#endif
+#ifdef max
+#undef max
+#endif
+
 /**
  # functions in nvh
 

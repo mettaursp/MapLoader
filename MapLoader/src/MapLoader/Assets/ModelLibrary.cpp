@@ -242,13 +242,19 @@ namespace MapLoader
 					if (lower(anisotropic) == "hair_a")
 						anisotropic = "Resource/Model/Textures/item_hair/hair_a";
 
-					material.textures.diffuse.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Diffuse).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					material.textures.specular.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Specular).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					material.textures.normal.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Normal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					material.textures.colorOverride.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.OverrideColor).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					material.textures.emissive.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Glow).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					material.textures.decal.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Decal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					material.textures.anisotropic.id = TextureLibrary->FetchTexture(anisotropic, VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					material.textures = (int)MaterialTextures.size();
+
+					MaterialTextures.push_back({});
+
+					::MaterialTextures& textures = MaterialTextures.back();
+
+					textures.diffuse.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Diffuse).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.specular.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Specular).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.normal.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Normal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.colorOverride.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.OverrideColor).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.emissive.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Glow).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.decal.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Decal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.anisotropic.id = TextureLibrary->FetchTexture(anisotropic, VK_FORMAT_R8G8B8A8_UNORM, sampler);
 
 					const auto getTransform = [this](const Engine::Graphics::ModelPackageTextureTransform& modelTransform) -> int
 					{
@@ -272,13 +278,13 @@ namespace MapLoader
 						return id;
 					};
 
-					material.textures.diffuse.transformId = getTransform(packageMaterial.DiffuseTransform);
-					material.textures.specular.transformId = getTransform(packageMaterial.SpecularTransform);
-					material.textures.normal.transformId = getTransform(packageMaterial.NormalTransform);
-					material.textures.colorOverride.transformId = getTransform(packageMaterial.OverrideColorTransform);
-					material.textures.emissive.transformId = getTransform(packageMaterial.GlowTransform);
-					material.textures.decal.transformId = getTransform(packageMaterial.DecalTransform);
-					material.textures.anisotropic.transformId = getTransform(packageMaterial.AnisotropicTransform);
+					textures.diffuse.transformId = getTransform(packageMaterial.DiffuseTransform);
+					textures.specular.transformId = getTransform(packageMaterial.SpecularTransform);
+					textures.normal.transformId = getTransform(packageMaterial.NormalTransform);
+					textures.colorOverride.transformId = getTransform(packageMaterial.OverrideColorTransform);
+					textures.emissive.transformId = getTransform(packageMaterial.GlowTransform);
+					textures.decal.transformId = getTransform(packageMaterial.DecalTransform);
+					textures.anisotropic.transformId = getTransform(packageMaterial.AnisotropicTransform);
 
 					//material.overrideColor0[0] = packageMaterial.OverrideColor0.R;
 					//material.overrideColor0[1] = packageMaterial.OverrideColor0.G;
@@ -447,5 +453,7 @@ namespace MapLoader
 
 		Models.clear();
 		ModelMap.clear();
+		GpuMeshData.clear();
+		MeshDescriptions.clear();
 	}
 }

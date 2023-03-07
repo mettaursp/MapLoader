@@ -124,7 +124,8 @@ void main()
 		return;
 	}
 
-	MaterialTextures textures = instanceDesc.textureOverride != -1 ? texOverride.i[instanceDesc.textureOverride] : mat.textures;
+	int texturesIndex = instanceDesc.textureOverride != -1 ? instanceDesc.textureOverride : mat.textures;
+	MaterialTextures textures = texOverride.i[texturesIndex];
 
 	if (textures.diffuse.id < 0 && textures.decal.id < 0)
 	{

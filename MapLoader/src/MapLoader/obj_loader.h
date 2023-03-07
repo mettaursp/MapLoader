@@ -95,6 +95,11 @@ struct shapeObj
 	uint32_t matIndex;
 };
 
+namespace MapLoader
+{
+	class ModelLibrary;
+}
+
 class ObjLoader
 {
 public:
@@ -106,6 +111,7 @@ public:
 	std::vector<uint32_t>    m_indices;
 	std::vector<MaterialObj> m_materials;
 	std::vector<std::string> m_textures;
+	std::shared_ptr<MapLoader::ModelLibrary> ModelLibrary;
 	std::shared_ptr<MapLoader::TextureLibrary> TextureLibrary;
 	std::vector<std::string> m_textures2;
 	std::vector<int32_t>     m_matIndx;

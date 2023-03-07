@@ -1088,11 +1088,13 @@ void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 
 		if (currentSlot != nullptr && (currentSlot->Slot->Decals.size() > 0 || currentSlot->Slot->Name == "FA"))
 		{
-			instance.textureOverride = (int)helloVkPtr->textureOverrides.size();
+			auto& materialTextures = ModelLibrary->GetMaterialTextures();
 
-			helloVkPtr->textureOverrides.push_back(model->Materials[i].textures);
+			instance.textureOverride = (int)materialTextures.size();
 
-			MaterialTextures& overrides = helloVkPtr->textureOverrides.back();
+			materialTextures.push_back(materialTextures[model->Materials[i].textures]);
+
+			MaterialTextures& overrides = materialTextures.back();
 
 			for (const ItemDecal& decal : currentSlot->Slot->Decals)
 			{

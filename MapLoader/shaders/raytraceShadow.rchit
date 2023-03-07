@@ -23,7 +23,9 @@ layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // 
 layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
 layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { ObjDesc i[]; } objDesc;
 layout(set = 1, binding = eTextures) uniform sampler2D textureSamplers[];
+layout(set = 1, binding = eInstDescs, scalar) buffer InstanceDescription_ { InstDesc i[]; } instDesc;
 layout(set = 1, binding = eTextureTransforms, scalar) buffer TextureTransform_ { TextureTransform i[]; } textureTransform;
+layout(set = 1, binding = eTextureOverrides, scalar) buffer MaterialTextures_ { MaterialTextures i[]; } texOverride;
 
 
 layout(push_constant) uniform _PushConstantRay { PushConstantRay pcRay; };
@@ -59,6 +61,7 @@ vec2 getTextCoords(vec2 textureCoords, int transformId)
 void main()
 {
 	// Object data
+	InstDesc    instanceDesc = instDesc.i[gl_InstanceID];
 	ObjDesc    objResource = objDesc.i[gl_InstanceCustomIndexEXT];
 	MatIndices matIndices  = MatIndices(objResource.materialIndexAddress);
 	Materials  materials   = Materials(objResource.materialAddress);
@@ -68,6 +71,8 @@ void main()
 	// Material of the object
 	int               matIdx = matIndices.i[gl_PrimitiveID];
 	WaveFrontMaterial mat    = materials.m[matIdx];
+	int texturesIndex = instanceDesc.textureOverride != -1 ? instanceDesc.textureOverride : mat.textures;
+	MaterialTextures textures = texOverride.i[texturesIndex];
 
 	// Indices of the triangle
 	ivec3 ind = indices.i[gl_PrimitiveID];
@@ -113,9 +118,9 @@ void main()
 
 	vec2 texCoord = v0.texCoord * barycentrics.x + v1.texCoord * barycentrics.y + v2.texCoord * barycentrics.z;
 
-	if(mat.textures.diffuse.id >= 0)
+	if(textures.diffuse.id >= 0)
 	{
-		vec4 diffuseTextureColor = textureLod(textureSamplers[nonuniformEXT(mat.textures.diffuse.id)], getTextCoords(texCoord, mat.textures.diffuse.transformId), 1);
+		vec4 diffuseTextureColor = textureLod(textureSamplers[nonuniformEXT(textures.diffuse.id)], getTextCoords(texCoord, textures.diffuse.transformId), 1);
 
 		diffuseColor = textureApplyColor(textureApply, diffuseTextureColor.xyz, diffuseColor, diffuseTextureColor.w);
 		alpha = textureApplyAlpha(textureApply, diffuseTextureColor.w, alpha);

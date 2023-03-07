@@ -193,7 +193,7 @@ struct WaveFrontMaterial  // See ObjLoader, copy of MaterialObj, could be compre
 	float ior WITH_DEFAULT(1);       // index of refraction
 	vec3  emission WITH_DEFAULT(vec3(0.0f, 0.0f, 0.10));
 	int   shaderType WITH_DEFAULT(-1);     // illumination model (see http://www.fileformat.info/format/material/)
-	MaterialTextures textures;
+	int textures;
 	int   textureModes WITH_DEFAULT(0);
 	float fresnelBoost WITH_DEFAULT(0);
 	float fresnelExponent WITH_DEFAULT(1);

@@ -131,7 +131,8 @@ void main()
 	// Material of the object
 	int               matIdx = matIndices.i[gl_PrimitiveID];
 	WaveFrontMaterial mat    = materials.m[matIdx];
-	MaterialTextures textures = instanceDesc.textureOverride != -1 ? texOverride.i[instanceDesc.textureOverride] : mat.textures;
+	int texturesIndex = instanceDesc.textureOverride != -1 ? instanceDesc.textureOverride : mat.textures;
+	MaterialTextures textures = texOverride.i[texturesIndex];
 
 	int shaderType = mat.shaderType & 0xFFFF0000;
 	shaderType = shaderType < 0 ? -1 : shaderType >> 16;
@@ -277,7 +278,7 @@ void main()
 	vec3 specular = vec3(0, 0, 0);
 	vec3 ambient = vec3(0, 0, 0);
 
-	bool hasSpecular = uni.lightingModel != eMS2Phong || mat.textures.specular.id >= 0 || shaderType == eMS2GlassMaterial || shaderType == eMS2CharacterSkinMaterial || shaderType == eMS2CharacterMaterial;
+	bool hasSpecular = uni.lightingModel != eMS2Phong || textures.specular.id >= 0 || shaderType == eMS2GlassMaterial || shaderType == eMS2CharacterSkinMaterial || shaderType == eMS2CharacterMaterial;
 
 	for (int i = 0; i < uni.lightCount; ++i)
 	{

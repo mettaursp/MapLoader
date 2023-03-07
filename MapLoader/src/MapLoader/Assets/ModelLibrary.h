@@ -12,7 +12,6 @@
 
 namespace MapLoader
 {
-
 	class ModelLibrary
 	{
 	public:
@@ -29,6 +28,8 @@ namespace MapLoader
 		const auto& GetMeshDescriptions() const { return MeshDescriptions; }
 		const auto& GetGpuData() const { return GpuMeshData; }
 		const auto& GetTextureTransforms() const { return TextureTransforms; }
+		auto& GetMaterialTextures() { return MaterialTextures; }
+		const auto& GetMaterialTextures() const { return MaterialTextures; }
 		auto& GetTextureTransforms() { return TextureTransforms; }
 
 		void FreeResources();
@@ -49,6 +50,7 @@ namespace MapLoader
 		std::vector<std::unique_ptr<ModelData>> Models;
 		std::vector<ObjDesc> GpuMeshData;
 		std::vector<MeshDescription> MeshDescriptions;
+		std::vector<MaterialTextures> MaterialTextures;
 
 		static std::unordered_set<std::string> UnmappedMaterials;
 

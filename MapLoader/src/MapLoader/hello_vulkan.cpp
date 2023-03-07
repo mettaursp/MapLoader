@@ -317,11 +317,12 @@ void HelloVulkan::createObjDescriptionBuffer()
 	VulkanContext->Allocator.finalizeAndReleaseStaging();
 	VulkanContext->Debug.setObjectName(m_mouseIO.buffer, "MouseIODescs");
 
-	if (textureOverrides.size() == 0)
-		textureOverrides.push_back({});
-
+	const auto& libraryMaterialTextures = ModelLibrary->GetMaterialTextures();
+	static const std::vector<MaterialTextures> defaultMaterialTextures{ {} };
+	const auto& materialTextures = libraryMaterialTextures.size() == 0 ? defaultMaterialTextures : libraryMaterialTextures;
+	
 	auto cmdBuf6 = cmdGen.createCommandBuffer();
-	m_textureOverride = VulkanContext->Allocator.createBuffer(cmdBuf6, textureOverrides, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+	m_textureOverride = VulkanContext->Allocator.createBuffer(cmdBuf6, materialTextures, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf6);
 	VulkanContext->Allocator.finalizeAndReleaseStaging();
 	VulkanContext->Debug.setObjectName(m_textureOverride.buffer, "TextureOverrides");

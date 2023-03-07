@@ -21,6 +21,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "obj_loader.h"
 #include "nvh/nvprint.hpp"
+#include "Assets/ModelLibrary.h"
 
 #include <map>
 
@@ -40,6 +41,8 @@ void ObjLoader::loadModel(const std::string& filename)
 
 void ObjLoader::loadModel(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::material_t>& materials, const std::vector<tinyobj::shape_t>& shapes)
 {
+	auto& materialTextures = ModelLibrary->GetMaterialTextures();
+
 	// Collecting the material in the scene
 	for(const auto& material : materials)
 	{
@@ -53,18 +56,25 @@ void ObjLoader::loadModel(const tinyobj::attrib_t& attrib, const std::vector<tin
 		m.ior           = material.ior;
 		m.shininess     = material.shininess;
 		m.shaderType = (material.shaderType << 16) | (int)material.debugDrawObject;
-		m.textures.diffuse.id = TextureLibrary->FetchTexture(material.diffuse_texname, VK_FORMAT_R8G8B8A8_UNORM, material.diffuseSampler);
-		m.textures.specular.id = TextureLibrary->FetchTexture(material.specular_texname, VK_FORMAT_R8G8B8A8_UNORM, material.specularSampler);
-		m.textures.normal.id = TextureLibrary->FetchTexture(material.normal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.normalSampler);
-		m.textures.colorOverride.id = TextureLibrary->FetchTexture(material.color_override_texname, VK_FORMAT_R8G8B8A8_UNORM, material.colorOverrideSampler);
-		m.textures.emissive.id = TextureLibrary->FetchTexture(material.emissive_texname, VK_FORMAT_R8G8B8A8_UNORM, material.emissiveSampler);
-		m.textures.decal.id = TextureLibrary->FetchTexture(material.decal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.decalSampler);
-		m.textures.diffuse.transformId = material.diffuseTransformId;
-		m.textures.specular.transformId = material.specularTransformId;
-		m.textures.normal.transformId = material.normalTransformId;
-		m.textures.colorOverride.transformId = material.colorOverrideTransformId;
-		m.textures.emissive.transformId = material.emissiveTransformId;
-		m.textures.decal.transformId = material.decalTransformId;
+
+		m.textures = (int)materialTextures.size();
+
+		materialTextures.push_back({});
+
+		MaterialTextures& textures = materialTextures.back();
+
+		textures.diffuse.id = TextureLibrary->FetchTexture(material.diffuse_texname, VK_FORMAT_R8G8B8A8_UNORM, material.diffuseSampler);
+		textures.specular.id = TextureLibrary->FetchTexture(material.specular_texname, VK_FORMAT_R8G8B8A8_UNORM, material.specularSampler);
+		textures.normal.id = TextureLibrary->FetchTexture(material.normal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.normalSampler);
+		textures.colorOverride.id = TextureLibrary->FetchTexture(material.color_override_texname, VK_FORMAT_R8G8B8A8_UNORM, material.colorOverrideSampler);
+		textures.emissive.id = TextureLibrary->FetchTexture(material.emissive_texname, VK_FORMAT_R8G8B8A8_UNORM, material.emissiveSampler);
+		textures.decal.id = TextureLibrary->FetchTexture(material.decal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.decalSampler);
+		textures.diffuse.transformId = material.diffuseTransformId;
+		textures.specular.transformId = material.specularTransformId;
+		textures.normal.transformId = material.normalTransformId;
+		textures.colorOverride.transformId = material.colorOverrideTransformId;
+		textures.emissive.transformId = material.emissiveTransformId;
+		textures.decal.transformId = material.decalTransformId;
 
 		m.textureModes =   (int)material.TextureApplyMode; // 2 bits
 		m.textureModes |= ((int)material.SourceVertexMode << 2); // 2 bits

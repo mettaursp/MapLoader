@@ -83,13 +83,13 @@ void main()
 
 	// Diffuse
 	vec3 diffuse = computeDiffuse(mat, L, N);
-	if(mat.textures.diffuse.id >= 0)
-	{
-		int  txtOffset  = objDesc.i[pcRaster.objIndex].txtOffset;
-		uint txtId      = txtOffset + mat.textures.diffuse.id;
-		vec3 diffuseTxt = texture(textureSamplers[nonuniformEXT(txtId)], i_texCoord).xyz;
-		diffuse *= diffuseTxt;
-	}
+	//if(mat.textures.diffuse.id >= 0)
+	//{
+	//	int  txtOffset  = objDesc.i[pcRaster.objIndex].txtOffset;
+	//	uint txtId      = txtOffset + mat.textures.diffuse.id;
+	//	vec3 diffuseTxt = texture(textureSamplers[nonuniformEXT(txtId)], i_texCoord).xyz;
+	//	diffuse *= diffuseTxt;
+	//}
 
 	// Specular
 	vec3 specular = computeSpecular(mat, i_viewDir, L, N);

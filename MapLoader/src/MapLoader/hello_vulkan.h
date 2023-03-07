@@ -88,7 +88,6 @@ public:
 	std::vector<ObjInstance> m_instances;  // Scene model instances
 	std::vector<LightDesc>   lights;
 	std::vector<InstDesc> instanceDescriptions;
-	std::vector<MaterialTextures> textureOverrides;
 	MouseRayOut mouseIO = { vec3(), -1 };
 	MouseRayOut* mouseIOPtr = nullptr;
 

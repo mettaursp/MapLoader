@@ -183,7 +183,11 @@
     <ClCompile Include="src\MapLoader\Assets\TextureLibrary.cpp" />
     <ClCompile Include="src\MapLoader\hello_vulkan.cpp" />
     <ClCompile Include="src\MapLoader\main.cpp" />
+    <ClCompile Include="src\MapLoader\Map\FlatLibrary.cpp" />
+    <ClCompile Include="src\MapLoader\Map\FlatModel.cpp" />
     <ClCompile Include="src\MapLoader\obj_loader.cpp" />
+    <ClCompile Include="src\MapLoader\Scene\RTScene.cpp" />
+    <ClCompile Include="src\MapLoader\Scene\SceneObject.cpp" />
     <ClCompile Include="src\MapLoader\Vulkan\VulkanContext.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -193,7 +197,11 @@
     <ClInclude Include="src\MapLoader\Assets\TextureAsset.h" />
     <ClInclude Include="src\MapLoader\Assets\TextureLibrary.h" />
     <ClInclude Include="src\MapLoader\hello_vulkan.h" />
+    <ClInclude Include="src\MapLoader\Map\FlatLibrary.h" />
+    <ClInclude Include="src\MapLoader\Map\FlatModel.h" />
     <ClInclude Include="src\MapLoader\obj_loader.h" />
+    <ClInclude Include="src\MapLoader\Scene\RTScene.h" />
+    <ClInclude Include="src\MapLoader\Scene\SceneObject.h" />
     <ClInclude Include="src\MapLoader\Vulkan\VulkanContext.h" />
   </ItemGroup>
   <ItemGroup>

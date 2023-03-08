@@ -11,6 +11,7 @@
 #include "ArchiveReader.h"
 
 std::string lower(const std::string& text);
+std::string padId(std::string id);
 
 template <typename T>
 const T* streamOf(const void* stream)

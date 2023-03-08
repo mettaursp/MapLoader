@@ -16,6 +16,14 @@ std::string lower(const std::string& text)
 	return lower;
 }
 
+std::string padId(std::string id)
+{
+	while (id.size() > 0 && id.size() < 8)
+		id = "0" + id;
+
+	return id;
+}
+
 template <>
 int readValue<int>(const tinyxml2::XMLAttribute* attribute)
 {

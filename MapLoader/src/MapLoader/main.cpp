@@ -72,6 +72,7 @@
 #include "Assets/ModelLibrary.h"
 #include "Assets/TextureLibrary.h"
 #include "Assets/TextureAsset.h"
+#include "Map/FlatLibrary.h"
 #include "Vulkan/VulkanContext.h"
 
 const auto PROJECT_NAME = "MapLoader";
@@ -113,17 +114,12 @@ static int const SAMPLE_HEIGHT = 720;
 
 namespace fs = std::filesystem;
 
-mat4 convert(const Matrix4F& matrix)
-{
-	return *reinterpret_cast<const mat4*>(&matrix);
-}
-
 struct EntityData;
 
 struct SpawnedEntity
 {
 	MapLoader::ModelData* Model = nullptr;
-	const EntityData* Flat = nullptr;
+	const Archive::Metadata::Entry* FlatEntry = nullptr;
 	std::string Id;
 	std::string Name;
 	Vector3SF Position;
@@ -266,6 +262,8 @@ std::shared_ptr<Archive::ArchiveReader> Reader = std::make_shared<Archive::Archi
 std::shared_ptr<Graphics::VulkanContext> VulkanContext;
 std::shared_ptr<MapLoader::TextureLibrary> TextureLibrary;
 std::shared_ptr<MapLoader::ModelLibrary> ModelLibrary;
+std::shared_ptr<MapLoader::FlatLibrary> FlatLibrary;
+std::shared_ptr<MapLoader::FlatLibrary> MapData;
 std::string documentBuffer;
 std::string flatDocumentBuffer;
 std::string nifDocumentBuffer;
@@ -300,14 +298,6 @@ struct RayHit
 	Vector3SF Intersection;
 	Vector3SF Normal;
 };
-
-std::string padId(std::string id)
-{
-	while (id.size() > 0 && id.size() < 8)
-		id = "0" + id;
-
-	return id;
-}
 
 RayHit castRay(const MapLoader::ModelData* model, Vector3SF rayStart, Vector3SF rayDirection)
 {
@@ -403,49 +393,6 @@ void getBounds(const MapLoader::ModelData* model, Bounds& bounds)
 	}
 }
 
-enum class EntityLightType
-{
-	Point,
-	Directional,
-	Ambient
-};
-
-struct EntityLight
-{
-	EntityLightType Type = EntityLightType::Point;
-	float Dimmer = 0;
-	Color3 DiffuseColor;
-	Color3 SpecularColor;
-	Color3 AmbientColor;
-	float Range = 0;
-	Vector3SF Position;
-	Vector3SF Direction;
-	float Scale;
-	bool Enabled = false;
-	bool CastsShadows = true;
-};
-
-struct EntityData
-{
-	MapLoader::ModelData* Model = nullptr;
-	const Archive::Metadata::Entry* Entry = nullptr;
-	Matrix4F Transformation;
-	Vector3SF VisualOffset;
-	Vector3SF Position;
-	Vector3SF Rotation;
-	float Scale;
-	bool IsVisible = true;
-	const Archive::Metadata::Entry* ModelEntry = nullptr;
-	std::string Id;
-	Color3 MaterialColor = Color3(1.0f, 1, 1);
-	bool IsLight = false;
-	EntityLight Light;
-	std::string TargetField;
-	bool IsPortal = false;
-	int TargetPortal = -1;
-	int PortalId = -1;
-};
-
 typedef std::function<bool(MapLoader::ModelData*, size_t, InstDesc&)> ModelSpawnCallback;
 
 SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform = Matrix4F(), const ModelSpawnCallback& callback = nullptr)
@@ -468,13 +415,9 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 					continue;
 			}
 
-			//model->Package.Nodes[i].Mesh->
-			Matrix4F modelTransform;
+			Matrix4F modelTransform = model->Transformations[i];
 
-			//if (model->Package.Nodes[i].Transform->InheritsTransformation())
-				modelTransform = model->Transformations[i];
-
-			helloVkPtr->loadModelInstance(model->GetId(i), convert(ms2ToWorld * transform * modelTransform));
+			helloVkPtr->loadModelInstance(model->GetId(i), ms2ToWorld * transform * modelTransform);
 
 			spawnedModels.push_back(SpawnedModel{ entityId, (int)i });
 
@@ -484,8 +427,6 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 
 	return &spawnedEntities.back();
 }
-
-std::map<const Archive::Metadata::Entry*, EntityData> loadedFlats;
 
 float degToRad(float deg)
 {
@@ -1228,237 +1169,6 @@ void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 	}
 }
 
-void LoadEntity(EntityData& entity, tinyxml2::XMLElement* entityElement)
-{
-	entity.Id = readAttribute<const char*>(entityElement, "id", "");
-
-	const Archive::Metadata::Entry* modelEntry = nullptr;
-
-	for (tinyxml2::XMLElement* traitElement = entityElement->FirstChildElement(); traitElement; traitElement = traitElement->NextSiblingElement())
-	{
-		const char* name = readAttribute<const char*>(traitElement, "name", "");
-		tinyxml2::XMLElement* setElement = traitElement->FirstChildElement("set");
-
-		if (setElement == nullptr)
-		{
-			if (strcmp(name, "Light") == 0)
-			{
-				entity.IsLight = true;
-
-				continue;
-			}
-			
-			if (strcmp(name, "Portal") == 0)
-			{
-				entity.IsPortal = true;
-
-				continue;
-			}
-			
-			if (strcmp(name, "DirectionalLight") == 0)
-			{
-				entity.Light.Type = EntityLightType::Directional;
-
-				continue;
-			}
-
-			if (strcmp(name, "PointLight") == 0)
-			{
-				entity.Light.Type = EntityLightType::Point;
-
-				continue;
-			}
-
-			if (strcmp(name, "AmbientLight") == 0)
-			{
-				entity.Light.Type = EntityLightType::Ambient;
-
-				continue;
-			}
-
-			continue;
-		}
-
-		if (strcmp(name, "Position") == 0)
-		{
-			entity.Position = readAttribute<Vector3SF>(setElement, "value", Vector3SF());
-
-			continue;
-		}
-
-		if (strcmp(name, "Rotation") == 0)
-		{
-			entity.Rotation = readAttribute<Vector3SF>(setElement, "value", Vector3SF());
-
-			continue;
-		}
-
-		if (strcmp(name, "Scale") == 0)
-		{
-			entity.Scale = readAttribute<float>(setElement, "value", 1);
-
-			continue;
-		}
-
-		if (strcmp(name, "VisualizerOffset") == 0)
-		{
-			entity.VisualOffset = readAttribute<Vector3SF>(setElement, "value", Vector3SF());
-
-			continue;
-		}
-
-		if (strcmp(name, "NifAsset") == 0)// || strcmp(name, "ProxyNifAsset") == 0)
-		{
-			const char* uuid = readAttribute<const char*>(setElement, "value", "urn:llid:null") + 9;
-
-			modelEntry = Archive::Metadata::Entry::FindFirstEntryByTagsWithLink(Archive::ParseHexInt(uuid, 0), "gamebryo-scenegraph");
-
-			continue;
-		}
-
-		if (strcmp(name, "IsVisible") == 0 && false)
-		{
-			entity.IsVisible = lower(readAttribute<const char*>(setElement, "value", "true")) == "true";
-
-			continue;
-		}
-
-		if (strcmp(name, "MaterialColor") == 0)
-		{
-			entity.MaterialColor = readAttribute<Color3>(setElement, "value", Color3(1.f, 1, 1));
-
-			continue;
-		}
-
-		if (entity.IsPortal)
-		{
-			if (strcmp(name, "TargetFieldSN") == 0)
-			{
-				entity.TargetField = padId(readAttribute<std::string>(setElement, "value", ""));
-
-				continue;
-			}
-
-			if (strcmp(name, "TargetPortalID") == 0)
-			{
-				entity.TargetPortal = readAttribute<int>(setElement, "value", -1);
-
-				continue;
-			}
-
-			if (strcmp(name, "PortalID") == 0)
-			{
-				entity.PortalId = readAttribute<int>(setElement, "value", -1);
-
-				continue;
-			}
-		}
-
-		if (entity.IsLight)
-		{
-			if (strcmp(name, "Dimmer") == 0)
-			{
-				entity.Light.Dimmer = readAttribute<float>(setElement, "value", 0);
-
-				continue;
-			}
-
-			if (strcmp(name, "DiffuseColor") == 0)
-			{
-				entity.Light.DiffuseColor = readAttribute<Color3>(setElement, "value", Color3(0.f, 0, 0));
-
-				continue;
-			}
-
-			if (strcmp(name, "SpecularColor") == 0)
-			{
-				entity.Light.SpecularColor = readAttribute<Color3>(setElement, "value", Color3(0.f, 0, 0));
-
-				continue;
-			}
-
-			if (strcmp(name, "AmbientColor") == 0)
-			{
-				entity.Light.AmbientColor = readAttribute<Color3>(setElement, "value", Color3(0.f, 0, 0));
-
-				continue;
-			}
-
-			if (strcmp(name, "CastShadows") == 0)
-			{
-				entity.Light.CastsShadows = lower(readAttribute<const char*>(setElement, "value", "false")) == "true";
-
-				continue;
-			}
-
-			if (strcmp(name, "Range") == 0)
-			{
-				entity.Light.Range = readAttribute<float>(setElement, "value", 0);
-
-				continue;
-			}
-		}
-	}
-
-	if (modelEntry != nullptr && modelEntry != entity.ModelEntry && entity.IsVisible)
-	{
-		entity.Model = ModelLibrary->FetchModel(modelEntry);
-		entity.ModelEntry = modelEntry;
-	}
-
-	if (entity.IsVisible && entity.Model == nullptr && modelEntry != nullptr)
-	{
-		entity.Model = ModelLibrary->FetchModel(modelEntry);
-	}
-
-	entity.Transformation = getMatrix(entity.Position, entity.Rotation, entity.Scale);
-
-	if (entity.IsLight)
-	{
-		entity.Light.Position = entity.Position;
-		entity.Light.Direction = entity.Transformation.FrontVector();
-		entity.Light.Scale = entity.Scale;
-		entity.Light.Enabled = entity.IsVisible;
-	}
-}
-
-EntityData* loadFlat(const std::string& name)
-{
-	const Archive::Metadata::Entry* entry = Archive::Metadata::Entry::FindFirstEntryByTags(name, "emergent-flat-model");
-
-	const auto& cachedFlat = loadedFlats.find(entry);
-
-	if (cachedFlat != loadedFlats.end())
-		return &cachedFlat->second;
-
-	if (entry == nullptr)
-		return nullptr;
-
-	Archive::ArchivePath flatFile = Reader->GetPath("Resource" + entry->RelativePath.string());
-
-	if (!flatFile.Loaded())
-	{
-		std::cout << "failed to load map resource: " << flatFile.GetPath().string() << std::endl;
-		return nullptr;
-	}
-
-	loadedFlats[entry] = EntityData();
-	EntityData& flat = loadedFlats[entry];
-
-	flat.Entry = entry;
-
-	tinyxml2::XMLDocument document;
-
-	flatFile.Read(documentBuffer);
-	document.Parse(documentBuffer.data(), documentBuffer.size());
-
-	tinyxml2::XMLElement* rootElement = document.RootElement();
-
-	LoadEntity(flat, rootElement);
-
-	return &flat;
-}
-
 void loadMap(const std::string& mapId)
 {
 	std::string xblockName;
@@ -1536,7 +1246,7 @@ void loadMap(const std::string& mapId)
 
 	size_t directionalLight = -1;
 
-	EntityLight ambient;
+	MapLoader::FlatLight ambient;
 	bool hasAmbient = false;
 
 	for (tinyxml2::XMLElement* entityElement = entitySet->FirstChildElement(); entityElement; entityElement = entityElement->NextSiblingElement())
@@ -1544,77 +1254,69 @@ void loadMap(const std::string& mapId)
 		std::string entityName = readAttribute<const char*>(entityElement, "name", "");
 		std::string modelName = readAttribute<std::string>(entityElement, "modelName", "");
 
-		EntityData* flat = loadFlat(modelName);
+		MapLoader::FlatEntry flatentry = FlatLibrary->FetchFlat(modelName);
 
-		if (flat == nullptr)
-			flat = loadFlat(modelName);
-		MapLoader::ModelData* model = flat->Model;
-
-		if (flat == nullptr)
+		if (flatentry.Entity == nullptr)
 			continue;
 
-		EntityData entity = *flat;
+		MapLoader::FlatEntry entityEntry = MapData->LoadEntityFromFlat(flatentry, entityElement);
 
-		LoadEntity(entity, entityElement);
-
-		if (entity.IsLight && loadLights)
+		if (entityEntry.Light != nullptr && loadLights)
 		{
-			if (entity.Light.Type == EntityLightType::Ambient)
+			if (entityEntry.Light->Type == MapLoader::EntityLightType::Ambient)
 			{
 				hasAmbient = true;
-				ambient = entity.Light;
+				ambient = *entityEntry.Light;
 			}
 			else
 			{
-				Vector3F direction = -(/*ms2ToWorld */ entity.Transformation.FrontVector()).Unit();
-				Vector3F position = /*ms2ToWorld */ Vector3F(entity.Position, 1);
+				Vector3F direction = -(/*ms2ToWorld */ entityEntry.Placeable->Transformation.FrontVector()).Unit();
+				Vector3F position = /*ms2ToWorld */ Vector3F(entityEntry.Placeable->Position, 1);
 
 				helloVkPtr->lights.push_back(LightDesc{});
 
 				LightDesc& light = helloVkPtr->lights.back();
 
-				if (entity.Light.Type == EntityLightType::Directional && directionalLight == -1)
+				if (entityEntry.Light->Type == MapLoader::EntityLightType::Directional && directionalLight == -1)
 					directionalLight = helloVkPtr->lights.size() - 1;
 
 				light.position = vec3(position.X, position.Y, position.Z);
 				light.direction = vec3(direction.X, direction.Y, direction.Z);
-				light.brightness = entity.Light.Dimmer;
-				light.type = (int)entity.Light.Type;
-				light.range = entity.Light.Range;
-				light.diffuse = vec3(entity.Light.DiffuseColor.R, entity.Light.DiffuseColor.G, entity.Light.DiffuseColor.B);
-				light.specular = vec3(entity.Light.SpecularColor.R, entity.Light.SpecularColor.G, entity.Light.SpecularColor.B);
-				light.ambient = vec3(entity.Light.AmbientColor.R, entity.Light.AmbientColor.G, entity.Light.AmbientColor.B);
-				light.castsShadows = entity.Light.CastsShadows;
+				light.brightness = entityEntry.Light->Dimmer;
+				light.type = (int)entityEntry.Light->Type;
+				light.range = entityEntry.Light->Range;
+				light.diffuse = (Vector3)entityEntry.Light->DiffuseColor;
+				light.specular = (Vector3)entityEntry.Light->SpecularColor;
+				light.ambient = (Vector3)entityEntry.Light->AmbientColor;
+				light.castsShadows = entityEntry.Light->CastsShadows;
 			}
 		}
-
-		model = entity.Model;
 		
-		if (model == nullptr)
+		if (entityEntry.Mesh == nullptr || entityEntry.Mesh->Model == nullptr)
 			continue;
 
-		SpawnedEntity* newModel = spawnModel(model, entity.Transformation, [&entity](MapLoader::ModelData* model, size_t i, InstDesc& instance)
+		SpawnedEntity* newModel = spawnModel(entityEntry.Mesh->Model, entityEntry.Placeable->Transformation, [&entityEntry](MapLoader::ModelData* model, size_t i, InstDesc& instance)
 			{
-				instance.color = vec3(entity.MaterialColor.R, entity.MaterialColor.G, entity.MaterialColor.B);
-				instance.flags = entity.IsVisible ? 0 : 1;
+				instance.color = (Vector3)entityEntry.Mesh->MaterialColor;
+				instance.flags = entityEntry.Placeable->IsVisible ? 0 : 1;
 
 				return true;
 			}
 		);// *flat->Transformation);
-		newModel->Id = entity.Id;
+		newModel->Id = entityEntry.Entity->Id;
 		newModel->Name = entityName;
-		newModel->Flat = flat;
-		newModel->Position = entity.Position;
-		newModel->WorldPosition = ms2ToWorld * Vector3F(entity.Position, 1);
+		newModel->FlatEntry = flatentry.Entity->Entry;
+		newModel->Position = entityEntry.Placeable->Position;
+		newModel->WorldPosition = ms2ToWorld * Vector3F(entityEntry.Placeable->Position, 1);
 		newModel->MapIndex = (int)loadedMaps.size() - 1;
 		newModel->LineNumber = entityElement->GetLineNum();
 
-		if (entity.IsPortal)
+		if (entityEntry.Portal != nullptr)
 		{
 			newModel->PortalIndex = (int)spawnedPortals.size();
-			loadedMaps.back().Portals[entity.PortalId] = (int)spawnedEntities.size() - 1;
+			loadedMaps.back().Portals[entityEntry.Portal->PortalId] = (int)spawnedEntities.size() - 1;
 
-			spawnedPortals.push_back(SpawnedPortal{ entity.TargetField, entity.TargetPortal, entity.PortalId });
+			spawnedPortals.push_back(SpawnedPortal{ entityEntry.Portal->TargetField, entityEntry.Portal->TargetPortal, entityEntry.Portal->PortalId });
 		}
 	}
 
@@ -2065,6 +1767,8 @@ int main(int argc, char** argv)
 	VulkanContext = std::make_shared<Graphics::VulkanContext>();
 	TextureLibrary = std::make_shared<MapLoader::TextureLibrary>(Reader, VulkanContext);
 	ModelLibrary = std::make_shared<MapLoader::ModelLibrary>(Reader, TextureLibrary, VulkanContext);
+	FlatLibrary = std::make_shared<MapLoader::FlatLibrary>(Reader, ModelLibrary, TextureLibrary);
+	MapData = std::make_shared<MapLoader::FlatLibrary>(Reader, ModelLibrary, TextureLibrary, FlatLibrary);
 
 	// Create example
 	HelloVulkan helloVk;
@@ -2460,10 +2164,10 @@ int main(int argc, char** argv)
 
 						ImGui::Text("Entity Name: %s", entity.Name.c_str());
 
-						if (entity.Flat != nullptr)
+						if (entity.FlatEntry != nullptr)
 						{
-							ImGui::Text("Entity Flat Name: %s", entity.Flat->Entry->Name.c_str());
-							ImGui::Text("Entity Flat Path: %s", entity.Flat->Entry->RelativePath.string().c_str());
+							ImGui::Text("Entity Flat Name: %s", entity.FlatEntry->Name.c_str());
+							ImGui::Text("Entity Flat Path: %s", entity.FlatEntry->RelativePath.string().c_str());
 						}
 
 						ImGui::Text("Entity Model Name: %s", entity.Model->Entry->Name.c_str());
@@ -2491,11 +2195,11 @@ int main(int argc, char** argv)
 							int line = -1;
 							DWORD flags = 0;
 
-							if (modifiers == (ModifierKeys::Shift | ModifierKeys::Ctrl) && entity.Flat != nullptr)
+							if (modifiers == (ModifierKeys::Shift | ModifierKeys::Ctrl) && entity.FlatEntry != nullptr)
 							{
 								flags = CREATE_NO_WINDOW;
 
-								path = path / entity.Flat->Entry->RelativePath;
+								path = path / entity.FlatEntry->RelativePath;
 							}
 							else if (modifiers == ModifierKeys::Alt)
 							{
@@ -2584,10 +2288,10 @@ int main(int argc, char** argv)
 
 										ImGui::Text("Target Portal Entity Name: %s", targetPortal.Name.c_str());
 
-										if (targetPortal.Flat != nullptr)
+										if (targetPortal.FlatEntry != nullptr)
 										{
-											ImGui::Text("Target Portal Entity Flat Name: %s", targetPortal.Flat->Entry->Name.c_str());
-											ImGui::Text("Target Portal Entity Flat Path: %s", targetPortal.Flat->Entry->RelativePath.string().c_str());
+											ImGui::Text("Target Portal Entity Flat Name: %s", targetPortal.FlatEntry->Name.c_str());
+											ImGui::Text("Target Portal Entity Flat Path: %s", targetPortal.FlatEntry->RelativePath.string().c_str());
 										}
 
 										ImGui::Text("Target Portal Entity Model Name: %s", targetPortal.Model->Entry->Name.c_str());

@@ -25,6 +25,12 @@
     <Filter Include="Source Files\Vulkan">
       <UniqueIdentifier>{d38dddd3-f25e-4541-9e52-5d3c4e95fdbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Scene">
+      <UniqueIdentifier>{7f3d8d2a-fab5-4e59-ad68-aad420d3355a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Map">
+      <UniqueIdentifier>{78358e8d-28a4-4281-b324-55690c974d97}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MapLoader\hello_vulkan.cpp">
@@ -51,6 +57,18 @@
     <ClCompile Include="src\MapLoader\Vulkan\VulkanContext.cpp">
       <Filter>Source Files\Vulkan</Filter>
     </ClCompile>
+    <ClCompile Include="src\MapLoader\Scene\RTScene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Scene\SceneObject.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Map\FlatModel.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Map\FlatLibrary.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MapLoader\hello_vulkan.h">
@@ -76,6 +94,18 @@
     </ClInclude>
     <ClInclude Include="src\MapLoader\Vulkan\VulkanContext.h">
       <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Scene\RTScene.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Scene\SceneObject.h">
+      <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Map\FlatModel.h">
+      <Filter>Source Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Map\FlatLibrary.h">
+      <Filter>Source Files\Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

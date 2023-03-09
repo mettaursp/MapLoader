@@ -31,6 +31,12 @@
     <Filter Include="Source Files\Map">
       <UniqueIdentifier>{78358e8d-28a4-4281-b324-55690c974d97}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Items">
+      <UniqueIdentifier>{0b907e33-046c-4621-a69f-9e32c38195b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Character">
+      <UniqueIdentifier>{a61c6ffc-db88-4803-b1e0-1ac012f7252f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\MapLoader\hello_vulkan.cpp">
@@ -69,6 +75,15 @@
     <ClCompile Include="src\MapLoader\Map\FlatLibrary.cpp">
       <Filter>Source Files\Map</Filter>
     </ClCompile>
+    <ClCompile Include="src\MapLoader\Items\Dyes.cpp">
+      <Filter>Source Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Items\Emotions.cpp">
+      <Filter>Source Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Character\Character.cpp">
+      <Filter>Source Files\Character</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MapLoader\hello_vulkan.h">
@@ -106,6 +121,15 @@
     </ClInclude>
     <ClInclude Include="src\MapLoader\Map\FlatLibrary.h">
       <Filter>Source Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Items\Dyes.h">
+      <Filter>Source Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Items\Emotions.h">
+      <Filter>Source Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Character\Character.h">
+      <Filter>Source Files\Character</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

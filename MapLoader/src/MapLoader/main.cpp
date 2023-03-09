@@ -74,6 +74,14 @@
 #include "Assets/TextureAsset.h"
 #include "Map/FlatLibrary.h"
 #include "Vulkan/VulkanContext.h"
+#include "Items/Dyes.h"
+#include "Items/Emotions.h"
+#include "Character/Character.h"
+
+using DyeColor = MapLoader::DyeColor;
+using EmotionTexture = MapLoader::EmotionTexture;
+using Emotion = MapLoader::Emotion;
+using Gender = MapLoader::Gender;
 
 const auto PROJECT_NAME = "MapLoader";
 
@@ -152,18 +160,6 @@ struct SpawnedPortal
 	int PortalId;
 };
 
-enum class Gender
-{
-	Male = 0,
-	Female = 1,
-	Either = 2
-};
-
-struct DyeColor
-{
-	Color4 Primary;
-	Color4 Secondary;
-};
 
 struct Item
 {
@@ -222,41 +218,6 @@ struct Character
 	int EmotionFrame = 0;
 };
 
-struct DyeColorInfo
-{
-	std::string Name;
-	int Id = 0;
-	int Palette = 0;
-	int Index = 0;
-	Color4 Primary;
-	Color4 Unused;
-	Color4 Secondary;
-	Color4 Display;
-	bool DisplayBoth = false;
-	bool HasEyeOverride = false;
-	Color4 EyePrimary;
-	Color4 EyeSecondary;
-};
-
-struct EmotionTexture
-{
-	std::string File;
-	std::string Control;
-	int Delay = 0;
-	bool Loop = false;
-};
-
-struct Emotion
-{
-	std::string Animation;
-	std::string IdleAnimation;
-	std::string BoreAnimation1;
-	std::string BoreAnimation2;
-	std::string Target;
-	std::string Effect;
-	std::vector<EmotionTexture> Faces;
-};
-
 HelloVulkan* helloVkPtr = nullptr;
 std::shared_ptr<Archive::ArchiveReader> Reader = std::make_shared<Archive::ArchiveReader>();
 std::shared_ptr<Graphics::VulkanContext> VulkanContext;
@@ -264,6 +225,8 @@ std::shared_ptr<MapLoader::TextureLibrary> TextureLibrary;
 std::shared_ptr<MapLoader::ModelLibrary> ModelLibrary;
 std::shared_ptr<MapLoader::FlatLibrary> FlatLibrary;
 std::shared_ptr<MapLoader::FlatLibrary> MapData;
+MapLoader::DyeColors dyeColors;
+MapLoader::Emotions emotions;
 std::string documentBuffer;
 std::string flatDocumentBuffer;
 std::string nifDocumentBuffer;
@@ -280,11 +243,6 @@ std::vector<LoadedMap> loadedMaps;
 std::vector<SpawnedPortal> spawnedPortals;
 std::unordered_map<std::string, std::string> mapNames;
 std::unordered_map<std::string, int> mapIndices;
-std::vector<DyeColorInfo> dyeColors;
-std::vector<DyeColorInfo> dyeColorsNA;
-std::unordered_map<std::string, DyeColorInfo*> dyeColorMap;
-std::unordered_map<std::string, Emotion> maleEmotions;
-std::unordered_map<std::string, Emotion> femaleEmotions;
 std::unordered_map<int, std::string> mapFileNames;
 
 const float PI = 3.14159265359f;
@@ -426,35 +384,6 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 	}
 
 	return &spawnedEntities.back();
-}
-
-float degToRad(float deg)
-{
-	return deg / 180 * PI;
-}
-
-Matrix4F getMatrix(const Vector3SF& position, const Vector3SF& rotation, float scale, bool isDegrees = true)
-{
-	// roll = yaw
-	// yaw = pitch
-	// pitch = roll
-	float x = rotation.X;
-	float y = rotation.Y;
-	float z = rotation.Z;
-
-	if (isDegrees)
-	{
-		x = degToRad(x);
-		y = degToRad(y);
-		z = degToRad(z);
-	}
-
-	Matrix4F roll = Matrix4F::RollRotation(z);
-	Matrix4F yaw = Matrix4F::YawRotation(y);
-	Matrix4F pitch = Matrix4F::PitchRotation(x);
-	Matrix4F rotationMatrix = pitch * yaw * roll;
-	//Matrix4F::EulerAnglesRotation(degToRad(rotation.X), degToRad(rotation.Y), degToRad(rotation.Z))
-	return Matrix4F(position) * rotationMatrix * Matrix4F::NewScale(scale, scale, scale);
 }
 
 template <>
@@ -849,7 +778,7 @@ const ItemModel* LoadItem(const Character& character, const Item& item)
 						Vector3SF rotation = readAttribute<Vector3SF>(transformElement, "rotation", {});
 						float scale = readAttribute<float>(transformElement, "scale", 1);
 
-						model.Customization.DefaultHatTransform = getMatrix(position, rotation, scale, false);
+						model.Customization.DefaultHatTransform = MapLoader::getMatrix(position, rotation, scale, false);
 					}
 
 					continue;
@@ -949,33 +878,6 @@ void LoadTab(LoadedCharacter& character, Character& data, EquipTab& equips)
 	EquipItem(character, data, equips.Weapon);
 }
 
-EmotionTexture GetFace(Gender gender, const std::string& emotionName, int index, int id)
-{
-	std::unordered_map<std::string, Emotion>& container = gender == Gender::Male ? maleEmotions : femaleEmotions;
-
-	const auto emotionIndex = container.find(emotionName);
-
-	const Emotion& emotion = emotionIndex != container.end() ? emotionIndex->second : container["default"];
-
-	index = std::min((int)emotion.Faces.size() - 1, std::max(0, index));
-
-	const EmotionTexture& faceData = emotion.Faces[index];
-	EmotionTexture face = { faceData.File, faceData.Control };
-
-	id %= 10000000;
-
-	for (int i = 0; i < 8; ++i)
-	{
-		int digit = id % 10;
-		id /= 10;
-
-		face.File[10 + 7 - i] = '0' + digit;
-		face.Control[10 + 7 - i] = '0' + digit;
-	}
-
-	return face;
-}
-
 void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 {
 	LoadedCharacter character{ &data };
@@ -1003,7 +905,7 @@ void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
 
 	const auto faceDecor = character.ActiveSlots.find("FD");
 
-	EmotionTexture face = GetFace(data.Gender, data.Emotion, data.EmotionFrame, data.Face.Id);
+	EmotionTexture face = emotions.GetFace(data.Gender, data.Emotion, data.EmotionFrame, data.Face.Id);
 
 	const auto spawnCallback = [&character, &dyeColor, &spawningRig, &currentSlot, &faceDecor, &face](MapLoader::ModelData* model, size_t i, InstDesc& instance)
 	{
@@ -1400,221 +1302,6 @@ void loadMapFileNames(const Archive::ArchivePath& file)
 	}
 }
 
-void loadDyes(const Archive::ArchivePath& file, std::vector<DyeColorInfo>& container)
-{
-	if (!file.Loaded())
-	{
-		std::cout << "failed to load dyes " << file.GetPath().string() << std::endl;
-		return;
-	}
-
-	tinyxml2::XMLDocument document;
-
-	file.Read(documentBuffer);
-
-	document.Parse(documentBuffer.data(), documentBuffer.size());
-
-	tinyxml2::XMLElement* rootElement = document.RootElement();
-
-	for (tinyxml2::XMLElement* paletteElement = rootElement->FirstChildElement(); paletteElement; paletteElement = paletteElement->NextSiblingElement())
-	{
-		int paletteId = readAttribute<int>(paletteElement, "id", 0);
-
-		for (tinyxml2::XMLElement* colorElement = paletteElement->FirstChildElement(); colorElement; colorElement = colorElement->NextSiblingElement())
-		{
-			DyeColorInfo dyeColor;
-
-			dyeColor.Palette = paletteId;
-			dyeColor.Index = readAttribute<int>(colorElement, "colorSN", 0);
-			dyeColor.Id = readAttribute<int>(colorElement, "stringKey", 0);
-			char* pointer;
-
-			unsigned long ch0 = strtoul(readAttribute<const char*>(colorElement, "ch0", "0xFFFFFFFF") + 2, &pointer, 16);
-			unsigned long ch1 = strtoul(readAttribute<const char*>(colorElement, "ch1", "0xFFFFFFFF") + 2, &pointer, 16);
-			unsigned long ch2 = strtoul(readAttribute<const char*>(colorElement, "ch2", "0xFFFFFFFF") + 2, &pointer, 16);
-			unsigned long display = strtoul(readAttribute<const char*>(colorElement, "palette", "0xFFFFFFFF") + 2, &pointer, 16);
-
-			dyeColor.DisplayBoth = readAttribute<int>(colorElement, "show2color", 0) == 1;
-
-			unsigned long ch0_eye = 0xFFFFFFFF;
-			unsigned long ch2_eye = 0xFFFFFFFF;
-
-			const char* ch0_eyeStr = readAttribute<const char*>(colorElement, "ch0_eye", nullptr);
-			const char* ch2_eyeStr = readAttribute<const char*>(colorElement, "ch2_eye", nullptr);
-
-			dyeColor.HasEyeOverride = ch0_eyeStr != nullptr && ch2_eyeStr != nullptr;
-
-			if (dyeColor.HasEyeOverride)
-			{
-				ch0_eye = strtoul(ch0_eyeStr + 2, &pointer, 16);
-				ch2_eye = strtoul(ch2_eyeStr + 2, &pointer, 16);
-			}
-
-			const auto loadColor = [](unsigned int color) -> Color4
-			{
-				unsigned int alpha = (color & 0xFF000000) >> 24;
-				color <<= 8;
-				return Color4(color | alpha);
-			};
-
-			dyeColor.Primary = loadColor((unsigned int)ch0);
-			dyeColor.Secondary = loadColor((unsigned int)ch2);
-			dyeColor.Unused = loadColor((unsigned int)ch1);
-			dyeColor.Display = loadColor((unsigned int)display);
-			dyeColor.EyePrimary = loadColor((unsigned int)ch0_eye);
-			dyeColor.EyeSecondary = loadColor((unsigned int)ch2_eye);
-
-			container.push_back(dyeColor);
-		}
-	}
-}
-
-void loadDyeNames(const Archive::ArchivePath& file, std::vector<DyeColorInfo>& container)
-{
-	if (!file.Loaded())
-	{
-		std::cout << "failed to load dye names " << file.GetPath().string() << std::endl;
-		return;
-	}
-
-	tinyxml2::XMLDocument document;
-
-	file.Read(documentBuffer);
-	document.Parse(documentBuffer.data(), documentBuffer.size());
-
-	tinyxml2::XMLElement* rootElement = document.RootElement();
-
-	for (tinyxml2::XMLElement* keyElement = rootElement->FirstChildElement(); keyElement; keyElement = keyElement->NextSiblingElement())
-	{
-		int id = readAttribute<int>(keyElement, "id", 0);
-
-		for (DyeColorInfo& dyeColor : container)
-		{
-			if (dyeColor.Id == id)
-			{
-				dyeColor.Name = readAttribute<std::string>(keyElement, "name", "");
-
-				if (dyeColor.Name != "")
-					dyeColorMap[lower(dyeColor.Name)] = &dyeColor;
-			}
-		}
-	}
-}
-
-void loadEmotions(const Archive::ArchivePath& file, std::unordered_map<std::string, Emotion>& container)
-{
-	if (!file.Loaded())
-	{
-		std::cout << "failed to load emotions " << file.GetPath().string() << std::endl;
-		return;
-	}
-
-	tinyxml2::XMLDocument document;
-
-	file.Read(documentBuffer);
-	document.Parse(documentBuffer.data(), documentBuffer.size());
-
-	tinyxml2::XMLElement* rootElement = document.RootElement();
-
-	for (tinyxml2::XMLElement* emotionElement = rootElement->FirstChildElement(); emotionElement; emotionElement = emotionElement->NextSiblingElement())
-	{
-		std::string emotionName = readAttribute<std::string>(emotionElement, "name", "");
-
-		Emotion& emotion = container[emotionName];
-
-		for (tinyxml2::XMLElement* propertyElement = emotionElement->FirstChildElement(); propertyElement; propertyElement = propertyElement->NextSiblingElement())
-		{
-			const char* name = propertyElement->Name();
-
-			if (strcmp(name, "anim") == 0)
-			{
-				emotion.Animation = readAttribute<std::string>(propertyElement, "name", "");
-
-				continue;
-			}
-
-			if (strcmp(name, "idleAnim") == 0)
-			{
-				emotion.IdleAnimation = readAttribute<std::string>(propertyElement, "name", "");
-
-				continue;
-			}
-
-			if (strcmp(name, "boreAnim") == 0)
-			{
-				emotion.BoreAnimation1 = readAttribute<std::string>(propertyElement, "name", "");
-
-				size_t i = 0;
-
-				for (i; i < emotion.BoreAnimation1.size() && emotion.BoreAnimation1[i] != ','; ++i);
-
-				if (i < emotion.BoreAnimation1.size())
-				{
-					emotion.BoreAnimation2 = emotion.BoreAnimation1.substr(i + 1, emotion.BoreAnimation1.size() - i - 1);
-					emotion.BoreAnimation1 = emotion.BoreAnimation1.substr(0, i);
-				}
-
-				continue;
-			}
-
-			if (strcmp(name, "textureani") == 0)
-			{
-				emotion.Target = readAttribute<std::string>(propertyElement, "target", "");
-
-				for (tinyxml2::XMLElement* textureElement = propertyElement->FirstChildElement(); textureElement; textureElement = textureElement->NextSiblingElement())
-				{
-					emotion.Faces.push_back(EmotionTexture{});
-
-					EmotionTexture& face = emotion.Faces.back();
-
-					face.File = readAttribute<std::string>(textureElement, "file", "");
-					face.Control = readAttribute<std::string>(textureElement, "control", "");
-					face.Delay = readAttribute<int>(textureElement, "delay", 0);
-
-					if (face.File.size() > 0)
-						face.File = face.File.substr(0, 10) + "00000000" + face.File.substr(13, face.File.size() - 13);
-
-					if (face.Control.size() > 0)
-						face.Control = face.Control.substr(0, 10) + "00000000" + face.Control.substr(13, face.Control.size() - 13);
-				}
-
-				continue;
-			}
-
-			if (strcmp(name, "effect") == 0)
-			{
-				emotion.Effect = readAttribute<std::string>(propertyElement, "file", "");
-
-				continue;
-			}
-		}
-	}
-}
-
-DyeColor getDyeColor(const std::string& name, bool isEye = false)
-{
-	const auto& dyeIndex = dyeColorMap.find(lower(name));
-
-	if (dyeIndex == dyeColorMap.end()) return DyeColor{};
-	if (dyeIndex->second == nullptr) return DyeColor{};
-
-	if (isEye && dyeIndex->second->HasEyeOverride)
-		return DyeColor{ dyeIndex->second->EyePrimary, dyeIndex->second->EyeSecondary };
-
-	return DyeColor{ dyeIndex->second->Primary, dyeIndex->second->Secondary };
-}
-
-DyeColor getDyeColor(int index, int palette = 11000072)
-{
-	for (const DyeColorInfo& color : dyeColors)
-	{
-		if (color.Palette == palette && color.Index == index)
-			return DyeColor{ color.Primary, color.Secondary };
-	}
-
-	return DyeColor{};
-}
-
 //--------------------------------------------------------------------------------------------------
 // Application Entry
 //
@@ -1791,12 +1478,8 @@ int main(int argc, char** argv)
 
 	// Setup Imgui
 	helloVk.initGUI(0);  // Using sub-pass 0
-
-	loadDyes(Reader->GetPath("Xml/table/colorpalette.xml"), dyeColors);
-	loadDyes(Reader->GetPath("Xml/table/na/colorpalette_achieve.xml"), dyeColorsNA);
-	loadDyeNames(Reader->GetPath("Xml/string/en/stringcolorpalette.xml"), dyeColorsNA);
-	loadEmotions(Reader->GetPath("Xml/emotion/common/femalecustom.xml"), femaleEmotions);
-	loadEmotions(Reader->GetPath("Xml/emotion/common/malecustom.xml"), maleEmotions);
+	dyeColors.LoadDyes(Reader);
+	emotions.LoadEmotions(Reader);
 
 	loadMapNames(Reader->GetPath("Xml/string/en/mapname.xml"));
 	loadMapFileNames(Reader->GetPath("Xml/table/fielddata.xml"));
@@ -2003,36 +1686,36 @@ int main(int argc, char** argv)
 	Character baadf00d;
 
 	baadf00d.Gender = Gender::Female;
-	baadf00d.Face = Item{ 10300097, getDyeColor("Light Green", true) };
+	baadf00d.Face = Item{ 10300097, dyeColors.GetDyeColor("Light Green", true) };
 	baadf00d.FaceDecor = FaceDecorItem{ 10400010 };
-	baadf00d.SkinColor = getDyeColor(3);
-	baadf00d.Hair = HairItem{ 10200250, getDyeColor("Pink") };
-	baadf00d.Cosmetics.Hat = HatItem{ 11300743, getDyeColor("Red") };
-	baadf00d.Cosmetics.Shirt = Item{ 11401065, getDyeColor("Light Pink") };
-	baadf00d.Cosmetics.Pants = Item{ 11500163, getDyeColor("Pink") };
-	baadf00d.Cosmetics.Gloves = Item{ 11620024, getDyeColor("Red") };
-	baadf00d.Cosmetics.Shoes = Item{ 11700313, getDyeColor("Light Pink") };
+	baadf00d.SkinColor = dyeColors.GetDyeColor(3);
+	baadf00d.Hair = HairItem{ 10200250, dyeColors.GetDyeColor("Pink") };
+	baadf00d.Cosmetics.Hat = HatItem{ 11300743, dyeColors.GetDyeColor("Red") };
+	baadf00d.Cosmetics.Shirt = Item{ 11401065, dyeColors.GetDyeColor("Light Pink") };
+	baadf00d.Cosmetics.Pants = Item{ 11500163, dyeColors.GetDyeColor("Pink") };
+	baadf00d.Cosmetics.Gloves = Item{ 11620024, dyeColors.GetDyeColor("Red") };
+	baadf00d.Cosmetics.Shoes = Item{ 11700313, dyeColors.GetDyeColor("Light Pink") };
 
 	LoadCharacter(baadf00d, Matrix4F(0, 0, 3000) * Matrix4F::RollRotation(PI));
 
 	Character hornetsp;
 
 	hornetsp.Gender = Gender::Male;
-	hornetsp.Face = Item{ 10300014, getDyeColor("Blue") };
-	hornetsp.FaceDecor = FaceDecorItem{ 10400006, getDyeColor("Blue"), 0 };
-	hornetsp.SkinColor = getDyeColor(12);
-	hornetsp.Hair = HairItem{ 10200001, getDyeColor("Green") };
-	hornetsp.Cosmetics.Hat = HatItem{ 11380431, getDyeColor("Green") };
-	hornetsp.Cosmetics.Shirt = Item{ 11480386, getDyeColor("Green") };
-	hornetsp.Cosmetics.Pants = Item{ 11500660, getDyeColor("Green") };
-	hornetsp.Cosmetics.Gloves = Item{ 11600864, getDyeColor("Green") };
-	hornetsp.Cosmetics.Shoes = Item{ 11790671, getDyeColor("Green") };
-	hornetsp.Cosmetics.Cape = Item{ 11890080, getDyeColor("Green") };
-	hornetsp.Gear.Earring = Item{ 11200064, getDyeColor("Green") };
-	hornetsp.Gear.Pendant = Item{ 11900122, getDyeColor("Green") };
-	hornetsp.Gear.Belt = Item{ 12100112, getDyeColor("Green") };
-	hornetsp.Gear.Ring = Item{ 12060106, getDyeColor("Green") };
-	hornetsp.Gear.Weapon = Item{ 15460178, getDyeColor("Green") };
+	hornetsp.Face = Item{ 10300014, dyeColors.GetDyeColor("Blue") };
+	hornetsp.FaceDecor = FaceDecorItem{ 10400006, dyeColors.GetDyeColor("Blue"), 0 };
+	hornetsp.SkinColor = dyeColors.GetDyeColor(12);
+	hornetsp.Hair = HairItem{ 10200001, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Hat = HatItem{ 11380431, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Shirt = Item{ 11480386, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Pants = Item{ 11500660, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Gloves = Item{ 11600864, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Shoes = Item{ 11790671, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Cape = Item{ 11890080, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Earring = Item{ 11200064, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Pendant = Item{ 11900122, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Belt = Item{ 12100112, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Ring = Item{ 12060106, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Weapon = Item{ 15460178, dyeColors.GetDyeColor("Green") };
 
 	LoadCharacter(hornetsp, Matrix4F(120, 0, 3000) * Matrix4F::RollRotation(PI));
 

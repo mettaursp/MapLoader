@@ -31,7 +31,7 @@
 #include <ArchiveParser/ArchiveParser.h>
 #include <ArchiveParser/MetadataMapper.h>
 #include <MapLoader/Vulkan/VulkanContext.h>
-#include "Assets/ModelLibrary.h"
+#include "Assets/GameAssetLibrary.h"
 #include "Assets/TextureLibrary.h"
 
 // #VKRay
@@ -107,10 +107,8 @@ public:
 	nvvk::Buffer m_InstDesc;
 	nvvk::Buffer m_textureOverride;
 	GlobalUniforms hostUBO;
-	Archive::ArchiveReader* Reader = nullptr;
 
-	std::shared_ptr<MapLoader::ModelLibrary> ModelLibrary;
-	std::shared_ptr<MapLoader::TextureLibrary> TextureLibrary;
+	std::shared_ptr<MapLoader::GameAssetLibrary> AssetLibrary;
 
 	// #Post - Draw the rendered image on a quad using a tonemapper
 	void createOffscreenRender();

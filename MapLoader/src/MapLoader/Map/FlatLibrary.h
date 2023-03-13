@@ -1,7 +1,5 @@
 #pragma once
 
-#include <MapLoader/Assets/ModelLibrary.h>
-#include <MapLoader/Assets/TextureLibrary.h>
 #include <tinyxml2/tinyxml2.h>
 
 #include "FlatModel.h"
@@ -21,24 +19,22 @@ namespace MapLoader
 		FlatPortal* Portal = nullptr;
 	};
 
+	class GameAssetLibrary;
+
 	class FlatLibrary
 	{
 	public:
 		FlatLibrary(
-			const std::shared_ptr<Archive::ArchiveReader>& reader,
-			const std::shared_ptr<ModelLibrary>& modelLibrary,
-			const std::shared_ptr<TextureLibrary>& textureLibrary,
-			const std::shared_ptr<FlatLibrary>& parentLibrary = nullptr);
+			GameAssetLibrary& assetLibrary,
+			FlatLibrary* parentLibrary = nullptr);
 
 		FlatEntry FetchFlat(const Archive::Metadata::Entry* entry);
 		FlatEntry FetchFlat(const std::string& name);
 		FlatEntry LoadEntityFromFlat(const FlatEntry& flat, tinyxml2::XMLElement* entityElement);
 
 	private:
-		std::shared_ptr<Archive::ArchiveReader> Reader;
-		std::shared_ptr<ModelLibrary> ModelLibrary;
-		std::shared_ptr<TextureLibrary> TextureLibrary;
-		std::shared_ptr<FlatLibrary> ParentLibrary;
+		GameAssetLibrary& AssetLibrary;
+		FlatLibrary* ParentLibrary = nullptr;
 		std::vector<FlatEntity> Entities;
 		std::vector<FlatPlaceable> Placeables;
 		std::vector<FlatMesh> Meshes;

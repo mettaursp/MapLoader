@@ -9,6 +9,7 @@
 #include <MapLoader/hello_vulkan.h>
 #include <MapLoader/obj_loader.h>
 #include <nvvk/buffers_vk.hpp>
+#include <MapLoader/Assets/GameAssetLibrary.h>
 
 namespace MapLoader
 {
@@ -48,7 +49,7 @@ namespace MapLoader
 		loadedModel.Entry = entry;
 		loadedModel.Index = (uint32_t)Models.size() - 1;
 
-		FetchModel(Reader->GetPath(filepath), loadedModel, keepRawData);
+		FetchModel(AssetLibrary.GetReader()->GetPath(filepath), loadedModel, keepRawData);
 
 		return &loadedModel;
 	}
@@ -81,6 +82,8 @@ namespace MapLoader
 		{
 			parser.Package->Nodes[0].Transform->Update(0);
 		}
+
+		auto& textureLibrary = AssetLibrary.GetTextures();
 
 		for (size_t i = 0; i < parser.Package->Nodes.size(); ++i)
 		{
@@ -178,8 +181,7 @@ namespace MapLoader
 					}
 				}
 
-				ObjLoader loader;
-				loader.TextureLibrary = TextureLibrary;
+				ObjLoader loader(AssetLibrary);
 
 				std::vector<MaterialObj>& materials = loader.m_materials;
 
@@ -248,13 +250,13 @@ namespace MapLoader
 
 					::MaterialTextures& textures = MaterialTextures.back();
 
-					textures.diffuse.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Diffuse).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.specular.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Specular).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.normal.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Normal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.colorOverride.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.OverrideColor).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.emissive.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Glow).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.decal.id = TextureLibrary->FetchTexture(fs::path(packageMaterial.Decal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.anisotropic.id = TextureLibrary->FetchTexture(anisotropic, VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.diffuse.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Diffuse).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.specular.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Specular).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.normal.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Normal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.colorOverride.id = textureLibrary.FetchTexture(fs::path(packageMaterial.OverrideColor).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.emissive.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Glow).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.decal.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Decal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+					textures.anisotropic.id = textureLibrary.FetchTexture(anisotropic, VK_FORMAT_R8G8B8A8_UNORM, sampler);
 
 					const auto getTransform = [this](const Engine::Graphics::ModelPackageTextureTransform& modelTransform) -> int
 					{
@@ -348,10 +350,7 @@ namespace MapLoader
 		return true;
 	}
 
-	ModelLibrary::ModelLibrary(
-		const std::shared_ptr<Archive::ArchiveReader>& reader,
-		const std::shared_ptr<MapLoader::TextureLibrary>& textureLibrary,
-		const std::shared_ptr<Graphics::VulkanContext>& vulkanContext) : Reader(reader), TextureLibrary(textureLibrary), VulkanContext(vulkanContext)
+	ModelLibrary::ModelLibrary(GameAssetLibrary& assetLibrary) : AssetLibrary(assetLibrary)
 	{
 		std::vector<Engine::Graphics::VertexAttributeFormat> attributes;
 
@@ -405,35 +404,37 @@ namespace MapLoader
 		mesh.IndexCount = static_cast<uint32_t>(loader.m_indices.size());
 		mesh.VertexCount = static_cast<uint32_t>(loader.m_vertices.size());
 
+		const auto& vulkanContext = AssetLibrary.GetVulkanContext();
+
 		// Create the buffers on Device and copy vertices, indices and materials
-		nvvk::CommandPool  cmdBufGet(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
+		nvvk::CommandPool  cmdBufGet(vulkanContext->Device, vulkanContext->GraphicsQueueIndex);
 		VkCommandBuffer    cmdBuf = cmdBufGet.createCommandBuffer();
 		VkBufferUsageFlags flag = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 		VkBufferUsageFlags rayTracingFlags =  // used also for building acceleration structures
 			flag | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-		mesh.VertexBuffer = VulkanContext->Allocator.createBuffer(cmdBuf, loader.m_vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | rayTracingFlags);
-		mesh.IndexBuffer = VulkanContext->Allocator.createBuffer(cmdBuf, loader.m_indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
-		mesh.MatColorBuffer = VulkanContext->Allocator.createBuffer(cmdBuf, loader.m_materials, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
-		mesh.MatIndexBuffer = VulkanContext->Allocator.createBuffer(cmdBuf, loader.m_matIndx, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
+		mesh.VertexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, loader.m_vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | rayTracingFlags);
+		mesh.IndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, loader.m_indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
+		mesh.MatColorBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, loader.m_materials, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
+		mesh.MatIndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, loader.m_matIndx, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
 		// Creates all textures found and find the offset for this model
 		auto txtOffset = 0;
-		TextureLibrary->FlushLoadingQueue(cmdBuf);
+		AssetLibrary.GetTextures().FlushLoadingQueue(cmdBuf);
 		cmdBufGet.submitAndWait(cmdBuf);
-		VulkanContext->Allocator.finalizeAndReleaseStaging();
+		vulkanContext->Allocator.finalizeAndReleaseStaging();
 
 		std::string objNb = std::to_string(Models.size());
-		VulkanContext->Debug.setObjectName(mesh.VertexBuffer.buffer, (std::string("vertex_" + objNb)));
-		VulkanContext->Debug.setObjectName(mesh.IndexBuffer.buffer, (std::string("index_" + objNb)));
-		VulkanContext->Debug.setObjectName(mesh.MatColorBuffer.buffer, (std::string("mat_" + objNb)));
-		VulkanContext->Debug.setObjectName(mesh.MatIndexBuffer.buffer, (std::string("matIdx_" + objNb)));
+		vulkanContext->Debug.setObjectName(mesh.VertexBuffer.buffer, (std::string("vertex_" + objNb)));
+		vulkanContext->Debug.setObjectName(mesh.IndexBuffer.buffer, (std::string("index_" + objNb)));
+		vulkanContext->Debug.setObjectName(mesh.MatColorBuffer.buffer, (std::string("mat_" + objNb)));
+		vulkanContext->Debug.setObjectName(mesh.MatIndexBuffer.buffer, (std::string("matIdx_" + objNb)));
 
 		// Creating information for device access
 		ObjDesc desc;
 		desc.txtOffset = txtOffset | (invisible ? 0x80000000 : 0);
-		desc.vertexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, mesh.VertexBuffer.buffer);
-		desc.indexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, mesh.IndexBuffer.buffer);
-		desc.materialAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, mesh.MatColorBuffer.buffer);
-		desc.materialIndexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, mesh.MatIndexBuffer.buffer);
+		desc.vertexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexBuffer.buffer);
+		desc.indexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.IndexBuffer.buffer);
+		desc.materialAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.MatColorBuffer.buffer);
+		desc.materialIndexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.MatIndexBuffer.buffer);
 
 		// Keeping the obj host model and device description
 		GpuMeshData.emplace_back(desc);
@@ -443,12 +444,14 @@ namespace MapLoader
 
 	void ModelLibrary::FreeResources()
 	{
+		const auto& vulkanContext = AssetLibrary.GetVulkanContext();
+
 		for (auto& m : MeshDescriptions)
 		{
-			VulkanContext->Allocator.destroy(m.VertexBuffer);
-			VulkanContext->Allocator.destroy(m.IndexBuffer);
-			VulkanContext->Allocator.destroy(m.MatColorBuffer);
-			VulkanContext->Allocator.destroy(m.MatIndexBuffer);
+			vulkanContext->Allocator.destroy(m.VertexBuffer);
+			vulkanContext->Allocator.destroy(m.IndexBuffer);
+			vulkanContext->Allocator.destroy(m.MatColorBuffer);
+			vulkanContext->Allocator.destroy(m.MatIndexBuffer);
 		}
 
 		Models.clear();

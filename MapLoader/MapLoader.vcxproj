@@ -177,6 +177,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\MapLoader\Assets\GameAssetLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Assets\ModelData.cpp" />
     <ClCompile Include="src\MapLoader\Assets\ModelLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Assets\TextureAsset.cpp" />
@@ -184,7 +185,9 @@
     <ClCompile Include="src\MapLoader\Character\Character.cpp" />
     <ClCompile Include="src\MapLoader\hello_vulkan.cpp" />
     <ClCompile Include="src\MapLoader\Items\Dyes.cpp" />
-    <ClCompile Include="src\MapLoader\Items\Emotions.cpp" />
+    <ClCompile Include="src\MapLoader\Items\EmotionLibrary.cpp" />
+    <ClCompile Include="src\MapLoader\Items\ItemData.cpp" />
+    <ClCompile Include="src\MapLoader\Items\ItemLibrary.cpp" />
     <ClCompile Include="src\MapLoader\main.cpp" />
     <ClCompile Include="src\MapLoader\Map\FlatLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Map\FlatModel.cpp" />
@@ -195,6 +198,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaders\host_device.h" />
+    <ClInclude Include="src\MapLoader\Assets\GameAssetLibrary.h" />
     <ClInclude Include="src\MapLoader\Assets\ModelData.h" />
     <ClInclude Include="src\MapLoader\Assets\ModelLibrary.h" />
     <ClInclude Include="src\MapLoader\Assets\TextureAsset.h" />
@@ -202,7 +206,9 @@
     <ClInclude Include="src\MapLoader\Character\Character.h" />
     <ClInclude Include="src\MapLoader\hello_vulkan.h" />
     <ClInclude Include="src\MapLoader\Items\Dyes.h" />
-    <ClInclude Include="src\MapLoader\Items\Emotions.h" />
+    <ClInclude Include="src\MapLoader\Items\EmotionLibrary.h" />
+    <ClInclude Include="src\MapLoader\Items\ItemData.h" />
+    <ClInclude Include="src\MapLoader\Items\ItemLibrary.h" />
     <ClInclude Include="src\MapLoader\Map\FlatLibrary.h" />
     <ClInclude Include="src\MapLoader\Map\FlatModel.h" />
     <ClInclude Include="src\MapLoader\obj_loader.h" />

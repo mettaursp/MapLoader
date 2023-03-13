@@ -4,7 +4,6 @@
 
 #include <Engine/VulkanGraphics/Scene/MeshData.h>
 #include <ArchiveParser/MetadataMapper.h>
-#include <ArchiveParser/ArchiveReader.h>
 #include <MapLoader/Assets/ModelData.h>
 #include "TextureLibrary.h"
 #include <host_device.h>
@@ -12,13 +11,12 @@
 
 namespace MapLoader
 {
+	class GameAssetLibrary;
+
 	class ModelLibrary
 	{
 	public:
-		ModelLibrary(
-			const std::shared_ptr<Archive::ArchiveReader>& reader,
-			const std::shared_ptr<TextureLibrary>& textureLibrary,
-			const std::shared_ptr<Graphics::VulkanContext>& vulkanContext);
+		ModelLibrary(GameAssetLibrary& assetLibrary);
 		~ModelLibrary();
 
 		ModelData* FetchModel(const Archive::Metadata::Entry* entry, bool keepRawData = false);
@@ -37,9 +35,7 @@ namespace MapLoader
 		static const std::unordered_map<std::string, int> MaterialTypeMap;
 
 	private:
-		std::shared_ptr<Archive::ArchiveReader> Reader;
-		std::shared_ptr<TextureLibrary> TextureLibrary;
-		std::shared_ptr<Graphics::VulkanContext> VulkanContext;
+		GameAssetLibrary& AssetLibrary;
 		std::string NifDocumentBuffer;
 		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormat;
 		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormatWithColor;

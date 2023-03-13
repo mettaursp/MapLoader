@@ -28,7 +28,7 @@ namespace MapLoader
 		std::vector<EmotionTexture> Faces;
 	};
 
-	class Emotions
+	class EmotionLibrary
 	{
 	public:
 		void LoadEmotions(const std::shared_ptr<Archive::ArchiveReader>& reader);

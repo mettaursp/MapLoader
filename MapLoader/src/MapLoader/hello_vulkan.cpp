@@ -117,7 +117,7 @@ void HelloVulkan::updateUniformBuffer(const VkCommandBuffer& cmdBuf)
 //
 void HelloVulkan::createDescriptorSetLayout()
 {
-	auto nbTxt = static_cast<uint32_t>(TextureLibrary->GetAssets().size());
+	auto nbTxt = static_cast<uint32_t>(AssetLibrary->GetTextures().GetAssets().size());
 
 	// Camera matrices
 	m_descSetLayoutBind.addBinding(SceneBindings::eGlobals, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1,
@@ -157,7 +157,7 @@ void HelloVulkan::createDescriptorSetLayout()
 //
 void HelloVulkan::updateDescriptorSet()
 {
-	TextureLibrary->FlushLoadingQueue();
+	AssetLibrary->GetTextures().FlushLoadingQueue();
 	std::vector<VkWriteDescriptorSet> writes;
 
 	// Camera matrices and scene description
@@ -169,7 +169,7 @@ void HelloVulkan::updateDescriptorSet()
 
 	// All texture samplers
 	std::vector<VkDescriptorImageInfo> diit;
-	for(auto& texture : TextureLibrary->GetAssets())
+	for(auto& texture : AssetLibrary->GetTextures().GetAssets())
 	{
 	diit.emplace_back(texture.Data.descriptor);
 	}
@@ -272,7 +272,7 @@ void HelloVulkan::createObjDescriptionBuffer()
 	nvvk::CommandPool cmdGen(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
 
 	auto cmdBuf = cmdGen.createCommandBuffer();
-	m_bObjDesc  = VulkanContext->Allocator.createBuffer(cmdBuf, ModelLibrary->GetGpuData(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+	m_bObjDesc  = VulkanContext->Allocator.createBuffer(cmdBuf, AssetLibrary->GetModels().GetGpuData(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf);
 	VulkanContext->Allocator.finalizeAndReleaseStaging();
 	VulkanContext->Debug.setObjectName(m_bObjDesc.buffer, "ObjDescs");
@@ -286,7 +286,7 @@ void HelloVulkan::createObjDescriptionBuffer()
 	VulkanContext->Allocator.finalizeAndReleaseStaging();
 	VulkanContext->Debug.setObjectName(m_lightDesc.buffer, "LightDescs");
 
-	const auto& libraryTextureTransforms = ModelLibrary->GetTextureTransforms();
+	const auto& libraryTextureTransforms = AssetLibrary->GetModels().GetTextureTransforms();
 	static const std::vector<TextureTransform> defaultTextureTransforms{ {} };
 	const auto& textureTransforms = libraryTextureTransforms.size() != 0 ? libraryTextureTransforms : defaultTextureTransforms;
 
@@ -317,7 +317,7 @@ void HelloVulkan::createObjDescriptionBuffer()
 	VulkanContext->Allocator.finalizeAndReleaseStaging();
 	VulkanContext->Debug.setObjectName(m_mouseIO.buffer, "MouseIODescs");
 
-	const auto& libraryMaterialTextures = ModelLibrary->GetMaterialTextures();
+	const auto& libraryMaterialTextures = AssetLibrary->GetModels().GetMaterialTextures();
 	static const std::vector<MaterialTextures> defaultMaterialTextures{ {} };
 	const auto& materialTextures = libraryMaterialTextures.size() == 0 ? defaultMaterialTextures : libraryMaterialTextures;
 	
@@ -485,8 +485,8 @@ void HelloVulkan::destroyResources()
 	VulkanContext->Allocator.destroy(m_InstDesc);
 	VulkanContext->Allocator.destroy(m_textureOverride);
 
-	ModelLibrary->FreeResources();
-	TextureLibrary->FreeResources();
+	AssetLibrary->GetModels().FreeResources();
+	AssetLibrary->GetTextures().FreeResources();
 
 	//#Post
 	VulkanContext->Allocator.destroy(m_offscreenColor);
@@ -529,7 +529,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 
 	for(const HelloVulkan::ObjInstance& inst : m_instances)
 	{
-	auto& model            = ModelLibrary->GetMeshDescriptions()[inst.objIndex];
+	auto& model            = AssetLibrary->GetModels().GetMeshDescriptions()[inst.objIndex];
 	m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
 	m_pcRaster.modelMatrix = inst.transform;
 
@@ -731,7 +731,7 @@ auto HelloVulkan::objectToVkGeometryKHR(const MapLoader::MeshDescription& model)
 
 	// Describe buffer as array of VertexObj.
 	VkAccelerationStructureGeometryTrianglesDataKHR triangles{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR};
-	triangles.vertexFormat             = VK_FORMAT_R32G32B32_SFLOAT;  // vec3 vertex position data.
+	triangles.vertexFormat             = VK_FORMAT_R32G32B32_SFLOAT;  // vec3 vertex position data
 	triangles.vertexData.deviceAddress = vertexAddress;
 	triangles.vertexStride             = sizeof(VertexObj);
 	// Describe index data (32-bit unsigned int)
@@ -769,8 +769,8 @@ void HelloVulkan::createBottomLevelAS()
 {
 	// BLAS - Storing each primitive in a geometry
 	std::vector<nvvk::RaytracingBuilderKHR::BlasInput> allBlas;
-	allBlas.reserve(ModelLibrary->GetMeshDescriptions().size());
-	for(const auto& obj : ModelLibrary->GetMeshDescriptions())
+	allBlas.reserve(AssetLibrary->GetModels().GetMeshDescriptions().size());
+	for(const auto& obj : AssetLibrary->GetModels().GetMeshDescriptions())
 	{
 	auto blas = objectToVkGeometryKHR(obj);
 

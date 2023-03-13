@@ -9,10 +9,12 @@
 
 namespace MapLoader
 {
+	class GameAssetLibrary;
+
 	class TextureLibrary
 	{
 	public:
-		TextureLibrary(const std::shared_ptr<Archive::ArchiveReader>& reader, const std::shared_ptr<Graphics::VulkanContext>& vulkanContext);
+		TextureLibrary(GameAssetLibrary& assetLibrary);
 		~TextureLibrary();
 
 		int FetchTexture(const std::string& name, VkFormat format, VkSamplerCreateInfo samplerInfo = TextureAsset::GetDefaultSampler());
@@ -25,8 +27,7 @@ namespace MapLoader
 		void FreeResources();
 
 	private:
-		std::shared_ptr<Archive::ArchiveReader> Reader;
-		std::shared_ptr<Graphics::VulkanContext> VulkanContext;
+		GameAssetLibrary& AssetLibrary;
 		std::string LoadingBuffer;
 		std::vector<TextureAsset> Assets = { {} };
 		std::unordered_map<const Archive::Metadata::Entry*, size_t> AssetMap;

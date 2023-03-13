@@ -78,11 +78,20 @@
     <ClCompile Include="src\MapLoader\Items\Dyes.cpp">
       <Filter>Source Files\Items</Filter>
     </ClCompile>
-    <ClCompile Include="src\MapLoader\Items\Emotions.cpp">
+    <ClCompile Include="src\MapLoader\Items\EmotionLibrary.cpp">
       <Filter>Source Files\Items</Filter>
     </ClCompile>
     <ClCompile Include="src\MapLoader\Character\Character.cpp">
       <Filter>Source Files\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Items\ItemData.cpp">
+      <Filter>Source Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Items\ItemLibrary.cpp">
+      <Filter>Source Files\Items</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Assets\GameAssetLibrary.cpp">
+      <Filter>Source Files\Assets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -99,9 +108,6 @@
       <Filter>Source Files\Assets</Filter>
     </ClInclude>
     <ClInclude Include="src\MapLoader\Assets\ModelLibrary.h">
-      <Filter>Source Files\Assets</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MapLoader\Assets\TextureLibrary.h">
       <Filter>Source Files\Assets</Filter>
     </ClInclude>
     <ClInclude Include="src\MapLoader\Assets\TextureAsset.h">
@@ -125,11 +131,23 @@
     <ClInclude Include="src\MapLoader\Items\Dyes.h">
       <Filter>Source Files\Items</Filter>
     </ClInclude>
-    <ClInclude Include="src\MapLoader\Items\Emotions.h">
+    <ClInclude Include="src\MapLoader\Items\EmotionLibrary.h">
       <Filter>Source Files\Items</Filter>
     </ClInclude>
     <ClInclude Include="src\MapLoader\Character\Character.h">
       <Filter>Source Files\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Items\ItemData.h">
+      <Filter>Source Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Items\ItemLibrary.h">
+      <Filter>Source Files\Items</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Assets\GameAssetLibrary.h">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Assets\TextureLibrary.h">
+      <Filter>Source Files\Assets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

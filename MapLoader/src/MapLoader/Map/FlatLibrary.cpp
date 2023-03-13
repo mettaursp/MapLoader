@@ -1,6 +1,7 @@
 #include "FlatLibrary.h"
 
 #include <ArchiveParser/ParserUtils.h>
+#include <MapLoader/Assets/GameAssetLibrary.h>
 
 namespace MapLoader
 {
@@ -36,13 +37,9 @@ namespace MapLoader
 	}
 
 	FlatLibrary::FlatLibrary(
-		const std::shared_ptr<Archive::ArchiveReader>& reader,
-		const std::shared_ptr<MapLoader::ModelLibrary>& modelLibrary,
-		const std::shared_ptr<MapLoader::TextureLibrary>& textureLibrary,
-		const std::shared_ptr<FlatLibrary>& parentLibrary) :
-		Reader(reader),
-		ModelLibrary(modelLibrary),
-		TextureLibrary(textureLibrary),
+		GameAssetLibrary& assetLibrary,
+		FlatLibrary* parentLibrary) :
+		AssetLibrary(assetLibrary),
 		ParentLibrary(parentLibrary)
 	{
 
@@ -55,7 +52,7 @@ namespace MapLoader
 		if (entityIndex != EntityMap.end())
 			return FetchEntry(entityIndex->second);
 
-		Archive::ArchivePath flatFile = Reader->GetPath("Resource" + entry->RelativePath.string());
+		Archive::ArchivePath flatFile = AssetLibrary.GetReader()->GetPath("Resource" + entry->RelativePath.string());
 
 		if (!flatFile.Loaded())
 		{
@@ -257,7 +254,7 @@ namespace MapLoader
 
 			if (entry != nullptr)
 			{
-				entity->ProxyModel = ModelLibrary->FetchModel(entry);
+				entity->ProxyModel = AssetLibrary.GetModels().FetchModel(entry);
 			}
 
 			return;
@@ -309,7 +306,7 @@ namespace MapLoader
 
 			if (entry != nullptr)
 			{
-				mesh->Model = ModelLibrary->FetchModel(entry);
+				mesh->Model = AssetLibrary.GetModels().FetchModel(entry);
 			}
 
 			return;

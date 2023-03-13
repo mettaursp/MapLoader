@@ -1,4 +1,4 @@
-#include "Emotions.h"
+#include "EmotionLibrary.h"
 
 #include <tinyxml2/tinyxml2.h>
 #include <ArchiveParser/ParserUtils.h>
@@ -6,7 +6,7 @@
 
 namespace MapLoader
 {
-	void Emotions::LoadEmotions(const std::shared_ptr<Archive::ArchiveReader>& reader)
+	void EmotionLibrary::LoadEmotions(const std::shared_ptr<Archive::ArchiveReader>& reader)
 	{
 		LoadEmotions(reader->GetPath("Xml/emotion/common/femalecustom.xml"), FemaleEmotions);
 		LoadEmotions(reader->GetPath("Xml/emotion/common/malecustom.xml"), MaleEmotions);
@@ -15,7 +15,7 @@ namespace MapLoader
 		DefaultFemale = FemaleEmotions["default"];
 	}
 
-	const Emotion& Emotions::GetEmotion(Gender gender, const std::string& emotionName) const
+	const Emotion& EmotionLibrary::GetEmotion(Gender gender, const std::string& emotionName) const
 	{
 		const std::unordered_map<std::string, Emotion>& container = GetEmotions(gender);
 
@@ -30,7 +30,7 @@ namespace MapLoader
 		return DefaultFemale;
 	}
 
-	EmotionTexture Emotions::GetFace(Gender gender, const std::string& emotionName, int index, int id)
+	EmotionTexture EmotionLibrary::GetFace(Gender gender, const std::string& emotionName, int index, int id)
 	{
 		const Emotion& emotion = GetEmotion(gender, emotionName);
 
@@ -53,7 +53,7 @@ namespace MapLoader
 		return face;
 	}
 
-	void Emotions::LoadEmotions(const Archive::ArchivePath& file, std::unordered_map<std::string, Emotion>& container)
+	void EmotionLibrary::LoadEmotions(const Archive::ArchivePath& file, std::unordered_map<std::string, Emotion>& container)
 	{
 		if (!file.Loaded())
 		{

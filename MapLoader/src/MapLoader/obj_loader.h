@@ -97,13 +97,13 @@ struct shapeObj
 
 namespace MapLoader
 {
-	class ModelLibrary;
+	class GameAssetLibrary;
 }
 
 class ObjLoader
 {
 public:
-		ObjLoader() {}
+		ObjLoader(MapLoader::GameAssetLibrary& assetLibrary) : AssetLibrary(assetLibrary) {}
 	void loadModel(const std::string& filename);
 	void loadModel(const tinyobj::attrib_t& attribs, const std::vector<tinyobj::material_t>& materials, const std::vector<tinyobj::shape_t>& shapes);
 
@@ -111,8 +111,7 @@ public:
 	std::vector<uint32_t>    m_indices;
 	std::vector<MaterialObj> m_materials;
 	std::vector<std::string> m_textures;
-	std::shared_ptr<MapLoader::ModelLibrary> ModelLibrary;
-	std::shared_ptr<MapLoader::TextureLibrary> TextureLibrary;
+	MapLoader::GameAssetLibrary& AssetLibrary;
 	std::vector<std::string> m_textures2;
 	std::vector<int32_t>     m_matIndx;
 };

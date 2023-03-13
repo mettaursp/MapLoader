@@ -71,17 +71,20 @@
 #include <ArchiveParser/MetadataMapper.h>
 #include "Assets/ModelLibrary.h"
 #include "Assets/TextureLibrary.h"
+#include "Assets/GameAssetLibrary.h"
 #include "Assets/TextureAsset.h"
 #include "Map/FlatLibrary.h"
 #include "Vulkan/VulkanContext.h"
 #include "Items/Dyes.h"
-#include "Items/Emotions.h"
+#include "Items/EmotionLibrary.h"
 #include "Character/Character.h"
+#include "Scene/RTScene.h"
 
 using DyeColor = MapLoader::DyeColor;
 using EmotionTexture = MapLoader::EmotionTexture;
 using Emotion = MapLoader::Emotion;
 using Gender = MapLoader::Gender;
+using Character = MapLoader::Character;
 
 const auto PROJECT_NAME = "MapLoader";
 
@@ -160,73 +163,11 @@ struct SpawnedPortal
 	int PortalId;
 };
 
-
-struct Item
-{
-	int Id = 0;
-	DyeColor Color;
-	int Preset = 0;
-};
-
-struct HairItem : public Item
-{
-	//float Scale = 0;
-	//int Pony = 0;
-	//Vector3SF HatPosition;
-	//Vector3SF HatRotation;
-	//float HatScale = 1;
-};
-
-struct FaceDecorItem : public Item
-{
-
-};
-
-struct HatItem : public Item
-{
-	bool CustomAttach = false;
-	Vector3SF AttachDirection;
-	Vector3SF AttachRotation;
-};
-
-struct EquipTab
-{
-	HatItem Hat;
-	Item Shirt;
-	Item Pants;
-	Item Gloves;
-	Item Shoes;
-	bool ShirtCoversPants = false;
-	Item Earring;
-	Item Pendant;
-	Item Ring;
-	Item Cape;
-	Item Belt;
-	Item Weapon;
-};
-
-struct Character
-{
-	Gender Gender = Gender::Male;
-	DyeColor SkinColor;
-	HairItem Hair;
-	FaceDecorItem FaceDecor;
-	Item Face;
-	EquipTab Gear;
-	EquipTab Cosmetics;
-	std::string Emotion = "default";
-	int EmotionFrame = 0;
-};
-
 HelloVulkan* helloVkPtr = nullptr;
 std::shared_ptr<Archive::ArchiveReader> Reader = std::make_shared<Archive::ArchiveReader>();
 std::shared_ptr<Graphics::VulkanContext> VulkanContext;
-std::shared_ptr<MapLoader::TextureLibrary> TextureLibrary;
-std::shared_ptr<MapLoader::ModelLibrary> ModelLibrary;
-std::shared_ptr<MapLoader::FlatLibrary> FlatLibrary;
-std::shared_ptr<MapLoader::FlatLibrary> MapData;
+std::shared_ptr<MapLoader::GameAssetLibrary> AssetLibrary;
 MapLoader::DyeColors dyeColors;
-MapLoader::Emotions emotions;
 std::string documentBuffer;
 std::string flatDocumentBuffer;
 std::string nifDocumentBuffer;
@@ -351,9 +292,7 @@ void getBounds(const MapLoader::ModelData* model, Bounds& bounds)
 	}
 }
 
-typedef std::function<bool(MapLoader::ModelData*, size_t, InstDesc&)> ModelSpawnCallback;
-
-SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform = Matrix4F(), const ModelSpawnCallback& callback = nullptr)
+SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform, const ModelSpawnCallback& callback)
 {
 	if (model == nullptr)
 		return nullptr;
@@ -438,637 +377,6 @@ Color3 readValue<Color3>(const tinyxml2::XMLAttribute* attribute)
 	color.B = (float)std::atof(value);
 
 	return color;
-}
-
-const char* adjustPath(const char* path)
-{
-	for (int i = 0; i < 3 && path[i]; ++i)
-	{
-		if (strncmp(path + i, "Data/", 5) == 0)
-		{
-			return path + i + 5;
-		}
-	}
-
-	return path;
-}
-
-struct ItemAsset
-{
-	std::string NifPath;
-	const Archive::Metadata::Entry* ModelEntry = nullptr;
-	MapLoader::ModelData* Model = nullptr;
-	std::string SelfNode;
-	std::string TargetNode;
-	std::string AttachNode;
-	bool Replace = false;
-	bool EarFold = false;
-	bool HasPonytail = false;
-	bool IsWeapon = false;
-};
-
-struct ItemSlotScale
-{
-	Vector3SF Value;
-	float Min = 0;
-	float Max = 0;
-	bool Reverse = false;
-};
-
-struct ItemDecalTransform
-{
-	Vector3SF Position;
-	Vector3SF Rotation;
-	int TextureTransformId = -1;
-};
-
-struct ItemDecal
-{
-	std::string TexturePath;
-	std::string ControlTexturePath;
-	std::vector<ItemDecalTransform> Transforms;
-	int Texture = -1;
-	int ControlTexture = -1;
-};
-
-struct ItemSlot
-{
-	std::string Name;
-	std::vector<ItemAsset> Assets;
-	std::vector<ItemSlotScale> Scales;
-	std::vector<ItemDecal> Decals;
-};
-
-struct ItemCustomizationFlags
-{
-	bool HairScale = false;
-	bool HairPonytail = false;
-	bool FaceDecorTranslation = false;
-	bool FaceDecorRotation = false;
-	bool FaceDecorScale = false;
-	bool HatRotationX = false;
-	bool HatRotationY = false;
-	bool HatRotationZ = false;
-	bool HatScale = false;
-	bool HatAttach = false;
-	bool HasDefaultHatTransform = false;
-	Matrix4F DefaultHatTransform;
-};
-
-struct ItemModel
-{
-	int Id = 0;
-	std::string Name;
-	std::vector<ItemSlot> Slots;
-	std::vector<std::string> Cutting;
-	ItemCustomizationFlags Customization;
-};
-
-std::unordered_map<int, ItemModel> maleItems;
-std::unordered_map<int, ItemModel> femaleItems;
-
-const ItemModel* LoadItem(const Character& character, const Item& item)
-{
-	if (item.Id == 0) return nullptr;
-
-	const std::unordered_map<int, ItemModel>& itemMap = character.Gender == Gender::Male ? maleItems : femaleItems;
-	const auto& itemIndex = itemMap.find(item.Id);
-
-	if (itemIndex != itemMap.end())
-	{
-		return &itemIndex->second;
-	}
-
-	std::stringstream idString;
-	idString << item.Id;
-
-	std::string id = idString.str();
-	char itemDir[6] = {
-		((item.Id / 10000000) % 10) + '0',
-		'/',
-		((item.Id / 1000000) % 10) + '0',
-		((item.Id / 100000) % 10) + '0',
-		'/',
-		0
-	};
-
-	Archive::ArchivePath file = Reader->GetPath("Xml/Item/" + std::string(itemDir) + (id + ".xml"));
-
-	if (!file.Loaded())
-	{
-		std::cout << "failed to load item " << file.GetPath().string() << std::endl;
-		return nullptr;
-	}
-
-	tinyxml2::XMLDocument document;
-
-	file.Read(documentBuffer);
-	document.Parse(documentBuffer.data(), documentBuffer.size());
-
-	tinyxml2::XMLElement* rootElement = document.RootElement();
-	tinyxml2::XMLElement* envElement = nullptr;
-
-	SupportSettings feature;
-	SupportSettings locale;
-
-	ItemModel& model = (character.Gender == Gender::Male ? maleItems : femaleItems)[item.Id];
-	
-	model.Id = item.Id;
-
-	for (tinyxml2::XMLElement* currentEnvElement = rootElement->FirstChildElement(); currentEnvElement; currentEnvElement = currentEnvElement->NextSiblingElement())
-	{
-		if (!isNodeEnabled(currentEnvElement, &feature, &locale))
-			continue;
-
-		envElement = currentEnvElement;
-	}
-
-	for (tinyxml2::XMLElement* componentElement = envElement->FirstChildElement(); componentElement; componentElement = componentElement->NextSiblingElement())
-	{
-		const char* name = componentElement->Name();
-
-		if (strcmp(name, "slots") == 0)
-		{
-			for (tinyxml2::XMLElement* slotElement = componentElement->FirstChildElement(); slotElement; slotElement = slotElement->NextSiblingElement())
-			{
-				model.Slots.push_back(ItemSlot{});
-
-				ItemSlot& slot = model.Slots.back();
-
-				slot.Name = readAttribute<const char*>(slotElement, "name", "");
-
-				for (tinyxml2::XMLElement* attributeElement = slotElement->FirstChildElement(); attributeElement; attributeElement = attributeElement->NextSiblingElement())
-				{
-					const char* attributeName = attributeElement->Name();
-
-					if (strcmp(attributeName, "asset") == 0)
-					{
-						Gender gender = (Gender)readAttribute<int>(attributeElement, "gender", 2);
-
-						if (gender != Gender::Either && gender != character.Gender) continue;
-
-						slot.Assets.push_back(ItemAsset{});
-
-						ItemAsset& asset = slot.Assets.back();
-
-						const char* nifPath = readAttribute<const char*>(attributeElement, "name", "");
-
-						if (strncmp(nifPath, "urn:", 4) == 0)
-						{
-							int lastColon = 3;
-
-							for (int i = 4; nifPath[i]; ++i)
-								if (nifPath[i] == ':')
-									lastColon = i;
-
-							if (nifPath[lastColon + 1])
-							{
-								asset.ModelEntry = Archive::Metadata::Entry::FindFirstEntryByTags(nifPath + lastColon + 1, "gamebryo-scenegraph");
-
-								if (asset.ModelEntry)
-								{
-									asset.NifPath = "Resource" + asset.ModelEntry->RelativePath.string();
-									asset.Model = ModelLibrary->FetchModel(asset.ModelEntry, slot.Name == "HR");
-								}
-							}
-						}
-						else
-						{
-							asset.NifPath = nifPath + 5;
-							asset.ModelEntry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(nifPath + 5 + 8, "gamebryo-scenegraph");
-							asset.Model = ModelLibrary->FetchModel(asset.ModelEntry, slot.Name == "HR");
-						}
-
-						asset.SelfNode = readAttribute<const char*>(attributeElement, "selfnode", "");
-						asset.TargetNode = readAttribute<const char*>(attributeElement, "targetnode", "");
-						asset.AttachNode = readAttribute<const char*>(attributeElement, "attachnode", "");
-						asset.Replace = readAttribute<int>(attributeElement, "replace", 0) != 0;
-						asset.EarFold = readAttribute<int>(attributeElement, "earfold", 0) != 0;
-						asset.HasPonytail = readAttribute<int>(attributeElement, "pony", 0) != 0;
-						asset.IsWeapon = readAttribute<int>(attributeElement, "weapon", 0) != 0;
-
-						continue;
-					}
-
-					if (strcmp(attributeName, "scale") == 0)
-					{
-						slot.Scales.push_back(ItemSlotScale{});
-
-						ItemSlotScale& scale = slot.Scales.back();
-
-						scale.Value = readAttribute<Vector3SF>(attributeElement, "value", Vector3SF());
-						scale.Min = readAttribute<float>(attributeElement, "min", 0);
-						scale.Max = readAttribute<float>(attributeElement, "max", 0);
-						scale.Reverse = readAttribute<int>(attributeElement, "reverse", 0) != 0;
-
-						continue;
-					}
-
-					if (strcmp(attributeName, "decal") == 0)
-					{
-						slot.Decals.push_back(ItemDecal{});
-
-						ItemDecal& decal = slot.Decals.back();
-
-						decal.TexturePath = adjustPath(readAttribute<const char*>(attributeElement, "texture", ""));
-						decal.ControlTexturePath = adjustPath(readAttribute<const char*>(attributeElement, "controlTexture", ""));
-
-						for (tinyxml2::XMLElement* customElement = attributeElement->FirstChildElement(); customElement; customElement = customElement->NextSiblingElement())
-						{
-							if (strcmp(customElement->Name(), "custom") != 0)
-								continue;
-
-							decal.Transforms.push_back(ItemDecalTransform{});
-
-							ItemDecalTransform& transform = decal.Transforms.back();
-
-							auto& textureTransforms = ModelLibrary->GetTextureTransforms();
-
-							transform.Position = readAttribute<Vector3SF>(customElement, "position", {});
-							transform.Rotation = readAttribute<Vector3SF>(customElement, "rotation", {});
-							transform.TextureTransformId = (int)textureTransforms.size();
-							
-							textureTransforms.push_back(TextureTransform{});
-							
-							TextureTransform& textureTransform = textureTransforms.back();
-							textureTransform.scale = { 1, 1 };
-							textureTransform.translation = { -transform.Position.X, -transform.Position.Y };
-							textureTransform.pivot = { 0.5f, 0.5f };
-							textureTransform.rotation = -transform.Rotation.Z;// *PI / 180;
-							textureTransform.mode = 1;
-							
-							if (slot.Scales.size() > 0)
-							{
-								textureTransform.scale = { 1 / slot.Scales[0].Value.X, 1 / slot.Scales[0].Value.X };
-							}
-						}
-
-						VkSamplerCreateInfo sampler = MapLoader::TextureAsset::GetDefaultSampler();
-						sampler.addressModeU = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-						sampler.addressModeV = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-						sampler.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_BORDER;
-
-						decal.Texture = TextureLibrary->FetchTexture(decal.TexturePath, VK_FORMAT_R8G8B8A8_UNORM, sampler);
-						decal.ControlTexture = TextureLibrary->FetchTexture(decal.ControlTexturePath, VK_FORMAT_R8G8B8A8_UNORM, sampler);
-
-						continue;
-					}
-
-					attributeName += 0;
-				}
-			}
-
-			continue;
-		}
-
-		if (strcmp(name, "cutting") == 0)
-		{
-			for (tinyxml2::XMLElement* meshElement = componentElement->FirstChildElement(); meshElement; meshElement = meshElement->NextSiblingElement())
-			{
-				if (strcmp(meshElement->Name(), "mesh") != 0)
-					continue;
-				
-				if ((Gender)readAttribute<int>(meshElement, "gender", 2) != character.Gender) continue;
-
-				model.Cutting.push_back(readAttribute<const char*>(meshElement, "name", ""));
-			}
-
-			continue;
-		}
-
-		if (strcmp(name, "customize") == 0)
-		{
-			for (tinyxml2::XMLElement* slotElement = componentElement->FirstChildElement(); slotElement; slotElement = slotElement->NextSiblingElement())
-			{
-				const char* slotName = slotElement->Name();
-
-				if (strcmp(slotName, "HR") == 0)
-				{
-					model.Customization.HairScale = readAttribute<int>(slotElement, "scale", 0) != 0;
-					model.Customization.HairPonytail = readAttribute<int>(slotElement, "pony", 0) != 0;
-
-					continue;
-				}
-
-				if (strcmp(slotName, "FD") == 0)
-				{
-					model.Customization.FaceDecorTranslation = readAttribute<int>(slotElement, "translation", 0) != 0;
-					model.Customization.FaceDecorRotation = readAttribute<int>(slotElement, "rotation", 0) != 0;
-					model.Customization.FaceDecorScale = readAttribute<int>(slotElement, "scale", 0) != 0;
-
-					continue;
-				}
-
-				if (strcmp(slotName, "CP") == 0)
-				{
-					model.Customization.HatRotationX = readAttribute<int>(slotElement, "xrotation", 0) != 0;
-					model.Customization.HatRotationY = readAttribute<int>(slotElement, "yrotation", 0) != 0;
-					model.Customization.HatRotationZ = readAttribute<int>(slotElement, "zrotation", 0) != 0;
-					model.Customization.HatScale = readAttribute<int>(slotElement, "scale", 0) != 0;
-					model.Customization.HatAttach = readAttribute<int>(slotElement, "attach", 0) != 0;
-
-					for (tinyxml2::XMLElement* transformElement = slotElement->FirstChildElement(); transformElement; transformElement = transformElement->NextSiblingElement())
-					{
-						if (strcmp(transformElement->Name(), "transform") != 0)
-							continue;
-
-						model.Customization.HasDefaultHatTransform = true;
-
-						Vector3SF position = readAttribute<Vector3SF>(transformElement, "position", {});
-						Vector3SF rotation = readAttribute<Vector3SF>(transformElement, "rotation", {});
-						float scale = readAttribute<float>(transformElement, "scale", 1);
-
-						model.Customization.DefaultHatTransform = MapLoader::getMatrix(position, rotation, scale, false);
-					}
-
-					continue;
-				}
-			}
-
-			continue;
-		}
-	}
-
-	TextureLibrary->FlushLoadingQueue();
-
-	return &model;
-}
-
-struct EquippedSlot
-{
-	const Item* Customization = nullptr;
-	const ItemModel* Item = nullptr;
-	const ItemSlot* Slot = nullptr;
-	bool Replaces = false;
-};
-
-struct LoadedCharacter
-{
-	Character* Customization = nullptr;
-	bool HideEars = false;
-	std::unordered_map<std::string, EquippedSlot> ActiveSlots;
-	std::vector<std::string> CutMeshes;
-	std::unordered_map<std::string, Matrix4F> Transforms;
-};
-
-template <typename T>
-bool contains(const std::vector<T>& vector, const T& searchFor)
-{
-	for (const T& value : vector)
-		if (value == searchFor)
-			return true;
-
-	return false;
-}
-
-void EquipItem(LoadedCharacter& character, const ItemModel* item, Item& customization)
-{
-	if (item == nullptr) return;
-	 
-	for (const ItemSlot& slot : item->Slots)
-	{
-		if (!character.ActiveSlots.contains(slot.Name))
-		{
-			bool replaces = false;
-
-			for (const ItemAsset& asset : slot.Assets)
-			{
-				character.HideEars |= asset.EarFold;
-				replaces |= asset.Replace;
-				character.Transforms[asset.TargetNode] = Matrix4F();
-
-				if (asset.AttachNode != "")
-					character.Transforms[asset.AttachNode] = Matrix4F();
-			}
-
-			character.ActiveSlots[slot.Name] = EquippedSlot{ &customization, item, &slot, replaces };
-		}
-		else
-			item += 0;
-	}
-
-	for (const std::string& meshName : item->Cutting)
-	{
-		bool alreadyHas = false;
-
-		if (!contains(character.CutMeshes, meshName))
-		{
-			character.CutMeshes.push_back(meshName);
-		}
-	}
-}
-
-void EquipItem(LoadedCharacter& character, Character& data, Item& item)
-{
-	EquipItem(character, LoadItem(data, item), item);
-}
-
-void LoadTab(LoadedCharacter& character, Character& data, EquipTab& equips)
-{
-	EquipItem(character, data, equips.Hat);
-	EquipItem(character, data, equips.Shirt);
-	EquipItem(character, data, equips.Pants);
-	EquipItem(character, data, equips.Gloves);
-	EquipItem(character, data, equips.Shoes);
-	EquipItem(character, data, equips.Earring);
-	EquipItem(character, data, equips.Pendant);
-	EquipItem(character, data, equips.Ring);
-	EquipItem(character, data, equips.Cape);
-	EquipItem(character, data, equips.Belt);
-	EquipItem(character, data, equips.Weapon);
-}
-
-void LoadCharacter(Character& data, const Matrix4F transform = Matrix4F())
-{
-	LoadedCharacter character{ &data };
-	EquipItem(character, data, data.Face);
-	EquipItem(character, data, data.FaceDecor);
-
-	LoadTab(character, data, data.Cosmetics);
-	LoadTab(character, data, data.Gear);
-
-	EquipItem(character, data, data.Hair);
-
-	std::string rigPath = data.Gender == Gender::Male ? "/Model/Character/male/m_body.nif" : "/Model/Character/female/f_body.nif";
-
-	const Archive::Metadata::Entry* rigEntry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(rigPath, "gamebryo-scenegraph");
-
-	MapLoader::ModelData* rig = ModelLibrary->FetchModel(rigEntry, true);
-
-	if (character.HideEars)
-		character.CutMeshes.push_back("FA_EA");
-
-	DyeColor dyeColor = data.SkinColor;
-	bool spawningRig = true;
-
-	EquippedSlot* currentSlot = nullptr;
-
-	const auto faceDecor = character.ActiveSlots.find("FD");
-
-	EmotionTexture face = emotions.GetFace(data.Gender, data.Emotion, data.EmotionFrame, data.Face.Id);
-
-	const auto spawnCallback = [&character, &dyeColor, &spawningRig, &currentSlot, &faceDecor, &face](MapLoader::ModelData* model, size_t i, InstDesc& instance)
-	{
-		const std::string& meshName = model->NodeNames[i];
-
-		if (contains(character.CutMeshes, meshName))
-			return false;
-
-		const auto equippedIndex = character.ActiveSlots.find(meshName.substr(0, 2));
-
-		if (spawningRig && equippedIndex != character.ActiveSlots.end() && equippedIndex->second.Replaces && meshName != "FA_EA")
-			return false;
-
-		const DyeColor& color = model->Shaders[i] == "MS2CharacterSkinMaterial" ? character.Customization->SkinColor : dyeColor;
-
-		instance.primaryColor = vec3(color.Primary.R, color.Primary.G, color.Primary.B);
-		instance.secondaryColor = vec3(color.Secondary.R, color.Secondary.G, color.Secondary.B);
-
-		if (meshName == "FA")
-		{
-			instance.flags |= 2;
-		}
-
-		if (currentSlot != nullptr && (currentSlot->Slot->Decals.size() > 0 || currentSlot->Slot->Name == "FA"))
-		{
-			auto& materialTextures = ModelLibrary->GetMaterialTextures();
-
-			instance.textureOverride = (int)materialTextures.size();
-
-			materialTextures.push_back(materialTextures[model->Materials[i].textures]);
-
-			MaterialTextures& overrides = materialTextures.back();
-
-			for (const ItemDecal& decal : currentSlot->Slot->Decals)
-			{
-				int preset = std::max(-1, std::min((int)decal.Transforms.size() - 1, currentSlot->Customization->Preset));
-
-				if (decal.Texture != -1)
-				{
-					overrides.decal.id = decal.Texture;
-
-					if (decal.Transforms.size() > 0)
-					{
-						overrides.decal.transformId = decal.Transforms[preset].TextureTransformId;
-					}
-				}
-
-				if (decal.ControlTexture != -1)
-				{
-					overrides.colorOverride.id = decal.ControlTexture;
-
-					if (decal.Transforms.size() > 0)
-					{
-						overrides.colorOverride.transformId = decal.Transforms[preset].TextureTransformId;
-					}
-				}
-			}
-
-			if (currentSlot->Slot->Name == "FA" && model->NodeNames[i] == "FA")
-			{
-				int diffuseTexture = TextureLibrary->FetchTexture("Resource/Model/Textures/" + face.File, VK_FORMAT_R8G8B8A8_UNORM);
-				int controlTexture = TextureLibrary->FetchTexture("Resource/Model/Textures/" + face.Control, VK_FORMAT_R8G8B8A8_UNORM);
-
-				if (diffuseTexture != -1)
-				{
-					overrides.diffuse.id = diffuseTexture;
-				}
-
-				if (controlTexture != -1)
-				{
-					overrides.colorOverride.id = controlTexture;
-				}
-			}
-
-			if (currentSlot->Slot->Name == "FA" && model->NodeNames[i] == "FA_Skin" && faceDecor != character.ActiveSlots.end())
-			{
-				for (const ItemDecal& decal : faceDecor->second.Slot->Decals)
-				{
-					int preset = std::max(-1, std::min((int)decal.Transforms.size() - 1, faceDecor->second.Customization->Preset));
-
-					if (decal.Texture != -1)
-					{
-						overrides.decal.id = decal.Texture;
-
-						if (decal.Transforms.size() > 0)
-						{
-							overrides.decal.transformId = decal.Transforms[preset].TextureTransformId;
-						}
-					}
-
-					if (decal.ControlTexture != -1)
-					{
-						overrides.colorOverride.id = decal.ControlTexture;
-
-						if (decal.Transforms.size() > 0)
-						{
-							overrides.colorOverride.transformId = decal.Transforms[preset].TextureTransformId;
-						}
-					}
-				}
-			}
-		}
-
-		return true;
-	};
-
-	spawnModel(rig, transform, spawnCallback);
-
-	spawningRig = false;
-
-	for (size_t i = 0; i < rig->Transformations.size(); ++i)
-	{
-		const auto transformIndex = character.Transforms.find(rig->NodeNames[i]);
-
-		if (transformIndex != character.Transforms.end())
-			transformIndex->second = rig->Transformations[i];
-	}
-
-	std::vector<const ItemModel*> addedModels;
-
-	Matrix4F hatTransform;
-
-	for (auto& activeSlot : character.ActiveSlots)
-	{
-		currentSlot = &activeSlot.second;
-
-		const ItemSlot* slot = currentSlot->Slot;
-
-		dyeColor = currentSlot->Customization->Color;
-
-		if (currentSlot->Item->Customization.HasDefaultHatTransform)
-		{
-			const auto transformIndex = character.Transforms.find("HR");
-
-			if (transformIndex != character.Transforms.end())
-				hatTransform = currentSlot->Item->Customization.DefaultHatTransform;
-		}
-
-		for (const ItemAsset& asset : slot->Assets)
-		{
-			Matrix4F assetTransform;
-
-			const auto transformIndex = character.Transforms.find(asset.TargetNode);
-
-			if (transformIndex != character.Transforms.end())
-				assetTransform = transformIndex->second;
-
-			if (slot->Name == "CP")
-				assetTransform = assetTransform * hatTransform;
-			
-			for (size_t i = 0; i < asset.Model->NodeNames.size(); ++i)
-			{
-				if (asset.SelfNode == asset.Model->NodeNames[i].substr(0, asset.SelfNode.size()))
-				{
-					assetTransform = assetTransform * asset.Model->Transformations[i].Inverted();
-
-					break;
-				}
-			}
-
-			spawnModel(asset.Model, transform * assetTransform, spawnCallback);
-		}
-	}
 }
 
 void loadMap(const std::string& mapId)
@@ -1156,12 +464,12 @@ void loadMap(const std::string& mapId)
 		std::string entityName = readAttribute<const char*>(entityElement, "name", "");
 		std::string modelName = readAttribute<std::string>(entityElement, "modelName", "");
 
-		MapLoader::FlatEntry flatentry = FlatLibrary->FetchFlat(modelName);
+		MapLoader::FlatEntry flatentry = AssetLibrary->GetFlats().FetchFlat(modelName);
 
 		if (flatentry.Entity == nullptr)
 			continue;
 
-		MapLoader::FlatEntry entityEntry = MapData->LoadEntityFromFlat(flatentry, entityElement);
+		MapLoader::FlatEntry entityEntry = AssetLibrary->GetMapData().LoadEntityFromFlat(flatentry, entityElement);
 
 		if (entityEntry.Light != nullptr && loadLights)
 		{
@@ -1452,18 +760,13 @@ int main(int argc, char** argv)
 	vkctx.initDevice(compatibleDevices[0], contextInfo);
 
 	VulkanContext = std::make_shared<Graphics::VulkanContext>();
-	TextureLibrary = std::make_shared<MapLoader::TextureLibrary>(Reader, VulkanContext);
-	ModelLibrary = std::make_shared<MapLoader::ModelLibrary>(Reader, TextureLibrary, VulkanContext);
-	FlatLibrary = std::make_shared<MapLoader::FlatLibrary>(Reader, ModelLibrary, TextureLibrary);
-	MapData = std::make_shared<MapLoader::FlatLibrary>(Reader, ModelLibrary, TextureLibrary, FlatLibrary);
+	AssetLibrary = std::make_shared<MapLoader::GameAssetLibrary>(Reader, VulkanContext);
 
 	// Create example
 	HelloVulkan helloVk;
 
 	helloVkPtr = &helloVk;
-	helloVk.Reader = Reader.get();
-	helloVk.ModelLibrary = ModelLibrary;
-	helloVk.TextureLibrary = TextureLibrary;
+	helloVk.AssetLibrary = AssetLibrary;
 	helloVk.VulkanContext = VulkanContext;
 
 	// Window need to be opened to get the surface on which to draw
@@ -1479,7 +782,7 @@ int main(int argc, char** argv)
 	// Setup Imgui
 	helloVk.initGUI(0);  // Using sub-pass 0
 	dyeColors.LoadDyes(Reader);
-	emotions.LoadEmotions(Reader);
+	AssetLibrary->GetEmotions().LoadEmotions(Reader);
 
 	loadMapNames(Reader->GetPath("Xml/string/en/mapname.xml"));
 	loadMapFileNames(Reader->GetPath("Xml/table/fielddata.xml"));
@@ -1683,41 +986,45 @@ int main(int argc, char** argv)
 	if (mapId != nullptr)
 		loadMap(mapId);
 
-	Character baadf00d;
+	MapLoader::CharacterData baadf00d;
 
 	baadf00d.Gender = Gender::Female;
-	baadf00d.Face = Item{ 10300097, dyeColors.GetDyeColor("Light Green", true) };
-	baadf00d.FaceDecor = FaceDecorItem{ 10400010 };
+	baadf00d.Face = { 10300097, dyeColors.GetDyeColor("Light Green", true) };
+	baadf00d.FaceDecor = { 10400010 };
 	baadf00d.SkinColor = dyeColors.GetDyeColor(3);
-	baadf00d.Hair = HairItem{ 10200250, dyeColors.GetDyeColor("Pink") };
-	baadf00d.Cosmetics.Hat = HatItem{ 11300743, dyeColors.GetDyeColor("Red") };
-	baadf00d.Cosmetics.Shirt = Item{ 11401065, dyeColors.GetDyeColor("Light Pink") };
-	baadf00d.Cosmetics.Pants = Item{ 11500163, dyeColors.GetDyeColor("Pink") };
-	baadf00d.Cosmetics.Gloves = Item{ 11620024, dyeColors.GetDyeColor("Red") };
-	baadf00d.Cosmetics.Shoes = Item{ 11700313, dyeColors.GetDyeColor("Light Pink") };
+	baadf00d.Hair = { 10200250, dyeColors.GetDyeColor("Pink") };
+	baadf00d.Cosmetics.Hat = { 11300743, dyeColors.GetDyeColor("Red") };
+	baadf00d.Cosmetics.Shirt = { 11401065, dyeColors.GetDyeColor("Light Pink") };
+	baadf00d.Cosmetics.Pants = { 11500163, dyeColors.GetDyeColor("Pink") };
+	baadf00d.Cosmetics.Gloves = { 11620024, dyeColors.GetDyeColor("Red") };
+	baadf00d.Cosmetics.Shoes = { 11700313, dyeColors.GetDyeColor("Light Pink") };
 
-	LoadCharacter(baadf00d, Matrix4F(0, 0, 3000) * Matrix4F::RollRotation(PI));
+	Character f00dCharacter(AssetLibrary);
 
-	Character hornetsp;
+	f00dCharacter.Load(&baadf00d, Matrix4F(0, 0, 3000) * Matrix4F::RollRotation(PI));
+
+	MapLoader::CharacterData hornetsp;
 
 	hornetsp.Gender = Gender::Male;
-	hornetsp.Face = Item{ 10300014, dyeColors.GetDyeColor("Blue") };
-	hornetsp.FaceDecor = FaceDecorItem{ 10400006, dyeColors.GetDyeColor("Blue"), 0 };
+	hornetsp.Face = { 10300014, dyeColors.GetDyeColor("Blue") };
+	hornetsp.FaceDecor = { 10400006, dyeColors.GetDyeColor("Blue"), 0 };
 	hornetsp.SkinColor = dyeColors.GetDyeColor(12);
-	hornetsp.Hair = HairItem{ 10200001, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Hat = HatItem{ 11380431, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Shirt = Item{ 11480386, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Pants = Item{ 11500660, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Gloves = Item{ 11600864, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Shoes = Item{ 11790671, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Cape = Item{ 11890080, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Earring = Item{ 11200064, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Pendant = Item{ 11900122, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Belt = Item{ 12100112, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Ring = Item{ 12060106, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Weapon = Item{ 15460178, dyeColors.GetDyeColor("Green") };
+	hornetsp.Hair = { 10200001, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Hat = { 11380431, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Shirt = { 11480386, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Pants = { 11500660, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Gloves = { 11600864, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Shoes = { 11790671, dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Cape = { 11890080, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Earring = { 11200064, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Pendant = { 11900122, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Belt = { 12100112, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Ring = { 12060106, dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Weapon = { 15460178, dyeColors.GetDyeColor("Green") };
 
-	LoadCharacter(hornetsp, Matrix4F(120, 0, 3000) * Matrix4F::RollRotation(PI));
+	Character hornetCharacter(AssetLibrary);
+
+	hornetCharacter.Load(&hornetsp, Matrix4F(120, 0, 3000) * Matrix4F::RollRotation(PI));
 
 
 	//loadMap("02000376"); //sb map
@@ -2046,7 +1353,7 @@ int main(int argc, char** argv)
 
 					if (ImGui::CollapsingHeader("Unmapped Materials Found:"))
 					{
-						for (const std::string& name : ModelLibrary->GetUnmappedMaterials())
+						for (const std::string& name : AssetLibrary->GetModels().GetUnmappedMaterials())
 						{
 							ImGui::Text(("\t" + name).c_str());
 						}

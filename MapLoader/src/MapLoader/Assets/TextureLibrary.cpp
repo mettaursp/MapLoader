@@ -5,10 +5,11 @@
 #include <Engine/Math/Color4I.h>
 #include <tinygltf/stb_image.h>
 #include <ArchiveParser/ParserUtils.h>
+#include <MapLoader/Assets/GameAssetLibrary.h>
 
 namespace MapLoader
 {
-	TextureLibrary::TextureLibrary(const std::shared_ptr<Archive::ArchiveReader>& reader, const std::shared_ptr<Graphics::VulkanContext>& vulkanContext) : Reader(reader), VulkanContext(vulkanContext)
+	TextureLibrary::TextureLibrary(GameAssetLibrary& assetLibrary) : AssetLibrary(assetLibrary)
 	{
 
 	}
@@ -22,7 +23,7 @@ namespace MapLoader
 	{
 		for (auto& t : Assets)
 		{
-			VulkanContext->Allocator.destroy(t.Data);
+			AssetLibrary.GetVulkanContext()->Allocator.destroy(t.Data);
 		}
 
 		Assets.clear();
@@ -47,7 +48,7 @@ namespace MapLoader
 		{
 			Archive::Metadata::Entry::FindEntriesByTags(name, "image", [this, &entry](const auto& newEntry)
 				{
-					if (entry == nullptr && Reader->GetPath("Resource" + newEntry.RelativePath.string()).Loaded())
+					if (entry == nullptr && AssetLibrary.GetReader()->GetPath("Resource" + newEntry.RelativePath.string()).Loaded())
 					entry = &newEntry;
 				}
 			);
@@ -76,11 +77,11 @@ namespace MapLoader
 
 	void TextureLibrary::FlushLoadingQueue()
 	{
-		nvvk::CommandPool  cmdBufGet(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
+		nvvk::CommandPool  cmdBufGet(AssetLibrary.GetVulkanContext()->Device, AssetLibrary.GetVulkanContext()->GraphicsQueueIndex);
 		VkCommandBuffer    cmdBuf = cmdBufGet.createCommandBuffer();
 		FlushLoadingQueue(cmdBuf);
 		cmdBufGet.submitAndWait(cmdBuf);
-		VulkanContext->Allocator.finalizeAndReleaseStaging();
+		AssetLibrary.GetVulkanContext()->Allocator.finalizeAndReleaseStaging();
 	}
 
 	void TextureLibrary::FlushLoadingQueue(const VkCommandBuffer& cmdBuf)
@@ -99,9 +100,9 @@ namespace MapLoader
 				auto                   imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, asset.Format);
 
 				// Creating the dummy texture
-				nvvk::Image           image = VulkanContext->Allocator.createImage(cmdBuf, bufferSize, &color, imageCreateInfo);
+				nvvk::Image           image = AssetLibrary.GetVulkanContext()->Allocator.createImage(cmdBuf, bufferSize, &color, imageCreateInfo);
 				VkImageViewCreateInfo ivInfo = nvvk::makeImageViewCreateInfo(image.image, imageCreateInfo);
-				asset.Data = VulkanContext->Allocator.createTexture(image, ivInfo, asset.SamplerInfo);
+				asset.Data = AssetLibrary.GetVulkanContext()->Allocator.createTexture(image, ivInfo, asset.SamplerInfo);
 
 				// The image format must be in VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL
 				nvvk::cmdBarrierImageLayout(cmdBuf, asset.Data.image, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
@@ -116,7 +117,7 @@ namespace MapLoader
 
 			std::string extensionText = asset.Entry->LogPath.extension().string();
 
-			Archive::ArchivePath textureFile = Reader->GetPath("Resource" + asset.Entry->RelativePath.string());
+			Archive::ArchivePath textureFile = AssetLibrary.GetReader()->GetPath("Resource" + asset.Entry->RelativePath.string());
 
 			if (textureFile.Loaded())
 			{
@@ -148,10 +149,10 @@ namespace MapLoader
 			auto         imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, asset.Format, VK_IMAGE_USAGE_SAMPLED_BIT, true);
 
 			{
-				nvvk::Image image = VulkanContext->Allocator.createImage(cmdBuf, bufferSize, pixels, imageCreateInfo);
+				nvvk::Image image = AssetLibrary.GetVulkanContext()->Allocator.createImage(cmdBuf, bufferSize, pixels, imageCreateInfo);
 				nvvk::cmdGenerateMipmaps(cmdBuf, image.image, asset.Format, imgSize, imageCreateInfo.mipLevels);
 				VkImageViewCreateInfo ivInfo = nvvk::makeImageViewCreateInfo(image.image, imageCreateInfo);
-				asset.Data = VulkanContext->Allocator.createTexture(image, ivInfo, asset.SamplerInfo);
+				asset.Data = AssetLibrary.GetVulkanContext()->Allocator.createTexture(image, ivInfo, asset.SamplerInfo);
 			}
 
 			stbi_image_free(stbi_pixels);
@@ -247,9 +248,9 @@ namespace MapLoader
 		auto         imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, format, VK_IMAGE_USAGE_SAMPLED_BIT, mipLevels);
 
 		{
-			nvvk::Image image = VulkanContext->Allocator.createImageDDS(cmdBuf, bufferSize, bufferData, imageCreateInfo, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, BlockSize);
+			nvvk::Image image = AssetLibrary.GetVulkanContext()->Allocator.createImageDDS(cmdBuf, bufferSize, bufferData, imageCreateInfo, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, BlockSize);
 			VkImageViewCreateInfo ivInfo = nvvk::makeImageViewCreateInfo(image.image, imageCreateInfo);
-			asset.Data = VulkanContext->Allocator.createTexture(image, ivInfo, asset.SamplerInfo);
+			asset.Data = AssetLibrary.GetVulkanContext()->Allocator.createTexture(image, ivInfo, asset.SamplerInfo);
 		}
 
 		return true;

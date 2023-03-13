@@ -21,7 +21,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "obj_loader.h"
 #include "nvh/nvprint.hpp"
-#include "Assets/ModelLibrary.h"
+#include "Assets/GameAssetLibrary.h"
 
 #include <map>
 
@@ -41,7 +41,7 @@ void ObjLoader::loadModel(const std::string& filename)
 
 void ObjLoader::loadModel(const tinyobj::attrib_t& attrib, const std::vector<tinyobj::material_t>& materials, const std::vector<tinyobj::shape_t>& shapes)
 {
-	auto& materialTextures = ModelLibrary->GetMaterialTextures();
+	auto& materialTextures = AssetLibrary.GetModels().GetMaterialTextures();
 
 	// Collecting the material in the scene
 	for(const auto& material : materials)
@@ -63,12 +63,14 @@ void ObjLoader::loadModel(const tinyobj::attrib_t& attrib, const std::vector<tin
 
 		MaterialTextures& textures = materialTextures.back();
 
-		textures.diffuse.id = TextureLibrary->FetchTexture(material.diffuse_texname, VK_FORMAT_R8G8B8A8_UNORM, material.diffuseSampler);
-		textures.specular.id = TextureLibrary->FetchTexture(material.specular_texname, VK_FORMAT_R8G8B8A8_UNORM, material.specularSampler);
-		textures.normal.id = TextureLibrary->FetchTexture(material.normal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.normalSampler);
-		textures.colorOverride.id = TextureLibrary->FetchTexture(material.color_override_texname, VK_FORMAT_R8G8B8A8_UNORM, material.colorOverrideSampler);
-		textures.emissive.id = TextureLibrary->FetchTexture(material.emissive_texname, VK_FORMAT_R8G8B8A8_UNORM, material.emissiveSampler);
-		textures.decal.id = TextureLibrary->FetchTexture(material.decal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.decalSampler);
+		auto& textureLibrary = AssetLibrary.GetTextures();
+
+		textures.diffuse.id = textureLibrary.FetchTexture(material.diffuse_texname, VK_FORMAT_R8G8B8A8_UNORM, material.diffuseSampler);
+		textures.specular.id = textureLibrary.FetchTexture(material.specular_texname, VK_FORMAT_R8G8B8A8_UNORM, material.specularSampler);
+		textures.normal.id = textureLibrary.FetchTexture(material.normal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.normalSampler);
+		textures.colorOverride.id = textureLibrary.FetchTexture(material.color_override_texname, VK_FORMAT_R8G8B8A8_UNORM, material.colorOverrideSampler);
+		textures.emissive.id = textureLibrary.FetchTexture(material.emissive_texname, VK_FORMAT_R8G8B8A8_UNORM, material.emissiveSampler);
+		textures.decal.id = textureLibrary.FetchTexture(material.decal_texname, VK_FORMAT_R8G8B8A8_UNORM, material.decalSampler);
 		textures.diffuse.transformId = material.diffuseTransformId;
 		textures.specular.transformId = material.specularTransformId;
 		textures.normal.transformId = material.normalTransformId;

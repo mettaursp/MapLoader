@@ -1420,6 +1420,8 @@ int main(int argc, char** argv)
 			takingLargeScreenshot = false;
 		}
 
+		//helloVk.updateTopLevelAS();
+
 		// Start command buffer of this frame
 		auto                   curFrame = helloVk.getCurFrame();
 		const VkCommandBuffer& cmdBuf   = helloVk.getCommandBuffers()[curFrame];

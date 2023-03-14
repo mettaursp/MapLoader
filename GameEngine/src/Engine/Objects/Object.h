@@ -42,8 +42,8 @@ namespace Engine
 		bool IsA(const std::string& className, bool inherited = true) const;
 		bool IsA(const Meta::ReflectedType* type, bool inherited = true) const;
 
-		void SetObjectID(int id);
-		int GetObjectID() const;
+		void SetObjectID(size_t id);
+		size_t GetObjectID() const;
 
 		template <typename T>
 		bool IsA(bool inherited = true);
@@ -135,8 +135,8 @@ namespace Engine
 
 		static unsigned long long ObjectsCreated;
 
-		int ObjectID = -1;
-		int OriginalID = -1;
+		size_t ObjectID = -1;
+		size_t OriginalID = -1;
 		unsigned long long CreationOrderId = 0;
 		bool Ticks = false;
 		int TickingChildren = 0;

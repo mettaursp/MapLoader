@@ -15,7 +15,8 @@ namespace Engine
 		template <typename Type>
 		struct BoundTypeAllocators
 		{
-			static inline IDHeap<Type> AllocatedData;
+			static inline IDHeap AllocatedIds;
+			static inline std::vector<Type> AllocatedData;
 		};
 
 		template <typename Type>
@@ -720,9 +721,9 @@ namespace Engine
 
 			static void Push(lua_State* lua, const Type& value)
 			{
-				int dataId = BoundTypeAllocators<Type>::AllocatedData.RequestID();
+				int dataId = BoundTypeAllocators<Type>::AllocatedIds.Allocate(BoundTypeAllocators<Type>::AllocatedData, value);
 
-				BoundTypeAllocators<Type>::AllocatedData.GetNode(dataId).GetData() = value;
+				BoundTypeAllocators<Type>::AllocatedData[dataId] = value;
 
 				BoundObject& bound = BoundObject::MakeBinding(lua);
 
@@ -739,7 +740,7 @@ namespace Engine
 				{
 					BoundObject& bound = BoundObject::Get(lua, index);
 
-					return BoundTypeAllocators<Type>::AllocatedData.GetNode(bound.DataId).GetData();
+					return BoundTypeAllocators<Type>::AllocatedData[bound.DataId];
 				}
 			};
 
@@ -754,7 +755,7 @@ namespace Engine
 
 					BoundObject& bound = BoundObject::Get(lua, index);
 
-					return BoundTypeAllocators<Type>::AllocatedData.GetNode(bound.DataId).GetData();
+					return BoundTypeAllocators<Type>::AllocatedData[bound.DataId];
 				}
 			};
 		};
@@ -775,7 +776,7 @@ namespace Engine
 		{
 			BoundObject& bound = BoundObject::Get(lua);
 
-			return &BoundTypeAllocators<Type>::AllocatedData.GetNode(bound.DataId).GetData();
+			return &BoundTypeAllocators<Type>::AllocatedData[bound.DataId];
 		}
 	}
 }

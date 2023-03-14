@@ -785,20 +785,33 @@ void HelloVulkan::createBottomLevelAS()
 //
 void HelloVulkan::createTopLevelAS()
 {
-	std::vector<VkAccelerationStructureInstanceKHR> tlas;
-	tlas.reserve(m_instances.size());
-	for(const HelloVulkan::ObjInstance& inst : m_instances)
+	m_tlas.resize(m_instances.size());
+	for(size_t i = 0; i < m_instances.size(); ++i)
 	{
-	VkAccelerationStructureInstanceKHR rayInst{};
-	rayInst.transform                      = nvvk::toTransformMatrixKHR(inst.transform);  // Position of the instance
-	rayInst.instanceCustomIndex            = inst.objIndex;                               // gl_InstanceCustomIndexEXT
-	rayInst.accelerationStructureReference = m_rtBuilder.getBlasDeviceAddress(inst.objIndex);
-	rayInst.flags                          = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-	rayInst.mask                           = 0xFF;       //  Only be hit if rayMask & instance.mask != 0
-	rayInst.instanceShaderBindingTableRecordOffset = 0;  // We will use the same hit group for all objects
-	tlas.emplace_back(rayInst);
+		const HelloVulkan::ObjInstance& inst = m_instances[i];
+		VkAccelerationStructureInstanceKHR& rayInst = m_tlas[i];
+		rayInst.transform                      = nvvk::toTransformMatrixKHR(inst.transform);  // Position of the instance
+		rayInst.instanceCustomIndex            = inst.objIndex;                               // gl_InstanceCustomIndexEXT
+		rayInst.accelerationStructureReference = m_rtBuilder.getBlasDeviceAddress(inst.objIndex);
+		rayInst.flags                          = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+		rayInst.mask                           = 0xFF;       //  Only be hit if rayMask & instance.mask != 0
+		rayInst.instanceShaderBindingTableRecordOffset = 0;  // We will use the same hit group for all objects
 	}
-	m_rtBuilder.buildTlas(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+	//m_rtBuilder.buildTlas(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+	//m_rtBuilder.buildTlas(m_tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
+	m_rtBuilder.buildTlas(m_tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
+}
+
+void HelloVulkan::updateTopLevelAS()
+{
+	//for (size_t i = 0; i < m_instances.size(); ++i)
+	//{
+	//	const HelloVulkan::ObjInstance& inst = m_instances[i];
+	//	VkAccelerationStructureInstanceKHR& rayInst = m_tlas[i];
+	//	rayInst.transform = nvvk::toTransformMatrixKHR(inst.transform);  // Position of the instance
+	//}
+	//m_rtBuilder.buildTlas(m_tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, true);
+	m_rtBuilder.buildTlas(m_tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, true);
 }
 
 //--------------------------------------------------------------------------------------------------

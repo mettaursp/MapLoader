@@ -108,6 +108,7 @@ public:
 	nvvk::Buffer m_textureOverride;
 	GlobalUniforms hostUBO;
 
+	std::vector<VkAccelerationStructureInstanceKHR> m_tlas;
 	std::shared_ptr<MapLoader::GameAssetLibrary> AssetLibrary;
 
 	// #Post - Draw the rendered image on a quad using a tonemapper
@@ -135,6 +136,7 @@ public:
 	auto objectToVkGeometryKHR(const MapLoader::MeshDescription& model);
 	void createBottomLevelAS();
 	void createTopLevelAS();
+	void updateTopLevelAS();
 	void createRtDescriptorSet();
 	void updateRtDescriptorSet();
 	void createRtPipeline();

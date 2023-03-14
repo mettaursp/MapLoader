@@ -7,9 +7,8 @@
 
 namespace Engine
 {
-	typedef IDHeap<Object::ObjectHandleData> ObjectHandleHeap;
-
-	ObjectHandleHeap ObjectIDs;
+	IDHeap ObjectIDs;
+	std::vector<Object::ObjectHandleData> ObjectHandles;
 
 	std::shared_ptr<Object> Null = nullptr;
 
@@ -17,14 +16,14 @@ namespace Engine
 
 	void Object::Initialize()
 	{
-		ObjectID = ObjectIDs.RequestID(ObjectHandleData{ this, This, ++ObjectsCreated });
+		ObjectID = ObjectIDs.Allocate(ObjectHandles, ObjectHandleData{ this, This, ++ObjectsCreated });
 		OriginalID = ObjectID;
 		CreationOrderId = ObjectsCreated;
 	}
 
 	bool Object::IsAlive(int objectId, unsigned long long creationOrderId)
 	{
-		return ObjectIDs.NodeAllocated(objectId) && ObjectIDs.GetNode(objectId).GetData().CreationOrderId == creationOrderId;
+		return ObjectIDs.NodeAllocated(objectId) && ObjectHandles[objectId].CreationOrderId == creationOrderId;
 	}
 
 	std::string Object::GetTypeName() const
@@ -53,7 +52,7 @@ namespace Engine
 		return data == metadata || data->InheritsType(metadata);
 	}
 
-	void Object::SetObjectID(int id)
+	void Object::SetObjectID(size_t id)
 	{
 		if (ObjectID != -1)
 			throw "Attempt to set ID";
@@ -64,7 +63,7 @@ namespace Engine
 			OriginalID = id;
 	}
 
-	int Object::GetObjectID() const
+	size_t Object::GetObjectID() const
 	{
 		return ObjectID;
 	}
@@ -101,6 +100,9 @@ namespace Engine
 		}
 
 		ObjectIDs.Release(ObjectID);
+
+		if (!ObjectHandles.empty())
+			ObjectHandles[ObjectID] = {};
 	}
 
 	std::string Object::GetFullName() const
@@ -375,6 +377,6 @@ namespace Engine
 
 	const std::weak_ptr<Object>& Object::GetHandle(int id)
 	{
-		return ObjectIDs.GetNode(id).GetData().SmartPointer;
+		return ObjectHandles[id].SmartPointer;
 	}
 }

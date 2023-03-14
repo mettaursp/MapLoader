@@ -42,7 +42,8 @@ namespace Engine
 			static int GetTextureIdBufferSize();
 
 		private:
-			static IDHeap<Texture*> TextureIds;
+			static IDHeap TextureIds;
+			static std::vector<Texture*> TexturePointers;
 
 			bool StagingBufferInitialized = false;
 			bool DispatchStagingCommands = false;

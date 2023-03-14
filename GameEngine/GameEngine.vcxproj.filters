@@ -206,5 +206,8 @@
     <ClCompile Include="src\Engine\Math\Quaternion.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
+    <ClCompile Include="src\Engine\IdentifierHeap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

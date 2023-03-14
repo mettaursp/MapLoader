@@ -11,11 +11,12 @@ namespace Engine
 {
 	namespace Graphics
 	{
-		IDHeap<Texture*> Texture::TextureIds = IDHeap<Texture*>();
+		IDHeap Texture::TextureIds = {};
+		std::vector<Texture*> TexturePointers = {};
 
 		Texture::Texture()
 		{
-			TextureId = TextureIds.RequestID(this);
+			TextureId = TextureIds.Allocate(TexturePointers, this);
 		}
 
 		Texture::~Texture()
@@ -23,6 +24,7 @@ namespace Engine
 			ReleaseResources();
 
 			TextureIds.Release(TextureId);
+			TexturePointers[TextureId] = nullptr;
 		}
 
 		int Texture::GetTextureIdBufferSize()

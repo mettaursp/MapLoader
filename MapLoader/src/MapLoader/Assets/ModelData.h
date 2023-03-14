@@ -14,6 +14,8 @@ namespace MapLoader
 {
 	using MaterialObj = WaveFrontMaterial;
 
+	class RTScene;
+
 	struct ModelData
 	{
 		uint32_t Index = 0;

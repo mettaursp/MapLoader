@@ -185,6 +185,7 @@ std::vector<SpawnedPortal> spawnedPortals;
 std::unordered_map<std::string, std::string> mapNames;
 std::unordered_map<std::string, int> mapIndices;
 std::unordered_map<int, std::string> mapFileNames;
+std::shared_ptr<MapLoader::RTScene> Scene;
 
 const float PI = 3.14159265359f;
 
@@ -292,7 +293,7 @@ void getBounds(const MapLoader::ModelData* model, Bounds& bounds)
 	}
 }
 
-SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform, const ModelSpawnCallback& callback)
+SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback)
 {
 	if (model == nullptr)
 		return nullptr;
@@ -314,9 +315,19 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 
 			Matrix4F modelTransform = model->Transformations[i];
 
-			helloVkPtr->loadModelInstance(model->GetId(i), ms2ToWorld * transform * modelTransform);
+			helloVkPtr->loadModelInstance(model->GetId(i), ms2ToWorld * transformation * modelTransform);
 
 			spawnedModels.push_back(SpawnedModel{ entityId, (int)i });
+
+			std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
+			std::shared_ptr<MapLoader::SceneObject> sceneObject = Engine::Create<MapLoader::SceneObject>();
+
+			transform->SetTransformation(ms2ToWorld * transformation * modelTransform);
+			transform->SetParent(sceneObject);
+			sceneObject->SetTransform(transform.get());
+			sceneObject->SetModel(model, i);
+			sceneObject->SetStatic(true);
+			Scene->AddObject(sceneObject);
 
 			helloVkPtr->instanceDescriptions.push_back(instance);
 		}
@@ -761,6 +772,7 @@ int main(int argc, char** argv)
 
 	VulkanContext = std::make_shared<Graphics::VulkanContext>();
 	AssetLibrary = std::make_shared<MapLoader::GameAssetLibrary>(Reader, VulkanContext);
+	Scene = std::make_shared<MapLoader::RTScene>(VulkanContext);
 
 	// Create example
 	HelloVulkan helloVk;
@@ -768,6 +780,7 @@ int main(int argc, char** argv)
 	helloVkPtr = &helloVk;
 	helloVk.AssetLibrary = AssetLibrary;
 	helloVk.VulkanContext = VulkanContext;
+	helloVk.Scene = Scene;
 
 	// Window need to be opened to get the surface on which to draw
 	const VkSurfaceKHR surface = helloVk.getVkSurface(vkctx.m_instance, window);
@@ -1049,8 +1062,9 @@ int main(int argc, char** argv)
 
 	// #VKRay
 	helloVk.initRayTracing();
+	Scene->Initialize();
 	helloVk.createBottomLevelAS();
-	helloVk.createTopLevelAS();
+	Scene->Update(0);
 	helloVk.createRtDescriptorSet();
 	helloVk.createRtPipeline();
 	helloVk.createRtShaderBindingTable();

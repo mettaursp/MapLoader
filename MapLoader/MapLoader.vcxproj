@@ -192,6 +192,7 @@
     <ClCompile Include="src\MapLoader\Map\FlatLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Map\FlatModel.cpp" />
     <ClCompile Include="src\MapLoader\obj_loader.cpp" />
+    <ClCompile Include="src\MapLoader\Scene\AccelerationStructure.cpp" />
     <ClCompile Include="src\MapLoader\Scene\RTScene.cpp" />
     <ClCompile Include="src\MapLoader\Scene\SceneObject.cpp" />
     <ClCompile Include="src\MapLoader\Vulkan\VulkanContext.cpp" />
@@ -212,6 +213,7 @@
     <ClInclude Include="src\MapLoader\Map\FlatLibrary.h" />
     <ClInclude Include="src\MapLoader\Map\FlatModel.h" />
     <ClInclude Include="src\MapLoader\obj_loader.h" />
+    <ClInclude Include="src\MapLoader\Scene\AccelerationStructure.h" />
     <ClInclude Include="src\MapLoader\Scene\RTScene.h" />
     <ClInclude Include="src\MapLoader\Scene\SceneObject.h" />
     <ClInclude Include="src\MapLoader\Vulkan\VulkanContext.h" />

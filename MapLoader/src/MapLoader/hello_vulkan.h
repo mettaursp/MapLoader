@@ -33,6 +33,7 @@
 #include <MapLoader/Vulkan/VulkanContext.h>
 #include "Assets/GameAssetLibrary.h"
 #include "Assets/TextureLibrary.h"
+#include "Scene/RTScene.h"
 
 // #VKRay
 #include "nvvk/raytraceKHR_vk.hpp"
@@ -108,8 +109,8 @@ public:
 	nvvk::Buffer m_textureOverride;
 	GlobalUniforms hostUBO;
 
-	std::vector<VkAccelerationStructureInstanceKHR> m_tlas;
 	std::shared_ptr<MapLoader::GameAssetLibrary> AssetLibrary;
+	std::shared_ptr<MapLoader::RTScene> Scene;
 
 	// #Post - Draw the rendered image on a quad using a tonemapper
 	void createOffscreenRender();
@@ -135,8 +136,8 @@ public:
 	void initRayTracing();
 	auto objectToVkGeometryKHR(const MapLoader::MeshDescription& model);
 	void createBottomLevelAS();
-	void createTopLevelAS();
-	void updateTopLevelAS();
+	//void createTopLevelAS();
+	//void updateTopLevelAS();
 	void createRtDescriptorSet();
 	void updateRtDescriptorSet();
 	void createRtPipeline();
@@ -145,7 +146,6 @@ public:
 
 
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR m_rtProperties{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR};
-	nvvk::RaytracingBuilderKHR                      m_rtBuilder;
 	nvvk::DescriptorSetBindings                     m_rtDescSetLayoutBind;
 	VkDescriptorPool                                m_rtDescPool;
 	VkDescriptorSetLayout                           m_rtDescSetLayout;

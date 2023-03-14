@@ -500,7 +500,7 @@ void HelloVulkan::destroyResources()
 
 
 	// #VKRay
-	m_rtBuilder.destroy();
+	Scene->FreeResources();
 	vkDestroyPipeline(VulkanContext->Device, m_rtPipeline, nullptr);
 	vkDestroyPipelineLayout(VulkanContext->Device, m_rtPipelineLayout, nullptr);
 	vkDestroyDescriptorPool(VulkanContext->Device, m_rtDescPool, nullptr);
@@ -714,8 +714,6 @@ void HelloVulkan::initRayTracing()
 	VkPhysicalDeviceProperties2 prop2{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2};
 	prop2.pNext = &m_rtProperties;
 	vkGetPhysicalDeviceProperties2(m_physicalDevice, &prop2);
-
-	m_rtBuilder.setup(VulkanContext->Device, &VulkanContext->Allocator, VulkanContext->GraphicsQueueIndex);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -777,41 +775,7 @@ void HelloVulkan::createBottomLevelAS()
 	// We could add more geometry in each BLAS, but we add only one for now
 	allBlas.emplace_back(blas);
 	}
-	m_rtBuilder.buildBlas(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
-}
-
-//--------------------------------------------------------------------------------------------------
-//
-//
-void HelloVulkan::createTopLevelAS()
-{
-	m_tlas.resize(m_instances.size());
-	for(size_t i = 0; i < m_instances.size(); ++i)
-	{
-		const HelloVulkan::ObjInstance& inst = m_instances[i];
-		VkAccelerationStructureInstanceKHR& rayInst = m_tlas[i];
-		rayInst.transform                      = nvvk::toTransformMatrixKHR(inst.transform);  // Position of the instance
-		rayInst.instanceCustomIndex            = inst.objIndex;                               // gl_InstanceCustomIndexEXT
-		rayInst.accelerationStructureReference = m_rtBuilder.getBlasDeviceAddress(inst.objIndex);
-		rayInst.flags                          = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-		rayInst.mask                           = 0xFF;       //  Only be hit if rayMask & instance.mask != 0
-		rayInst.instanceShaderBindingTableRecordOffset = 0;  // We will use the same hit group for all objects
-	}
-	//m_rtBuilder.buildTlas(tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
-	//m_rtBuilder.buildTlas(m_tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
-	m_rtBuilder.buildTlas(m_tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
-}
-
-void HelloVulkan::updateTopLevelAS()
-{
-	//for (size_t i = 0; i < m_instances.size(); ++i)
-	//{
-	//	const HelloVulkan::ObjInstance& inst = m_instances[i];
-	//	VkAccelerationStructureInstanceKHR& rayInst = m_tlas[i];
-	//	rayInst.transform = nvvk::toTransformMatrixKHR(inst.transform);  // Position of the instance
-	//}
-	//m_rtBuilder.buildTlas(m_tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, true);
-	m_rtBuilder.buildTlas(m_tlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, true);
+	Scene->GetRTBuilder().buildBlas(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -835,7 +799,7 @@ void HelloVulkan::createRtDescriptorSet()
 	vkAllocateDescriptorSets(VulkanContext->Device, &allocateInfo, &m_rtDescSet);
 
 
-	VkAccelerationStructureKHR                   tlas = m_rtBuilder.getAccelerationStructure();
+	VkAccelerationStructureKHR                   tlas = Scene->GetRTBuilder().getAccelerationStructure();
 	VkWriteDescriptorSetAccelerationStructureKHR descASInfo{VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR};
 	descASInfo.accelerationStructureCount = 1;
 	descASInfo.pAccelerationStructures    = &tlas;

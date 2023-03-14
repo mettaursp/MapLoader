@@ -20,7 +20,7 @@ namespace Engine
 
 		bool ReflectedType::InheritsType(const ReflectedType* type) const
 		{
-			return Inherits.size() >= type->Inherits.size() && Inherits[type->Inherits.size() - 1] == type;
+			return Inherits.size() > 0 && Inherits.size() >= type->Inherits.size() && Inherits[type->Inherits.size() - 1] == type;
 		}
 
 		std::pair<int, MemberType> ReflectedType::GetRegisteredMember(const std::string& name) const

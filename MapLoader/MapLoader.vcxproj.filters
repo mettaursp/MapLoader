@@ -93,6 +93,9 @@
     <ClCompile Include="src\MapLoader\Assets\GameAssetLibrary.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="src\MapLoader\Scene\AccelerationStructure.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MapLoader\hello_vulkan.h">
@@ -148,6 +151,9 @@
     </ClInclude>
     <ClInclude Include="src\MapLoader\Assets\TextureLibrary.h">
       <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Scene\AccelerationStructure.h">
+      <Filter>Source Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

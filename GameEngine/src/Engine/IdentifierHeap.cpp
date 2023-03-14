@@ -5,12 +5,17 @@ IDHeap::~IDHeap()
 	Clear();
 }
 
+constexpr unsigned short rshift(unsigned short value, int offset)
+{
+	return offset > 0 ? value << offset : value >> -offset;
+}
+
 void IDHeap::Write(size_t index, unsigned char bits, unsigned char srcMask)
 {
 	unsigned char& value = Nodes[index / 4];
 	size_t offset = 2 * (index % 4);
-	srcMask = (unsigned char)(0xFCFF << (offset - 8)) | srcMask;
-	value = (value & srcMask) | bits;
+	srcMask = (unsigned char)rshift(0xFCFF, ((int)offset - 8)) | (srcMask << offset);
+	value = ((unsigned short)value & ((unsigned short)srcMask)) | (bits << offset);
 }
 
 void IDHeap::Write(size_t index, unsigned char bits, bool value)
@@ -18,14 +23,14 @@ void IDHeap::Write(size_t index, unsigned char bits, bool value)
 	Write(index, value ? bits : 0, (unsigned char)(0x3 ^ bits));
 }
 
-unsigned char IDHeap::Read(size_t index) const
+constexpr unsigned char IDHeap::Read(size_t index) const
 {
 	unsigned char value = Nodes[index / 4];
 	size_t offset = 2 * (index % 4);
 	return (value >> offset) & 0x3;
 }
 
-unsigned char IDHeap::Read(size_t index, unsigned char mask) const
+constexpr unsigned char IDHeap::Read(size_t index, unsigned char mask) const
 {
 	return (Read(index) & mask) != 0;
 }
@@ -34,18 +39,20 @@ size_t IDHeap::RequestID()
 {
 	size_t id = Allocate();
 
+	++Allocated;
+
 	Write(id, Used, true);
 
 	if (id > 0)
 	{
 		size_t currentID = (id - 1) / 2;
 
-		while (currentID < Allocated)
+		while (currentID < Capacity)
 		{
 			size_t left = 2 * currentID + 1;
 			size_t right = 2 * currentID + 2;
 
-			bool childrenUsed = (left >= Allocated || Read(left, ChildrenUsed)) && (right >= Allocated || Read(right, ChildrenUsed));
+			bool childrenUsed = (left >= Capacity || Read(left, ChildrenUsed)) && (right >= Capacity || Read(right, ChildrenUsed));
 
 			Write(currentID, ChildrenUsed, childrenUsed);
 
@@ -60,8 +67,10 @@ size_t IDHeap::RequestID()
 }
 void IDHeap::Release(size_t id)
 {
-	if (id >= Allocated || !Read(id, Used))
+	if (id >= Capacity || !Read(id, Used))
 		return;
+
+	--Allocated;
 
 	Write(id, Used, false);
 
@@ -70,7 +79,7 @@ void IDHeap::Release(size_t id)
 
 	id = (id - 1) / 2;
 
-	while (id >= 0)
+	while (id < Capacity)
 	{
 		Write(id, ChildrenUsed, false);
 
@@ -95,9 +104,9 @@ size_t IDHeap::Allocate()
 			size_t left = 2 * id + 1;
 			size_t right = 2 * id + 2;
 
-			if (left < int(Allocated) && (!Read(left, Used) || !Read(left, ChildrenUsed)))
+			if (left < int(Capacity) && (!Read(left, Used) || !Read(left, ChildrenUsed)))
 				id = left;
-			else if (right < int(Allocated) && (!Read(right, Used) || !Read(right, ChildrenUsed)))
+			else if (right < int(Capacity) && (!Read(right, Used) || !Read(right, ChildrenUsed)))
 				id = right;
 			else
 				throw "shts fucked";
@@ -108,7 +117,7 @@ size_t IDHeap::Allocate()
 	else
 	{
 		size_t capacity = Nodes.size() * 4;
-		size_t id = Allocated;
+		size_t id = Capacity;
 
 		if (id >= capacity)
 		{
@@ -119,7 +128,7 @@ size_t IDHeap::Allocate()
 			Write(id, Used | ChildrenUsed, true);
 		}
 
-		++Allocated;
+		++Capacity;
 
 		return id;
 	}
@@ -137,7 +146,7 @@ size_t IDHeap::AllocatedIDs() const
 
 bool IDHeap::NodeAllocated(size_t id) const
 {
-	if (id >= 0 && id < Allocated)
+	if (id >= 0 && id < Capacity)
 		return Read(id, Used);
 	else
 		throw "Attempt to access out of bounds ID";
@@ -147,4 +156,11 @@ void IDHeap::Clear()
 {
 	Nodes.clear();
 	Allocated = 0;
+	Capacity = 0;
+}
+
+void IDHeap::ShrinkToAllocated()
+{
+	Nodes.resize((Capacity / 4) + std::max(1ull, Capacity % 4));
+	std::memset(Nodes.data(), 0xFF, Nodes.size());
 }

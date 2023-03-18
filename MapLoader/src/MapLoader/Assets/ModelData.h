@@ -27,6 +27,7 @@ namespace MapLoader
 		std::vector<MaterialObj> Materials;
 		std::vector<std::shared_ptr<Engine::Graphics::MeshData>> Meshes;
 		const Archive::Metadata::Entry* Entry = nullptr;
+		int DuplicateFormatUses = 0;
 
 		bool IsLoaded(size_t index) const;
 

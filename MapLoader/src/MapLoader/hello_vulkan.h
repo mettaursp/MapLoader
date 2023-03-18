@@ -34,6 +34,10 @@
 #include "Assets/GameAssetLibrary.h"
 #include "Assets/TextureLibrary.h"
 #include "Scene/RTScene.h"
+#include "Vulkan/Shader.h"
+#include "Vulkan/ShaderPipeline.h"
+#include "Vulkan/DescriptorSetLibrary.h"
+#include <MapLoader/Assets/ModelData.h>
 
 // #VKRay
 #include "nvvk/raytraceKHR_vk.hpp"
@@ -93,12 +97,14 @@ public:
 	MouseRayOut* mouseIOPtr = nullptr;
 
 	// Graphic pipeline
-	VkPipelineLayout            m_pipelineLayout;
 	VkPipeline                  m_graphicsPipeline;
-	nvvk::DescriptorSetBindings m_descSetLayoutBind;
-	VkDescriptorPool            m_descPool;
-	VkDescriptorSetLayout       m_descSetLayout;
-	VkDescriptorSet             m_descSet;
+
+	std::shared_ptr<Engine::Graphics::MeshFormat> ShaderVertexFormat;
+	std::vector<std::shared_ptr<Graphics::Shader>> Shaders;
+	std::unique_ptr<Graphics::ShaderPipeline> RTPipeline;
+	std::unique_ptr<Graphics::ShaderPipeline> RasterPipeline;
+	std::unique_ptr<Graphics::ShaderPipeline> PostPipeline;
+	std::shared_ptr<Graphics::DescriptorSetLibrary> DescriptorSetLibrary;
 
 	nvvk::Buffer m_bGlobals;  // Device-Host of the camera matrices
 	nvvk::Buffer m_bObjDesc;  // Device buffer of the OBJ descriptions
@@ -115,16 +121,10 @@ public:
 	// #Post - Draw the rendered image on a quad using a tonemapper
 	void createOffscreenRender();
 	void createPostPipeline();
-	void createPostDescriptor();
 	void updatePostDescriptorSet();
 	void drawPost(VkCommandBuffer cmdBuf);
 
-	nvvk::DescriptorSetBindings m_postDescSetLayoutBind;
-	VkDescriptorPool            m_postDescPool{VK_NULL_HANDLE};
-	VkDescriptorSetLayout       m_postDescSetLayout{VK_NULL_HANDLE};
-	VkDescriptorSet             m_postDescSet{VK_NULL_HANDLE};
 	VkPipeline                  m_postPipeline{VK_NULL_HANDLE};
-	VkPipelineLayout            m_postPipelineLayout{VK_NULL_HANDLE};
 	VkRenderPass                m_offscreenRenderPass{VK_NULL_HANDLE};
 	VkFramebuffer               m_offscreenFramebuffer{VK_NULL_HANDLE};
 	nvvk::Texture               m_offscreenColor;
@@ -136,8 +136,6 @@ public:
 	void initRayTracing();
 	auto objectToVkGeometryKHR(const MapLoader::MeshDescription& model);
 	void createBottomLevelAS();
-	//void createTopLevelAS();
-	//void updateTopLevelAS();
 	void createRtDescriptorSet();
 	void updateRtDescriptorSet();
 	void createRtPipeline();
@@ -147,11 +145,7 @@ public:
 
 	VkPhysicalDeviceRayTracingPipelinePropertiesKHR m_rtProperties{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR};
 	nvvk::DescriptorSetBindings                     m_rtDescSetLayoutBind;
-	VkDescriptorPool                                m_rtDescPool;
-	VkDescriptorSetLayout                           m_rtDescSetLayout;
-	VkDescriptorSet                                 m_rtDescSet;
 	std::vector<VkRayTracingShaderGroupCreateInfoKHR> m_rtShaderGroups;
-	VkPipelineLayout                                  m_rtPipelineLayout;
 	VkPipeline                                        m_rtPipeline;
 
 	nvvk::Buffer                    m_rtSBTBuffer;

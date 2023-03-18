@@ -93,42 +93,31 @@ namespace Engine
 				TransferOperations.Operations[Type][destinationType](sourceChar + (i * GetElementSize()), destinationChar + (i * GetDataSize(destinationType)));
 		}
 
-		void VertexAttributeFormat::GetHashString(std::string& hash) const
+		template <typename T>
+		void AppendHash(unsigned long long& hash, T value)
 		{
-			const size_t MaxBufferSize = 0xFF;
+			const unsigned int prime = 0x01000193;
 
-			char buffer[MaxBufferSize];
-
-			size_t addedSize = std::min(sizeof(Type) + sizeof(ElementCount) + sizeof(Binding) + Name.size(), (size_t)0xFF);
-
-			buffer[0] = (Type >> 0) & 0xFF;
-			buffer[1] = (Type >> 8) & 0xFF;
-			buffer[2] = (Type >> 16) & 0xFF;
-			buffer[3] = (Type >> 24) & 0xFF;
-
-			buffer[4] = (ElementCount >> 0) & 0xFF;
-			buffer[5] = (ElementCount >> 8) & 0xFF;
-			buffer[6] = (ElementCount >> 16) & 0xFF;
-			buffer[7] = (ElementCount >> 24) & 0xFF;
-			buffer[8] = (ElementCount >> 32) & 0xFF;
-			buffer[9] = (ElementCount >> 40) & 0xFF;
-			buffer[10] = (ElementCount >> 48) & 0xFF;
-			buffer[11] = (ElementCount >> 56) & 0xFF;
-
-			buffer[12] = (Binding >> 0) & 0xFF;
-			buffer[13] = (Binding >> 8) & 0xFF;
-			buffer[14] = (Binding >> 16) & 0xFF;
-			buffer[15] = (Binding >> 24) & 0xFF;
-
-			size_t nameStart = sizeof(Type) + sizeof(ElementCount) + sizeof(Binding);
-
-			for (size_t i = 0; i < Name.size() && i < MaxBufferSize; ++i)
-				buffer[i + nameStart] = Name[i];
-
-			hash.append(buffer, addedSize);
+			hash ^= (unsigned long long)value;
+			hash *= prime;
 		}
 
-		void VertexAttributeFormat::GetHashString(std::string& hash, const std::vector<VertexAttributeFormat>& attributes)
+		void VertexAttributeFormat::GetHash(unsigned long long& hash) const
+		{
+			size_t addedSize = std::min(sizeof(Type) + sizeof(ElementCount) + sizeof(Binding) + Name.size(), (size_t)0xFF);
+
+			AppendHash(hash, Type);
+			AppendHash(hash, ElementCount);
+			AppendHash(hash, Binding);
+			AppendHash(hash, Binding);
+
+			for (size_t i = 0; i < Name.size(); ++i)
+				AppendHash(hash, Name[i]);
+
+			AppendHash(hash, addedSize);
+		}
+
+		void VertexAttributeFormat::GetHash(unsigned long long& hash, const std::vector<VertexAttributeFormat>& attributes)
 		{
 			size_t maxBinding = 0;
 
@@ -138,7 +127,7 @@ namespace Engine
 			for (size_t binding = 0; binding < maxBinding + 1; ++binding)
 				for (size_t i = 0; i < attributes.size(); ++i)
 					if (attributes[i].Binding == binding)
-						attributes[i].GetHashString(hash);
+						attributes[i].GetHash(hash);
 		}
 
 		size_t MeshFormat::GetVertexSize(size_t binding) const
@@ -232,9 +221,9 @@ namespace Engine
 				WriteAttribute(source, destination, index->second, element);
 		}
 
-		std::shared_ptr<MeshFormat> MeshFormat::GetCachedFormat(const std::string& hashString)
+		std::shared_ptr<MeshFormat> MeshFormat::GetCachedFormat(unsigned int hash)
 		{
-			auto entry = Cache.find(hashString);
+			auto entry = Cache.find(hash);
 
 			if (entry != Cache.end())
 				return entry->second;
@@ -250,9 +239,9 @@ namespace Engine
 			return CacheVector[index];
 		}
 
-		void MeshFormat::CacheFormat(const std::string& hashString, const std::shared_ptr<MeshFormat>& format)
+		void MeshFormat::CacheFormat(unsigned int& hash, const std::shared_ptr<MeshFormat>& format)
 		{
-			Cache[hashString] = format;
+			Cache[hash] = format;
 			CacheVector.push_back(format);
 
 			format->CachedIndex = CachedFormats;
@@ -261,19 +250,21 @@ namespace Engine
 
 		void MeshFormat::CacheFormat(const std::shared_ptr<MeshFormat>& format)
 		{
-			std::string hash = format->GetHashString();
+			unsigned int hash = format->GetHash();
 
 			if (GetCachedFormat(hash) == nullptr)
 				CacheFormat(hash, format);
 		}
 
-		std::string MeshFormat::GetHashString() const
+		unsigned int MeshFormat::GetHash() const
 		{
-			std::string hash;
+			const unsigned int offsetBasis = 0x811c9dc5;
 
-			VertexAttributeFormat::GetHashString(hash, Attributes);
+			unsigned long long hash = offsetBasis;
 
-			return hash;
+			VertexAttributeFormat::GetHash(hash, Attributes);
+
+			return (unsigned int)hash;
 		}
 
 		const VertexAttributeFormat* MeshFormat::GetAttribute(const std::string& name) const
@@ -296,11 +287,13 @@ namespace Engine
 
 		std::shared_ptr<MeshFormat> MeshFormat::GetFormat(const std::vector<VertexAttributeFormat>& attributes)
 		{
-			std::string hashString;
+			unsigned long long hashLong;
 
-			VertexAttributeFormat::GetHashString(hashString, attributes);
+			VertexAttributeFormat::GetHash(hashLong, attributes);
 
-			std::shared_ptr<MeshFormat> meshFormat = GetCachedFormat(hashString);
+			unsigned int hash = (unsigned int)hashLong;
+
+			std::shared_ptr<MeshFormat> meshFormat = GetCachedFormat(hash);
 
 			if (meshFormat == nullptr)
 			{
@@ -309,7 +302,7 @@ namespace Engine
 				for (size_t i = 0; i < attributes.size(); ++i)
 					meshFormat->Push(attributes[i]);
 
-				CacheFormat(hashString, meshFormat);
+				CacheFormat(hash, meshFormat);
 			}
 
 			return meshFormat;

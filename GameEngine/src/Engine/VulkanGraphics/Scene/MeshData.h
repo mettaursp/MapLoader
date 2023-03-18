@@ -29,9 +29,9 @@ namespace Engine
 			size_t GetSize() const;
 
 			void Copy(const void* source, void* destination, AttributeDataType destinationType) const;
-			void GetHashString(std::string& hash) const;
+			void GetHash(unsigned long long& hash) const;
 
-			static void GetHashString(std::string& hash, const std::vector<VertexAttributeFormat>& attributes);
+			static void GetHash(unsigned long long& hash, const std::vector<VertexAttributeFormat>& attributes);
 		};
 
 		class MeshFormat : public Object
@@ -44,7 +44,7 @@ namespace Engine
 			void Copy(const void* const* source, void** destination, const std::shared_ptr<MeshFormat>& destinationFormat, size_t vertices, size_t offsetCount = 0) const;
 			void WriteAttribute(const void* const * source, void* destination, size_t attribute, size_t element) const;
 			void WriteAttribute(const void* const * source, void* destination, const std::string& attribute, size_t element) const;
-			std::string GetHashString() const;
+			unsigned int GetHash() const;
 			int GetCachedIndex() const { return CachedIndex; }
 
 			const std::vector<VertexAttributeFormat>& GetAttributes() const { return Attributes; }
@@ -61,13 +61,13 @@ namespace Engine
 			void ForEach(const void* const* source, size_t attributeIndex, size_t vertices, const std::function<void(const T&)>& callback) const;
 
 			static std::shared_ptr<MeshFormat> GetFormat(const std::vector<VertexAttributeFormat>& attributes);
-			static std::shared_ptr<MeshFormat> GetCachedFormat(const std::string& hashString);
+			static std::shared_ptr<MeshFormat> GetCachedFormat(unsigned int hash);
 			static std::shared_ptr<MeshFormat> GetCachedFormat(int index);
-			static void CacheFormat(const std::string& hashString, const std::shared_ptr<MeshFormat>& format);
+			static void CacheFormat(unsigned int& hashString, const std::shared_ptr<MeshFormat>& format);
 			static void CacheFormat(const std::shared_ptr<MeshFormat>& format);
 
 		private:
-			typedef std::map<std::string, std::shared_ptr<MeshFormat>> MeshFormatMap;
+			typedef std::map<unsigned int, std::shared_ptr<MeshFormat>> MeshFormatMap;
 			typedef std::vector<std::shared_ptr<MeshFormat>> MeshFormatVector;
 
 			std::vector<VertexAttributeFormat> Attributes;

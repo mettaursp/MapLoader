@@ -96,6 +96,27 @@
     <ClCompile Include="src\MapLoader\Scene\AccelerationStructure.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="src\MapLoader\Map\FlatEntity.cpp">
+      <Filter>Source Files\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Vulkan\Shader.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Vulkan\ShaderPipeline.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Vulkan\DescriptorSet.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Vulkan\DescriptorSetLibrary.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Vulkan\ShaderLibrary.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Vulkan\VulkanAttributes.cpp">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MapLoader\hello_vulkan.h">
@@ -154,6 +175,27 @@
     </ClInclude>
     <ClInclude Include="src\MapLoader\Scene\AccelerationStructure.h">
       <Filter>Source Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Map\FlatEntity.h">
+      <Filter>Source Files\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Vulkan\Shader.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Vulkan\ShaderPipeline.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Vulkan\DescriptorSet.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Vulkan\DescriptorSetLibrary.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Vulkan\ShaderLibrary.h">
+      <Filter>Source Files\Vulkan</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Vulkan\VulkanAttributes.h">
+      <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

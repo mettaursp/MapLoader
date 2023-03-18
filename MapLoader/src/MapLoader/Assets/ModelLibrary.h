@@ -47,6 +47,7 @@ namespace MapLoader
 		std::vector<ObjDesc> GpuMeshData;
 		std::vector<MeshDescription> MeshDescriptions;
 		std::vector<MaterialTextures> MaterialTextures;
+		int DuplicateFormatUses = 0;
 
 		static std::unordered_set<std::string> UnmappedMaterials;
 

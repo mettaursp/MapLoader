@@ -85,6 +85,8 @@ namespace MapLoader
 
 		auto& textureLibrary = AssetLibrary.GetTextures();
 
+		std::unordered_map<unsigned int, int> formatUseCount;
+
 		for (size_t i = 0; i < parser.Package->Nodes.size(); ++i)
 		{
 			Engine::Graphics::ModelPackageNode& node = parser.Package->Nodes[i];
@@ -104,6 +106,11 @@ namespace MapLoader
 
 				bool hasColor = node.Format->GetAttribute("COLOR") != nullptr;
 				bool hasBinormal = node.Format->GetAttribute("binormal") != nullptr;
+
+				++formatUseCount[node.Format->GetHash()];
+
+				if (formatUseCount.size() > 1)
+					hasColor |= hasColor;
 
 				size_t vertices = node.Mesh->GetVertices();
 				size_t indices = node.Mesh->GetTriangleVertices();
@@ -346,6 +353,14 @@ namespace MapLoader
 				loadedModel.MeshIds[i] = (int)LoadModel(loader);
 			}
 		}
+
+		for (const auto& pair : formatUseCount)
+		{
+			if (pair.second > 1)
+				loadedModel.DuplicateFormatUses += pair.second - 1;
+		}
+
+		DuplicateFormatUses += loadedModel.DuplicateFormatUses;
 
 		return true;
 	}

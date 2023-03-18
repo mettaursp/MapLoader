@@ -60,20 +60,26 @@ namespace Archive
 		return uuid;
 	}
 
-	unsigned int fnv1a32(const std::string& text)
+	namespace FNV1A32
 	{
-		const unsigned int offsetBasis = 0x811c9dc5;
-		const unsigned int prime = 0x01000193;
+		const unsigned int OffsetBasis = 0x811c9dc5;
+		const unsigned int Prime = 0x01000193;
 
-		unsigned long long hash = offsetBasis;
-
-		for (size_t i = 0; i < text.size(); ++i)
+		unsigned int Hash(const std::string& text)
 		{
-			hash ^= text[i];
-			hash *= prime;
-		}
+			const unsigned int offsetBasis = 0x811c9dc5;
+			const unsigned int prime = 0x01000193;
 
-		return (unsigned int)hash;
+			unsigned long long hash = offsetBasis;
+
+			for (size_t i = 0; i < text.size(); ++i)
+			{
+				hash ^= text[i];
+				hash *= prime;
+			}
+
+			return (unsigned int)hash;
+		}
 	}
 
 	namespace Metadata

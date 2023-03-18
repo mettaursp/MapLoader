@@ -412,8 +412,8 @@ public:
 #endif
 #endif
 
-private:
   std::vector<VkDescriptorSetLayoutBinding> m_bindings;
+private:
   std::vector<VkDescriptorBindingFlags>     m_bindingFlags;
 };
 

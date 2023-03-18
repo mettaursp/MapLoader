@@ -71,6 +71,7 @@
     <Import Project="..\GLFW\GLFWInclude.props" />
     <Import Project="..\tinygltf\tinygltfInclude.props" />
     <Import Project="..\DebugLibraries.props" />
+    <Import Project="..\VulkanShadersDebug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -87,6 +88,7 @@
     <Import Project="..\GLFW\GLFWInclude.props" />
     <Import Project="..\tinygltf\tinygltfInclude.props" />
     <Import Project="..\Libraries.props" />
+    <Import Project="..\VulkanShaders.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -102,6 +104,7 @@
     <Import Project="..\GLFW\GLFWInclude.props" />
     <Import Project="..\tinygltf\tinygltfInclude.props" />
     <Import Project="..\DebugLibraries.props" />
+    <Import Project="..\VulkanShadersDebug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -118,6 +121,7 @@
     <Import Project="..\GLFW\GLFWInclude.props" />
     <Import Project="..\tinygltf\tinygltfInclude.props" />
     <Import Project="..\Libraries.props" />
+    <Import Project="..\VulkanShaders.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -189,12 +193,19 @@
     <ClCompile Include="src\MapLoader\Items\ItemData.cpp" />
     <ClCompile Include="src\MapLoader\Items\ItemLibrary.cpp" />
     <ClCompile Include="src\MapLoader\main.cpp" />
+    <ClCompile Include="src\MapLoader\Map\FlatEntity.cpp" />
     <ClCompile Include="src\MapLoader\Map\FlatLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Map\FlatModel.cpp" />
     <ClCompile Include="src\MapLoader\obj_loader.cpp" />
     <ClCompile Include="src\MapLoader\Scene\AccelerationStructure.cpp" />
     <ClCompile Include="src\MapLoader\Scene\RTScene.cpp" />
     <ClCompile Include="src\MapLoader\Scene\SceneObject.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\DescriptorSet.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\DescriptorSetLibrary.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\Shader.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\ShaderLibrary.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\ShaderPipeline.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\VulkanAttributes.cpp" />
     <ClCompile Include="src\MapLoader\Vulkan\VulkanContext.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -210,12 +221,19 @@
     <ClInclude Include="src\MapLoader\Items\EmotionLibrary.h" />
     <ClInclude Include="src\MapLoader\Items\ItemData.h" />
     <ClInclude Include="src\MapLoader\Items\ItemLibrary.h" />
+    <ClInclude Include="src\MapLoader\Map\FlatEntity.h" />
     <ClInclude Include="src\MapLoader\Map\FlatLibrary.h" />
     <ClInclude Include="src\MapLoader\Map\FlatModel.h" />
     <ClInclude Include="src\MapLoader\obj_loader.h" />
     <ClInclude Include="src\MapLoader\Scene\AccelerationStructure.h" />
     <ClInclude Include="src\MapLoader\Scene\RTScene.h" />
     <ClInclude Include="src\MapLoader\Scene\SceneObject.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\DescriptorSet.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\DescriptorSetLibrary.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\Shader.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\ShaderLibrary.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\ShaderPipeline.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\VulkanAttributes.h" />
     <ClInclude Include="src\MapLoader\Vulkan\VulkanContext.h" />
   </ItemGroup>
   <ItemGroup>

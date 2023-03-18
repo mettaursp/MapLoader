@@ -186,6 +186,7 @@ std::unordered_map<std::string, std::string> mapNames;
 std::unordered_map<std::string, int> mapIndices;
 std::unordered_map<int, std::string> mapFileNames;
 std::shared_ptr<MapLoader::RTScene> Scene;
+std::shared_ptr<Engine::Transform> mapTransform;
 
 const float PI = 3.14159265359f;
 
@@ -293,6 +294,8 @@ void getBounds(const MapLoader::ModelData* model, Bounds& bounds)
 	}
 }
 
+int duplicateFormatUses = 0;
+
 SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback)
 {
 	if (model == nullptr)
@@ -300,6 +303,7 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 
 	int entityId = (int)spawnedEntities.size();
 	spawnedEntities.push_back(SpawnedEntity{ model });
+	duplicateFormatUses += model->DuplicateFormatUses;
 
 	for (size_t i = 0; i < model->MeshIds.size(); ++i)
 	{
@@ -323,10 +327,11 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 			std::shared_ptr<MapLoader::SceneObject> sceneObject = Engine::Create<MapLoader::SceneObject>();
 
 			transform->SetTransformation(ms2ToWorld * transformation * modelTransform);
-			transform->SetParent(sceneObject);
+			transform->SetParent(mapTransform);
 			sceneObject->SetTransform(transform.get());
 			sceneObject->SetModel(model, i);
 			sceneObject->SetStatic(true);
+			sceneObject->SetParent(transform);
 			Scene->AddObject(sceneObject);
 
 			helloVkPtr->instanceDescriptions.push_back(instance);
@@ -680,7 +685,7 @@ int main(int argc, char** argv)
 
 	fs::path webMetaCache = "./cache/asset-web-metadata-cache-";
 
-	unsigned int hash = Archive::fnv1a32(ms2Root.string());
+	unsigned int hash = Archive::FNV1A32::Hash(ms2Root.string());
 	char hashBuffer[9] = { 0 };
 
 	for (size_t i = 0; i < 8; ++i)
@@ -773,6 +778,7 @@ int main(int argc, char** argv)
 	VulkanContext = std::make_shared<Graphics::VulkanContext>();
 	AssetLibrary = std::make_shared<MapLoader::GameAssetLibrary>(Reader, VulkanContext);
 	Scene = std::make_shared<MapLoader::RTScene>(VulkanContext);
+	mapTransform = Engine::Create<Engine::Transform>();
 
 	// Create example
 	HelloVulkan helloVk;
@@ -1069,7 +1075,6 @@ int main(int argc, char** argv)
 	helloVk.createRtPipeline();
 	helloVk.createRtShaderBindingTable();
 
-	helloVk.createPostDescriptor();
 	helloVk.createPostPipeline();
 	helloVk.updatePostDescriptorSet();
 

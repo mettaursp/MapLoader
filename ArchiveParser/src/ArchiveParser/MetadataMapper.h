@@ -74,7 +74,14 @@ namespace Archive
 {
 	UUID ParseUUID(const std::string& value, int offset);
 	unsigned int ParseHexInt(const std::string& value, int offset);
-	unsigned int fnv1a32(const std::string& text);
+
+	namespace FNV1A32
+	{
+		extern const unsigned int OffsetBasis;
+		extern const unsigned int Prime;
+
+		unsigned int Hash(const std::string& text);
+	}
 
 	class ArchiveReader;
 

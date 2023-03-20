@@ -1073,7 +1073,6 @@ int main(int argc, char** argv)
 	Scene->Update(0);
 	helloVk.createRtDescriptorSet();
 	helloVk.createRtPipeline();
-	helloVk.createRtShaderBindingTable();
 
 	helloVk.createPostPipeline();
 	helloVk.updatePostDescriptorSet();

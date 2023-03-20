@@ -54,6 +54,7 @@ namespace Graphics
 		fs::path GetBinaryPath() const;
 		VkShaderStageFlagBits GetShaderStage() const { return Stage; }
 		VkShaderModule GetModule() const { return Module; }
+		const std::string& GetEntryPoint() const { return EntryPoint; }
 
 	private:
 		std::shared_ptr<Graphics::VulkanContext> VulkanContext;
@@ -64,11 +65,13 @@ namespace Graphics
 		VkShaderModule Module = { 0 };
 		std::string Source;
 		std::string ByteCode;
+		std::string EntryPoint = "main";
 		VkShaderStageFlagBits Stage = VK_SHADER_STAGE_ALL;
 
 		void LoadDescriptor(ShaderPipeline& pipeline, const spirv_cross::Resource& resource, VkDescriptorType type);
 		void LoadDescriptors(ShaderPipeline& pipeline, const spirv_cross::SmallVector<spirv_cross::Resource>& resources, VkDescriptorType type);
 		void LoadInputs(ShaderPipeline& pipeline, const spirv_cross::SmallVector<spirv_cross::Resource>& resources);
 		void LoadPushConstants(ShaderPipeline& pipeline, const spirv_cross::SmallVector<spirv_cross::Resource>& resources);
+		void LoadShaderRecords(ShaderPipeline& pipeline, const spirv_cross::SmallVector<spirv_cross::Resource>& resources);
 	};
 }

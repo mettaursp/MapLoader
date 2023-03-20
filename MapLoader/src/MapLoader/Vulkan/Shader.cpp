@@ -70,6 +70,7 @@ namespace Graphics
 		LoadDescriptors(pipeline, resources.sampled_images, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER);
 		LoadDescriptors(pipeline, resources.acceleration_structures, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR);
 		LoadPushConstants(pipeline, resources.push_constant_buffers);
+		LoadShaderRecords(pipeline, resources.shader_record_buffers);
 		LoadDescriptors(pipeline, resources.separate_images, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 		LoadDescriptors(pipeline, resources.separate_samplers, VK_DESCRIPTOR_TYPE_SAMPLER);
 	}
@@ -185,6 +186,20 @@ namespace Graphics
 
 			pushConstant.size = size;
 			pushConstant.stageFlags |= Stage;
+		}
+	}
+
+	void Shader::LoadShaderRecords(ShaderPipeline& pipeline, const spirv_cross::SmallVector<spirv_cross::Resource>& resources)
+	{
+		for (const spirv_cross::Resource& resource : resources)
+		{
+			spirv_cross::SPIRType baseType = Compiler->get_type(resource.base_type_id);
+
+			uint32_t size = (uint32_t)Compiler->get_declared_struct_size(baseType);
+
+			std::cout << "\tshader record size: " << size << "\n";
+
+			pipeline.SetShaderRecordSize(size);
 		}
 	}
 

@@ -167,6 +167,11 @@ void HelloVulkan::createDescriptorSetLayout()
 	}
 
 	RTPipeline->LoadDescriptors();
+	RTPipeline->AddRayGenGroup(0);
+	RTPipeline->AddMissGroup(1);
+	RTPipeline->AddMissGroup(2);
+	RTPipeline->AddHitGroup({ 3, 4 });
+	RTPipeline->AddHitGroup({ 5, 6 });
 
 	PostPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
 
@@ -253,7 +258,7 @@ void HelloVulkan::updateDescriptorSet()
 //
 void HelloVulkan::createGraphicsPipeline()
 {
-	RasterPipeline->CreatePipeline();
+	RasterPipeline->CreatePipelineLayout();
 
 	// Creating the Pipeline
 	std::vector<std::string>                paths = defaultSearchPaths;
@@ -535,9 +540,8 @@ void HelloVulkan::destroyResources()
 
 	// #VKRay
 	Scene->FreeResources();
-	vkDestroyPipeline(VulkanContext->Device, m_rtPipeline, nullptr);
+	vkDestroyPipeline(VulkanContext->Device, RTPipeline->GetPipeline(), nullptr);
 	RTPipeline->ReleaseResources();
-	VulkanContext->Allocator.destroy(m_rtSBTBuffer);
 
 	VulkanContext->Allocator.deinit();
 }
@@ -667,7 +671,7 @@ void HelloVulkan::createOffscreenRender()
 //
 void HelloVulkan::createPostPipeline()
 {
-	PostPipeline->CreatePipeline();
+	PostPipeline->CreatePipelineLayout();
 
 	// Pipeline: completely generic, no vertices
 	nvvk::GraphicsPipelineGeneratorCombined pipelineGenerator(VulkanContext->Device, PostPipeline->GetPipelineLayout(), m_renderPass);
@@ -721,7 +725,7 @@ void HelloVulkan::initRayTracing()
 {
 	// Requesting ray tracing properties
 	VkPhysicalDeviceProperties2 prop2{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2};
-	prop2.pNext = &m_rtProperties;
+	prop2.pNext = &VulkanContext->RTDeviceProperties;
 	vkGetPhysicalDeviceProperties2(m_physicalDevice, &prop2);
 }
 
@@ -792,12 +796,6 @@ void HelloVulkan::createBottomLevelAS()
 //
 void HelloVulkan::createRtDescriptorSet()
 {
-	// Top-level acceleration structure, usable by both the ray generation and the closest hit (to shoot shadow rays)
-	m_rtDescSetLayoutBind.addBinding(RtxBindings::eTlas, VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR, 1,
-									 VK_SHADER_STAGE_RAYGEN_BIT_KHR | VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);  // TLAS
-	m_rtDescSetLayoutBind.addBinding(RtxBindings::eOutImage, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1,
-									 VK_SHADER_STAGE_RAYGEN_BIT_KHR);  // Output image
-
 	auto& descriptorSets = RTPipeline->GetDescriptorSets();
 
 	VkAccelerationStructureKHR                   tlas = Scene->GetRTBuilder().getAccelerationStructure();
@@ -838,193 +836,8 @@ void HelloVulkan::updateRtDescriptorSet()
 //
 void HelloVulkan::createRtPipeline()
 {
-	enum StageIndices
-	{
-	eRaygen,
-	eMiss,
-	eMiss2,
-	eClosestHit,
-	eAnyHit,
-	eShadowClosestHit,
-	eAnyHit2,
-	eShaderGroupCount
-	};
-
-	//The API defines five new shader stages for building GLSL shaders:
-	// rgen for raygen shaders
-	// rint for intersection shaders
-	// rchit for closest-hit shaders
-	// rahit for any-hit shaders
-	// rmiss for miss shaders.
-
-	// any-hit: ignoreIntersectionEXT(), terminateRayEXT()
-
-	// All stages
-	std::array<VkPipelineShaderStageCreateInfo, eShaderGroupCount> stages{};
-	VkPipelineShaderStageCreateInfo stage{VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO};
-	stage.pName = "main";  // All the same entry point
-
-	for (size_t i = 0; i < Shaders.size(); ++i)
-	{
-		Shaders[i]->LoadModule();
-		stage.module = Shaders[i]->GetModule();
-		stage.stage = Shaders[i]->GetShaderStage();
-		stages[i] = stage;
-	}
-
-	RTPipeline->CreatePipeline();
-
-	// Shader groups
-	VkRayTracingShaderGroupCreateInfoKHR group{VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_KHR};
-	group.anyHitShader       = VK_SHADER_UNUSED_KHR;
-	group.closestHitShader   = VK_SHADER_UNUSED_KHR;
-	group.generalShader      = VK_SHADER_UNUSED_KHR;
-	group.intersectionShader = VK_SHADER_UNUSED_KHR;
-
-	// Raygen
-	group.type          = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
-	group.generalShader = eRaygen;
-	m_rtShaderGroups.push_back(group);
-
-	// Miss
-	group.type          = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
-	group.generalShader = eMiss;
-	m_rtShaderGroups.push_back(group);
-
-	// Shadow Miss
-	group.type          = VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
-	group.generalShader = eMiss2;
-	m_rtShaderGroups.push_back(group);
-
-	// closest hit shader
-	group.type             = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR;
-	group.generalShader    = VK_SHADER_UNUSED_KHR;
-	group.closestHitShader = eClosestHit;
-	group.anyHitShader = eAnyHit;
-	m_rtShaderGroups.push_back(group);
-
-	// closest hit shader
-	group.type = VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR;
-	group.generalShader = VK_SHADER_UNUSED_KHR;
-	group.closestHitShader = eShadowClosestHit;
-	group.anyHitShader = eAnyHit2;// eAnyHit2;
-	m_rtShaderGroups.push_back(group);
-
-	// Assemble the shader stages and recursion depth info into the ray tracing pipeline
-	VkRayTracingPipelineCreateInfoKHR rayPipelineInfo{VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_KHR};
-	rayPipelineInfo.stageCount = static_cast<uint32_t>(stages.size());  // Stages are shaders
-	rayPipelineInfo.pStages    = stages.data();
-
-	// In this case, m_rtShaderGroups.size() == 4: we have one raygen group,
-	// two miss shader groups, and one hit group.
-	rayPipelineInfo.groupCount = static_cast<uint32_t>(m_rtShaderGroups.size());
-	rayPipelineInfo.pGroups    = m_rtShaderGroups.data();
-
-	// The ray tracing process can shoot rays from the camera, and a shadow ray can be shot from the
-	// hit points of the camera rays, hence a recursion level of 2. This number should be kept as low
-	// as possible for performance reasons. Even recursive ray tracing should be flattened into a loop
-	// in the ray generation to avoid deep recursion.
-	rayPipelineInfo.maxPipelineRayRecursionDepth = 2;  // Ray depth
-	rayPipelineInfo.layout                       = RTPipeline->GetPipelineLayout();
-
-	vkCreateRayTracingPipelinesKHR(VulkanContext->Device, {}, {}, 1, &rayPipelineInfo, nullptr, &m_rtPipeline);
-
-
-	// Spec only guarantees 1 level of "recursion". Check for that sad possibility here.
-	if(m_rtProperties.maxRayRecursionDepth <= 2)
-	{
-	throw std::runtime_error("Device fails to support ray recursion (m_rtProperties.maxRayRecursionDepth <= 2)");
-	}
-
-	//createRtShaderBindingTable();
-
-	for (size_t i = 0; i < Shaders.size(); ++i)
-	{
-		Shaders[i]->ReleaseResources();
-	}
-}
-
-
-struct HitPayload
-{
-	vec3 hitValue;
-	float rayLength;
-	vec3 transmission;
-	int hitObject;
-	vec3 nextOrigin;
-	vec3 nextDirection;
-};
-
-//--------------------------------------------------------------------------------------------------
-// The Shader Binding Table (SBT)
-// - getting all shader handles and write them in a SBT buffer
-// - Besides exception, this could be always done like this
-//
-void HelloVulkan::createRtShaderBindingTable()
-{
-	uint32_t missCount{2};
-	uint32_t hitCount{2};
-	auto     handleCount = 1 + missCount + hitCount;
-	uint32_t handleSize  = m_rtProperties.shaderGroupHandleSize;
-
-	// The SBT (buffer) need to have starting groups to be aligned and handles in the group to be aligned.
-	uint32_t handleSizeAligned = nvh::align_up(handleSize, m_rtProperties.shaderGroupHandleAlignment);
-
-	m_rgenRegion.stride = nvh::align_up(handleSizeAligned, m_rtProperties.shaderGroupBaseAlignment);
-	m_rgenRegion.size   = m_rgenRegion.stride;  // The size member of pRayGenShaderBindingTable must be equal to its stride member
-	m_missRegion.stride = handleSizeAligned;
-	m_missRegion.size   = nvh::align_up(missCount * handleSizeAligned, m_rtProperties.shaderGroupBaseAlignment);
-	m_hitRegion.stride  = nvh::align_up(handleSize + sizeof(HitPayload), m_rtProperties.shaderGroupBaseAlignment);
-	m_hitRegion.size    = nvh::align_up(hitCount * handleSizeAligned, m_rtProperties.shaderGroupBaseAlignment);
-
-	// Get the shader group handles
-	uint32_t             dataSize = handleCount * handleSize;
-	std::vector<uint8_t> handles(dataSize);
-	auto result = vkGetRayTracingShaderGroupHandlesKHR(VulkanContext->Device, m_rtPipeline, 0, handleCount, dataSize, handles.data());
-	assert(result == VK_SUCCESS);
-
-	// Allocate a buffer for storing the SBT.
-	VkDeviceSize sbtSize = m_rgenRegion.size + m_missRegion.size + m_hitRegion.size + m_callRegion.size;
-	m_rtSBTBuffer        = VulkanContext->Allocator.createBuffer(sbtSize,
-										 VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT
-											 | VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR,
-										 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-	VulkanContext->Debug.setObjectName(m_rtSBTBuffer.buffer, std::string("SBT"));  // Give it a debug name for NSight.
-
-	// Find the SBT addresses of each group
-	VkBufferDeviceAddressInfo info{VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO, nullptr, m_rtSBTBuffer.buffer};
-	VkDeviceAddress           sbtAddress = vkGetBufferDeviceAddress(VulkanContext->Device, &info);
-	m_rgenRegion.deviceAddress           = sbtAddress;
-	m_missRegion.deviceAddress           = sbtAddress + m_rgenRegion.size;
-	m_hitRegion.deviceAddress            = sbtAddress + m_rgenRegion.size + m_missRegion.size;
-
-	// Helper to retrieve the handle data
-	auto getHandle = [&](int i) { return handles.data() + i * handleSize; };
-
-	// Map the SBT buffer and write in the handles.
-	auto*    pSBTBuffer = reinterpret_cast<uint8_t*>(VulkanContext->Allocator.map(m_rtSBTBuffer));
-	uint8_t* pData{nullptr};
-	uint32_t handleIdx{0};
-	// Raygen
-	pData = pSBTBuffer;
-	memcpy(pData, getHandle(handleIdx++), handleSize);
-	// Miss
-	pData = pSBTBuffer + m_rgenRegion.size;
-	for(uint32_t c = 0; c < missCount; c++)
-	{
-	memcpy(pData, getHandle(handleIdx++), handleSize);
-	pData += m_missRegion.stride;
-	}
-	// Hit
-	pData = pSBTBuffer + m_rgenRegion.size + m_missRegion.size;
-	for(uint32_t c = 0; c < hitCount; c++)
-	{
-	memcpy(pData, getHandle(handleIdx++), handleSize);
-	pData += m_hitRegion.stride;
-	}
-
-	VulkanContext->Allocator.unmap(m_rtSBTBuffer);
-	VulkanContext->Allocator.finalizeAndReleaseStaging();
+	RTPipeline->CreatePipelineLayout();
+	RTPipeline->CreateRTPipeline();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1047,14 +860,14 @@ void HelloVulkan::raytrace(const VkCommandBuffer& cmdBuf, const vec4& clearColor
 	auto& descriptorSets = RTPipeline->GetDescriptorSets();
 
 	std::vector<VkDescriptorSet> descSets{descriptorSets[0]->DescriptorSet, descriptorSets[1]->DescriptorSet };
-	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, m_rtPipeline);
+	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, RTPipeline->GetPipeline());
 	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, RTPipeline->GetPipelineLayout(), 0,
 							(uint32_t)descSets.size(), descSets.data(), 0, nullptr);
 	vkCmdPushConstants(cmdBuf, RTPipeline->GetPipelineLayout(),
 					 RTPipeline->FetchPushConstant().stageFlags,
 					 0, sizeof(PushConstantRay), &m_pcRay);
 
-	vkCmdTraceRaysKHR(cmdBuf, &m_rgenRegion, &m_missRegion, &m_hitRegion, &m_callRegion, m_size.width, m_size.height, 1);
+	vkCmdTraceRaysKHR(cmdBuf, &RTPipeline->GetRayGenRegion(), &RTPipeline->GetRayMissRegion(), &RTPipeline->GetRayHitRegion(), &m_callRegion, m_size.width, m_size.height, 1);
 
 
 	VulkanContext->Debug.endLabel(cmdBuf);

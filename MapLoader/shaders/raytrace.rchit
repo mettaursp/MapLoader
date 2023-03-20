@@ -50,6 +50,10 @@ layout(set = 1, binding = eInstDescs, scalar) buffer InstanceDescription_ { Inst
 layout(set = 1, binding = eTextureOverrides, scalar) buffer MaterialTextures_ { MaterialTextures i[]; } texOverride;
 
 layout(push_constant) uniform _PushConstantRay { PushConstantRay pcRay; };
+
+layout(shaderRecordEXT) buffer SBTData {
+    float material_id;
+};
 // clang-format on
 
 vec3 reflectVector(vec3 vector, vec3 normal)

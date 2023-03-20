@@ -139,19 +139,9 @@ public:
 	void createRtDescriptorSet();
 	void updateRtDescriptorSet();
 	void createRtPipeline();
-	void createRtShaderBindingTable();
 	void raytrace(const VkCommandBuffer& cmdBuf, const vec4& clearColor);
 
 
-	VkPhysicalDeviceRayTracingPipelinePropertiesKHR m_rtProperties{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR};
-	nvvk::DescriptorSetBindings                     m_rtDescSetLayoutBind;
-	std::vector<VkRayTracingShaderGroupCreateInfoKHR> m_rtShaderGroups;
-	VkPipeline                                        m_rtPipeline;
-
-	nvvk::Buffer                    m_rtSBTBuffer;
-	VkStridedDeviceAddressRegionKHR m_rgenRegion{};
-	VkStridedDeviceAddressRegionKHR m_missRegion{};
-	VkStridedDeviceAddressRegionKHR m_hitRegion{};
 	VkStridedDeviceAddressRegionKHR m_callRegion{};
 
 	// Push constant for ray tracer

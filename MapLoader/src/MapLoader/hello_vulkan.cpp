@@ -245,14 +245,6 @@ void HelloVulkan::updateDescriptorSet()
 	VkDescriptorBufferInfo dbiTextureOverrideDesc{ m_textureOverride.buffer, 0, VK_WHOLE_SIZE };
 	writes.emplace_back(m_descSet->MakeWrite(SceneBindings::eTextureOverrides, &dbiTextureOverrideDesc));
 
-	if (m_mouseIO.memHandle != nullptr)
-	{
-		//mouseIOPtr = reinterpret_cast<MouseRayOut*>(VulkanContext->Allocator.map(m_mouseIO));
-		//if (mouseIOPtr != nullptr)
-		//	mouseIO = *mouseIOPtr;
-		//VulkanContext->Allocator.unmap(m_mouseIO);
-	}
-
 	// Writing the information
 	vkUpdateDescriptorSets(VulkanContext->Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
 }
@@ -267,23 +259,6 @@ void HelloVulkan::createGraphicsPipeline()
 	RasterPipeline->SetAttachmentsAlphaBlend();
 	RasterPipeline->CreatePipelineLayout();
 	RasterPipeline->CreateRasterPipeline();
-	//
-	//// Creating the Pipeline
-	//std::vector<std::string>                paths = defaultSearchPaths;
-	//nvvk::GraphicsPipelineGeneratorCombined gpb(VulkanContext->Device, RasterPipeline->GetPipelineLayout(), m_offscreenRenderPass);
-	//gpb.depthStencilState.depthTestEnable = true;
-	//gpb.addShader(nvh::loadFile("spv/vert_shader.vert.spv", true, paths, true), VK_SHADER_STAGE_VERTEX_BIT);
-	//gpb.addShader(nvh::loadFile("spv/frag_shader.frag.spv", true, paths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
-	//gpb.addBindingDescription({0, sizeof(VertexObj)});
-	//gpb.addAttributeDescriptions({
-	//	{0, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, pos))},
-	//	{1, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, nrm))},
-	//	{2, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, color))},
-	//	{3, 0, VK_FORMAT_R32G32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, texCoord))},
-	//});
-	//
-	//m_graphicsPipeline = gpb.createPipeline();
-	//VulkanContext->Debug.setObjectName(m_graphicsPipeline, "Graphics");
 }
 
 void HelloVulkan::loadModelInstance(uint32_t index, mat4 transform)
@@ -355,10 +330,6 @@ void HelloVulkan::createObjDescriptionBuffer()
 
 	std::vector<MouseRayOut> out = { { vec3(), -1 } };
 
-	//m_mouseIO = VulkanContext->Allocator.createBuffer(sizeof(mouseIO), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
-	//cmdGen.submitAndWait(cmdBuf4);
-	//VulkanContext->Allocator.getDMA()->map(m_mouseIO.memHandle, 0, sizeof(mouseIO), &mouseIO);
-	//VulkanContext->Allocator.finalizeAndReleaseStaging();
 	m_mouseIO = VulkanContext->Allocator.createBuffer(cmdBuf5, out, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT);
 	cmdGen.submitAndWait(cmdBuf5);
 	VulkanContext->Allocator.finalizeAndReleaseStaging();
@@ -637,6 +608,13 @@ void HelloVulkan::createRenderPass()
 		DeviceRenderPass->AddSubpass();
 		DeviceRenderPass->SetColorAttachments({ 0 }, { 0 });
 		DeviceRenderPass->SetDepthAttachments({ 0 }, 1);
+
+		auto& dependency = DeviceRenderPass->GetDependency(0);
+		dependency.srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		dependency.srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+		dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 	}
 	else
 		DeviceRenderPass->ReleaseResources();
@@ -692,12 +670,6 @@ void HelloVulkan::createOffscreenRender()
 	genCmdBuf.submitAndWait(cmdBuf);
 	}
 
-	//// Creating a renderpass for the offscreen
-	//if(!m_offscreenRenderPass)
-	//{
-	//m_offscreenRenderPass = nvvk::createRenderPass(VulkanContext->Device, {m_offscreenColorFormat}, m_offscreenDepthFormat, 1, true,
-	//											     true, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
-	//}
 	if (RasterRenderPass.get() == nullptr)
 	{
 		RasterRenderPass = std::make_shared<Graphics::RenderPass>(VulkanContext);
@@ -716,18 +688,6 @@ void HelloVulkan::createOffscreenRender()
 	attachments[1] = m_offscreenDepth.descriptor.imageView;
 
 	OffscreenBuffer->Create();
-
-	// Creating the frame buffer for offscreen
-	//
-	//vkDestroyFramebuffer(VulkanContext->Device, OffscreenBuffer->GetFrameBuffer(), nullptr);
-	//VkFramebufferCreateInfo info{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
-	//info.renderPass      = m_offscreenRenderPass;
-	//info.attachmentCount = 2;
-	//info.pAttachments    = attachments.data();
-	//info.width           = m_size.width;
-	//info.height          = m_size.height;
-	//info.layers          = 1;
-	//vkCreateFramebuffer(VulkanContext->Device, &info, nullptr, &m_offscreenFramebuffer);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -736,18 +696,11 @@ void HelloVulkan::createOffscreenRender()
 void HelloVulkan::createPostPipeline()
 {
 	PostPipeline->SetRenderPass(DeviceRenderPass);
+	PostPipeline->SetAttachmentsAlphaBlend();
 	PostPipeline->CreatePipelineLayout();
-	PostPipeline->GetRasterizationStateCreateInfo().cullMode = VK_CULL_MODE_NONE;
+	PostPipeline->GetRasterizationState().cullMode = VK_CULL_MODE_NONE;
+	PostPipeline->GetDepthStencilState().stencilTestEnable = VK_FALSE;
 	PostPipeline->CreateRasterPipeline();
-	//PostPipeline->CreatePipelineLayout();
-	//
-	// Pipeline: completely generic, no vertices
-	//nvvk::GraphicsPipelineGeneratorCombined pipelineGenerator(VulkanContext->Device, PostPipeline->GetPipelineLayout(), DeviceRenderPass->GetRenderPass());
-	//pipelineGenerator.addShader(nvh::loadFile("spv/passthrough.vert.spv", true, defaultSearchPaths, true), VK_SHADER_STAGE_VERTEX_BIT);
-	//pipelineGenerator.addShader(nvh::loadFile("spv/post.frag.spv", true, defaultSearchPaths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
-	//pipelineGenerator.rasterizationState.cullMode = VK_CULL_MODE_NONE;
-	//m_postPipeline                                = pipelineGenerator.createPipeline();
-	//VulkanContext->Debug.setObjectName(m_postPipeline, "post");
 }
 
 //--------------------------------------------------------------------------------------------------

@@ -23,25 +23,6 @@
 
 
 //--------------------------------------------------------------------------------------------------
-// Creation order of all elements for the application
-// First keep the Vulkan instance, device, ... in class members
-// Then create the swapchain, a depth buffer, a default render pass and the
-// framebuffers for the swapchain (all sharing the depth image)
-// Initialize Imgui and setup callback functions for windows operations (mouse, key, ...)
-//void nvvkhl::AppBaseVk::create(const AppBaseVkCreateInfo& info)
-//{
-//  m_useDynamicRendering = info.useDynamicRendering;
-//  setup(info.instance, info.device, info.physicalDevice, info.queueIndices[0]);
-//  createSwapchain(info.surface, info.size.width, info.size.height, VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_UNDEFINED, info.useVsync);
-//  createDepthBuffer();
-//  createRenderPass();
-//  createFrameBuffers();
-//  initGUI();
-//  setupGlfwCallbacks(info.window);
-//  ImGui_ImplGlfw_InitForVulkan(info.window, true);
-//}
-
-//--------------------------------------------------------------------------------------------------
 // Setup the low level Vulkan for various operations
 //
 void nvvkhl::AppBaseVk::setup(const VkInstance& instance, const VkDevice& device, const VkPhysicalDevice& physicalDevice, uint32_t graphicsQueueIndex)
@@ -201,44 +182,6 @@ void nvvkhl::AppBaseVk::createFrameBuffers()
 {
   if(m_useDynamicRendering)
     return;
-
-  // Recreate the frame buffers
-  //for(auto framebuffer : m_framebuffers)
-  //  vkDestroyFramebuffer(VulkanContext->Device, framebuffer, nullptr);
-  //
-  //// Array of attachment (color, depth)
-  //std::array<VkImageView, 2> attachments{};
-  //
-  //// Create frame buffers for every swap chain image
-  //VkFramebufferCreateInfo framebufferCreateInfo{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
-  //framebufferCreateInfo.renderPass      = m_renderPass;
-  //framebufferCreateInfo.attachmentCount = 2;
-  //framebufferCreateInfo.width           = m_size.width;
-  //framebufferCreateInfo.height          = m_size.height;
-  //framebufferCreateInfo.layers          = 1;
-  //framebufferCreateInfo.pAttachments    = attachments.data();
-  //
-  //// Create frame buffers for every swap chain image
-  //m_framebuffers.resize(m_swapChain.getImageCount());
-  //for(uint32_t i = 0; i < m_swapChain.getImageCount(); i++)
-  //{
-  //  attachments[0] = m_swapChain.getImageView(i);
-  //  attachments[1] = m_depthView;
-  //  vkCreateFramebuffer(VulkanContext->Device, &framebufferCreateInfo, nullptr, &m_framebuffers[i]);
-  //}
-
-
-//#ifdef _DEBUG
-//  for(size_t i = 0; i < m_framebuffers.size(); i++)
-//  {
-//    std::string                   name = std::string("AppBase") + std::to_string(i);
-//    VkDebugUtilsObjectNameInfoEXT nameInfo{VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT};
-//    nameInfo.objectHandle = (uint64_t)m_framebuffers[i];
-//    nameInfo.objectType   = VK_OBJECT_TYPE_FRAMEBUFFER;
-//    nameInfo.pObjectName  = name.c_str();
-//    vkSetDebugUtilsObjectNameEXT(VulkanContext->Device, &nameInfo);
-//  }
-//#endif  // _DEBUG
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -249,61 +192,6 @@ void nvvkhl::AppBaseVk::createRenderPass()
 {
   if(m_useDynamicRendering)
     return;
-
-//  //if(m_renderPass)
-//  //  vkDestroyRenderPass(VulkanContext->Device, m_renderPass, nullptr);
-//
-//  std::array<VkAttachmentDescription, 2> attachments{};
-//  // Color attachment
-//  attachments[0].format      = m_colorFormat;
-//  attachments[0].loadOp      = VK_ATTACHMENT_LOAD_OP_CLEAR;
-//  attachments[0].finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-//  attachments[0].samples     = VK_SAMPLE_COUNT_1_BIT;
-//
-//  // Depth attachment
-//  attachments[1].format        = m_depthFormat;
-//  attachments[1].loadOp        = VK_ATTACHMENT_LOAD_OP_CLEAR;
-//  attachments[1].stencilLoadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
-//  attachments[1].finalLayout   = VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL;
-//  attachments[1].samples       = VK_SAMPLE_COUNT_1_BIT;
-//
-//  // One color, one depth
-//  const VkAttachmentReference colorReference{0, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL};
-//  const VkAttachmentReference depthReference{1, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL};
-//
-//  std::array<VkSubpassDependency, 1> subpassDependencies{};
-//  // Transition from final to initial (VK_SUBPASS_EXTERNAL refers to all commands executed outside of the actual renderpass)
-//  subpassDependencies[0].srcSubpass      = VK_SUBPASS_EXTERNAL;
-//  subpassDependencies[0].dstSubpass      = 0;
-//  subpassDependencies[0].srcStageMask    = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
-//  subpassDependencies[0].dstStageMask    = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-//  subpassDependencies[0].srcAccessMask   = VK_ACCESS_MEMORY_READ_BIT;
-//  subpassDependencies[0].dstAccessMask   = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-//  subpassDependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
-//
-//  VkSubpassDescription subpassDescription{};
-//  subpassDescription.pipelineBindPoint       = VK_PIPELINE_BIND_POINT_GRAPHICS;
-//  subpassDescription.colorAttachmentCount    = 1;
-//  subpassDescription.pColorAttachments       = &colorReference;
-//  subpassDescription.pDepthStencilAttachment = &depthReference;
-//
-//  VkRenderPassCreateInfo renderPassInfo{VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO};
-//  renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-//  renderPassInfo.pAttachments    = attachments.data();
-//  renderPassInfo.subpassCount    = 1;
-//  renderPassInfo.pSubpasses      = &subpassDescription;
-//  renderPassInfo.dependencyCount = static_cast<uint32_t>(subpassDependencies.size());
-//  renderPassInfo.pDependencies   = subpassDependencies.data();
-//
-//  vkCreateRenderPass(VulkanContext->Device, &renderPassInfo, nullptr, &m_renderPass);
-//
-//#ifdef _DEBUG
-//  VkDebugUtilsObjectNameInfoEXT nameInfo{VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT};
-//  nameInfo.objectHandle = (uint64_t)m_renderPass;
-//  nameInfo.objectType   = VK_OBJECT_TYPE_RENDER_PASS;
-//  nameInfo.pObjectName  = R"(AppBaseVk)";
-//  vkSetDebugUtilsObjectNameEXT(VulkanContext->Device, &nameInfo);
-//#endif  // _DEBUG
 }
 
 //--------------------------------------------------------------------------------------------------

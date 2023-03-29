@@ -71,8 +71,9 @@ namespace Graphics
 		void SetRenderPass(const std::shared_ptr<RenderPass>& renderPass, uint32_t index = 0);
 		void SetAttachmentAlphaBlend(size_t index, bool premultiplyAlpha = false);
 		void SetAttachmentsAlphaBlend(bool premultiplyAlpha = false);
+		VkPipelineDepthStencilStateCreateInfo& GetDepthStencilState();
 		VkPipelineColorBlendAttachmentState& GetAttachmentBlendState(size_t index);
-		VkPipelineRasterizationStateCreateInfo& GetRasterizationStateCreateInfo();
+		VkPipelineRasterizationStateCreateInfo& GetRasterizationState();
 
 		// Ray tracing
 		void SetShaderRecordSize(uint32_t size);

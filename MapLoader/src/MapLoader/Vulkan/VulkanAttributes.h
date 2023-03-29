@@ -9,10 +9,11 @@ namespace Graphics
 	struct FormatStats
 	{
 		Enum::AttributeDataType DataType = Enum::AttributeDataType::Unknown;
-		size_t ElementCount;
+		size_t ElementCount = 0;
 		VkFormat Format = VK_FORMAT_UNDEFINED;
 		spirv_cross::SPIRType::BaseType BaseType = spirv_cross::SPIRType::BaseType::Unknown;
-		std::string Name;
+		VkColorComponentFlags Components = VK_COLOR_COMPONENT_FLAG_BITS_MAX_ENUM;
+		std::string Name = "unknown";
 	};
 
 	struct DepthStencilFormatStats

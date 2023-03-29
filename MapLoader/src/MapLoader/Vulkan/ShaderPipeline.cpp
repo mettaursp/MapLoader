@@ -164,15 +164,10 @@ namespace Graphics
 		{
 			const auto& attachment = attachments[subpass.ColorAttachments[i].attachment];
 			auto& blendAttachment = CreateInfo->BlendStates[i];
-
-			blendAttachment.blendEnable = VK_FALSE;
-			blendAttachment.colorWriteMask = 0;
-
-			const VkColorComponentFlags components[4] = { VK_COLOR_COMPONENT_R_BIT, VK_COLOR_COMPONENT_G_BIT, VK_COLOR_COMPONENT_B_BIT , VK_COLOR_COMPONENT_A_BIT };
 			const FormatStats& format = GetFormatStats(attachment.format);
 
-			for (size_t i = 0; i < format.ElementCount; ++i)
-				blendAttachment.colorWriteMask |= components[i];
+			blendAttachment.blendEnable = VK_FALSE;
+			blendAttachment.colorWriteMask = format.Components;
 		}
 
 		CreateInfo->ColorBlendState.attachmentCount = (uint32_t)CreateInfo->BlendStates.size();
@@ -242,12 +237,17 @@ namespace Graphics
 			SetAttachmentAlphaBlend(i, premultiplyAlpha);
 	}
 
+	VkPipelineDepthStencilStateCreateInfo& ShaderPipeline::GetDepthStencilState()
+	{
+		return CreateInfo->DepthStencilState;
+	}
+
 	VkPipelineColorBlendAttachmentState& ShaderPipeline::GetAttachmentBlendState(size_t index)
 	{
 		return CreateInfo->BlendStates[index];
 	}
 
-	VkPipelineRasterizationStateCreateInfo& ShaderPipeline::GetRasterizationStateCreateInfo()
+	VkPipelineRasterizationStateCreateInfo& ShaderPipeline::GetRasterizationState()
 	{
 		return CreateInfo->RasterizationState;
 	}

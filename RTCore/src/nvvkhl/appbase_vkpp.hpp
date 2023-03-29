@@ -159,7 +159,7 @@ public:
   // Initialization of the GUI
   // - Need to be call after the device creation
   //
-  void initGUI(uint32_t subpassID = 0);
+  void initGUI(VkRenderPass renderPass, uint32_t subpassID = 0);
 
   //--------------------------------------------------------------------------------------------------
   // Fit the camera to the Bounding box
@@ -193,11 +193,9 @@ public:
   vk::Queue                             getQueue();
   uint32_t                              getQueueFamily();
   vk::CommandPool                       getCommandPool();
-  vk::RenderPass                        getRenderPass();
   vk::Extent2D                          getSize();
   vk::PipelineCache                     getPipelineCache();
   vk::SurfaceKHR                        getSurface();
-  const std::vector<vk::Framebuffer>&   getFramebuffers();
   const std::vector<vk::CommandBuffer>& getCommandBuffers();
   uint32_t                              getCurFrame() const;
   vk::Format                            getColorFormat() const;
@@ -229,13 +227,11 @@ protected:
 
   // Drawing/Surface
   nvvk::SwapChain                m_swapChain;
-  std::vector<vk::Framebuffer>   m_framebuffers;      // All framebuffers, correspond to the Swapchain
   std::vector<vk::CommandBuffer> m_commandBuffers;    // Command buffer per nb element in Swapchain
   std::vector<vk::Fence>         m_waitFences;        // Fences per nb element in Swapchain
   vk::Image                      m_depthImage;        // Depth/Stencil
   vk::DeviceMemory               m_depthMemory;       // Depth/Stencil
   vk::ImageView                  m_depthView;         // Depth/Stencil
-  vk::RenderPass                 m_renderPass;        // Base render pass
   vk::Extent2D                   m_size{0, 0};        // Size of the window
   vk::PipelineCache              m_pipelineCache;     // Cache for pipeline/shaders
   bool                           m_vsync{false};      // Swapchain with vsync

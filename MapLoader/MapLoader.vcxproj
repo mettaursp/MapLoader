@@ -202,6 +202,8 @@
     <ClCompile Include="src\MapLoader\Scene\SceneObject.cpp" />
     <ClCompile Include="src\MapLoader\Vulkan\DescriptorSet.cpp" />
     <ClCompile Include="src\MapLoader\Vulkan\DescriptorSetLibrary.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\FrameBuffer.cpp" />
+    <ClCompile Include="src\MapLoader\Vulkan\RenderPass.cpp" />
     <ClCompile Include="src\MapLoader\Vulkan\Shader.cpp" />
     <ClCompile Include="src\MapLoader\Vulkan\ShaderLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Vulkan\ShaderPipeline.cpp" />
@@ -230,6 +232,8 @@
     <ClInclude Include="src\MapLoader\Scene\SceneObject.h" />
     <ClInclude Include="src\MapLoader\Vulkan\DescriptorSet.h" />
     <ClInclude Include="src\MapLoader\Vulkan\DescriptorSetLibrary.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\FrameBuffer.h" />
+    <ClInclude Include="src\MapLoader\Vulkan\RenderPass.h" />
     <ClInclude Include="src\MapLoader\Vulkan\Shader.h" />
     <ClInclude Include="src\MapLoader\Vulkan\ShaderLibrary.h" />
     <ClInclude Include="src\MapLoader\Vulkan\ShaderPipeline.h" />

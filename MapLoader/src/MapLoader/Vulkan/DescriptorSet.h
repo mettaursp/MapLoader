@@ -21,7 +21,7 @@ namespace Graphics
 		std::vector<VkDescriptorSetLayoutBinding> LayoutBindings;
 		std::vector<std::string> DescriptorNames;
 		std::unordered_map<std::string, VkDescriptorSetLayoutBinding*> DescriptorMap;
-		VkDescriptorSetLayout Layout;
+		VkDescriptorSetLayout Layout = nullptr;
 		VkDescriptorSet DescriptorSet;
 
 		DescriptorReference FetchBinding(uint32_t index);

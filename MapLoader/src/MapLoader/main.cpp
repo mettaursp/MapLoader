@@ -798,8 +798,6 @@ int main(int argc, char** argv)
 	helloVk.createRenderPass();
 	helloVk.createFrameBuffers();
 
-	// Setup Imgui
-	helloVk.initGUI(0);  // Using sub-pass 0
 	dyeColors.LoadDyes(Reader);
 	AssetLibrary->GetEmotions().LoadEmotions(Reader);
 
@@ -1059,12 +1057,14 @@ int main(int argc, char** argv)
 	//helloVk.loadModel(nvh::findFile("media/scenes/Medieval_building.obj", defaultSearchPaths, true));
 	//helloVk.loadModel(nvh::findFile("media/scenes/plane.obj", defaultSearchPaths, true));
 
-	helloVk.createOffscreenRender();
 	helloVk.createDescriptorSetLayout();
+	helloVk.createOffscreenRender();
 	helloVk.createGraphicsPipeline();
 	helloVk.createUniformBuffer();
 	helloVk.createObjDescriptionBuffer();
 	helloVk.updateDescriptorSet();
+	// Setup Imgui
+	helloVk.initGUI(helloVk.DeviceRenderPass->GetRenderPass(), 0);  // Using sub-pass 0
 
 	// #VKRay
 	helloVk.initRayTracing();
@@ -1461,8 +1461,8 @@ int main(int argc, char** argv)
 			VkRenderPassBeginInfo offscreenRenderPassBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
 			offscreenRenderPassBeginInfo.clearValueCount = 2;
 			offscreenRenderPassBeginInfo.pClearValues    = clearValues.data();
-			offscreenRenderPassBeginInfo.renderPass      = helloVk.m_offscreenRenderPass;
-			offscreenRenderPassBeginInfo.framebuffer     = helloVk.m_offscreenFramebuffer;
+			offscreenRenderPassBeginInfo.renderPass      = helloVk.RasterRenderPass->GetRenderPass();
+			offscreenRenderPassBeginInfo.framebuffer     = helloVk.OffscreenBuffer->GetFrameBuffer();
 			offscreenRenderPassBeginInfo.renderArea      = {{0, 0}, helloVk.getSize()};
 
 			// Rendering Scene
@@ -1483,8 +1483,8 @@ int main(int argc, char** argv)
 			VkRenderPassBeginInfo postRenderPassBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
 			postRenderPassBeginInfo.clearValueCount = 2;
 			postRenderPassBeginInfo.pClearValues    = clearValues.data();
-			postRenderPassBeginInfo.renderPass      = helloVk.getRenderPass();
-			postRenderPassBeginInfo.framebuffer     = helloVk.getFramebuffers()[curFrame];
+			postRenderPassBeginInfo.renderPass      = helloVk.DeviceRenderPass->GetRenderPass();
+			postRenderPassBeginInfo.framebuffer     = helloVk.DeviceBuffers[curFrame]->GetFrameBuffer();
 			postRenderPassBeginInfo.renderArea      = {{0, 0}, helloVk.getSize()};
 
 			// Rendering tonemapper

@@ -28,6 +28,7 @@ namespace fs = std::filesystem;
 namespace Graphics
 {
 	class ShaderPipeline;
+	class RenderPass;
 
 	class Shader
 	{
@@ -44,6 +45,7 @@ namespace Graphics
 		void LoadModule(bool forceReload = false);
 		void LoadReflection(bool forceReload = false);
 		void LoadDescriptors(ShaderPipeline& pipeline);
+		void LoadOutputs(ShaderPipeline& pipeline, RenderPass& renderPass);
 		void ReleaseResources();
 		void ClearBuffers();
 
@@ -62,7 +64,7 @@ namespace Graphics
 		fs::path ShaderPath;
 		fs::path SourcePath = "./shaders";
 		fs::path BinaryPath = "./spv";
-		VkShaderModule Module = { 0 };
+		VkShaderModule Module = nullptr;
 		std::string Source;
 		std::string ByteCode;
 		std::string EntryPoint = "main";
@@ -73,5 +75,6 @@ namespace Graphics
 		void LoadInputs(ShaderPipeline& pipeline, const spirv_cross::SmallVector<spirv_cross::Resource>& resources);
 		void LoadPushConstants(ShaderPipeline& pipeline, const spirv_cross::SmallVector<spirv_cross::Resource>& resources);
 		void LoadShaderRecords(ShaderPipeline& pipeline, const spirv_cross::SmallVector<spirv_cross::Resource>& resources);
+		void LoadOutputs(ShaderPipeline& pipeline, RenderPass& renderPass, const spirv_cross::SmallVector<spirv_cross::Resource>& resources);
 	};
 }

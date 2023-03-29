@@ -37,7 +37,10 @@
 #include "Vulkan/Shader.h"
 #include "Vulkan/ShaderPipeline.h"
 #include "Vulkan/DescriptorSetLibrary.h"
+#include "Vulkan/RenderPass.h"
 #include <MapLoader/Assets/ModelData.h>
+#include "Vulkan/FrameBuffer.h"
+#include "Vulkan/ShaderLibrary.h"
 
 // #VKRay
 #include "nvvk/raytraceKHR_vk.hpp"
@@ -96,15 +99,17 @@ public:
 	MouseRayOut mouseIO = { vec3(), -1 };
 	MouseRayOut* mouseIOPtr = nullptr;
 
-	// Graphic pipeline
-	VkPipeline                  m_graphicsPipeline;
-
 	std::shared_ptr<Engine::Graphics::MeshFormat> ShaderVertexFormat;
-	std::vector<std::shared_ptr<Graphics::Shader>> Shaders;
+	std::vector<Graphics::Shader*> Shaders;
 	std::unique_ptr<Graphics::ShaderPipeline> RTPipeline;
 	std::unique_ptr<Graphics::ShaderPipeline> RasterPipeline;
 	std::unique_ptr<Graphics::ShaderPipeline> PostPipeline;
+	std::shared_ptr<Graphics::RenderPass> RasterRenderPass;
 	std::shared_ptr<Graphics::DescriptorSetLibrary> DescriptorSetLibrary;
+	std::unique_ptr<Graphics::FrameBuffer> DeviceBuffers[3];
+	std::unique_ptr<Graphics::FrameBuffer> OffscreenBuffer;
+	std::shared_ptr<Graphics::RenderPass> DeviceRenderPass;
+	std::unique_ptr<Graphics::ShaderLibrary> ShaderLibrary;
 
 	nvvk::Buffer m_bGlobals;  // Device-Host of the camera matrices
 	nvvk::Buffer m_bObjDesc;  // Device buffer of the OBJ descriptions
@@ -119,14 +124,13 @@ public:
 	std::shared_ptr<MapLoader::RTScene> Scene;
 
 	// #Post - Draw the rendered image on a quad using a tonemapper
+	void createFrameBuffers();
+	void createRenderPass();
 	void createOffscreenRender();
 	void createPostPipeline();
 	void updatePostDescriptorSet();
 	void drawPost(VkCommandBuffer cmdBuf);
 
-	VkPipeline                  m_postPipeline{VK_NULL_HANDLE};
-	VkRenderPass                m_offscreenRenderPass{VK_NULL_HANDLE};
-	VkFramebuffer               m_offscreenFramebuffer{VK_NULL_HANDLE};
 	nvvk::Texture               m_offscreenColor;
 	nvvk::Texture               m_offscreenDepth;
 	VkFormat                    m_offscreenColorFormat{VK_FORMAT_R32G32B32A32_SFLOAT};

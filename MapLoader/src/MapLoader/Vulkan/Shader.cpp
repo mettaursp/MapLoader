@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "ShaderPipeline.h"
+#include "RenderPass.h"
 #include "VulkanAttributes.h"
 
 namespace Graphics
@@ -73,6 +74,15 @@ namespace Graphics
 		LoadShaderRecords(pipeline, resources.shader_record_buffers);
 		LoadDescriptors(pipeline, resources.separate_images, VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE);
 		LoadDescriptors(pipeline, resources.separate_samplers, VK_DESCRIPTOR_TYPE_SAMPLER);
+	}
+
+	void Shader::LoadOutputs(ShaderPipeline& pipeline, RenderPass& renderPass)
+	{
+		if (Stage != VK_SHADER_STAGE_FRAGMENT_BIT) return;
+
+		spirv_cross::ShaderResources resources = Compiler->get_shader_resources();
+
+		LoadOutputs(pipeline, renderPass, resources.stage_outputs);
 	}
 
 	void Shader::LoadDescriptor(ShaderPipeline& pipeline, const spirv_cross::Resource& resource, VkDescriptorType type)
@@ -200,6 +210,16 @@ namespace Graphics
 			std::cout << "\tshader record size: " << size << "\n";
 
 			pipeline.SetShaderRecordSize(size);
+		}
+	}
+
+	void Shader::LoadOutputs(ShaderPipeline& pipeline, RenderPass& renderPass, const spirv_cross::SmallVector<spirv_cross::Resource>& resources)
+	{
+		for (const spirv_cross::Resource& resource : resources)
+		{
+			spirv_cross::Bitset flags = Compiler->get_decoration_bitset(resource.id);
+
+			flags = flags;
 		}
 	}
 

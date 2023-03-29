@@ -215,9 +215,9 @@ bool loadFeatures(const Archive::ArchivePath& tablePath, const char* locale, con
 	if (!featureSettingPath.Loaded() || !featurePath.Loaded())
 	{
 		if (featurePath.Loaded())
-			std::cout << "failed to find " << featurePath.GetPath().string() << std::endl;
+			std::cout << "failed to find feature.xml: \"" << featurePath.GetPath().string() << "\"" << std::endl;
 		if (!featureSettingPath.Loaded())
-			std::cout << "failed to find " << featureSettingPath.GetPath().string() << std::endl;
+			std::cout << "failed to find feature_setting.xml: \"" << featureSettingPath.GetPath().string() << "\"" << std::endl;
 
 		return false;
 	}

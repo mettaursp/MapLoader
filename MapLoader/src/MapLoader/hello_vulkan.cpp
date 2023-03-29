@@ -56,6 +56,7 @@ void HelloVulkan::setup(const VkInstance& instance, const VkDevice& device, cons
 	AppBaseVk::setup(instance, device, physicalDevice, queueFamily);
 	VulkanContext->Allocator.init(instance, device, physicalDevice);
 	VulkanContext->Debug.setup(VulkanContext->Device);
+	ShaderLibrary = std::make_unique<Graphics::ShaderLibrary>(VulkanContext);
 	m_offscreenDepthFormat = nvvk::findDepthFormat(physicalDevice);
 }
 
@@ -135,9 +136,9 @@ void HelloVulkan::createDescriptorSetLayout()
 	RasterPipeline->SetVertexFormat(ShaderVertexFormat);
 
 	{
-		std::shared_ptr<Graphics::Shader> shaders[] = {
-			std::make_shared<Graphics::Shader>(VulkanContext, "vert_shader.vert", VK_SHADER_STAGE_VERTEX_BIT),
-			std::make_shared<Graphics::Shader>(VulkanContext, "frag_shader.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
+		Graphics::Shader* shaders[] = {
+			ShaderLibrary->FetchShader("vert_shader.vert", VK_SHADER_STAGE_VERTEX_BIT),
+			ShaderLibrary->FetchShader("frag_shader.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
 		};
 
 		for (auto& shader : shaders)
@@ -149,13 +150,13 @@ void HelloVulkan::createDescriptorSetLayout()
 	RasterPipeline->LoadDescriptors();
 
 	Shaders = {
-		std::make_shared<Graphics::Shader>(VulkanContext, "raytrace.rgen", VK_SHADER_STAGE_RAYGEN_BIT_KHR),
-		std::make_shared<Graphics::Shader>(VulkanContext, "raytrace.rmiss", VK_SHADER_STAGE_MISS_BIT_KHR),
-		std::make_shared<Graphics::Shader>(VulkanContext, "raytraceShadow.rmiss", VK_SHADER_STAGE_MISS_BIT_KHR),
-		std::make_shared<Graphics::Shader>(VulkanContext, "raytrace.rchit", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
-		std::make_shared<Graphics::Shader>(VulkanContext, "raytrace.rahit", VK_SHADER_STAGE_ANY_HIT_BIT_KHR),
-		std::make_shared<Graphics::Shader>(VulkanContext, "raytraceShadow.rchit", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
-		std::make_shared<Graphics::Shader>(VulkanContext, "raytraceShadow.rahit", VK_SHADER_STAGE_ANY_HIT_BIT_KHR),
+		ShaderLibrary->FetchShader("raytrace.rgen", VK_SHADER_STAGE_RAYGEN_BIT_KHR),
+		ShaderLibrary->FetchShader("raytrace.rmiss", VK_SHADER_STAGE_MISS_BIT_KHR),
+		ShaderLibrary->FetchShader("raytraceShadow.rmiss", VK_SHADER_STAGE_MISS_BIT_KHR),
+		ShaderLibrary->FetchShader("raytrace.rchit", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
+		ShaderLibrary->FetchShader("raytrace.rahit", VK_SHADER_STAGE_ANY_HIT_BIT_KHR),
+		ShaderLibrary->FetchShader("raytraceShadow.rchit", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
+		ShaderLibrary->FetchShader("raytraceShadow.rahit", VK_SHADER_STAGE_ANY_HIT_BIT_KHR),
 	};
 
 	RTPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
@@ -176,9 +177,9 @@ void HelloVulkan::createDescriptorSetLayout()
 	PostPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
 
 	{
-		std::shared_ptr<Graphics::Shader> shaders[] = {
-			std::make_shared<Graphics::Shader>(VulkanContext, "passthrough.vert", VK_SHADER_STAGE_VERTEX_BIT),
-			std::make_shared<Graphics::Shader>(VulkanContext, "post.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
+		Graphics::Shader* shaders[] = {
+			ShaderLibrary->FetchShader("passthrough.vert", VK_SHADER_STAGE_VERTEX_BIT),
+			ShaderLibrary->FetchShader("post.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
 		};
 
 		for (auto& shader : shaders)
@@ -198,6 +199,10 @@ void HelloVulkan::createDescriptorSetLayout()
 	DescriptorSetLibrary->CreateLayouts();
 	DescriptorSetLibrary->CreateDescriptorPool();
 	DescriptorSetLibrary->CreateDescriptorSets();
+
+	VkPhysicalDeviceProperties2 prop2{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2 };
+	prop2.pNext = &VulkanContext->RTDeviceProperties;
+	vkGetPhysicalDeviceProperties2(m_physicalDevice, &prop2);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -258,24 +263,27 @@ void HelloVulkan::updateDescriptorSet()
 //
 void HelloVulkan::createGraphicsPipeline()
 {
+	RasterPipeline->SetRenderPass(RasterRenderPass);
+	RasterPipeline->SetAttachmentsAlphaBlend();
 	RasterPipeline->CreatePipelineLayout();
-
-	// Creating the Pipeline
-	std::vector<std::string>                paths = defaultSearchPaths;
-	nvvk::GraphicsPipelineGeneratorCombined gpb(VulkanContext->Device, RasterPipeline->GetPipelineLayout(), m_offscreenRenderPass);
-	gpb.depthStencilState.depthTestEnable = true;
-	gpb.addShader(nvh::loadFile("spv/vert_shader.vert.spv", true, paths, true), VK_SHADER_STAGE_VERTEX_BIT);
-	gpb.addShader(nvh::loadFile("spv/frag_shader.frag.spv", true, paths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
-	gpb.addBindingDescription({0, sizeof(VertexObj)});
-	gpb.addAttributeDescriptions({
-		{0, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, pos))},
-		{1, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, nrm))},
-		{2, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, color))},
-		{3, 0, VK_FORMAT_R32G32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, texCoord))},
-	});
-
-	m_graphicsPipeline = gpb.createPipeline();
-	VulkanContext->Debug.setObjectName(m_graphicsPipeline, "Graphics");
+	RasterPipeline->CreateRasterPipeline();
+	//
+	//// Creating the Pipeline
+	//std::vector<std::string>                paths = defaultSearchPaths;
+	//nvvk::GraphicsPipelineGeneratorCombined gpb(VulkanContext->Device, RasterPipeline->GetPipelineLayout(), m_offscreenRenderPass);
+	//gpb.depthStencilState.depthTestEnable = true;
+	//gpb.addShader(nvh::loadFile("spv/vert_shader.vert.spv", true, paths, true), VK_SHADER_STAGE_VERTEX_BIT);
+	//gpb.addShader(nvh::loadFile("spv/frag_shader.frag.spv", true, paths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
+	//gpb.addBindingDescription({0, sizeof(VertexObj)});
+	//gpb.addAttributeDescriptions({
+	//	{0, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, pos))},
+	//	{1, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, nrm))},
+	//	{2, 0, VK_FORMAT_R32G32B32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, color))},
+	//	{3, 0, VK_FORMAT_R32G32_SFLOAT, static_cast<uint32_t>(offsetof(VertexObj, texCoord))},
+	//});
+	//
+	//m_graphicsPipeline = gpb.createPipeline();
+	//VulkanContext->Debug.setObjectName(m_graphicsPipeline, "Graphics");
 }
 
 void HelloVulkan::loadModelInstance(uint32_t index, mat4 transform)
@@ -447,7 +455,7 @@ void HelloVulkan::screenshot()
 	cmdBufGet.submitAndWait(copyCmd);
 
 	VkImageSubresource subResource{ VK_IMAGE_ASPECT_COLOR_BIT, 0, 0 };
-	VkSubresourceLayout subResourceLayout;
+	VkSubresourceLayout subResourceLayout{ 0 };
 	vkGetImageSubresourceLayout(VulkanContext->Device, screenshotImage.image, &subResource, &subResourceLayout);
 
 	const char* data = reinterpret_cast<const char*>(VulkanContext->Allocator.map(screenshotImage));
@@ -515,8 +523,12 @@ void HelloVulkan::destroyResources()
 {
 	DescriptorSetLibrary->ReleaseResources();
 
-	vkDestroyPipeline(VulkanContext->Device, m_graphicsPipeline, nullptr);
 	RasterPipeline->ReleaseResources();
+	DeviceRenderPass->ReleaseResources();
+	ShaderLibrary->ReleaseModules();
+
+	for (size_t i = 0; i < 3; ++i)
+		DeviceBuffers[i]->ReleaseResources();
 
 	VulkanContext->Allocator.destroy(m_bGlobals);
 	VulkanContext->Allocator.destroy(m_bObjDesc);
@@ -532,15 +544,13 @@ void HelloVulkan::destroyResources()
 	//#Post
 	VulkanContext->Allocator.destroy(m_offscreenColor);
 	VulkanContext->Allocator.destroy(m_offscreenDepth);
-	vkDestroyPipeline(VulkanContext->Device, m_postPipeline, nullptr);
 	PostPipeline->ReleaseResources();
-	vkDestroyRenderPass(VulkanContext->Device, m_offscreenRenderPass, nullptr);
-	vkDestroyFramebuffer(VulkanContext->Device, m_offscreenFramebuffer, nullptr);
-
+	
+	RasterRenderPass->ReleaseResources();
+	OffscreenBuffer->ReleaseResources();
 
 	// #VKRay
 	Scene->FreeResources();
-	vkDestroyPipeline(VulkanContext->Device, RTPipeline->GetPipeline(), nullptr);
 	RTPipeline->ReleaseResources();
 
 	VulkanContext->Allocator.deinit();
@@ -561,7 +571,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 	auto& m_descSet = DescriptorSetLibrary->FetchDescriptorSet("common")->DescriptorSet;
 
 	// Drawing all triangles
-	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_graphicsPipeline);
+	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, RasterPipeline->GetPipeline());
 	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, RasterPipeline->GetPipelineLayout(), 0, 1, &m_descSet, 0, nullptr);
 
 
@@ -594,7 +604,45 @@ void HelloVulkan::onResize(int /*w*/, int /*h*/)
 //////////////////////////////////////////////////////////////////////////
 // Post-processing
 //////////////////////////////////////////////////////////////////////////
+void HelloVulkan::createFrameBuffers()
+{
+	for (size_t i = 0; i < 3; ++i)
+	{
+		DeviceBuffers[i] = std::make_unique<Graphics::FrameBuffer>(DeviceRenderPass);
+		DeviceBuffers[i]->SetResolution(m_size.width, m_size.height, 1);
 
+		auto& attachments = DeviceBuffers[i]->GetAttachments();
+		attachments[0] = m_swapChain.getImageView((uint32_t)i);
+		attachments[1] = m_depthView;
+
+		DeviceBuffers[i]->Create();
+
+#ifdef _DEBUG
+		std::string                   name = std::string("AppBase") + std::to_string(i);
+		VkDebugUtilsObjectNameInfoEXT nameInfo{ VK_STRUCTURE_TYPE_DEBUG_UTILS_OBJECT_NAME_INFO_EXT };
+		nameInfo.objectHandle = (uint64_t)DeviceBuffers[i]->GetFrameBuffer();
+		nameInfo.objectType = VK_OBJECT_TYPE_FRAMEBUFFER;
+		nameInfo.pObjectName = name.c_str();
+		vkSetDebugUtilsObjectNameEXT(VulkanContext->Device, &nameInfo);
+#endif
+	}
+}
+
+void HelloVulkan::createRenderPass()
+{
+	if (DeviceRenderPass.get() == nullptr)
+	{
+		DeviceRenderPass = std::make_shared<Graphics::RenderPass>(VulkanContext);
+		DeviceRenderPass->Configure({ m_colorFormat }, m_depthFormat, true, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+		DeviceRenderPass->AddSubpass();
+		DeviceRenderPass->SetColorAttachments({ 0 }, { 0 });
+		DeviceRenderPass->SetDepthAttachments({ 0 }, 1);
+	}
+	else
+		DeviceRenderPass->ReleaseResources();
+
+	DeviceRenderPass->Create();
+}
 
 //--------------------------------------------------------------------------------------------------
 // Creating an offscreen frame buffer and the associated render pass
@@ -644,26 +692,42 @@ void HelloVulkan::createOffscreenRender()
 	genCmdBuf.submitAndWait(cmdBuf);
 	}
 
-	// Creating a renderpass for the offscreen
-	if(!m_offscreenRenderPass)
+	//// Creating a renderpass for the offscreen
+	//if(!m_offscreenRenderPass)
+	//{
+	//m_offscreenRenderPass = nvvk::createRenderPass(VulkanContext->Device, {m_offscreenColorFormat}, m_offscreenDepthFormat, 1, true,
+	//											     true, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
+	//}
+	if (RasterRenderPass.get() == nullptr)
 	{
-	m_offscreenRenderPass = nvvk::createRenderPass(VulkanContext->Device, {m_offscreenColorFormat}, m_offscreenDepthFormat, 1, true,
-												     true, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
+		RasterRenderPass = std::make_shared<Graphics::RenderPass>(VulkanContext);
+		RasterRenderPass->Configure({ m_offscreenColorFormat }, m_offscreenDepthFormat, true, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
+		RasterRenderPass->AddSubpass();
+		RasterRenderPass->SetColorAttachments({ 0 }, { 0 });
+		RasterRenderPass->SetDepthAttachments({ 0 }, 1);
+		RasterRenderPass->Create();
 	}
 
+	OffscreenBuffer = std::make_unique<Graphics::FrameBuffer>(RasterRenderPass);
+	OffscreenBuffer->SetResolution(m_size.width, m_size.height, 1);
+
+	auto& attachments = OffscreenBuffer->GetAttachments();
+	attachments[0] = m_offscreenColor.descriptor.imageView;
+	attachments[1] = m_offscreenDepth.descriptor.imageView;
+
+	OffscreenBuffer->Create();
 
 	// Creating the frame buffer for offscreen
-	std::vector<VkImageView> attachments = {m_offscreenColor.descriptor.imageView, m_offscreenDepth.descriptor.imageView};
-
-	vkDestroyFramebuffer(VulkanContext->Device, m_offscreenFramebuffer, nullptr);
-	VkFramebufferCreateInfo info{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
-	info.renderPass      = m_offscreenRenderPass;
-	info.attachmentCount = 2;
-	info.pAttachments    = attachments.data();
-	info.width           = m_size.width;
-	info.height          = m_size.height;
-	info.layers          = 1;
-	vkCreateFramebuffer(VulkanContext->Device, &info, nullptr, &m_offscreenFramebuffer);
+	//
+	//vkDestroyFramebuffer(VulkanContext->Device, OffscreenBuffer->GetFrameBuffer(), nullptr);
+	//VkFramebufferCreateInfo info{VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO};
+	//info.renderPass      = m_offscreenRenderPass;
+	//info.attachmentCount = 2;
+	//info.pAttachments    = attachments.data();
+	//info.width           = m_size.width;
+	//info.height          = m_size.height;
+	//info.layers          = 1;
+	//vkCreateFramebuffer(VulkanContext->Device, &info, nullptr, &m_offscreenFramebuffer);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -671,15 +735,18 @@ void HelloVulkan::createOffscreenRender()
 //
 void HelloVulkan::createPostPipeline()
 {
+	PostPipeline->SetRenderPass(DeviceRenderPass);
 	PostPipeline->CreatePipelineLayout();
-
+	PostPipeline->CreateRasterPipeline();
+	//PostPipeline->CreatePipelineLayout();
+	//
 	// Pipeline: completely generic, no vertices
-	nvvk::GraphicsPipelineGeneratorCombined pipelineGenerator(VulkanContext->Device, PostPipeline->GetPipelineLayout(), m_renderPass);
-	pipelineGenerator.addShader(nvh::loadFile("spv/passthrough.vert.spv", true, defaultSearchPaths, true), VK_SHADER_STAGE_VERTEX_BIT);
-	pipelineGenerator.addShader(nvh::loadFile("spv/post.frag.spv", true, defaultSearchPaths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
-	pipelineGenerator.rasterizationState.cullMode = VK_CULL_MODE_NONE;
-	m_postPipeline                                = pipelineGenerator.createPipeline();
-	VulkanContext->Debug.setObjectName(m_postPipeline, "post");
+	//nvvk::GraphicsPipelineGeneratorCombined pipelineGenerator(VulkanContext->Device, PostPipeline->GetPipelineLayout(), DeviceRenderPass->GetRenderPass());
+	//pipelineGenerator.addShader(nvh::loadFile("spv/passthrough.vert.spv", true, defaultSearchPaths, true), VK_SHADER_STAGE_VERTEX_BIT);
+	//pipelineGenerator.addShader(nvh::loadFile("spv/post.frag.spv", true, defaultSearchPaths, true), VK_SHADER_STAGE_FRAGMENT_BIT);
+	//pipelineGenerator.rasterizationState.cullMode = VK_CULL_MODE_NONE;
+	//m_postPipeline                                = pipelineGenerator.createPipeline();
+	//VulkanContext->Debug.setObjectName(m_postPipeline, "post");
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -707,7 +774,7 @@ void HelloVulkan::drawPost(VkCommandBuffer cmdBuf)
 
 	auto aspectRatio = static_cast<float>(m_size.width) / static_cast<float>(m_size.height);
 	vkCmdPushConstants(cmdBuf, PostPipeline->GetPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(float), &aspectRatio);
-	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, m_postPipeline);
+	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, PostPipeline->GetPipeline());
 	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, PostPipeline->GetPipelineLayout(), 0, 1, &PostPipeline->GetDescriptorSets()[0]->DescriptorSet, 0, nullptr);
 	vkCmdDraw(cmdBuf, 3, 1, 0, 0);
 
@@ -724,9 +791,9 @@ void HelloVulkan::drawPost(VkCommandBuffer cmdBuf)
 void HelloVulkan::initRayTracing()
 {
 	// Requesting ray tracing properties
-	VkPhysicalDeviceProperties2 prop2{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2};
-	prop2.pNext = &VulkanContext->RTDeviceProperties;
-	vkGetPhysicalDeviceProperties2(m_physicalDevice, &prop2);
+	//VkPhysicalDeviceProperties2 prop2{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2};
+	//prop2.pNext = &VulkanContext->RTDeviceProperties;
+	//vkGetPhysicalDeviceProperties2(m_physicalDevice, &prop2);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -759,7 +826,7 @@ auto HelloVulkan::objectToVkGeometryKHR(const MapLoader::MeshDescription& model)
 	asGeom.geometry.triangles = triangles;
 
 	// The entire array will be used to build the BLAS.
-	VkAccelerationStructureBuildRangeInfoKHR offset;
+	VkAccelerationStructureBuildRangeInfoKHR offset{ 0 };
 	offset.firstVertex     = 0;
 	offset.primitiveCount  = maxPrimitiveCount;
 	offset.primitiveOffset = 0;

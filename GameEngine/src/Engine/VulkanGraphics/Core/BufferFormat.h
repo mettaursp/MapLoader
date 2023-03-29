@@ -23,6 +23,7 @@ namespace Engine
 				UInt16,
 				UInt32,
 				UInt64,
+				UInt24,
 
 				Count,
 				Unknown

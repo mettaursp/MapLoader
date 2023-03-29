@@ -783,8 +783,9 @@ ContextCreateInfo::ContextCreateInfo(bool bUseValidation, VkDeviceDiagnosticsCon
   {
     requestedQueues.push_back({defaultQueueC, 1, defaultPriorityC});
   }
-
+#ifndef NO_VALIDATION
 //#define NO_VALIDATION
+#endif
 #ifndef NO_VALIDATION
 #ifdef _DEBUG
   instanceExtensions.push_back({VK_EXT_DEBUG_UTILS_EXTENSION_NAME, true});

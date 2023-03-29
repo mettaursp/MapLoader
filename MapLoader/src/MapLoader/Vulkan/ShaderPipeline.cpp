@@ -5,6 +5,7 @@
 #include "VulkanContext.h"
 #include "DescriptorSetLibrary.h"
 #include "VulkanAttributes.h"
+#include "RenderPass.h"
 
 namespace Graphics
 {
@@ -23,20 +24,20 @@ namespace Graphics
 		VertexFormat = format;
 	}
 
-	void ShaderPipeline::AddStage(const std::shared_ptr<Shader>& shader)
+	void ShaderPipeline::AddStage(Shader* shader, const std::string& entryPoint)
 	{
-		Shaders.push_back(shader);
+		Shaders.push_back({ shader, entryPoint });
 	}
 
 	void ShaderPipeline::LoadDescriptors()
 	{
 		for (auto& shader : Shaders)
 		{
-			PresentStages |= shader->GetShaderStage();
+			PresentStages |= shader.Shader->GetShaderStage();
 
-			shader->LoadByteCode();
-			shader->LoadReflection();
-			shader->LoadDescriptors(*this);
+			shader.Shader->LoadByteCode();
+			shader.Shader->LoadReflection();
+			shader.Shader->LoadDescriptors(*this);
 		}
 	}
 
@@ -66,6 +67,182 @@ namespace Graphics
 		if (Pipeline) return;
 
 		Type = PipelineType::RayTracing;
+
+		CreateInfo->PipelineCreateInfo.layout = PipelineLayout;
+
+		VkResult result = vkCreateGraphicsPipelines(VulkanContext->Device, nullptr, 1, &CreateInfo->PipelineCreateInfo, nullptr, &Pipeline);
+		assert(result == VK_SUCCESS);
+	}
+
+	void ShaderPipeline::CreateRasterPipelines(RenderPass& renderPass, const std::vector<ShaderPipeline*>& pipelines)
+	{
+		std::vector<VkGraphicsPipelineCreateInfo> createInfos;
+		createInfos.resize(pipelines.size());
+		std::vector<VkPipeline> pipelineHandles;
+		pipelineHandles.resize(pipelines.size());
+
+		for (size_t i = 0; i < pipelines.size(); ++i)
+		{
+			createInfos[i] = pipelines[i]->CreateInfo->PipelineCreateInfo;
+		}
+
+		VkResult result = vkCreateGraphicsPipelines(pipelines[0]->VulkanContext->Device, nullptr, (uint32_t)pipelines.size(), createInfos.data(), nullptr, pipelineHandles.data());
+		assert(result == VK_SUCCESS);
+
+		for (size_t i = 0; i < pipelines.size(); ++i)
+		{
+			pipelines[i]->Pipeline = pipelineHandles[i];
+		}
+	}
+
+	void ShaderPipeline::SetRenderPass(const std::shared_ptr<RenderPass>& renderPass, uint32_t index)
+	{
+		CreateInfo = std::make_unique<RasterCreateInfo>();
+
+		CreateInfo->InputAssemblyState.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
+
+		CreateInfo->RasterizationState.polygonMode = VK_POLYGON_MODE_FILL;
+		CreateInfo->RasterizationState.cullMode = VK_CULL_MODE_BACK_BIT;
+		CreateInfo->RasterizationState.frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE;
+		CreateInfo->RasterizationState.lineWidth = 1;
+
+		CreateInfo->MultisampleState.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
+
+		CreateInfo->PipelineCreateInfo.renderPass = renderPass->GetRenderPass();
+		CreateInfo->PipelineCreateInfo.subpass = index;
+
+		PipelineRenderPass = renderPass;
+		SubpassIndex = index;
+
+		ConfigureCreateInfo();
+	}
+
+	void ShaderPipeline::ConfigureCreateInfo()
+	{
+		RenderPass::Subpass& subpass = PipelineRenderPass->GetSubpass(SubpassIndex);
+
+		for (size_t i = 0; i < Shaders.size(); ++i)
+		{
+			Shaders[i].Shader->LoadOutputs(*this, *PipelineRenderPass.get());
+		}
+
+		const auto& attachments = PipelineRenderPass->GetAttachments();
+
+		if (subpass.HasDepthStencilAttachment)
+		{
+			const auto& depthStencilStats = GetDepthStencilStats(attachments[subpass.DepthStencilAttachment.attachment].format);
+
+			if (depthStencilStats.DepthEnabled)
+			{
+				CreateInfo->DepthStencilState.depthTestEnable = true;
+				CreateInfo->DepthStencilState.depthWriteEnable = true;
+				CreateInfo->DepthStencilState.depthCompareOp = VK_COMPARE_OP_LESS_OR_EQUAL;
+			}
+
+			if (depthStencilStats.StencilEnabled)
+			{
+				CreateInfo->DepthStencilState.stencilTestEnable = true;
+			}
+		}
+
+		CreateInfo->ViewportState.viewportCount = 1;
+		CreateInfo->ViewportState.pViewports = nullptr;
+		CreateInfo->ViewportState.scissorCount = 1;
+		CreateInfo->ViewportState.pScissors = nullptr;
+
+		if (CreateInfo->HasDynamicState)
+		{
+			CreateInfo->DynamicState.dynamicStateCount = (uint32_t)CreateInfo->DynamicStates.size();
+			CreateInfo->DynamicState.pDynamicStates = CreateInfo->DynamicStates.data();
+		}
+
+		CreateInfo->BlendStates.resize(subpass.ColorAttachments.size());
+
+		for (size_t i = 0; i < CreateInfo->BlendStates.size(); ++i)
+		{
+			const auto& attachment = attachments[subpass.ColorAttachments[i].attachment];
+			auto& blendAttachment = CreateInfo->BlendStates[i];
+
+			blendAttachment.blendEnable = VK_FALSE;
+			blendAttachment.colorWriteMask = 0;
+
+			const VkColorComponentFlags components[4] = { VK_COLOR_COMPONENT_R_BIT, VK_COLOR_COMPONENT_G_BIT, VK_COLOR_COMPONENT_B_BIT , VK_COLOR_COMPONENT_A_BIT };
+			const FormatStats& format = GetFormatStats(attachment.format);
+
+			for (size_t i = 0; i < format.ElementCount; ++i)
+				blendAttachment.colorWriteMask |= components[i];
+		}
+
+		CreateInfo->ColorBlendState.attachmentCount = (uint32_t)CreateInfo->BlendStates.size();
+		CreateInfo->ColorBlendState.pAttachments = CreateInfo->BlendStates.data();
+		CreateInfo->ColorBlendState.logicOpEnable = RasterState.LogicOpEnable;
+		CreateInfo->ColorBlendState.logicOp = RasterState.LogicOp;
+
+		for (size_t i = 0; i < 4; ++i)
+			CreateInfo->ColorBlendState.blendConstants[i] = (&RasterState.BlendConstants.R)[i];
+
+		CreateInfo->VertexInputState.vertexAttributeDescriptionCount = (uint32_t)AttributeDescriptions.size();
+		CreateInfo->VertexInputState.vertexBindingDescriptionCount = (uint32_t)BindingDescriptions.size();
+		CreateInfo->VertexInputState.pVertexAttributeDescriptions = AttributeDescriptions.data();
+		CreateInfo->VertexInputState.pVertexBindingDescriptions = BindingDescriptions.data();
+
+		CreateInfo->Stages.resize(Shaders.size(), { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO });
+
+		for (size_t i = 0; i < CreateInfo->Stages.size(); ++i)
+		{
+			auto& shader = Shaders[i].Shader;
+
+			shader->LoadModule();
+
+			auto& stage = CreateInfo->Stages[i];
+
+			stage.pName = Shaders[i].EntryPoint != "" ? Shaders[i].EntryPoint.c_str() : shader->GetEntryPoint().c_str();
+			stage.module = shader->GetModule();
+			stage.stage = shader->GetShaderStage();
+		}
+
+		VkGraphicsPipelineCreateInfo createInfo{ VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO };
+
+		CreateInfo->PipelineCreateInfo.stageCount = (uint32_t)CreateInfo->Stages.size();
+		CreateInfo->PipelineCreateInfo.pStages = CreateInfo->Stages.data();
+
+		CreateInfo->PipelineCreateInfo.pInputAssemblyState = &CreateInfo->InputAssemblyState;
+		CreateInfo->PipelineCreateInfo.pRasterizationState = &CreateInfo->RasterizationState;
+		CreateInfo->PipelineCreateInfo.pMultisampleState = &CreateInfo->MultisampleState;
+		CreateInfo->PipelineCreateInfo.pDepthStencilState = &CreateInfo->DepthStencilState;
+		CreateInfo->PipelineCreateInfo.pViewportState = &CreateInfo->ViewportState;
+
+		if (CreateInfo->HasDynamicState)
+			CreateInfo->PipelineCreateInfo.pDynamicState = &CreateInfo->DynamicState;
+
+		CreateInfo->PipelineCreateInfo.pColorBlendState = &CreateInfo->ColorBlendState;
+		CreateInfo->PipelineCreateInfo.pVertexInputState = &CreateInfo->VertexInputState;
+		CreateInfo->PipelineCreateInfo.layout = PipelineLayout;
+	}
+
+	void ShaderPipeline::SetAttachmentAlphaBlend(size_t index, bool premultiplyAlpha)
+	{
+		VkPipelineColorBlendAttachmentState& blendState = CreateInfo->BlendStates[index];
+
+		blendState.blendEnable = VK_TRUE;
+
+		blendState.srcColorBlendFactor = premultiplyAlpha ? VK_BLEND_FACTOR_ONE : VK_BLEND_FACTOR_SRC_ALPHA;
+		blendState.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+		blendState.colorBlendOp = VK_BLEND_OP_ADD;
+		blendState.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE;
+		blendState.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+		blendState.alphaBlendOp = VK_BLEND_OP_ADD;
+	}
+
+	void ShaderPipeline::SetAttachmentsAlphaBlend(bool premultiplyAlpha)
+	{
+		for (size_t i = 0; i < CreateInfo->BlendStates.size(); ++i)
+			SetAttachmentAlphaBlend(i, premultiplyAlpha);
+	}
+
+	VkPipelineColorBlendAttachmentState& ShaderPipeline::GetAttachmentBlendState(size_t index)
+	{
+		return CreateInfo->BlendStates[index];
 	}
 
 	void ShaderPipeline::CreateRTPipeline()
@@ -75,13 +252,15 @@ namespace Graphics
 
 		for (size_t i = 0; i < stages.size(); ++i)
 		{
-			Shaders[i]->LoadModule();
+			auto& shader = Shaders[i].Shader;
+
+			shader->LoadModule();
 
 			auto& stage = stages[i];
 
-			stage.pName = Shaders[i]->GetEntryPoint().c_str();
-			stage.module = Shaders[i]->GetModule();
-			stage.stage = Shaders[i]->GetShaderStage();
+			stage.pName = Shaders[i].EntryPoint != "" ? Shaders[i].EntryPoint.c_str() : shader->GetEntryPoint().c_str();
+			stage.module = shader->GetModule();
+			stage.stage = shader->GetShaderStage();
 		}
 
 		std::vector<VkRayTracingShaderGroupCreateInfoKHR> groups;
@@ -146,7 +325,7 @@ namespace Graphics
 
 		for (size_t i = 0; i < Shaders.size(); ++i)
 		{
-			Shaders[i]->ReleaseResources();
+			Shaders[i].Shader->ReleaseResources();
 		}
 
 		uint32_t rayGenCount = (uint32_t)RayGenGroups.size();
@@ -210,7 +389,7 @@ namespace Graphics
 		}
 
 		pData = bindingTableBuffer + RayGenRegion.size + RayMissRegion.size;
-		for (uint32_t i = 0; i < rayGenCount; ++i, ++handleIndex)
+		for (uint32_t i = 0; i < rayHitCount; ++i, ++handleIndex)
 		{
 			std::memcpy(pData, handles.data() + handleIndex * handleSize, handleSize);
 			pData += RayHitRegion.stride;
@@ -346,6 +525,11 @@ namespace Graphics
 
 		if (ShaderBindingTableBuffer.buffer)
 			VulkanContext->Allocator.destroy(ShaderBindingTableBuffer);
+
+		if (Pipeline)
+			vkDestroyPipeline(VulkanContext->Device, Pipeline, nullptr);
+
+		Pipeline = nullptr;
 
 		ShaderBindingTableBuffer = {};
 	}

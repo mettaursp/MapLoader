@@ -225,7 +225,7 @@ namespace MapLoader
 
 		int BlockSize = 16;
 
-		VkFormat format;
+		VkFormat format = VK_FORMAT_UNDEFINED;
 
 		if (formatName == std::string("DXT1", 4))
 		{

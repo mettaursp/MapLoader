@@ -166,7 +166,9 @@ void nvvkhl::Application::init(ApplicationCreateInfo& info)
     vk_setup.instanceExtensions.emplace_back(extensions[i]);
   }
   vk_setup.deviceExtensions.emplace_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+#ifndef NO_VALIDATION
 //#define NO_VALIDATION
+#endif
 #ifndef NO_VALIDATION
   vk_setup.instanceExtensions.emplace_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 #endif

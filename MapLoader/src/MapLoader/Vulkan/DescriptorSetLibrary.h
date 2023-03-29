@@ -26,7 +26,7 @@ namespace Graphics
 		void ReleaseResources();
 
 	private:
-		VkDescriptorPool DescriptorPool;
+		VkDescriptorPool DescriptorPool = nullptr;
 		std::shared_ptr<VulkanContext> VulkanContext;
 		std::vector<std::unique_ptr<DescriptorSet>> DescriptorSets;
 		std::unordered_map<std::string, DescriptorSet*> NamedDescriptorSets;

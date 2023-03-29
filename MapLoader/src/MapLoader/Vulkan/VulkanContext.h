@@ -10,7 +10,7 @@ namespace Graphics
 	public:
 		nvvk::ResourceAllocatorDma Allocator;
 		nvvk::DebugUtil Debug;
-		VkDevice Device;
+		VkDevice Device = nullptr;
 		uint32_t GraphicsQueueIndex = VK_QUEUE_FAMILY_IGNORED;
 		VkPhysicalDeviceRayTracingPipelinePropertiesKHR RTDeviceProperties{ VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR };
 

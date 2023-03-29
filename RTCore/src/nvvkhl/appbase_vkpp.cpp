@@ -59,7 +59,7 @@ void nvvkhl::AppBase::destroy()
     ImGui::DestroyContext();
   }
 
-  m_device.destroy(m_renderPass);
+  //m_device.destroy(m_renderPass);
   m_device.destroy(m_depthView);
   m_device.destroy(m_depthImage);
   m_device.freeMemory(m_depthMemory);
@@ -68,7 +68,7 @@ void nvvkhl::AppBase::destroy()
   for(uint32_t i = 0; i < m_swapChain.getImageCount(); i++)
   {
     m_device.destroy(m_waitFences[i]);
-    m_device.destroy(m_framebuffers[i]);
+    //m_device.destroy(m_framebuffers[i]);
     m_device.freeCommandBuffers(m_cmdPool, m_commandBuffers[i]);
   }
   m_swapChain.deinit();
@@ -147,97 +147,97 @@ void nvvkhl::AppBase::createSwapchain(const vk::SurfaceKHR& surface, uint32_t wi
 
 void nvvkhl::AppBase::createFrameBuffers()
 {
-  // Recreate the frame buffers
-  for(auto framebuffer : m_framebuffers)
-  {
-    m_device.destroy(framebuffer);
-  }
-
-  // Array of attachment (color, depth)
-  std::array<vk::ImageView, 2> attachments;
-
-  // Create frame buffers for every swap chain image
-  vk::FramebufferCreateInfo framebufferCreateInfo;
-  framebufferCreateInfo.renderPass      = m_renderPass;
-  framebufferCreateInfo.attachmentCount = 2;
-  framebufferCreateInfo.width           = m_size.width;
-  framebufferCreateInfo.height          = m_size.height;
-  framebufferCreateInfo.layers          = 1;
-  framebufferCreateInfo.pAttachments    = attachments.data();
-
-  // Create frame buffers for every swap chain image
-  m_framebuffers.resize(m_swapChain.getImageCount());
-  for(uint32_t i = 0; i < m_swapChain.getImageCount(); i++)
-  {
-    attachments[0]    = m_swapChain.getImageView(i);
-    attachments[1]    = m_depthView;
-    m_framebuffers[i] = m_device.createFramebuffer(framebufferCreateInfo);
-  }
-
-
-#ifdef _DEBUG
-  for(size_t i = 0; i < m_framebuffers.size(); i++)
-  {
-    std::string name = std::string("AppBase") + std::to_string(i);
-    m_device.setDebugUtilsObjectNameEXT(
-        {vk::ObjectType::eFramebuffer, reinterpret_cast<const uint64_t&>(m_framebuffers[i]), name.c_str()});
-  }
-#endif  // _DEBUG
+//  // Recreate the frame buffers
+//  for(auto framebuffer : m_framebuffers)
+//  {
+//    m_device.destroy(framebuffer);
+//  }
+//
+//  // Array of attachment (color, depth)
+//  std::array<vk::ImageView, 2> attachments;
+//
+//  // Create frame buffers for every swap chain image
+//  vk::FramebufferCreateInfo framebufferCreateInfo;
+//  framebufferCreateInfo.renderPass      = m_renderPass;
+//  framebufferCreateInfo.attachmentCount = 2;
+//  framebufferCreateInfo.width           = m_size.width;
+//  framebufferCreateInfo.height          = m_size.height;
+//  framebufferCreateInfo.layers          = 1;
+//  framebufferCreateInfo.pAttachments    = attachments.data();
+//
+//  // Create frame buffers for every swap chain image
+//  m_framebuffers.resize(m_swapChain.getImageCount());
+//  for(uint32_t i = 0; i < m_swapChain.getImageCount(); i++)
+//  {
+//    attachments[0]    = m_swapChain.getImageView(i);
+//    attachments[1]    = m_depthView;
+//    m_framebuffers[i] = m_device.createFramebuffer(framebufferCreateInfo);
+//  }
+//
+//
+//#ifdef _DEBUG
+//  for(size_t i = 0; i < m_framebuffers.size(); i++)
+//  {
+//    std::string name = std::string("AppBase") + std::to_string(i);
+//    m_device.setDebugUtilsObjectNameEXT(
+//        {vk::ObjectType::eFramebuffer, reinterpret_cast<const uint64_t&>(m_framebuffers[i]), name.c_str()});
+//  }
+//#endif  // _DEBUG
 }
 
 void nvvkhl::AppBase::createRenderPass()
 {
-  if(m_renderPass)
-  {
-    m_device.destroy(m_renderPass);
-  }
-
-  std::array<vk::AttachmentDescription, 2> attachments;
-  // Color attachment
-  attachments[0].setFormat(m_colorFormat);
-  attachments[0].setLoadOp(vk::AttachmentLoadOp::eClear);
-  attachments[0].setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
-
-  // Depth attachment
-  attachments[1].setFormat(m_depthFormat);
-  attachments[1].setLoadOp(vk::AttachmentLoadOp::eClear);
-  attachments[1].setStencilLoadOp(vk::AttachmentLoadOp::eClear);
-  attachments[1].setFinalLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
-
-  // One color, one depth
-  const vk::AttachmentReference colorReference{0, vk::ImageLayout::eColorAttachmentOptimal};
-  const vk::AttachmentReference depthReference{1, vk::ImageLayout::eDepthStencilAttachmentOptimal};
-
-  std::array<vk::SubpassDependency, 1> subpassDependencies;
-  // Transition from final to initial (VK_SUBPASS_EXTERNAL refers to all commands executed outside of the actual renderpass)
-  subpassDependencies[0].setSrcSubpass(VK_SUBPASS_EXTERNAL);
-  subpassDependencies[0].setDstSubpass(0);
-  subpassDependencies[0].setSrcStageMask(vk::PipelineStageFlagBits::eBottomOfPipe);
-  subpassDependencies[0].setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput);
-  subpassDependencies[0].setSrcAccessMask(vk::AccessFlagBits::eMemoryRead);
-  subpassDependencies[0].setDstAccessMask(vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite);
-  subpassDependencies[0].setDependencyFlags(vk::DependencyFlagBits::eByRegion);
-
-  vk::SubpassDescription subpassDescription;
-  subpassDescription.setPipelineBindPoint(vk::PipelineBindPoint::eGraphics);
-  subpassDescription.setColorAttachmentCount(1);
-  subpassDescription.setPColorAttachments(&colorReference);
-  subpassDescription.setPDepthStencilAttachment(&depthReference);
-
-  vk::RenderPassCreateInfo renderPassInfo;
-  renderPassInfo.setAttachmentCount(static_cast<uint32_t>(attachments.size()));
-  renderPassInfo.setPAttachments(attachments.data());
-  renderPassInfo.setSubpassCount(1);
-  renderPassInfo.setPSubpasses(&subpassDescription);
-  renderPassInfo.setDependencyCount(static_cast<uint32_t>(subpassDependencies.size()));
-  renderPassInfo.setPDependencies(subpassDependencies.data());
-
-  m_renderPass = m_device.createRenderPass(renderPassInfo);
-
-#ifdef _DEBUG
-  m_device.setDebugUtilsObjectNameEXT(
-      {vk::ObjectType::eRenderPass, reinterpret_cast<const uint64_t&>(m_renderPass), "AppBase"});
-#endif  // _DEBUG
+//  if(m_renderPass)
+//  {
+//    m_device.destroy(m_renderPass);
+//  }
+//
+//  std::array<vk::AttachmentDescription, 2> attachments;
+//  // Color attachment
+//  attachments[0].setFormat(m_colorFormat);
+//  attachments[0].setLoadOp(vk::AttachmentLoadOp::eClear);
+//  attachments[0].setFinalLayout(vk::ImageLayout::ePresentSrcKHR);
+//
+//  // Depth attachment
+//  attachments[1].setFormat(m_depthFormat);
+//  attachments[1].setLoadOp(vk::AttachmentLoadOp::eClear);
+//  attachments[1].setStencilLoadOp(vk::AttachmentLoadOp::eClear);
+//  attachments[1].setFinalLayout(vk::ImageLayout::eDepthStencilAttachmentOptimal);
+//
+//  // One color, one depth
+//  const vk::AttachmentReference colorReference{0, vk::ImageLayout::eColorAttachmentOptimal};
+//  const vk::AttachmentReference depthReference{1, vk::ImageLayout::eDepthStencilAttachmentOptimal};
+//
+//  std::array<vk::SubpassDependency, 1> subpassDependencies;
+//  // Transition from final to initial (VK_SUBPASS_EXTERNAL refers to all commands executed outside of the actual renderpass)
+//  subpassDependencies[0].setSrcSubpass(VK_SUBPASS_EXTERNAL);
+//  subpassDependencies[0].setDstSubpass(0);
+//  subpassDependencies[0].setSrcStageMask(vk::PipelineStageFlagBits::eBottomOfPipe);
+//  subpassDependencies[0].setDstStageMask(vk::PipelineStageFlagBits::eColorAttachmentOutput);
+//  subpassDependencies[0].setSrcAccessMask(vk::AccessFlagBits::eMemoryRead);
+//  subpassDependencies[0].setDstAccessMask(vk::AccessFlagBits::eColorAttachmentRead | vk::AccessFlagBits::eColorAttachmentWrite);
+//  subpassDependencies[0].setDependencyFlags(vk::DependencyFlagBits::eByRegion);
+//
+//  vk::SubpassDescription subpassDescription;
+//  subpassDescription.setPipelineBindPoint(vk::PipelineBindPoint::eGraphics);
+//  subpassDescription.setColorAttachmentCount(1);
+//  subpassDescription.setPColorAttachments(&colorReference);
+//  subpassDescription.setPDepthStencilAttachment(&depthReference);
+//
+//  vk::RenderPassCreateInfo renderPassInfo;
+//  renderPassInfo.setAttachmentCount(static_cast<uint32_t>(attachments.size()));
+//  renderPassInfo.setPAttachments(attachments.data());
+//  renderPassInfo.setSubpassCount(1);
+//  renderPassInfo.setPSubpasses(&subpassDescription);
+//  renderPassInfo.setDependencyCount(static_cast<uint32_t>(subpassDependencies.size()));
+//  renderPassInfo.setPDependencies(subpassDependencies.data());
+//
+//  m_renderPass = m_device.createRenderPass(renderPassInfo);
+//
+//#ifdef _DEBUG
+//  m_device.setDebugUtilsObjectNameEXT(
+//      {vk::ObjectType::eRenderPass, reinterpret_cast<const uint64_t&>(m_renderPass), "AppBase"});
+//#endif  // _DEBUG
 }
 
 void nvvkhl::AppBase::createDepthBuffer()
@@ -498,9 +498,9 @@ void nvvkhl::AppBase::onMouseWheel(int delta)
 
 void nvvkhl::AppBase::onFileDrop(const char* filename) {}
 
-void nvvkhl::AppBase::initGUI(uint32_t subpassID)
+void nvvkhl::AppBase::initGUI(VkRenderPass renderPass, uint32_t subpassID)
 {
-  assert(m_renderPass && "Render Pass must be set");
+  assert(renderPass && "Render Pass must be set");
 
   // UI
   ImGui::CreateContext();
@@ -529,11 +529,11 @@ void nvvkhl::AppBase::initGUI(uint32_t subpassID)
   init_info.DescriptorPool            = m_imguiDescPool;
   init_info.Subpass                   = subpassID;
   init_info.MinImageCount             = 2;
-  init_info.ImageCount                = static_cast<int>(m_framebuffers.size());
+  init_info.ImageCount                = 3;
   init_info.MSAASamples               = VK_SAMPLE_COUNT_1_BIT;  // <--- need argument?
   init_info.CheckVkResultFn           = nullptr;
   init_info.Allocator                 = nullptr;
-  ImGui_ImplVulkan_Init(&init_info, m_renderPass);
+  ImGui_ImplVulkan_Init(&init_info, renderPass);
 
 
   // Upload Fonts
@@ -663,11 +663,6 @@ vk::CommandPool nvvkhl::AppBase::getCommandPool()
   return m_cmdPool;
 }
 
-vk::RenderPass nvvkhl::AppBase::getRenderPass()
-{
-  return m_renderPass;
-}
-
 vk::Extent2D nvvkhl::AppBase::getSize()
 {
   return m_size;
@@ -681,11 +676,6 @@ vk::PipelineCache nvvkhl::AppBase::getPipelineCache()
 vk::SurfaceKHR nvvkhl::AppBase::getSurface()
 {
   return m_surface;
-}
-
-const std::vector<vk::Framebuffer>& nvvkhl::AppBase::getFramebuffers()
-{
-  return m_framebuffers;
 }
 
 const std::vector<vk::CommandBuffer>& nvvkhl::AppBase::getCommandBuffers()

@@ -272,7 +272,7 @@ public:
   AppBaseVk()          = default;
   virtual ~AppBaseVk() = default;
 
-  virtual void create(const AppBaseVkCreateInfo& info);
+  //virtual void create(const AppBaseVkCreateInfo& info);
   virtual void onResize(int /*w*/, int /*h*/){};  // To implement when the size of the window change
   virtual void setup(const VkInstance& instance, const VkDevice& device, const VkPhysicalDevice& physicalDevice, uint32_t graphicsQueueIndex);
   virtual void destroy();
@@ -297,7 +297,7 @@ public:
   virtual void onMouseWheel(int delta);
   virtual void onFileDrop(const char* filename) {}
   void         setViewport(const VkCommandBuffer& cmdBuf);
-  void         initGUI(uint32_t subpassID = 0);
+  void         initGUI(VkRenderPass renderPass, uint32_t subpassID = 0);
   void         fitCamera(const vec3& boxMin, const vec3& boxMax, bool instantFit = true);
   bool         isMinimized(bool doSleeping = true);
   void         setTitle(const std::string& title) { glfwSetWindowTitle(m_window, title.c_str()); }
@@ -322,11 +322,9 @@ public:
   VkQueue                             getQueue() { return m_queue; }
   uint32_t                            getQueueFamily() { return VulkanContext->GraphicsQueueIndex; }
   VkCommandPool                       getCommandPool() { return m_cmdPool; }
-  VkRenderPass                        getRenderPass() { return m_renderPass; }
   VkExtent2D                          getSize() { return m_size; }
   VkPipelineCache                     getPipelineCache() { return m_pipelineCache; }
   VkSurfaceKHR                        getSurface() { return m_surface; }
-  const std::vector<VkFramebuffer>&   getFramebuffers() { return m_framebuffers; }
   const std::vector<VkCommandBuffer>& getCommandBuffers() { return m_commandBuffers; }
   uint32_t                            getCurFrame() const { return m_swapChain.getActiveImageIndex(); }
   VkFormat                            getColorFormat() const { return m_colorFormat; }
@@ -358,13 +356,11 @@ protected:
 
   // Drawing/Surface
   nvvk::SwapChain              m_swapChain;
-  std::vector<VkFramebuffer>   m_framebuffers;                   // All framebuffers, correspond to the Swapchain
   std::vector<VkCommandBuffer> m_commandBuffers;                 // Command buffer per nb element in Swapchain
   std::vector<VkFence>         m_waitFences;                     // Fences per nb element in Swapchain
   VkImage                      m_depthImage{VK_NULL_HANDLE};     // Depth/Stencil
   VkDeviceMemory               m_depthMemory{VK_NULL_HANDLE};    // Depth/Stencil
   VkImageView                  m_depthView{VK_NULL_HANDLE};      // Depth/Stencil
-  VkRenderPass                 m_renderPass{VK_NULL_HANDLE};     // Base render pass
   VkExtent2D                   m_size{0, 0};                     // Size of the window
   VkPipelineCache              m_pipelineCache{VK_NULL_HANDLE};  // Cache for pipeline/shaders
   bool                         m_vsync{ desiredVSync };                   // Swapchain with vsync

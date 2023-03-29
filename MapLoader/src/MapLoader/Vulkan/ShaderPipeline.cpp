@@ -70,6 +70,8 @@ namespace Graphics
 
 		CreateInfo->PipelineCreateInfo.layout = PipelineLayout;
 
+		auto& createInfo = CreateInfo->PipelineCreateInfo;
+
 		VkResult result = vkCreateGraphicsPipelines(VulkanContext->Device, nullptr, 1, &CreateInfo->PipelineCreateInfo, nullptr, &Pipeline);
 		assert(result == VK_SUCCESS);
 	}
@@ -243,6 +245,11 @@ namespace Graphics
 	VkPipelineColorBlendAttachmentState& ShaderPipeline::GetAttachmentBlendState(size_t index)
 	{
 		return CreateInfo->BlendStates[index];
+	}
+
+	VkPipelineRasterizationStateCreateInfo& ShaderPipeline::GetRasterizationStateCreateInfo()
+	{
+		return CreateInfo->RasterizationState;
 	}
 
 	void ShaderPipeline::CreateRTPipeline()

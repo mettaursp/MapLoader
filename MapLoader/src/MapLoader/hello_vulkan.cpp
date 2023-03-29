@@ -737,6 +737,7 @@ void HelloVulkan::createPostPipeline()
 {
 	PostPipeline->SetRenderPass(DeviceRenderPass);
 	PostPipeline->CreatePipelineLayout();
+	PostPipeline->GetRasterizationStateCreateInfo().cullMode = VK_CULL_MODE_NONE;
 	PostPipeline->CreateRasterPipeline();
 	//PostPipeline->CreatePipelineLayout();
 	//

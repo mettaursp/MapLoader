@@ -39,8 +39,8 @@ namespace Graphics
 		struct RasterPipelineState
 		{
 			VkBool32 LogicOpEnable = false;
-			VkLogicOp LogicOp = VK_LOGIC_OP_MAX_ENUM;
-			Color4 BlendConstants;
+			VkLogicOp LogicOp = VK_LOGIC_OP_CLEAR;
+			Color4 BlendConstants = Color4(0.0f, 0.0f, 0.0f, 0.0f);
 		};
 
 		ShaderPipeline(const std::shared_ptr<VulkanContext>& vulkanContext, const std::shared_ptr<DescriptorSetLibrary>& descriptorSetLibrary);
@@ -72,6 +72,7 @@ namespace Graphics
 		void SetAttachmentAlphaBlend(size_t index, bool premultiplyAlpha = false);
 		void SetAttachmentsAlphaBlend(bool premultiplyAlpha = false);
 		VkPipelineColorBlendAttachmentState& GetAttachmentBlendState(size_t index);
+		VkPipelineRasterizationStateCreateInfo& GetRasterizationStateCreateInfo();
 
 		// Ray tracing
 		void SetShaderRecordSize(uint32_t size);

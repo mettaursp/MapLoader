@@ -1396,12 +1396,14 @@ int main(int argc, char** argv)
 
 					bool drawInvisible = (helloVk.hostUBO.drawMode & 1) != 0;
 					bool drawDebug = (helloVk.hostUBO.drawMode & 2) != 0;
+					bool highlightDebug = (helloVk.hostUBO.drawMode & 4) != 0;
 
 					ImGui::Checkbox("Draw Invisible Objects", &drawInvisible);
 					ImGui::Checkbox("Draw Debug Objects", &drawDebug);
+					ImGui::Checkbox("Highlight Debug Objects", &highlightDebug);
 
-					helloVk.hostUBO.drawMode &= -1 ^ 3;
-					helloVk.hostUBO.drawMode |= (drawDebug ? 2 : 0) | (drawInvisible ? 1 : 0);
+					helloVk.hostUBO.drawMode &= -1 ^ 7;
+					helloVk.hostUBO.drawMode |= (highlightDebug ? 4 : 0) | (drawDebug ? 2 : 0) | (drawInvisible ? 1 : 0);
 
 					ImGui::Checkbox("Limit Frame Rate", &helloVk.desiredVSync);
 					takeScreenshot = ImGui::Button("Screenshot");

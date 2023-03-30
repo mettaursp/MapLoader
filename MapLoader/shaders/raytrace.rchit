@@ -150,6 +150,7 @@ void main()
 
 	bool drawInvisible = (uni.drawMode & 1) != 0;
 	bool drawDebug = (uni.drawMode & 2) != 0;
+	bool highlightDebug = (uni.drawMode & 4) != 0;
 	
 	if ((invisibleObject && !drawInvisible) || (debugDrawObject && !drawDebug))
 	{
@@ -158,6 +159,13 @@ void main()
 		prd.rayLength -= gl_HitTEXT;
 	
 		return;
+	}
+
+	if (debugDrawObject && highlightDebug)
+	{
+		 prd.hitValue = vec3(1, 0, 1);
+		 prd.rayLength = 0;
+		 return;
 	}
 
 	// Diffuse

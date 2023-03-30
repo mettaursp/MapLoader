@@ -278,6 +278,8 @@ void nvvkhl::AppBaseVk::createDepthBuffer()
 // - Update camera matrix if in movement
 void nvvkhl::AppBaseVk::prepareFrame()
 {
+
+    updateVSync();
   // Resize protection - should be cached by the glFW callback
   int w, h;
   glfwGetFramebufferSize(m_window, &w, &h);
@@ -433,6 +435,21 @@ void nvvkhl::AppBaseVk::onKeyboard(int key, int /*scancode*/, int action, int mo
     glfwSetWindowShouldClose(m_window, 1);
 }
 
+void nvvkhl::AppBaseVk::updateVSync()
+{
+    if (desiredVSync != m_vsync)
+    {
+        m_vsync = desiredVSync;
+        vkDeviceWaitIdle(VulkanContext->Device);
+        vkQueueWaitIdle(m_queue);
+        m_swapChain.update(m_size.width, m_size.height, m_vsync);
+        auto cmdBuffer = createTempCmdBuffer();
+        m_swapChain.cmdUpdateBarriers(cmdBuffer);  // Make them presentable
+        submitTempCmdBuffer(cmdBuffer);
+        createFrameBuffers();
+    }
+}
+
 //--------------------------------------------------------------------------------------------------
 // Window callback when a key gets hit
 //
@@ -440,22 +457,6 @@ void nvvkhl::AppBaseVk::onKeyboardChar(unsigned char key)
 {
   if(ImGui::GetCurrentContext() != nullptr && ImGui::GetIO().WantCaptureKeyboard)
     return;
-
-  // Toggling vsync
-  if(key == 'v' || desiredVSync != m_vsync)
-  {
-      if (key == 'v')
-          m_vsync = !m_vsync;
-      else
-          m_vsync = desiredVSync;
-    vkDeviceWaitIdle(VulkanContext->Device);
-    vkQueueWaitIdle(m_queue);
-    m_swapChain.update(m_size.width, m_size.height, m_vsync);
-    auto cmdBuffer = createTempCmdBuffer();
-    m_swapChain.cmdUpdateBarriers(cmdBuffer);  // Make them presentable
-    submitTempCmdBuffer(cmdBuffer);
-    createFrameBuffers();
-  }
 
   if(key == 'h' || key == '?')
     m_showHelp = !m_showHelp;

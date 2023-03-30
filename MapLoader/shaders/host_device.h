@@ -86,7 +86,7 @@ struct ObjDesc
 struct InstDesc
 {
 	vec3 color;
-	int flags;
+	int flags WITH_DEFAULT(0);
 	vec3 primaryColor;
 	int textureOverride WITH_DEFAULT(-1);
 	vec3 secondaryColor;

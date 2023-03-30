@@ -293,6 +293,7 @@ public:
   virtual void onMouseMotion(int x, int y);
   virtual void onKeyboard(int key, int scancode, int action, int mods);
   virtual void onKeyboardChar(unsigned char key);
+  void updateVSync();
   virtual void onMouseButton(int button, int action, int mods);
   virtual void onMouseWheel(int delta);
   virtual void onFileDrop(const char* filename) {}

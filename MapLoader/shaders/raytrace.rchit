@@ -145,18 +145,18 @@ void main()
 	bool invisibleObject = (instanceDesc.flags & 1) != 0;
 	//if (mat.shaderType == eNone)
 	//{ prd.hitValue = vec3(1, 0, 0); prd.rayLength = 0; return; }
-	if (shaderType == eMS2GlowMaterial)
-	{ prd.hitValue = vec3(1, 0, 1); prd.rayLength = 0; return; }
+	//if (shaderType == eMS2GlowMaterial)
+	//{ prd.hitValue = vec3(1, 0, 1); prd.rayLength = 0; return; }
 
 	bool drawInvisible = (uni.drawMode & 1) != 0;
 	bool drawDebug = (uni.drawMode & 2) != 0;
-
+	
 	if ((invisibleObject && !drawInvisible) || (debugDrawObject && !drawDebug))
 	{
 		prd.nextDirection = gl_WorldRayDirectionEXT;
 		prd.nextOrigin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 		prd.rayLength -= gl_HitTEXT;
-
+	
 		return;
 	}
 

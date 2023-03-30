@@ -92,14 +92,14 @@ void main()
 
 	bool debugDrawObject = (mat.shaderType & 0x1) != 0;
 	bool invisibleObject = (instanceDesc.flags & 1) != 0;
-
+	
 	bool drawInvisible = (uni.drawMode & 1) != 0;
 	bool drawDebug = (uni.drawMode & 2) != 0;
-
+	
 	if ((invisibleObject && !drawInvisible) || (debugDrawObject && !drawDebug))
 	{
 		ignoreIntersectionEXT;
-
+	
 		return;
 	}
 
@@ -129,7 +129,8 @@ void main()
 
 	if (textures.diffuse.id < 0 && textures.decal.id < 0)
 	{
-		ignoreIntersectionEXT;
+		if (!debugDrawObject)
+			ignoreIntersectionEXT;
 
 		return;
 	}

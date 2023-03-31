@@ -19,7 +19,7 @@ namespace MapLoader
 		//{ "MS2GlowMaterial", 2 },
 		{ "MS2CharacterSkinMaterial", 3 },
 		{ "MS2CharacterMaterial", 4 },
-		//{ "MS2CharacterHairMaterial", 5 },
+		{ "MS2CharacterHairMaterial", 5 },
 		{ "MS2GlassMaterial", 6 },
 	};
 

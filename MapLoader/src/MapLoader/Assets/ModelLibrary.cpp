@@ -239,10 +239,6 @@ namespace MapLoader
 					i += 0;
 				}
 
-				//meshBuffers.Material.ambient = pow(meshBuffers.Material.ambient, 2.2f);
-				//meshBuffers.Material.diffuse = pow(meshBuffers.Material.diffuse, 2.2f);
-				//meshBuffers.Material.specular = pow(meshBuffers.Material.specular, 2.2f);
-
 				loadedModel.Materials[i] = meshBuffers.Material;
 				loadedModel.MeshIds[i] = (int)LoadModel(meshBuffers);
 			}

@@ -60,10 +60,6 @@ namespace MapLoader
 		GameAssetLibrary& AssetLibrary;
 		std::string NifDocumentBuffer;
 		std::shared_ptr<Engine::Graphics::MeshFormat> MeshFormat;
-		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormat;
-		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormatWithColor;
-		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormatWithBinormal;
-		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormatWithColorAndBinormal;
 		std::map<const Archive::Metadata::Entry*, size_t> ModelMap;
 		std::vector<TextureTransform> TextureTransforms;
 		std::vector<std::unique_ptr<ModelData>> Models;

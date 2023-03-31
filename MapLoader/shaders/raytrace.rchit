@@ -30,19 +30,24 @@
 #include "raycommon.glsl"
 #include "wavefront.glsl"
 
-hitAttributeEXT vec2 attribs;
+hitAttributeEXT vec2 attributes;
 
 // clang-format off
 layout(location = 0) rayPayloadInEXT hitPayload prd;
 layout(location = 1) rayPayloadEXT shadowHitPayload shadowPayload;
 
-layout(buffer_reference, scalar) buffer Vertices {Vertex v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexPos {VertexPosBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexAttrib {VertexAttribBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexColor {VertexColorBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexSkeleton {VertexSkeletonBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer Indices {ivec3 i[]; }; // Triangle indices
 layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
 layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
 layout(set = 0, binding = eTlas) uniform accelerationStructureEXT topLevelAS;
 layout(set = 1, binding = eGlobals) uniform _GlobalUniforms { GlobalUniforms uni; };
-layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { ObjDesc i[]; } objDesc;
+layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { MeshDesc i[]; } objDesc;
 layout(set = 1, binding = eTextures) uniform sampler2D textureSamplers[];
 layout(set = 1, binding = eLights, scalar) buffer LightDesc_ { LightDesc i[]; } lightDesc;
 layout(set = 1, binding = eTextureTransforms, scalar) buffer TextureTransform_ { TextureTransform i[]; } textureTransform;
@@ -103,34 +108,39 @@ void main()
 {
 	// Object data
 	InstDesc    instanceDesc = instDesc.i[gl_InstanceID];
-	ObjDesc    objResource = objDesc.i[gl_InstanceCustomIndexEXT];
+	MeshDesc    objResource = objDesc.i[gl_InstanceCustomIndexEXT];
 	MatIndices matIndices  = MatIndices(objResource.materialIndexAddress);
 	Materials  materials   = Materials(objResource.materialAddress);
 	Indices    indices     = Indices(objResource.indexAddress);
-	Vertices   vertices    = Vertices(objResource.vertexAddress);
+
 
 	prd.hitObject = gl_InstanceID;
 
 	// Indices of the triangle
 	ivec3 ind = indices.i[gl_PrimitiveID];
 
-	// Vertex of the triangle
-	Vertex v0 = vertices.v[ind.x];
-	Vertex v1 = vertices.v[ind.y];
-	Vertex v2 = vertices.v[ind.z];
+	VertexPos vertices = VertexPos(objResource.vertexPosAddress);
 
-	const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
+	// Vertex of the triangle
+	VertexPosBinding v0 = vertices.v[ind.x];
+	VertexPosBinding v1 = vertices.v[ind.y];
+	VertexPosBinding v2 = vertices.v[ind.z];
+
+	const vec3 barycentrics = vec3(1.0 - attributes.x - attributes.y, attributes.x, attributes.y);
 
 	// Computing the coordinates of the hit position
-	const vec3 pos      = v0.pos * barycentrics.x + v1.pos * barycentrics.y + v2.pos * barycentrics.z;
+	const vec3 pos      = v0.position * barycentrics.x + v1.position * barycentrics.y + v2.position * barycentrics.z;
 	const vec3 worldPos = vec3(gl_ObjectToWorldEXT * vec4(pos, 1.0));  // Transforming the position to world space
 
+	vec3 nrm = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
+	vec2 texCoord = v0.texcoord * barycentrics.x + v1.texcoord * barycentrics.y + v2.texcoord * barycentrics.z;
+
 	// Computing the normal at hit position
-	vec3 nrm      = v0.nrm * barycentrics.x + v1.nrm * barycentrics.y + v2.nrm * barycentrics.z;
 	vec3 worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));  // Transforming the normal to world space
 
 	// Computing the normal at hit position
-	const vec4 vertexColor      = v0.color * barycentrics.x + v1.color * barycentrics.y + v2.color * barycentrics.z;
+	vec4 vertexColor      = v0.color * barycentrics.x + v1.color * barycentrics.y + v2.color * barycentrics.z;
+	vertexColor /= 255;
 
 	// Material of the object
 	int               matIdx = matIndices.i[gl_PrimitiveID];
@@ -191,7 +201,7 @@ void main()
 		specularColor = vertexColor.xyz;
 	}
 
-	vec2 texCoord = v0.texCoord * barycentrics.x + v1.texCoord * barycentrics.y + v2.texCoord * barycentrics.z;
+	diffuseColor = vertexColor.xyz;
 
 	if (textures.emissive.id >= 0)
 	{
@@ -216,6 +226,7 @@ void main()
 	}
 
 	float diffuseAlpha = 1;
+	vec3 baseColor = diffuseColor;
 
 	if(textures.diffuse.id >= 0)
 	{
@@ -230,7 +241,7 @@ void main()
 		vec4 controlColor = sampleTexture(textures.colorOverride, texCoord);
 
 		vec3 dyeColor = (1 - controlColor.r) * instanceDesc.secondaryColor + controlColor.r * instanceDesc.primaryColor;
-		diffuseColor = (1 - controlColor.w) * diffuseColor + controlColor.w * dyeColor;
+		diffuseColor = (1 - controlColor.w) * diffuseColor + controlColor.w * dyeColor * baseColor;
 	}
 
 	if(textures.decal.id >= 0)
@@ -250,10 +261,16 @@ void main()
 	vec3 binormal = vec3(0, 0, 0);
 	vec3 tangent = vec3(0, 0, 0);
 
-	if (textures.anisotropic.id >= 0 || textures.normal.id >= 0)
+	if (objResource.vertexBinormalAddress != 0 && (textures.anisotropic.id >= 0 || textures.normal.id >= 0))
 	{
-		binormal = v0.binormal * barycentrics.x + v1.binormal * barycentrics.y + v2.binormal * barycentrics.z;
-		tangent = v0.tangent * barycentrics.x + v1.tangent * barycentrics.y + v2.tangent * barycentrics.z;
+		VertexBinormal tbn = VertexBinormal(objResource.vertexBinormalAddress);
+
+		VertexBinormalBinding v0tbn = tbn.v[ind.x];
+		VertexBinormalBinding v1tbn = tbn.v[ind.y];
+		VertexBinormalBinding v2tbn = tbn.v[ind.z];
+
+		binormal = normalize(v0tbn.binormal * barycentrics.x + v1tbn.binormal * barycentrics.y + v2tbn.binormal * barycentrics.z);
+		tangent = normalize(v0tbn.tangent * barycentrics.x + v1tbn.tangent * barycentrics.y + v2tbn.tangent * barycentrics.z);
 	}
 
 	if (textures.anisotropic.id >= 0)
@@ -263,9 +280,6 @@ void main()
 
 	if (textures.normal.id >= 0)
 	{
-		//vec3 binormal = v0.binormal * barycentrics.x + v1.binormal * barycentrics.y + v2.binormal * barycentrics.z;
-		//vec3 tangent = v0.tangent * barycentrics.x + v1.tangent * barycentrics.y + v2.tangent * barycentrics.z;
-
 		vec4 normalTextureColor = sampleTexture(textures.normal, texCoord);
 
 		if (false)
@@ -279,6 +293,8 @@ void main()
 		
 		nrm = normalize(mat3(tangent, binormal, nrm) * normalTextureColor.xyz);
 		worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));
+
+		//{ prd.hitValue = worldNrm; prd.rayLength = 0; return; }
 	}
 
 	vec3 minTransmission = vec3(0, 0, 0);
@@ -434,8 +450,6 @@ void main()
 			vec3 lightColor = (1 - fresnel) * vec3(0, 0, 0) + fresnel * light.diffuse;
 			
 			diffuse += shadowPayload.transmission * lightBoost * lightIntensity * lightColor;
-
-			lightBoost *= 0.5;
 		}
 		
 		diffuse += shadowPayload.transmission * lightBoost * lightIntensity * max(0, dot(L, worldNrm)) * light.diffuse;
@@ -459,7 +473,6 @@ void main()
 		case eMS2Phong:
 			ambient *= mat.ambient;
 			contribution = src * mat.colorBoost * diffuseColor * (diffuse + ambient + emissiveColor) + specularColor * specular;
-			contribution *= 2.1;
 
 			break;
 	}
@@ -470,10 +483,8 @@ void main()
 	prd.nextOrigin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 	prd.rayLength -= gl_HitTEXT;
 
-	if (prd.transmission.x <= 0.01 && prd.transmission.y <= 0.01 && prd.transmission.z <= 0.01)//(alpha == 1)
+	if (prd.transmission.x <= 0.01 && prd.transmission.y <= 0.01 && prd.transmission.z <= 0.01)
 	{
 		prd.rayLength = 0;
 	}
-	
-	//prd.hitValue = reflectivity * reflectedColor + (1 - reflectivity) * vec3(lightIntensity * attenuation * (diffuse + specular + ambient));
 }

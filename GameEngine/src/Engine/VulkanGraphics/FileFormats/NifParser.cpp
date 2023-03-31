@@ -672,10 +672,16 @@ std::map<std::string, std::string> attributeAliases = {
 	{ "POSITION_BP", "position" },
 	{ "NORMAL", "normal" },
 	{ "NORMAL_BP", "normal" },
-	{ "TEXCOORD", "textureCoords" },
+	{ "TEXCOORD", "texcoord" },
 	{ "BINORMAL", "binormal" },
+	{ "BINORMAL_BP", "binormal" },
 	{ "TANGENT", "tangent" },
-	{ "MORPH_POSITION", "morphPosition" }
+	{ "TANGENT_BP", "tangent" },
+	{ "MORPH_POSITION", "morphpos" },
+	{ "MORPH_POSITION_BP", "morphpos" },
+	{ "BLENDINDICES", "blendindices" },
+	{ "BLENDWEIGHT", "blendweight" },
+	{ "COLOR", "color" }
 };
 
 using namespace Engine::Graphics;
@@ -1113,10 +1119,15 @@ void NifParser::Parse(std::string_view stream)
 
 				for (size_t j = 0; j < semanticsCount; ++j)
 				{
-					auto index = attributeAliases.find(data->Streams[i].ComponentSemantics[j].Name);
+					const std::string semantic = data->Streams[i].ComponentSemantics[j].Name;
+
+					auto index = attributeAliases.find(semantic);
+
+					if (!SemanticsFound.contains(semantic))
+						SemanticsFound.insert(semantic);
 
 					if (index == attributeAliases.end())
-						stream->Attributes[j].Name = data->Streams[i].ComponentSemantics[j].Name;
+						stream->Attributes[j].Name = semantic;
 					else
 						stream->Attributes[j].Name = index->second;
 
@@ -1165,3 +1176,5 @@ void NifParser::Parse(std::string_view stream)
 		if (Package->Nodes[i].AttachedTo != (size_t)-1)
 			Package->Nodes[i].Transform->SetParent(Package->Nodes[Package->Nodes[i].AttachedTo].Transform);
 }
+
+std::unordered_set<std::string> NifParser::SemanticsFound = {};

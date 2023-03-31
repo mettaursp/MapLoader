@@ -2,6 +2,7 @@
 
 #include <istream>
 #include <vector>
+#include <unordered_set>
 
 #include "PackageNodes.h"
 
@@ -28,4 +29,7 @@ public:
 
 	void Parse(std::istream& stream);
 	void Parse(std::string_view stream);
+
+private:
+	static std::unordered_set<std::string> SemanticsFound;
 };

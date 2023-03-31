@@ -43,12 +43,17 @@ layout(location = 4) in vec2 i_texCoord;
 // Outgoing
 layout(location = 0) out vec4 o_color;
 
-layout(buffer_reference, scalar) buffer Vertices {Vertex v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexPos {VertexPosBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexAttrib {VertexAttribBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexColor {VertexColorBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexSkeleton {VertexSkeletonBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer Indices {uint i[]; }; // Triangle indices
 layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
 layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
 
-layout(binding = eObjDescs, scalar) buffer ObjDesc_ { ObjDesc i[]; } objDesc;
+layout(binding = eObjDescs, scalar) buffer ObjDesc_ { MeshDesc i[]; } objDesc;
 layout(binding = eTextures) uniform sampler2D[] textureSamplers;
 // clang-format on
 
@@ -56,7 +61,7 @@ layout(binding = eTextures) uniform sampler2D[] textureSamplers;
 void main()
 {
 	// Material of the object
-	ObjDesc    objResource = objDesc.i[pcRaster.objIndex];
+	MeshDesc    objResource = objDesc.i[pcRaster.objIndex];
 	MatIndices matIndices  = MatIndices(objResource.materialIndexAddress);
 	Materials  materials   = Materials(objResource.materialAddress);
 

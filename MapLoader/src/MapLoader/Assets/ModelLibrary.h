@@ -8,6 +8,15 @@
 #include "TextureLibrary.h"
 #include <host_device.h>
 #include <MapLoader/obj_loader.h>
+#include <host_device.h>
+
+namespace Engine
+{
+	namespace Graphics
+	{
+		struct ModelPackageNode;
+	}
+}
 
 namespace MapLoader
 {
@@ -35,8 +44,22 @@ namespace MapLoader
 		static const std::unordered_map<std::string, int> MaterialTypeMap;
 
 	private:
+		struct MeshBuffers
+		{
+			void* VertexBindings[6] = { 0 };
+			std::vector<VertexPosBinding> VertexPositions;
+			std::vector<VertexAttribBinding> VertexAttributes;
+			std::vector<VertexColorBinding> VertexColors;
+			std::vector<VertexBinormalBinding> VertexBinormals;
+			std::vector<VertexMorphBinding> VertexMorphPos;
+			std::vector<VertexSkeletonBinding> VertexSkeleton;
+			std::vector<int> IndexBuffer;
+			MaterialObj Material;
+		};
+
 		GameAssetLibrary& AssetLibrary;
 		std::string NifDocumentBuffer;
+		std::shared_ptr<Engine::Graphics::MeshFormat> MeshFormat;
 		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormat;
 		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormatWithColor;
 		std::shared_ptr<Engine::Graphics::MeshFormat> ImportFormatWithBinormal;
@@ -44,7 +67,7 @@ namespace MapLoader
 		std::map<const Archive::Metadata::Entry*, size_t> ModelMap;
 		std::vector<TextureTransform> TextureTransforms;
 		std::vector<std::unique_ptr<ModelData>> Models;
-		std::vector<ObjDesc> GpuMeshData;
+		std::vector<MeshDesc> GpuMeshData;
 		std::vector<MeshDescription> MeshDescriptions;
 		std::vector<MaterialTextures> MaterialTextures;
 		int DuplicateFormatUses = 0;
@@ -52,6 +75,7 @@ namespace MapLoader
 		static std::unordered_set<std::string> UnmappedMaterials;
 
 		bool FetchModel(const Archive::ArchivePath& file, ModelData& loadedModel, bool keepRawData = false);
-		uint32_t LoadModel(ObjLoader& loader, const Matrix4F& transform = Matrix4F(), bool invisible = false);
+		void LoadBuffers(MeshBuffers& buffers, Engine::Graphics::ModelPackageNode& node);
+		uint32_t LoadModel(MeshBuffers& buffers, const Matrix4F& transform = Matrix4F(), bool invisible = false);
 	};
 }

@@ -38,7 +38,12 @@ namespace MapLoader
 	{
 		uint32_t IndexCount = 0;
 		uint32_t VertexCount = 0;
-		nvvk::Buffer VertexBuffer;    // Device buffer of all 'Vertex'
+		nvvk::Buffer VertexPosBuffer;    // Device buffer of all 'Vertex'
+		nvvk::Buffer VertexAttribBuffer;    // Device buffer of all 'Vertex'
+		nvvk::Buffer VertexColorBuffer;    // Device buffer of all 'Vertex'
+		nvvk::Buffer VertexBinormalBuffer;    // Device buffer of all 'Vertex'
+		nvvk::Buffer VertexMorphBuffer;    // Device buffer of all 'Vertex'
+		nvvk::Buffer VertexSkeletonBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer IndexBuffer;     // Device buffer of the indices forming triangles
 		nvvk::Buffer MatColorBuffer;  // Device buffer of array of 'Wavefront material'
 		nvvk::Buffer MatIndexBuffer;  // Device buffer of array of 'Wavefront material'

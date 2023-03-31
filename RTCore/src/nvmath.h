@@ -16,6 +16,7 @@ using vec4i = Vector3I;
 using mat3 = Matrix3F;
 using mat4 = Matrix4F;
 using mat4d = Matrix4D;
+using u8vec4 = unsigned int;
 
 const float nv_pi = 3.14159265358979323846264338327950288419716939937510582f;
 const float nv_two_pi = nv_pi * 2.f;

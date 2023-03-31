@@ -123,8 +123,8 @@ void HelloVulkan::createDescriptorSetLayout()
 
 	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "position", 0 });
 	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "normal", 0 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 4, "COLOR", 0 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 2, "textureCoords", 0 });
+	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 4, "color", 0 });
+	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 2, "texcoord", 0 });
 	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 0 });
 	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 0 });
 
@@ -554,7 +554,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 
 	vkCmdPushConstants(cmdBuf, RasterPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
 						 sizeof(PushConstantRaster), &m_pcRaster);
-	vkCmdBindVertexBuffers(cmdBuf, 0, 1, &model.VertexBuffer.buffer, &offset);
+	vkCmdBindVertexBuffers(cmdBuf, 0, 5, &model.VertexPosBuffer.buffer, &offset);
 	vkCmdBindIndexBuffer(cmdBuf, model.IndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 	vkCmdDrawIndexed(cmdBuf, model.IndexCount, 1, 0, 0, 0);
 	}
@@ -756,7 +756,7 @@ void HelloVulkan::initRayTracing()
 auto HelloVulkan::objectToVkGeometryKHR(const MapLoader::MeshDescription& model)
 {
 	// BLAS builder requires raw device addresses.
-	VkDeviceAddress vertexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, model.VertexBuffer.buffer);
+	VkDeviceAddress vertexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, model.VertexPosBuffer.buffer);
 	VkDeviceAddress indexAddress  = nvvk::getBufferDeviceAddress(VulkanContext->Device, model.IndexBuffer.buffer);
 
 	uint32_t maxPrimitiveCount = model.IndexCount / 3;
@@ -765,7 +765,7 @@ auto HelloVulkan::objectToVkGeometryKHR(const MapLoader::MeshDescription& model)
 	VkAccelerationStructureGeometryTrianglesDataKHR triangles{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR};
 	triangles.vertexFormat             = VK_FORMAT_R32G32B32_SFLOAT;  // vec3 vertex position data
 	triangles.vertexData.deviceAddress = vertexAddress;
-	triangles.vertexStride             = sizeof(VertexObj);
+	triangles.vertexStride             = sizeof(VertexPosBinding);
 	// Describe index data (32-bit unsigned int)
 	triangles.indexType               = VK_INDEX_TYPE_UINT32;
 	triangles.indexData.deviceAddress = indexAddress;

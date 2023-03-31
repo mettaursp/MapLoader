@@ -66,10 +66,10 @@ std::shared_ptr<Engine::Graphics::MeshFormat> GetNiMeshFormat()
 
 	attributes.push_back(VertexAttributeFormat{ Enum::AttributeDataType::Float32, 3, "position", 0 });
 	attributes.push_back(VertexAttributeFormat{ Enum::AttributeDataType::Float32, 3, "normal", 1 });
-	attributes.push_back(VertexAttributeFormat{ Enum::AttributeDataType::Float32, 2, "textureCoords", 1 });
+	attributes.push_back(VertexAttributeFormat{ Enum::AttributeDataType::Float32, 2, "texcoord", 1 });
 	attributes.push_back(VertexAttributeFormat{ Enum::AttributeDataType::Float32, 3, "binormal", 1 });
 	attributes.push_back(VertexAttributeFormat{ Enum::AttributeDataType::Float32, 3, "tangent", 1 });
-	attributes.push_back(VertexAttributeFormat{ Enum::AttributeDataType::Float32, 3, "morphPosition1", 2 });
+	attributes.push_back(VertexAttributeFormat{ Enum::AttributeDataType::Float32, 3, "morphpos", 2 });
 
 	format = Engine::Graphics::MeshFormat::GetFormat(attributes);
 

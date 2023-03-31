@@ -34,6 +34,7 @@ using uint64_t = unsigned long long;
  #define END_BINDING() }
 #define WITH_DEFAULT(x) = x
 #else
+#extension GL_EXT_shader_explicit_arithmetic_types_int8 : require
  #define START_BINDING(a)  const uint
  #define END_BINDING() 
 #define WITH_DEFAULT(x)
@@ -72,15 +73,18 @@ START_BINDING(MaterialTypes)
 END_BINDING();
 // clang-format on
 
-
-// Information of a obj model when referenced in a shader
-struct ObjDesc
+struct MeshDesc
 {
-	int      txtOffset;             // Texture index offset in the array of textures
-	uint64_t vertexAddress;         // Address of the Vertex buffer
-	uint64_t indexAddress;          // Address of the index buffer
-	uint64_t materialAddress;       // Address of the material buffer
-	uint64_t materialIndexAddress;  // Address of the triangle material index buffer
+	int displayFlags WITH_DEFAULT(0);
+	uint64_t vertexPosAddress WITH_DEFAULT(0);      // Address of the Vertex buffer
+	uint64_t vertexAttribAddress WITH_DEFAULT(0);   // Address of the Vertex buffer
+	uint64_t vertexColorAddress WITH_DEFAULT(0);    // Address of the Vertex buffer
+	uint64_t vertexBinormalAddress WITH_DEFAULT(0); // Address of the Vertex buffer
+	uint64_t vertexMorphAddress WITH_DEFAULT(0);    // Address of the Vertex buffer
+	uint64_t vertexSkeletonAddress WITH_DEFAULT(0); // Address of the Vertex buffer
+	uint64_t indexAddress WITH_DEFAULT(0);          // Address of the index buffer
+	uint64_t materialAddress WITH_DEFAULT(0);       // Address of the material buffer
+	uint64_t materialIndexAddress WITH_DEFAULT(0);  // Address of the triangle material index buffer
 };
 
 struct InstDesc
@@ -159,9 +163,44 @@ struct Vertex  // See ObjLoader, copy of VertexObj, could be compressed for devi
 	vec3 pos;
 	vec3 nrm;
 	vec4 color;
-	vec2 texCoord;
+	vec2 texcoord;
 	vec3 binormal;
 	vec3 tangent;
+};
+
+struct VertexPosBinding
+{
+	vec3 position;
+	vec2 texcoord;
+	vec3 normal;
+	u8vec4 color WITH_DEFAULT(0xFFFFFFFF);
+};
+
+struct VertexAttribBinding
+{
+	int a;
+};
+
+struct VertexColorBinding
+{
+	int a;
+};
+
+struct VertexBinormalBinding
+{
+	vec3 binormal;
+	vec3 tangent;
+};
+
+struct VertexMorphBinding
+{
+	vec3 morphpos;
+};
+
+struct VertexSkeletonBinding
+{
+	u8vec4 blendindices WITH_DEFAULT(0);
+	vec4 blendweight;
 };
 
 struct MaterialTexture
@@ -193,7 +232,7 @@ struct WaveFrontMaterial  // See ObjLoader, copy of MaterialObj, could be compre
 	float ior WITH_DEFAULT(1);       // index of refraction
 	vec3  emission WITH_DEFAULT(vec3(0.0f, 0.0f, 0.10));
 	int   shaderType WITH_DEFAULT(-1);     // illumination model (see http://www.fileformat.info/format/material/)
-	int textures;
+	int textures WITH_DEFAULT(0);
 	int   textureModes WITH_DEFAULT(0);
 	float fresnelBoost WITH_DEFAULT(0);
 	float fresnelExponent WITH_DEFAULT(1);

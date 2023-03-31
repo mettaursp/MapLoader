@@ -8,7 +8,7 @@
 #include "raycommon.glsl"
 #include "wavefront.glsl"
 
-hitAttributeEXT vec2 attribs;
+hitAttributeEXT vec2 attributes;
 
 #ifdef PAYLOAD_0
 layout(location = 0) rayPayloadInEXT hitPayload prd;
@@ -18,11 +18,16 @@ layout(location = 1) rayPayloadEXT shadowHitPayload shadowPayload;
 
 //layout(location = 0) rayPayloadEXT hitPayload prd;
 
-layout(buffer_reference, scalar) buffer Vertices {Vertex v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexPos {VertexPosBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexAttrib {VertexAttribBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexColor {VertexColorBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexSkeleton {VertexSkeletonBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer Indices {ivec3 i[]; }; // Triangle indices
 layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
 layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
-layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { ObjDesc i[]; } objDesc;
+layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { MeshDesc i[]; } objDesc;
 layout(set = 1, binding = eInstDescs, scalar) buffer InstanceDescription_ { InstDesc i[]; } instDesc;
 layout(set = 1, binding = eTextures) uniform sampler2D textureSamplers[];
 layout(set = 1, binding = eTextureTransforms, scalar) buffer TextureTransform_ { TextureTransform i[]; } textureTransform;
@@ -69,11 +74,10 @@ void main()
 {
 	// Object data
 	InstDesc		instanceDesc = instDesc.i[gl_InstanceID];
-	ObjDesc		objResource = objDesc.i[gl_InstanceCustomIndexEXT];
+	MeshDesc		objResource = objDesc.i[gl_InstanceCustomIndexEXT];
 	MatIndices matIndices	= MatIndices(objResource.materialIndexAddress);
 	Materials	materials	 = Materials(objResource.materialAddress);
 	Indices		indices		 = Indices(objResource.indexAddress);
-	Vertices	 vertices		= Vertices(objResource.vertexAddress);
 
 	// Material of the object
 	int							 matIdx = matIndices.i[gl_PrimitiveID];
@@ -106,14 +110,17 @@ void main()
 	// Indices of the triangle
 	ivec3 ind = indices.i[gl_PrimitiveID];
 
-	// Vertex of the triangle
-	Vertex v0 = vertices.v[ind.x];
-	Vertex v1 = vertices.v[ind.y];
-	Vertex v2 = vertices.v[ind.z];
+	const vec3 barycentrics = vec3(1.0 - attributes.x - attributes.y, attributes.x, attributes.y);
 
-	const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
+	VertexPos vertices = VertexPos(objResource.vertexPosAddress);
 
-	const float vertexAlpha		 = v0.color.w * barycentrics.x + v1.color.w * barycentrics.y + v2.color.w * barycentrics.z;
+	VertexPosBinding v0 = vertices.v[ind.x];
+	VertexPosBinding v1 = vertices.v[ind.y];
+	VertexPosBinding v2 = vertices.v[ind.z];
+
+	float vertexAlpha      = v0.color.w * barycentrics.x + v1.color.w * barycentrics.y + v2.color.w * barycentrics.z;
+	vertexAlpha /= 255;
+
 	float alpha = mat.dissolve * vertexAlpha;
 	int textureApply = getFlags(mat.textureModes, 3, 0);
 
@@ -135,8 +142,9 @@ void main()
 		return;
 	}
 
-	// Computing the normal at hit position
-	const vec3 nrm			= v0.nrm * barycentrics.x + v1.nrm * barycentrics.y + v2.nrm * barycentrics.z;
+	vec3 nrm = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
+	vec2 texCoord = v0.texcoord * barycentrics.x + v1.texcoord * barycentrics.y + v2.texcoord * barycentrics.z;
+
 	const vec3 worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));	// Transforming the normal to world space
 	
 	float normalDot = dot(worldNrm, gl_WorldRayDirectionEXT);
@@ -157,7 +165,8 @@ void main()
 	}
 #endif
 
-	vec2 texCoord = v0.texCoord * barycentrics.x + v1.texCoord * barycentrics.y + v2.texCoord * barycentrics.z;
+	return;
+
 	float diffuseAlpha = 1;
 
 	if (textures.diffuse.id >= 0)

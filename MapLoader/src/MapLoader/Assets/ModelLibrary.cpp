@@ -102,95 +102,11 @@ namespace MapLoader
 				if (keepRawData)
 					loadedModel.Meshes[i] = node.Mesh;
 
-				tinyobj::attrib_t attrib;
+				MeshBuffers meshBuffers;
 
-				bool hasColor = node.Format->GetAttribute("COLOR") != nullptr;
-				bool hasBinormal = node.Format->GetAttribute("binormal") != nullptr;
-
-				++formatUseCount[node.Format->GetHash()];
-
-				if (formatUseCount.size() > 1)
-					hasColor |= hasColor;
-
-				size_t vertices = node.Mesh->GetVertices();
-				size_t indices = node.Mesh->GetTriangleVertices();
-
-				if (vertices == 0 || indices == 0 || (indices % 3) != 0)
-					vertices += 0;
-
-				attrib.vertices.resize(vertices * 3);
-				attrib.texcoords.resize(vertices * 2);
-				attrib.normals.resize(vertices * 3);
-
-				std::vector<Color4I> colors;
-				std::vector<Vector3> binormal;
-				std::vector<Vector3> tangent;
-
-				if (hasColor)
-				{
-					colors.resize(vertices);
-					attrib.colors.resize(vertices * 4);
-				}
-
-				if (hasBinormal)
-				{
-					binormal.resize(vertices);
-					tangent.resize(vertices);
-					attrib.binormals.resize(vertices * 3);
-					attrib.tangents.resize(vertices * 3);
-				}
-
-				std::vector<void*> data;
-
-				data.push_back(attrib.vertices.data());
-				data.push_back(attrib.texcoords.data());
-				data.push_back(attrib.normals.data());
-
-				if (hasColor)
-				{
-					data.push_back(colors.data());
-				}
-
-				if (hasBinormal)
-				{
-					data.push_back(attrib.binormals.data());
-					data.push_back(attrib.tangents.data());
-				}
-
-				struct MeshFormatRef
-				{
-					const std::shared_ptr<Engine::Graphics::MeshFormat>& Ref;
-				};
-
-				MeshFormatRef formats[4] = {
-					ImportFormat,
-					ImportFormatWithColor,
-					ImportFormatWithBinormal,
-					ImportFormatWithColorAndBinormal
-				};
-
-				int formatIndex = (hasColor ? 1 : 0) + (hasBinormal ? 2 : 0);
-
-				const std::shared_ptr<Engine::Graphics::MeshFormat>& format = formats[formatIndex].Ref;
-
-				node.Format->Copy(node.Mesh->GetData(), data.data(), format, vertices);
-
-				if (hasColor)
-				{
-					for (size_t i = 0; i < vertices; ++i)
-					{
-						Color4 color = colors[i];
-
-						attrib.colors[4 * i + 0] = color.R;
-						attrib.colors[4 * i + 1] = color.G;
-						attrib.colors[4 * i + 2] = color.B;
-						attrib.colors[4 * i + 3] = color.A;
-					}
-				}
-
-				ObjLoader loader(AssetLibrary);
-
-				std::vector<MaterialObj>& materials = loader.m_materials;
+				LoadBuffers(meshBuffers, node);
+				
+				MaterialObj& material = meshBuffers.Material;
 
 				if (node.MaterialIndex != -1)
 				{
@@ -198,8 +114,6 @@ namespace MapLoader
 
 					loadedModel.Shaders[i] = packageMaterial.ShaderName;
 					loadedModel.MaterialNames[i] = packageMaterial.Name;
-
-					MaterialObj material;
 
 					material.diffuse[0] = packageMaterial.DiffuseColor.R;
 					material.diffuse[1] = packageMaterial.DiffuseColor.G;
@@ -318,8 +232,6 @@ namespace MapLoader
 					material.textureModes |= ((int)packageMaterial.DestBlendMode << 9); // 4 bits
 					material.textureModes |= ((int)packageMaterial.AlphaTestMode << 13); // 4 bits
 					material.textureModes |= ((int)packageMaterial.TestThreshold << 17); // 4 bits
-
-					materials.push_back(material);
 				}
 
 				if (node.MaterialIndex == -1)
@@ -327,30 +239,12 @@ namespace MapLoader
 					i += 0;
 				}
 
-				std::vector<tinyobj::shape_t> shapes(1);
+				//meshBuffers.Material.ambient = pow(meshBuffers.Material.ambient, 2.2f);
+				//meshBuffers.Material.diffuse = pow(meshBuffers.Material.diffuse, 2.2f);
+				//meshBuffers.Material.specular = pow(meshBuffers.Material.specular, 2.2f);
 
-				tinyobj::shape_t shape;
-
-				shape.mesh.indices.reserve(indices);
-
-				for (int index : node.Mesh->GetIndexBuffer())
-				{
-					shape.mesh.indices.push_back(tinyobj::index_t{ index, index, index, index });
-				}
-
-				shape.mesh.material_ids.reserve(indices / 3);
-
-				for (int i = 0; i < indices / 3; ++i)
-				{
-					shape.mesh.material_ids.push_back(0);
-				}
-
-				shapes.push_back(shape);
-
-				loader.loadModel(attrib, {}, shapes);
-
-				loadedModel.Materials[i] = loader.m_materials[0];
-				loadedModel.MeshIds[i] = (int)LoadModel(loader);
+				loadedModel.Materials[i] = meshBuffers.Material;
+				loadedModel.MeshIds[i] = (int)LoadModel(meshBuffers);
 			}
 		}
 
@@ -370,26 +264,16 @@ namespace MapLoader
 		std::vector<Engine::Graphics::VertexAttributeFormat> attributes;
 
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "position", 0 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 2, "textureCoords", 1 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "normal", 2 });
-
-		ImportFormat = Engine::Graphics::MeshFormat::GetFormat(attributes);
-
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "COLOR", 3 });
-
-		ImportFormatWithColor = Engine::Graphics::MeshFormat::GetFormat(attributes);
-
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 4 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 5 });
-
-		ImportFormatWithColorAndBinormal = Engine::Graphics::MeshFormat::GetFormat(attributes);
-
-		attributes.resize(3);
-
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 2, "texcoord", 0 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "normal", 0 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "color", 0 });
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 3 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 4 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 3 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "morphpos", 4 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "blendindices", 5 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 4, "blendweight", 5 });
 
-		ImportFormatWithBinormal = Engine::Graphics::MeshFormat::GetFormat(attributes);
+		MeshFormat = Engine::Graphics::MeshFormat::GetFormat(attributes);
 	}
 
 	ModelLibrary::~ModelLibrary()
@@ -397,29 +281,80 @@ namespace MapLoader
 		FreeResources();
 	}
 
-	uint32_t ModelLibrary::LoadModel(ObjLoader& loader, const Matrix4F& transform, bool invisible)
+	void ModelLibrary::LoadBuffers(MeshBuffers& buffers, Engine::Graphics::ModelPackageNode& node)
 	{
-		// Converting from Srgb to linear
-		for (auto& m : loader.m_materials)
-		{
-			//const auto pow = [](const vec3 & vec, float exp)
-			//{
-			//	return vec3(std::pow(vec.X, exp), std::pow(vec.Y, exp), std::pow(vec.Z, exp));
-			//};
-			m.ambient = pow(m.ambient, 2.2f);
-			m.diffuse = pow(m.diffuse, 2.2f);
-			m.specular = pow(m.specular, 2.2f);
-		}
+		std::vector<Engine::Graphics::VertexAttributeFormat> attributes;
 
+		for (size_t binding = 0; binding < 6; ++binding)
+		{
+			bool foundInBinding = false;
+
+			for (const auto& attribute : MeshFormat->GetAttributes())
+			{
+				if (attribute.Binding == binding && node.Format->GetAttribute(attribute.Name) != nullptr)
+				{
+					foundInBinding = true;
+
+					break;
+				}
+			}
+
+			if (!foundInBinding) continue;
+
+			for (const auto& attribute : MeshFormat->GetAttributes())
+			{
+				if (attribute.Binding == binding)
+				{
+					attributes.push_back(attribute);
+				}
+			}
+		}
+		
+		auto bufferFormat = Engine::Graphics::MeshFormat::GetFormat(attributes);
+
+		const auto& nodeAttributes = node.Format->GetAttributes();
+
+		size_t vertices = node.Mesh->GetVertices();
+		size_t indices = node.Mesh->GetTriangleVertices();
+
+		const auto enableBinding = [](auto& buffers, const auto& format, size_t binding, auto& vector, size_t size)
+		{
+			if (binding >= format->GetBindingCount() || format->GetVertexSize(binding) == 0) return;
+
+			vector.resize(size);
+			buffers.VertexBindings[binding] = vector.data();
+		};
+
+		enableBinding(buffers, bufferFormat, 0, buffers.VertexPositions, vertices);
+		enableBinding(buffers, bufferFormat, 1, buffers.VertexAttributes, vertices);
+		enableBinding(buffers, bufferFormat, 2, buffers.VertexColors, vertices);
+		enableBinding(buffers, bufferFormat, 3, buffers.VertexBinormals, vertices);
+		enableBinding(buffers, bufferFormat, 4, buffers.VertexMorphPos, vertices);
+		enableBinding(buffers, bufferFormat, 5, buffers.VertexSkeleton, vertices);
+
+		buffers.IndexBuffer = node.Mesh->GetIndexBuffer();
+
+		node.Format->Copy(node.Mesh->GetData(), buffers.VertexBindings, bufferFormat, vertices);
+	}
+
+	uint32_t ModelLibrary::LoadModel(MeshBuffers& buffers, const Matrix4F& transform, bool invisible)
+	{
 		uint32_t index = (uint32_t)MeshDescriptions.size();
 
 		MeshDescriptions.push_back({});
 		MeshDescription& mesh = MeshDescriptions.back();
 
-		mesh.IndexCount = static_cast<uint32_t>(loader.m_indices.size());
-		mesh.VertexCount = static_cast<uint32_t>(loader.m_vertices.size());
+		mesh.IndexCount = (uint32_t)buffers.IndexBuffer.size();
+		mesh.VertexCount = (uint32_t)buffers.VertexPositions.size();
 
 		const auto& vulkanContext = AssetLibrary.GetVulkanContext();
+
+		const auto bindBuffer = [](const auto& vulkanContext, VkCommandBuffer cmdBuf, auto& vector, void* pointer, VkBufferUsageFlags flags)
+		{
+			if (pointer == nullptr) return nvvk::Buffer();
+
+			return vulkanContext->Allocator.createBuffer(cmdBuf, vector, flags);
+		};
 
 		// Create the buffers on Device and copy vertices, indices and materials
 		nvvk::CommandPool  cmdBufGet(vulkanContext->Device, vulkanContext->GraphicsQueueIndex);
@@ -427,10 +362,21 @@ namespace MapLoader
 		VkBufferUsageFlags flag = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
 		VkBufferUsageFlags rayTracingFlags =  // used also for building acceleration structures
 			flag | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-		mesh.VertexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, loader.m_vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | rayTracingFlags);
-		mesh.IndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, loader.m_indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
-		mesh.MatColorBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, loader.m_materials, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
-		mesh.MatIndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, loader.m_matIndx, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
+		VkBufferUsageFlags vertexBufferFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | rayTracingFlags;
+
+		mesh.VertexPosBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexPositions, buffers.VertexBindings[0], vertexBufferFlags);
+		mesh.VertexAttribBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexAttributes, buffers.VertexBindings[1], vertexBufferFlags);
+		mesh.VertexColorBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexColors, buffers.VertexBindings[2], vertexBufferFlags);
+		mesh.VertexBinormalBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexBinormals, buffers.VertexBindings[3], vertexBufferFlags);
+		mesh.VertexMorphBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexMorphPos, buffers.VertexBindings[4], vertexBufferFlags);
+		mesh.VertexSkeletonBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexSkeleton, buffers.VertexBindings[5], vertexBufferFlags);
+
+		mesh.IndexBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.IndexBuffer, buffers.IndexBuffer.data(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
+
+		std::vector<int32_t> materialIndices(mesh.IndexCount / 3);
+
+		mesh.MatColorBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, std::vector<MaterialObj> { buffers.Material }, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
+		mesh.MatIndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, materialIndices, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
 		// Creates all textures found and find the offset for this model
 		auto txtOffset = 0;
 		AssetLibrary.GetTextures().FlushLoadingQueue(cmdBuf);
@@ -438,15 +384,48 @@ namespace MapLoader
 		vulkanContext->Allocator.finalizeAndReleaseStaging();
 
 		std::string objNb = std::to_string(Models.size());
-		vulkanContext->Debug.setObjectName(mesh.VertexBuffer.buffer, (std::string("vertex_" + objNb)));
+		
+		vulkanContext->Debug.setObjectName(mesh.VertexPosBuffer.buffer, (std::string("vertexPos_" + objNb)));
+
+		if (mesh.VertexAttribBuffer.buffer)
+			vulkanContext->Debug.setObjectName(mesh.VertexAttribBuffer.buffer, (std::string("vertexAttrib_" + objNb)));
+
+		if (mesh.VertexColorBuffer.buffer)
+			vulkanContext->Debug.setObjectName(mesh.VertexColorBuffer.buffer, (std::string("vertexColor_" + objNb)));
+
+		if (mesh.VertexBinormalBuffer.buffer)
+			vulkanContext->Debug.setObjectName(mesh.VertexBinormalBuffer.buffer, (std::string("vertexBinormal_" + objNb)));
+
+		if (mesh.VertexMorphBuffer.buffer)
+			vulkanContext->Debug.setObjectName(mesh.VertexMorphBuffer.buffer, (std::string("vertexMorph_" + objNb)));
+
+		if (mesh.VertexSkeletonBuffer.buffer)
+			vulkanContext->Debug.setObjectName(mesh.VertexSkeletonBuffer.buffer, (std::string("vertexSkeleton_" + objNb)));
+
 		vulkanContext->Debug.setObjectName(mesh.IndexBuffer.buffer, (std::string("index_" + objNb)));
 		vulkanContext->Debug.setObjectName(mesh.MatColorBuffer.buffer, (std::string("mat_" + objNb)));
 		vulkanContext->Debug.setObjectName(mesh.MatIndexBuffer.buffer, (std::string("matIdx_" + objNb)));
 
 		// Creating information for device access
-		ObjDesc desc;
-		desc.txtOffset = txtOffset | (invisible ? 0x80000000 : 0);
-		desc.vertexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexBuffer.buffer);
+		MeshDesc desc;
+		desc.displayFlags = (invisible ? 1 : 0);
+		desc.vertexPosAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexPosBuffer.buffer);
+
+		if (mesh.VertexAttribBuffer.buffer)
+			desc.vertexAttribAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexAttribBuffer.buffer);
+
+		if (mesh.VertexColorBuffer.buffer)
+			desc.vertexColorAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexColorBuffer.buffer);
+
+		if (mesh.VertexBinormalBuffer.buffer)
+			desc.vertexBinormalAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexBinormalBuffer.buffer);
+
+		if (mesh.VertexMorphBuffer.buffer)
+			desc.vertexMorphAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexMorphBuffer.buffer);
+
+		if (mesh.VertexSkeletonBuffer.buffer)
+			desc.vertexSkeletonAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexSkeletonBuffer.buffer);
+
 		desc.indexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.IndexBuffer.buffer);
 		desc.materialAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.MatColorBuffer.buffer);
 		desc.materialIndexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.MatIndexBuffer.buffer);
@@ -463,7 +442,12 @@ namespace MapLoader
 
 		for (auto& m : MeshDescriptions)
 		{
-			vulkanContext->Allocator.destroy(m.VertexBuffer);
+			vulkanContext->Allocator.destroy(m.VertexPosBuffer);
+			vulkanContext->Allocator.destroy(m.VertexAttribBuffer);
+			vulkanContext->Allocator.destroy(m.VertexColorBuffer);
+			vulkanContext->Allocator.destroy(m.VertexBinormalBuffer);
+			vulkanContext->Allocator.destroy(m.VertexMorphBuffer);
+			vulkanContext->Allocator.destroy(m.VertexSkeletonBuffer);
 			vulkanContext->Allocator.destroy(m.IndexBuffer);
 			vulkanContext->Allocator.destroy(m.MatColorBuffer);
 			vulkanContext->Allocator.destroy(m.MatIndexBuffer);

@@ -3,6 +3,7 @@
 #include <MapLoader/Items/EmotionLibrary.h>
 #include <MapLoader/Assets/GameAssetLibrary.h>
 #include <MapLoader/Scene/RTScene.h>
+#include <MapLoader/Map/FlatLibrary.h>
 
 namespace MapLoader
 {
@@ -33,11 +34,11 @@ namespace MapLoader
 
 			const std::vector<int>& indexBuffer = mesh->GetIndexBuffer();
 
-			for (size_t i = 0; i < indexBuffer.size(); i += 3)
+			for (size_t j = 0; j < indexBuffer.size(); j += 3)
 			{
-				size_t vertexAIndex = (size_t)indexBuffer[i];
-				size_t vertexBIndex = (size_t)indexBuffer[i + 1];
-				size_t vertexCIndex = (size_t)indexBuffer[i + 2];
+				size_t vertexAIndex = (size_t)indexBuffer[j];
+				size_t vertexBIndex = (size_t)indexBuffer[j + 1];
+				size_t vertexCIndex = (size_t)indexBuffer[j + 2];
 
 				const Vector3SF& vertexA = mesh->GetAttribute<Vector3SF>(vertexAIndex, positionIndex);
 				const Vector3SF& vertexB = mesh->GetAttribute<Vector3SF>(vertexBIndex, positionIndex);
@@ -68,7 +69,7 @@ namespace MapLoader
 					continue;
 
 				hit.Hit = true;
-				hit.Intersection = intersection;
+				hit.Intersection = rayStart + distance * rayDirection;
 				hit.Distance = distance;
 
 				float u = dot2 / length;
@@ -80,6 +81,7 @@ namespace MapLoader
 				const Vector3SF& normalC = mesh->GetAttribute<Vector3SF>(vertexCIndex, normalIndex);
 
 				hit.Normal = u * normalA + v * normalB + w * normalC;
+				hit.Normal = model->Transformations[i] * Vector3F(hit.Normal, 0);
 
 				if (hit.Normal.SquareLength() <= 1e-9f)
 					hit.Normal = faceNormal.Unit();
@@ -347,9 +349,10 @@ namespace MapLoader
 					Vector3SF front = hitData.Normal.Unit();
 					Vector3SF right = front.Cross(itemUp).Unit();
 					Vector3SF up = front.Cross(right).Unit();
-					Vector3SF rotation = hatData->AttachRotation;
 					
-					hatTransform = Matrix4F(hitData.Intersection, -up, -right, front) * Matrix4F::EulerAnglesRotation(rotation.X, rotation.Y, rotation.Z);
+					Matrix4F rotation = getMatrix(Vector3SF(0, 0, 0), hatData->AttachRotation, 1, true);
+
+					hatTransform = Matrix4F(hitData.Intersection, front, -up, -right) * rotation;
 				}
 			}
 		}
@@ -373,7 +376,7 @@ namespace MapLoader
 
 				if (slot->Name == "CP" && activeSlot.second.Item->Customization.HatAttach)
 				{
-					assetTransform = hatTransform * assetTransform;
+					assetTransform = assetTransform * hatTransform * Matrix4F(hatOffset);
 				}
 
 				if (asset.SelfNode == asset.TargetNode)

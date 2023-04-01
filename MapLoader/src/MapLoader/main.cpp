@@ -933,7 +933,7 @@ int main(int argc, char** argv)
 	baadf00d.FaceDecor = { 10400010 };
 	baadf00d.SkinColor = dyeColors.GetDyeColor(3);
 	baadf00d.Hair = { 10200250, dyeColors.GetDyeColor("Pink") };
-	baadf00d.Cosmetics.Hat = { 11300743, dyeColors.GetDyeColor("Red"), 0, Vector3SF(30, 0, 0), Vector3SF(10, 25, 20), Vector3SF(0, 0, -0.4f) };
+	baadf00d.Cosmetics.Hat = { 11300743, dyeColors.GetDyeColor("Red"), 0, Vector3SF(30, 0, 0), Vector3SF(10, 25, 20), Vector3SF(-5, 0, 0) };
 	baadf00d.Cosmetics.Shirt = { 11401065, dyeColors.GetDyeColor("Light Pink") };
 	baadf00d.Cosmetics.Pants = { 11500163, dyeColors.GetDyeColor("Pink") };
 	baadf00d.Cosmetics.Gloves = { 11620024, dyeColors.GetDyeColor("Red") };

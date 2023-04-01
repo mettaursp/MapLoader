@@ -37,7 +37,7 @@ namespace MapLoader
 
 	struct HatItem : public Item
 	{
-		bool CustomAttach = false;
+		Vector3SF AttachOrigin;
 		Vector3SF AttachDirection;
 		Vector3SF AttachRotation;
 	};

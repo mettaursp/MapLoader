@@ -15,6 +15,7 @@ namespace Engine
 	namespace Graphics
 	{
 		struct ModelPackageNode;
+		struct ModelPackageMaterial;
 	}
 }
 
@@ -71,6 +72,7 @@ namespace MapLoader
 		static std::unordered_set<std::string> UnmappedMaterials;
 
 		bool FetchModel(const Archive::ArchivePath& file, ModelData& loadedModel, bool keepRawData = false);
+		void LoadMaterial(MaterialObj& material, const Engine::Graphics::ModelPackageMaterial& packageMaterial);
 		void LoadBuffers(MeshBuffers& buffers, Engine::Graphics::ModelPackageNode& node);
 		uint32_t LoadModel(MeshBuffers& buffers, const Matrix4F& transform = Matrix4F(), bool invisible = false);
 	};

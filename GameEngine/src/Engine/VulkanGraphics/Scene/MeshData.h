@@ -85,13 +85,28 @@ namespace Engine
 		class MeshData : public Object
 		{
 		public:
+			struct MeshTypeEnum
+			{
+				enum MeshType
+				{
+					Triangles,
+					Lines
+				};
+			};
+
+			typedef MeshTypeEnum::MeshType MeshType;
+
 			void SetFormat(const std::shared_ptr<MeshFormat>& format);
 			const std::shared_ptr<MeshFormat>& GetFormat() const { return Format; }
 
 			size_t GetTotalSize(size_t binding) const;
 			size_t GetBindingCount() const;
 			size_t GetVertices() const { return Vertices; }
-			size_t GetTriangleVertices() const { return Indices.size(); }
+			size_t GetIndices() const { return Indices.size(); }
+			size_t GetTriangles() const { return Indices.size() / 3; }
+			size_t GetLines() const { return Indices.size() / 2; }
+			size_t GetPrimitives() const;
+			MeshType GetType() const { return Type; }
 			const void* const* GetData() const { return DataPointers.data(); }
 			void** GetData() { return DataPointers.data(); }
 			void* GetIndexData() { return Indices.data(); }
@@ -118,6 +133,7 @@ namespace Engine
 		private:
 			std::shared_ptr<MeshFormat> Format;
 
+			MeshType Type = MeshType::Triangles;
 			size_t Vertices = 0;
 			std::vector<std::vector<unsigned char>> Data;
 			std::vector<void*> DataPointers;
@@ -211,4 +227,9 @@ namespace Engine
 			Format->ForEach(DataPointers.data(), attributeIndex, Vertices, callback);
 		}
 	}
+}
+
+namespace Enum
+{
+	typedef Engine::Graphics::MeshData::MeshType MeshType;
 }

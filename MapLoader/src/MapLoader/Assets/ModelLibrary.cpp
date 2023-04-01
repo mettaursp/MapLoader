@@ -83,8 +83,6 @@ namespace MapLoader
 			parser.Package->Nodes[0].Transform->Update(0);
 		}
 
-		auto& textureLibrary = AssetLibrary.GetTextures();
-
 		std::unordered_map<unsigned int, int> formatUseCount;
 
 		for (size_t i = 0; i < parser.Package->Nodes.size(); ++i)
@@ -115,123 +113,7 @@ namespace MapLoader
 					loadedModel.Shaders[i] = packageMaterial.ShaderName;
 					loadedModel.MaterialNames[i] = packageMaterial.Name;
 
-					material.diffuse[0] = packageMaterial.DiffuseColor.R;
-					material.diffuse[1] = packageMaterial.DiffuseColor.G;
-					material.diffuse[2] = packageMaterial.DiffuseColor.B;
-
-					material.specular[0] = packageMaterial.SpecularColor.R;
-					material.specular[1] = packageMaterial.SpecularColor.G;
-					material.specular[2] = packageMaterial.SpecularColor.B;
-
-					material.ambient[0] = packageMaterial.AmbientColor.R;
-					material.ambient[1] = packageMaterial.AmbientColor.G;
-					material.ambient[2] = packageMaterial.AmbientColor.B;
-
-					material.emission[0] = packageMaterial.EmissiveColor.R;
-					material.emission[1] = packageMaterial.EmissiveColor.G;
-					material.emission[2] = packageMaterial.EmissiveColor.B;
-
-					material.shininess = packageMaterial.Shininess;
-					material.dissolve = packageMaterial.Alpha;
-					material.colorBoost = packageMaterial.ColorBoost;
-					material.fresnelBoost = packageMaterial.FresnelBoost;
-					material.fresnelExponent = packageMaterial.FresnelExponent;
-
-					int shaderType = 0;
-
-					const auto& materialTypeIndex = MaterialTypeMap.find(packageMaterial.ShaderName);
-
-					if (materialTypeIndex != MaterialTypeMap.end())
-					{
-						shaderType = materialTypeIndex->second;
-					}
-					else
-					{
-						if (!UnmappedMaterials.contains(packageMaterial.ShaderName) && packageMaterial.ShaderName != "")
-							UnmappedMaterials.insert(packageMaterial.ShaderName);
-					}
-
-					std::string diffuse = packageMaterial.Diffuse.substr(0, diffuse.size() - 4);
-
-					if (strcmp(diffuse.c_str() + diffuse.size() - 4, ".dds") == 0)
-					{
-						diffuse = diffuse;
-					}
-
-					VkSamplerCreateInfo sampler = TextureAsset::GetDefaultSampler();
-
-					std::string anisotropic = fs::path(packageMaterial.Anisotropic).stem().string();
-
-					if (lower(anisotropic) == "hair_a")
-						anisotropic = "Resource/Model/Textures/item_hair/hair_a";
-
-					material.textures = (int)MaterialTextures.size();
-
-					MaterialTextures.push_back({});
-
-					::MaterialTextures& textures = MaterialTextures.back();
-
-					textures.diffuse.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Diffuse).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.specular.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Specular).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.normal.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Normal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.colorOverride.id = textureLibrary.FetchTexture(fs::path(packageMaterial.OverrideColor).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.emissive.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Glow).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.decal.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Decal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
-					textures.anisotropic.id = textureLibrary.FetchTexture(anisotropic, VK_FORMAT_R8G8B8A8_UNORM, sampler);
-
-					const auto getTransform = [this](const Engine::Graphics::ModelPackageTextureTransform& modelTransform) -> int
-					{
-						if (!modelTransform.Active)
-						{
-							return -1;
-						}
-
-						int id = (int)TextureTransforms.size();
-
-						TextureTransforms.push_back(TextureTransform{});
-
-						TextureTransform& transform = TextureTransforms.back();
-
-						transform.translation = vec2{ modelTransform.Translation.X, modelTransform.Translation.Y };
-						transform.scale = vec2{ modelTransform.Scale.X, modelTransform.Scale.Y };
-						transform.pivot = vec2{ modelTransform.Pivot.X, modelTransform.Pivot.Y };
-						transform.rotation = modelTransform.Rotation;
-						transform.mode = modelTransform.Mode;
-
-						return id;
-					};
-
-					textures.diffuse.transformId = getTransform(packageMaterial.DiffuseTransform);
-					textures.specular.transformId = getTransform(packageMaterial.SpecularTransform);
-					textures.normal.transformId = getTransform(packageMaterial.NormalTransform);
-					textures.colorOverride.transformId = getTransform(packageMaterial.OverrideColorTransform);
-					textures.emissive.transformId = getTransform(packageMaterial.GlowTransform);
-					textures.decal.transformId = getTransform(packageMaterial.DecalTransform);
-					textures.anisotropic.transformId = getTransform(packageMaterial.AnisotropicTransform);
-
-					//material.overrideColor0[0] = packageMaterial.OverrideColor0.R;
-					//material.overrideColor0[1] = packageMaterial.OverrideColor0.G;
-					//material.overrideColor0[2] = packageMaterial.OverrideColor0.B;
-					//
-					//material.overrideColor1[0] = packageMaterial.OverrideColor1.R;
-					//material.overrideColor1[1] = packageMaterial.OverrideColor1.G;
-					//material.overrideColor1[2] = packageMaterial.OverrideColor1.B;
-					//
-					//material.overrideColor2[0] = packageMaterial.OverrideColor2.R;
-					//material.overrideColor2[1] = packageMaterial.OverrideColor2.G;
-					//material.overrideColor2[2] = packageMaterial.OverrideColor2.B;
-
-					bool debugDrawObject = packageMaterial.Name == "" && packageMaterial.ShaderName == "";
-
-					material.shaderType = (shaderType << 16) | (int)debugDrawObject;
-
-					material.textureModes = (int)packageMaterial.TextureApplyMode; // 2 bits
-					material.textureModes |= ((int)packageMaterial.SourceVertexMode << 2); // 2 bits
-					material.textureModes |= ((int)packageMaterial.LightingMode << 4); // 1 bit
-					material.textureModes |= ((int)packageMaterial.SourceBlendMode << 5); // 4 bits
-					material.textureModes |= ((int)packageMaterial.DestBlendMode << 9); // 4 bits
-					material.textureModes |= ((int)packageMaterial.AlphaTestMode << 13); // 4 bits
-					material.textureModes |= ((int)packageMaterial.TestThreshold << 17); // 4 bits
+					LoadMaterial(meshBuffers.Material, packageMaterial);
 				}
 
 				if (node.MaterialIndex == -1)
@@ -277,6 +159,129 @@ namespace MapLoader
 		FreeResources();
 	}
 
+	void ModelLibrary::LoadMaterial(MaterialObj& material, const Engine::Graphics::ModelPackageMaterial& packageMaterial)
+	{
+		material.diffuse[0] = packageMaterial.DiffuseColor.R;
+		material.diffuse[1] = packageMaterial.DiffuseColor.G;
+		material.diffuse[2] = packageMaterial.DiffuseColor.B;
+
+		material.specular[0] = packageMaterial.SpecularColor.R;
+		material.specular[1] = packageMaterial.SpecularColor.G;
+		material.specular[2] = packageMaterial.SpecularColor.B;
+
+		material.ambient[0] = packageMaterial.AmbientColor.R;
+		material.ambient[1] = packageMaterial.AmbientColor.G;
+		material.ambient[2] = packageMaterial.AmbientColor.B;
+
+		material.emission[0] = packageMaterial.EmissiveColor.R;
+		material.emission[1] = packageMaterial.EmissiveColor.G;
+		material.emission[2] = packageMaterial.EmissiveColor.B;
+
+		material.shininess = packageMaterial.Shininess;
+		material.dissolve = packageMaterial.Alpha;
+		material.colorBoost = packageMaterial.ColorBoost;
+		material.fresnelBoost = packageMaterial.FresnelBoost;
+		material.fresnelExponent = packageMaterial.FresnelExponent;
+
+		int shaderType = 0;
+
+		const auto& materialTypeIndex = MaterialTypeMap.find(packageMaterial.ShaderName);
+
+		if (materialTypeIndex != MaterialTypeMap.end())
+		{
+			shaderType = materialTypeIndex->second;
+		}
+		else
+		{
+			if (!UnmappedMaterials.contains(packageMaterial.ShaderName) && packageMaterial.ShaderName != "")
+				UnmappedMaterials.insert(packageMaterial.ShaderName);
+		}
+
+		std::string diffuse = packageMaterial.Diffuse.substr(0, diffuse.size() - 4);
+
+		if (strcmp(diffuse.c_str() + diffuse.size() - 4, ".dds") == 0)
+		{
+			diffuse = diffuse;
+		}
+
+		VkSamplerCreateInfo sampler = TextureAsset::GetDefaultSampler();
+
+		std::string anisotropic = fs::path(packageMaterial.Anisotropic).stem().string();
+
+		if (lower(anisotropic) == "hair_a")
+			anisotropic = "Resource/Model/Textures/item_hair/hair_a";
+
+		material.textures = (int)MaterialTextures.size();
+
+		MaterialTextures.push_back({});
+
+		::MaterialTextures& textures = MaterialTextures.back();
+
+		auto& textureLibrary = AssetLibrary.GetTextures();
+
+		textures.diffuse.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Diffuse).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+		textures.specular.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Specular).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+		textures.normal.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Normal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+		textures.colorOverride.id = textureLibrary.FetchTexture(fs::path(packageMaterial.OverrideColor).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+		textures.emissive.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Glow).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+		textures.decal.id = textureLibrary.FetchTexture(fs::path(packageMaterial.Decal).stem().string(), VK_FORMAT_R8G8B8A8_UNORM, sampler);
+		textures.anisotropic.id = textureLibrary.FetchTexture(anisotropic, VK_FORMAT_R8G8B8A8_UNORM, sampler);
+
+		const auto getTransform = [this](const Engine::Graphics::ModelPackageTextureTransform& modelTransform) -> int
+		{
+			if (!modelTransform.Active)
+			{
+				return -1;
+			}
+
+			int id = (int)TextureTransforms.size();
+
+			TextureTransforms.push_back(TextureTransform{});
+
+			TextureTransform& transform = TextureTransforms.back();
+
+			transform.translation = vec2{ modelTransform.Translation.X, modelTransform.Translation.Y };
+			transform.scale = vec2{ modelTransform.Scale.X, modelTransform.Scale.Y };
+			transform.pivot = vec2{ modelTransform.Pivot.X, modelTransform.Pivot.Y };
+			transform.rotation = modelTransform.Rotation;
+			transform.mode = modelTransform.Mode;
+
+			return id;
+		};
+
+		textures.diffuse.transformId = getTransform(packageMaterial.DiffuseTransform);
+		textures.specular.transformId = getTransform(packageMaterial.SpecularTransform);
+		textures.normal.transformId = getTransform(packageMaterial.NormalTransform);
+		textures.colorOverride.transformId = getTransform(packageMaterial.OverrideColorTransform);
+		textures.emissive.transformId = getTransform(packageMaterial.GlowTransform);
+		textures.decal.transformId = getTransform(packageMaterial.DecalTransform);
+		textures.anisotropic.transformId = getTransform(packageMaterial.AnisotropicTransform);
+
+		//material.overrideColor0[0] = packageMaterial.OverrideColor0.R;
+		//material.overrideColor0[1] = packageMaterial.OverrideColor0.G;
+		//material.overrideColor0[2] = packageMaterial.OverrideColor0.B;
+		//
+		//material.overrideColor1[0] = packageMaterial.OverrideColor1.R;
+		//material.overrideColor1[1] = packageMaterial.OverrideColor1.G;
+		//material.overrideColor1[2] = packageMaterial.OverrideColor1.B;
+		//
+		//material.overrideColor2[0] = packageMaterial.OverrideColor2.R;
+		//material.overrideColor2[1] = packageMaterial.OverrideColor2.G;
+		//material.overrideColor2[2] = packageMaterial.OverrideColor2.B;
+
+		bool debugDrawObject = packageMaterial.Name == "" && packageMaterial.ShaderName == "";
+
+		material.shaderType = (shaderType << 16) | (int)debugDrawObject;
+
+		material.textureModes = (int)packageMaterial.TextureApplyMode; // 2 bits
+		material.textureModes |= ((int)packageMaterial.SourceVertexMode << 2); // 2 bits
+		material.textureModes |= ((int)packageMaterial.LightingMode << 4); // 1 bit
+		material.textureModes |= ((int)packageMaterial.SourceBlendMode << 5); // 4 bits
+		material.textureModes |= ((int)packageMaterial.DestBlendMode << 9); // 4 bits
+		material.textureModes |= ((int)packageMaterial.AlphaTestMode << 13); // 4 bits
+		material.textureModes |= ((int)packageMaterial.TestThreshold << 17); // 4 bits
+	}
+
 	void ModelLibrary::LoadBuffers(MeshBuffers& buffers, Engine::Graphics::ModelPackageNode& node)
 	{
 		std::vector<Engine::Graphics::VertexAttributeFormat> attributes;
@@ -311,7 +316,7 @@ namespace MapLoader
 		const auto& nodeAttributes = node.Format->GetAttributes();
 
 		size_t vertices = node.Mesh->GetVertices();
-		size_t indices = node.Mesh->GetTriangleVertices();
+		size_t indices = node.Mesh->GetIndices();
 
 		const auto enableBinding = [](auto& buffers, const auto& format, size_t binding, auto& vector, size_t size)
 		{

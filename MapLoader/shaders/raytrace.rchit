@@ -260,6 +260,8 @@ void main()
 
 	vec3 binormal = vec3(0, 0, 0);
 	vec3 tangent = vec3(0, 0, 0);
+	vec3 worldBinormal = vec3(0, 0, 0);
+	vec3 worldTangent = vec3(0, 0, 0);
 
 	if (objResource.vertexBinormalAddress != 0 && (textures.anisotropic.id >= 0 || textures.normal.id >= 0))
 	{
@@ -271,6 +273,9 @@ void main()
 
 		binormal = normalize(v0tbn.binormal * barycentrics.x + v1tbn.binormal * barycentrics.y + v2tbn.binormal * barycentrics.z);
 		tangent = normalize(v0tbn.tangent * barycentrics.x + v1tbn.tangent * barycentrics.y + v2tbn.tangent * barycentrics.z);
+
+		worldBinormal = normalize(vec3(binormal * gl_WorldToObjectEXT));
+		worldTangent = normalize(vec3(tangent * gl_WorldToObjectEXT));
 	}
 
 	if (textures.anisotropic.id >= 0)
@@ -427,11 +432,11 @@ void main()
 
 				if (textures.anisotropic.id >= 0)
 				{
-					vec3 directionBias = normalize(anisotropicColor.x * tangent + anisotropicColor.y * binormal);
+					vec3 directionBias = normalize(anisotropicColor.x * worldTangent + anisotropicColor.y * worldBinormal);
 
 					float biasDot = dot(halfVector, directionBias);
 					biasDot = 1 - biasDot * biasDot;
-					float binormalDot = dot(halfVector, binormal);
+					float binormalDot = dot(halfVector, worldBinormal);
 
 					float biasExponent = lightDot > 0 ? log2(biasDot) : -16.6096401;
 					float binormalExponent = binormalDot > 0 ? log2(binormalDot) : -16.6096401;

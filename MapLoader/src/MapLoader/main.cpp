@@ -192,83 +192,6 @@ const float PI = 3.14159265359f;
 
 Matrix4F ms2ToWorld = Matrix4F::NewScale(0.02f / 3.f, 0.02f / 3.f, 0.02f / 3.f) * Matrix4F::PitchRotation(-PI / 2);
 
-struct RayHit
-{
-	float Distance = std::numeric_limits<float>::max();
-	bool Hit = false;
-	Vector3SF Intersection;
-	Vector3SF Normal;
-};
-
-RayHit castRay(const MapLoader::ModelData* model, Vector3SF rayStart, Vector3SF rayDirection)
-{
-	RayHit hit;
-
-	for (const std::shared_ptr<Engine::Graphics::MeshData>& mesh : model->Meshes)
-	{
-		if (mesh == nullptr) continue;
-
-		size_t positionIndex = mesh->GetFormat()->GetAttributeIndex("position");
-		size_t normalIndex = mesh->GetFormat()->GetAttributeIndex("normal");
-
-		const std::vector<int>& indexBuffer = mesh->GetIndexBuffer();
-
-		for (size_t i = 0; i < indexBuffer.size(); i += 3)
-		{
-			size_t vertexAIndex = (size_t)indexBuffer[i];
-			size_t vertexBIndex = (size_t)indexBuffer[i + 1];
-			size_t vertexCIndex = (size_t)indexBuffer[i + 2];
-
-			const Vector3SF& vertexA = mesh->GetAttribute<Vector3SF>(vertexAIndex, positionIndex);
-			const Vector3SF& vertexB = mesh->GetAttribute<Vector3SF>(vertexBIndex, positionIndex);
-			const Vector3SF& vertexC = mesh->GetAttribute<Vector3SF>(vertexCIndex, positionIndex);
-
-			Vector3SF faceNormal = (vertexB - vertexA).Cross(vertexC - vertexA);
-
-			float length = faceNormal.SquareLength();
-
-			if (length <= 1e-9)
-			{
-				continue; // degenerate triangle (0 area)
-			}
-
-			float normalDot = faceNormal * rayDirection;
-			float distance = (faceNormal * (vertexA - rayStart)) / normalDot;
-
-			if (distance > hit.Distance || distance < 0)
-				continue;
-
-			Vector3SF intersection = rayStart + distance * rayDirection;
-
-			float dot1 = (vertexB - vertexA).Cross(intersection - vertexA).Dot(faceNormal);
-			float dot2 = (vertexC - vertexB).Cross(intersection - vertexB).Dot(faceNormal);
-			float dot3 = (vertexA - vertexC).Cross(intersection - vertexC).Dot(faceNormal);
-
-			if (!(std::signbit(dot1) == std::signbit(dot2) && std::signbit(dot1) == std::signbit(dot3)))
-				continue;
-
-			hit.Hit = true;
-			hit.Intersection = intersection;
-			hit.Distance = distance;
-
-			float u = dot2 * length;
-			float v = dot3 * length;
-			float w = 1 - u - v;
-
-			const Vector3SF& normalA = mesh->GetAttribute<Vector3SF>(vertexAIndex, normalIndex);
-			const Vector3SF& normalB = mesh->GetAttribute<Vector3SF>(vertexBIndex, normalIndex);
-			const Vector3SF& normalC = mesh->GetAttribute<Vector3SF>(vertexCIndex, normalIndex);
-
-			hit.Normal = u * normalA + v * normalB + w * normalC;
-
-			if (hit.Normal.SquareLength() <= 1e-9f)
-				hit.Normal = faceNormal.Unit();
-		}
-	}
-	
-	return hit;
-}
-
 struct Bounds
 {
 	Vector3SF Min = { std::numeric_limits<float>::max(), std::numeric_limits<float>::max() , std::numeric_limits<float>::max() };
@@ -1010,7 +933,7 @@ int main(int argc, char** argv)
 	baadf00d.FaceDecor = { 10400010 };
 	baadf00d.SkinColor = dyeColors.GetDyeColor(3);
 	baadf00d.Hair = { 10200250, dyeColors.GetDyeColor("Pink") };
-	baadf00d.Cosmetics.Hat = { 11300743, dyeColors.GetDyeColor("Red") };
+	baadf00d.Cosmetics.Hat = { 11300743, dyeColors.GetDyeColor("Red"), 0, Vector3SF(30, 0, 0), Vector3SF(10, 25, 20), Vector3SF(0, 0, -0.4f) };
 	baadf00d.Cosmetics.Shirt = { 11401065, dyeColors.GetDyeColor("Light Pink") };
 	baadf00d.Cosmetics.Pants = { 11500163, dyeColors.GetDyeColor("Pink") };
 	baadf00d.Cosmetics.Gloves = { 11620024, dyeColors.GetDyeColor("Red") };

@@ -6,6 +6,89 @@
 
 namespace MapLoader
 {
+	struct RayHit
+	{
+		float Distance = 0;
+		bool Hit = false;
+		Vector3SF Intersection;
+		Vector3SF Normal;
+	};
+
+	RayHit castRay(const MapLoader::ModelData* model, Vector3SF rayStart, Vector3SF rayDirection)
+	{
+		RayHit hit;
+
+		for (size_t i = 0; i < model->Transformations.size(); ++i)
+		{
+			const auto& mesh = model->Meshes[i];
+
+			if (mesh == nullptr) continue;
+
+			Matrix4F transform = model->Transformations[i].Inverted();
+			Vector3SF localStart = transform * Vector3F(rayStart, 1);
+			Vector3SF localDirection = transform * Vector3F(rayDirection, 0);
+
+			size_t positionIndex = mesh->GetFormat()->GetAttributeIndex("position");
+			size_t normalIndex = mesh->GetFormat()->GetAttributeIndex("normal");
+
+			const std::vector<int>& indexBuffer = mesh->GetIndexBuffer();
+
+			for (size_t i = 0; i < indexBuffer.size(); i += 3)
+			{
+				size_t vertexAIndex = (size_t)indexBuffer[i];
+				size_t vertexBIndex = (size_t)indexBuffer[i + 1];
+				size_t vertexCIndex = (size_t)indexBuffer[i + 2];
+
+				const Vector3SF& vertexA = mesh->GetAttribute<Vector3SF>(vertexAIndex, positionIndex);
+				const Vector3SF& vertexB = mesh->GetAttribute<Vector3SF>(vertexBIndex, positionIndex);
+				const Vector3SF& vertexC = mesh->GetAttribute<Vector3SF>(vertexCIndex, positionIndex);
+
+				Vector3SF faceNormal = (vertexB - vertexA).Cross(vertexC - vertexA);
+
+				float length = faceNormal.SquareLength();
+
+				if (length <= 1e-9)
+				{
+					continue; // degenerate triangle (0 area)
+				}
+
+				float normalDot = faceNormal * localDirection;
+				float distance = (faceNormal * (vertexA - localStart)) / normalDot;
+
+				if (distance < hit.Distance)
+					continue;
+
+				Vector3SF intersection = localStart + distance * localDirection;
+
+				float dot1 = (vertexB - vertexA).Cross(intersection - vertexA).Dot(faceNormal);
+				float dot2 = (vertexC - vertexB).Cross(intersection - vertexB).Dot(faceNormal);
+				float dot3 = (vertexA - vertexC).Cross(intersection - vertexC).Dot(faceNormal);
+
+				if (!(std::signbit(dot1) == std::signbit(dot2) && std::signbit(dot1) == std::signbit(dot3)))
+					continue;
+
+				hit.Hit = true;
+				hit.Intersection = intersection;
+				hit.Distance = distance;
+
+				float u = dot2 / length;
+				float v = dot3 / length;
+				float w = 1 - u - v;
+
+				const Vector3SF& normalA = mesh->GetAttribute<Vector3SF>(vertexAIndex, normalIndex);
+				const Vector3SF& normalB = mesh->GetAttribute<Vector3SF>(vertexBIndex, normalIndex);
+				const Vector3SF& normalC = mesh->GetAttribute<Vector3SF>(vertexCIndex, normalIndex);
+
+				hit.Normal = u * normalA + v * normalB + w * normalC;
+
+				if (hit.Normal.SquareLength() <= 1e-9f)
+					hit.Normal = faceNormal.Unit();
+			}
+		}
+
+		return hit;
+	}
+
 	template <typename T>
 	bool contains(const std::vector<T>& vector, const T& searchFor)
 	{
@@ -216,6 +299,8 @@ namespace MapLoader
 
 		spawningRig = false;
 
+		Transforms["Bip01_HeadNub"] = {};
+
 		for (size_t i = 0; i < rig->Transformations.size(); ++i)
 		{
 			const auto transformIndex = Transforms.find(rig->NodeNames[i]);
@@ -227,6 +312,47 @@ namespace MapLoader
 		std::vector<const ItemModel*> addedModels;
 
 		Matrix4F hatTransform;
+		Vector3SF hatOffset;
+
+		const auto& hat = ActiveSlots.find("CP");
+
+		if (hat != ActiveSlots.end() && hat->second.Item->Customization.HatAttach)
+		{
+			const auto& hatAsset = hat->second.Slot->Assets[0];
+			ModelData* hatModel = hatAsset.Model;
+
+			for (size_t i = 0; i < hatModel->NodeNames.size(); ++i)
+			{
+				if (hatAsset.SelfNode == hatModel->NodeNames[i].substr(0, hatAsset.SelfNode.size()))
+				{
+					hatOffset = -hatModel->Transformations[i].Translation();
+
+					break;
+				}
+			}
+
+			const auto& hair = ActiveSlots.find("HR");
+
+			if (hair != ActiveSlots.end())
+			{
+				ModelData* hairModel = hair->second.Slot->Assets[0].Model;
+				const HatItem* hatData = reinterpret_cast<const HatItem*>(hat->second.Customization);
+
+				RayHit hitData = castRay(hairModel, hatData->AttachOrigin, hatData->AttachDirection);
+
+				if (hitData.Hit)
+				{
+					Vector3SF itemUp(1, 0, 0);
+
+					Vector3SF front = hitData.Normal.Unit();
+					Vector3SF right = front.Cross(itemUp).Unit();
+					Vector3SF up = front.Cross(right).Unit();
+					Vector3SF rotation = hatData->AttachRotation;
+					
+					hatTransform = Matrix4F(hitData.Intersection, -up, -right, front) * Matrix4F::EulerAnglesRotation(rotation.X, rotation.Y, rotation.Z);
+				}
+			}
+		}
 
 		for (auto& activeSlot : ActiveSlots)
 		{
@@ -235,14 +361,6 @@ namespace MapLoader
 			const ItemSlot* slot = currentSlot->Slot;
 
 			dyeColor = currentSlot->Customization->Color;
-
-			if (currentSlot->Item->Customization.HasDefaultHatTransform)
-			{
-				const auto transformIndex = Transforms.find("HR");
-
-				if (transformIndex != Transforms.end())
-					hatTransform = currentSlot->Item->Customization.DefaultHatTransform;
-			}
 
 			for (const ItemData& asset : slot->Assets)
 			{
@@ -253,16 +371,21 @@ namespace MapLoader
 				if (transformIndex != Transforms.end())
 					assetTransform = transformIndex->second;
 
-				if (slot->Name == "CP")
-					assetTransform = assetTransform * hatTransform;
-
-				for (size_t i = 0; i < asset.Model->NodeNames.size(); ++i)
+				if (slot->Name == "CP" && activeSlot.second.Item->Customization.HatAttach)
 				{
-					if (asset.SelfNode == asset.Model->NodeNames[i].substr(0, asset.SelfNode.size()))
-					{
-						assetTransform = assetTransform * asset.Model->Transformations[i].Inverted();
+					assetTransform = hatTransform * assetTransform;
+				}
 
-						break;
+				if (asset.SelfNode == asset.TargetNode)
+				{
+					for (size_t i = 0; i < asset.Model->NodeNames.size(); ++i)
+					{
+						if (asset.SelfNode == asset.Model->NodeNames[i].substr(0, asset.SelfNode.size()))
+						{
+							assetTransform = assetTransform * asset.Model->Transformations[i].Inverted();
+					
+							break;
+						}
 					}
 				}
 

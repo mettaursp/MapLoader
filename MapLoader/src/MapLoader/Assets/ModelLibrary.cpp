@@ -70,13 +70,18 @@ namespace MapLoader
 		file.Read(NifDocumentBuffer);
 		parser.Parse(NifDocumentBuffer);
 
-		loadedModel.MeshIds.resize(parser.Package->Nodes.size());
-		loadedModel.Transformations.resize(parser.Package->Nodes.size());
-		loadedModel.Materials.resize(parser.Package->Nodes.size());
-		loadedModel.Shaders.resize(parser.Package->Nodes.size());
-		loadedModel.MaterialNames.resize(parser.Package->Nodes.size());
-		loadedModel.NodeNames.resize(parser.Package->Nodes.size());
-		loadedModel.Meshes.resize(parser.Package->Nodes.size());
+		size_t nodeCount = parser.Package->Nodes.size();
+
+		loadedModel.Nodes.resize(nodeCount);
+		//loadedModel.MeshIds.resize(nodeCount);
+		//loadedModel.Transformations.resize(nodeCount);
+		//loadedModel.Materials.resize(nodeCount);
+		//loadedModel.Shaders.resize(nodeCount);
+		//loadedModel.MaterialNames.resize(nodeCount);
+		//loadedModel.NodeNames.resize(nodeCount);
+		//loadedModel.Meshes.resize(nodeCount);
+		//loadedModel.MeshSkins.resize(nodeCount);
+		loadedModel.BoneIndices = parser.Package->Bones;
 
 		if (parser.Package->Nodes.size() > 0)
 		{
@@ -88,17 +93,20 @@ namespace MapLoader
 		for (size_t i = 0; i < parser.Package->Nodes.size(); ++i)
 		{
 			Engine::Graphics::ModelPackageNode& node = parser.Package->Nodes[i];
+			ModelNode& modelNode = loadedModel.Nodes[i];
 
-			loadedModel.MeshIds[i] = -1;
-			loadedModel.NodeNames[i] = node.Name;
+			modelNode.Name = node.Name;
+			modelNode.IsBone = node.IsBone;
+			modelNode.Bones = node.Bones;
+			modelNode.AttachedTo = node.AttachedTo;
 
 			if (node.Transform != nullptr)
-				loadedModel.Transformations[i] = node.Transform->GetWorldTransformation();
+				modelNode.Transformation = node.Transform->GetWorldTransformation();
 
 			if (node.Mesh != nullptr)
 			{
 				if (keepRawData)
-					loadedModel.Meshes[i] = node.Mesh;
+					modelNode.Mesh = node.Mesh;
 
 				MeshBuffers meshBuffers;
 
@@ -110,8 +118,8 @@ namespace MapLoader
 				{
 					const Engine::Graphics::ModelPackageMaterial& packageMaterial = parser.Package->Materials[node.MaterialIndex];
 
-					loadedModel.Shaders[i] = packageMaterial.ShaderName;
-					loadedModel.MaterialNames[i] = packageMaterial.Name;
+					modelNode.Shader = packageMaterial.ShaderName;
+					modelNode.MaterialName = packageMaterial.Name;
 
 					LoadMaterial(meshBuffers.Material, packageMaterial);
 				}
@@ -121,8 +129,8 @@ namespace MapLoader
 					i += 0;
 				}
 
-				loadedModel.Materials[i] = meshBuffers.Material;
-				loadedModel.MeshIds[i] = (int)LoadModel(meshBuffers);
+				modelNode.Material = meshBuffers.Material;
+				modelNode.MeshId = (int)LoadModel(meshBuffers);
 			}
 		}
 
@@ -145,11 +153,11 @@ namespace MapLoader
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 2, "texcoord", 0 });
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "normal", 0 });
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "color", 0 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 3 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 3 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "morphpos", 4 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "blendindices", 5 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 4, "blendweight", 5 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 1 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 1 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "morphpos", 2 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "blendindices", 3 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 4, "blendweight", 3 });
 
 		MeshFormat = Engine::Graphics::MeshFormat::GetFormat(attributes);
 	}
@@ -327,11 +335,9 @@ namespace MapLoader
 		};
 
 		enableBinding(buffers, bufferFormat, 0, buffers.VertexPositions, vertices);
-		enableBinding(buffers, bufferFormat, 1, buffers.VertexAttributes, vertices);
-		enableBinding(buffers, bufferFormat, 2, buffers.VertexColors, vertices);
-		enableBinding(buffers, bufferFormat, 3, buffers.VertexBinormals, vertices);
-		enableBinding(buffers, bufferFormat, 4, buffers.VertexMorphPos, vertices);
-		enableBinding(buffers, bufferFormat, 5, buffers.VertexSkeleton, vertices);
+		enableBinding(buffers, bufferFormat, 1, buffers.VertexBinormals, vertices);
+		enableBinding(buffers, bufferFormat, 2, buffers.VertexMorphPos, vertices);
+		enableBinding(buffers, bufferFormat, 3, buffers.VertexSkeleton, vertices);
 
 		buffers.IndexBuffer = node.Mesh->GetIndexBuffer();
 
@@ -366,11 +372,9 @@ namespace MapLoader
 		VkBufferUsageFlags vertexBufferFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | rayTracingFlags;
 
 		mesh.VertexPosBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexPositions, buffers.VertexBindings[0], vertexBufferFlags);
-		mesh.VertexAttribBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexAttributes, buffers.VertexBindings[1], vertexBufferFlags);
-		mesh.VertexColorBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexColors, buffers.VertexBindings[2], vertexBufferFlags);
-		mesh.VertexBinormalBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexBinormals, buffers.VertexBindings[3], vertexBufferFlags);
-		mesh.VertexMorphBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexMorphPos, buffers.VertexBindings[4], vertexBufferFlags);
-		mesh.VertexSkeletonBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexSkeleton, buffers.VertexBindings[5], vertexBufferFlags);
+		mesh.VertexBinormalBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexBinormals, buffers.VertexBindings[1], vertexBufferFlags);
+		mesh.VertexMorphBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexMorphPos, buffers.VertexBindings[2], vertexBufferFlags);
+		mesh.VertexSkeletonBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexSkeleton, buffers.VertexBindings[3], vertexBufferFlags);
 
 		mesh.IndexBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.IndexBuffer, buffers.IndexBuffer.data(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
 
@@ -437,6 +441,49 @@ namespace MapLoader
 		return index;
 	}
 
+	uint32_t ModelLibrary::LoadWireframeMesh(const std::vector<VertexPosBinding>& vertices, const std::vector<int>& indices)
+	{
+		uint32_t index = (uint32_t)WireframeDescriptions.size();
+
+		WireframeDescriptions.push_back({});
+		WireframeDescription& mesh = WireframeDescriptions.back();
+
+		mesh.IndexCount = (uint32_t)indices.size();
+		mesh.VertexCount = (uint32_t)vertices.size();
+
+		const auto& vulkanContext = AssetLibrary.GetVulkanContext();
+
+		// Create the buffers on Device and copy vertices, indices and materials
+		nvvk::CommandPool  cmdBufGet(vulkanContext->Device, vulkanContext->GraphicsQueueIndex);
+		VkCommandBuffer    cmdBuf = cmdBufGet.createCommandBuffer();
+		VkBufferUsageFlags flag = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
+		VkBufferUsageFlags rayTracingFlags =  // used also for building acceleration structures
+			flag | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
+		VkBufferUsageFlags vertexBufferFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | rayTracingFlags;
+
+		mesh.VertexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, vertices, vertexBufferFlags);
+		mesh.IndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
+
+		cmdBufGet.submitAndWait(cmdBuf);
+		vulkanContext->Allocator.finalizeAndReleaseStaging();
+
+		std::string objNb = std::to_string(index);
+
+		vulkanContext->Debug.setObjectName(mesh.VertexBuffer.buffer, (std::string("wireframeVertexPos_" + objNb)));
+
+		vulkanContext->Debug.setObjectName(mesh.IndexBuffer.buffer, (std::string("wireframeIndex_" + objNb)));
+
+		// Creating information for device access
+		WireframeDesc desc;
+		desc.vertexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexBuffer.buffer);
+		desc.indexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.IndexBuffer.buffer);
+
+		// Keeping the obj host model and device description
+		GpuWireframeData.emplace_back(desc);
+
+		return index;
+	}
+
 	void ModelLibrary::FreeResources()
 	{
 		const auto& vulkanContext = AssetLibrary.GetVulkanContext();
@@ -454,9 +501,17 @@ namespace MapLoader
 			vulkanContext->Allocator.destroy(m.MatIndexBuffer);
 		}
 
+		for (auto& m : WireframeDescriptions)
+		{
+			vulkanContext->Allocator.destroy(m.VertexBuffer);
+			vulkanContext->Allocator.destroy(m.IndexBuffer);
+		}
+
 		Models.clear();
 		ModelMap.clear();
 		GpuMeshData.clear();
+		GpuWireframeData.clear();
 		MeshDescriptions.clear();
+		WireframeDescriptions.clear();
 	}
 }

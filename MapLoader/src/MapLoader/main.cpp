@@ -40,6 +40,7 @@
 #include <nvp/nvpsystem.hpp>
 #include "nvvk/commands_vk.hpp"
 #include "nvvk/context_vk.hpp"
+#include "nvvk/images_vk.hpp"
 #include "obj_loader.h"
 #ifdef near
 #undef near
@@ -200,11 +201,11 @@ struct Bounds
 
 void getBounds(const MapLoader::ModelData* model, Bounds& bounds)
 {
-	for (const std::shared_ptr<Engine::Graphics::MeshData>& mesh : model->Meshes)
+	for (const MapLoader::ModelNode& node : model->Nodes)
 	{
-		if (mesh == nullptr) continue;
+		if (node.Mesh == nullptr) continue;
 
-		mesh->ForEach<Vector3SF>(mesh->GetFormat()->GetAttributeIndex("position"), [&bounds](const Vector3SF& vertex)
+		node.Mesh->ForEach<Vector3SF>(node.Mesh->GetFormat()->GetAttributeIndex("position"), [&bounds](const Vector3SF& vertex)
 			{
 				bounds.Min.X = std::min(bounds.Min.X, vertex.X);
 				bounds.Min.Y = std::min(bounds.Min.Y, vertex.Y);
@@ -228,7 +229,7 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 	spawnedEntities.push_back(SpawnedEntity{ model });
 	duplicateFormatUses += model->DuplicateFormatUses;
 
-	for (size_t i = 0; i < model->MeshIds.size(); ++i)
+	for (size_t i = 0; i < model->Nodes.size(); ++i)
 	{
 		if (model->IsLoaded(i))
 		{
@@ -240,7 +241,7 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 					continue;
 			}
 
-			Matrix4F modelTransform = model->Transformations[i];
+			Matrix4F modelTransform = model->Nodes[i].Transformation;
 
 			helloVkPtr->loadModelInstance(model->GetId(i), ms2ToWorld * transformation * modelTransform);
 
@@ -262,6 +263,11 @@ SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform
 	}
 
 	return &spawnedEntities.back();
+}
+
+void spawnWireframe(uint32_t index, const Matrix4F& transform)
+{
+	helloVkPtr->loadWireframeInstance(index, ms2ToWorld * transform);
 }
 
 template <>
@@ -1009,6 +1015,7 @@ int main(int argc, char** argv)
 	ImGui_ImplGlfw_InitForVulkan(window, true);
 
 	bool takingLargeScreenshot = false;
+	bool debugDisplaySkeletons = false;
 
 	// Main loop
 	while(!glfwWindowShouldClose(window))
@@ -1108,15 +1115,17 @@ int main(int argc, char** argv)
 						ImGui::Text("Entity Coordinates: %.3f, %.3f, %.3f", entity.Position.X, entity.Position.Y, entity.Position.Z);
 						ImGui::Text("NiMesh Index: %d", spawnedModelId);
 
-						ImGui::Text("Shader: %s", entity.Model->Shaders[spawnedModelId].c_str());
-						ImGui::Text("Material: %s", entity.Model->MaterialNames[spawnedModelId].c_str());
+						MapLoader::ModelNode& node = entity.Model->Nodes[spawnedModelId];
 
-						ImGui::ColorEdit3("Diffuse", &entity.Model->Materials[spawnedModelId].diffuse[0], ImGuiColorEditFlags_NoPicker);
-						ImGui::ColorEdit3("Specular", &entity.Model->Materials[spawnedModelId].specular[0], ImGuiColorEditFlags_NoPicker);
-						ImGui::ColorEdit3("Ambient", &entity.Model->Materials[spawnedModelId].ambient[0], ImGuiColorEditFlags_NoPicker);
-						ImGui::ColorEdit3("Emission", &entity.Model->Materials[spawnedModelId].emission[0], ImGuiColorEditFlags_NoPicker);
-						ImGui::Text("Alpha: %.2f", entity.Model->Materials[spawnedModelId].dissolve);
-						ImGui::Text("Shininess: %.2f", entity.Model->Materials[spawnedModelId].shininess);
+						ImGui::Text("Shader: %s", node.Shader.c_str());
+						ImGui::Text("Material: %s", node.MaterialName.c_str());
+
+						ImGui::ColorEdit3("Diffuse", &node.Material.diffuse[0], ImGuiColorEditFlags_NoPicker);
+						ImGui::ColorEdit3("Specular", &node.Material.specular[0], ImGuiColorEditFlags_NoPicker);
+						ImGui::ColorEdit3("Ambient", &node.Material.ambient[0], ImGuiColorEditFlags_NoPicker);
+						ImGui::ColorEdit3("Emission", &node.Material.emission[0], ImGuiColorEditFlags_NoPicker);
+						ImGui::Text("Alpha: %.2f", node.Material.dissolve);
+						ImGui::Text("Shininess: %.2f", node.Material.shininess);
 
 						if (ImGui::IsKeyPressed(ImGuiKey_Insert) && fs::exists(ms2RootExtracted))
 						{
@@ -1324,6 +1333,7 @@ int main(int argc, char** argv)
 					ImGui::Checkbox("Draw Invisible Objects", &drawInvisible);
 					ImGui::Checkbox("Draw Debug Objects", &drawDebug);
 					ImGui::Checkbox("Highlight Debug Objects", &highlightDebug);
+					ImGui::Checkbox("Draw Rig Skeletons", &debugDisplaySkeletons);
 
 					helloVk.hostUBO.drawMode &= -1 ^ 7;
 					helloVk.hostUBO.drawMode |= (highlightDebug ? 4 : 0) | (drawDebug ? 2 : 0) | (drawInvisible ? 1 : 0);
@@ -1390,16 +1400,30 @@ int main(int argc, char** argv)
 			offscreenRenderPassBeginInfo.framebuffer     = helloVk.OffscreenBuffer->GetFrameBuffer();
 			offscreenRenderPassBeginInfo.renderArea      = {{0, 0}, helloVk.getSize()};
 
+			VkRenderPassBeginInfo offscreenWireframeRenderPassBeginInfo{VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO};
+			offscreenWireframeRenderPassBeginInfo.clearValueCount = 2;
+			offscreenWireframeRenderPassBeginInfo.pClearValues    = clearValues.data();
+			offscreenWireframeRenderPassBeginInfo.renderPass      = helloVk.WireframeRenderPass->GetRenderPass();
+			offscreenWireframeRenderPassBeginInfo.framebuffer     = helloVk.OffscreenWireframeBuffer->GetFrameBuffer();
+			offscreenWireframeRenderPassBeginInfo.renderArea      = {{0, 0}, helloVk.getSize()};
+
 			// Rendering Scene
 			if(useRaytracer)
 			{
-			helloVk.raytrace(cmdBuf, clearColor);
+				helloVk.raytrace(cmdBuf, clearColor);
 			}
 			else
 			{
-			vkCmdBeginRenderPass(cmdBuf, &offscreenRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-			helloVk.rasterize(cmdBuf);
-			vkCmdEndRenderPass(cmdBuf);
+				vkCmdBeginRenderPass(cmdBuf, &offscreenRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+				helloVk.rasterize(cmdBuf);
+				vkCmdEndRenderPass(cmdBuf);
+			}
+
+			if (debugDisplaySkeletons)
+			{
+				vkCmdBeginRenderPass(cmdBuf, &offscreenWireframeRenderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
+				helloVk.drawWireframes(cmdBuf);
+				vkCmdEndRenderPass(cmdBuf);
 			}
 		}
 

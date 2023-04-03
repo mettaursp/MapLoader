@@ -27,10 +27,7 @@
 
 #include "wavefront.glsl"
 
-layout(set = 1, binding = 0) uniform _GlobalUniforms
-{
-	GlobalUniforms uni;
-};
+layout(set = 0, binding = 0) uniform _GlobalUniforms { GlobalUniforms uni; };
 
 layout(push_constant) uniform _PushConstantRaster
 {
@@ -44,9 +41,7 @@ layout(location = 3) in vec2 texcoord;
 
 
 layout(location = 1) out vec3 o_worldPos;
-layout(location = 2) out vec3 o_worldNrm;
-layout(location = 3) out vec3 o_viewDir;
-layout(location = 4) out vec2 o_texCoord;
+layout(location = 2) out vec4 o_color;
 
 out gl_PerVertex
 {
@@ -59,9 +54,7 @@ void main()
 	vec3 origin = vec3(uni.viewInverse * vec4(0, 0, 0, 1));
 
 	o_worldPos = vec3(pcRaster.modelMatrix * vec4(position, 1.0));
-	o_viewDir  = vec3(o_worldPos - origin);
-	o_texCoord = texcoord;
-	o_worldNrm = mat3(pcRaster.modelMatrix) * normal;
+	o_color  = color;
 
 	gl_Position = uni.viewProj * vec4(o_worldPos, 1.0);
 }

@@ -3,6 +3,7 @@
 #include <istream>
 #include <vector>
 #include <unordered_set>
+#include <unordered_map>
 
 #include "PackageNodes.h"
 
@@ -32,4 +33,6 @@ public:
 
 private:
 	static std::unordered_set<std::string> SemanticsFound;
+
+	void MarkBone(size_t index, std::unordered_map<size_t, size_t>& boneIndices);
 };

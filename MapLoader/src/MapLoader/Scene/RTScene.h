@@ -13,6 +13,7 @@ struct SpawnedEntity;
 typedef std::function<bool(MapLoader::ModelData*, size_t, InstDesc&)> ModelSpawnCallback;
 
 SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transform = Matrix4F(), const ModelSpawnCallback& callback = nullptr);
+void spawnWireframe(uint32_t index, const Matrix4F& transform = Matrix4F());
 
 namespace Graphics
 {

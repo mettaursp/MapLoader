@@ -19,13 +19,13 @@ namespace MapLoader
 	{
 		RayHit hit;
 
-		for (size_t i = 0; i < model->Transformations.size(); ++i)
+		for (size_t i = 0; i < model->Nodes.size(); ++i)
 		{
-			const auto& mesh = model->Meshes[i];
+			const auto& mesh = model->Nodes[i].Mesh;
 
 			if (mesh == nullptr) continue;
 
-			Matrix4F transform = model->Transformations[i].Inverted();
+			Matrix4F transform = model->Nodes[i].Transformation.Inverted();
 			Vector3SF localStart = transform * Vector3F(rayStart, 1);
 			Vector3SF localDirection = transform * Vector3F(rayDirection, 0);
 
@@ -81,7 +81,7 @@ namespace MapLoader
 				const Vector3SF& normalC = mesh->GetAttribute<Vector3SF>(vertexCIndex, normalIndex);
 
 				hit.Normal = u * normalA + v * normalB + w * normalC;
-				hit.Normal = model->Transformations[i] * Vector3F(hit.Normal, 0);
+				hit.Normal = model->Nodes[i].Transformation * Vector3F(hit.Normal, 0);
 
 				if (hit.Normal.SquareLength() <= 1e-9f)
 					hit.Normal = faceNormal.Unit();
@@ -194,7 +194,7 @@ namespace MapLoader
 
 		const auto spawnCallback = [this, &dyeColor, &spawningRig, &currentSlot, &faceDecor, &face](MapLoader::ModelData* model, size_t i, InstDesc& instance)
 		{
-			const std::string& meshName = model->NodeNames[i];
+			const std::string& meshName = model->Nodes[i].Name;
 
 			if (contains(CutMeshes, meshName))
 				return false;
@@ -204,7 +204,7 @@ namespace MapLoader
 			if (spawningRig && equippedIndex != ActiveSlots.end() && equippedIndex->second.Replaces && meshName != "FA_EA")
 				return false;
 
-			const DyeColor& color = model->Shaders[i] == "MS2CharacterSkinMaterial" ? Customization->SkinColor : dyeColor;
+			const DyeColor& color = model->Nodes[i].Shader == "MS2CharacterSkinMaterial" ? Customization->SkinColor : dyeColor;
 
 			instance.primaryColor = vec3(color.Primary.R, color.Primary.G, color.Primary.B);
 			instance.secondaryColor = vec3(color.Secondary.R, color.Secondary.G, color.Secondary.B);
@@ -220,7 +220,7 @@ namespace MapLoader
 
 				instance.textureOverride = (int)materialTextures.size();
 
-				materialTextures.push_back(materialTextures[model->Materials[i].textures]);
+				materialTextures.push_back(materialTextures[model->Nodes[i].Material.textures]);
 
 				MaterialTextures& overrides = materialTextures.back();
 
@@ -249,7 +249,7 @@ namespace MapLoader
 					}
 				}
 
-				if (currentSlot->Slot->Name == "FA" && model->NodeNames[i] == "FA")
+				if (currentSlot->Slot->Name == "FA" && model->Nodes[i].Name == "FA")
 				{
 					int diffuseTexture = AssetLibrary->GetTextures().FetchTexture("Resource/Model/Textures/" + face.File, VK_FORMAT_R8G8B8A8_UNORM);
 					int controlTexture = AssetLibrary->GetTextures().FetchTexture("Resource/Model/Textures/" + face.Control, VK_FORMAT_R8G8B8A8_UNORM);
@@ -265,7 +265,7 @@ namespace MapLoader
 					}
 				}
 
-				if (currentSlot->Slot->Name == "FA" && model->NodeNames[i] == "FA_Skin" && faceDecor != ActiveSlots.end())
+				if (currentSlot->Slot->Name == "FA" && model->Nodes[i].Name == "FA_Skin" && faceDecor != ActiveSlots.end())
 				{
 					for (const ItemDecal& decal : faceDecor->second.Slot->Decals)
 					{
@@ -299,63 +299,21 @@ namespace MapLoader
 
 		spawnModel(rig, transform, spawnCallback);
 
+		CreateRigDebugMesh(rig, transform);
+
 		spawningRig = false;
 
-		Transforms["Bip01_HeadNub"] = {};
-
-		for (size_t i = 0; i < rig->Transformations.size(); ++i)
+		for (size_t i = 0; i < rig->Nodes.size(); ++i)
 		{
-			const auto transformIndex = Transforms.find(rig->NodeNames[i]);
+			const auto transformIndex = Transforms.find(rig->Nodes[i].Name);
 
 			if (transformIndex != Transforms.end())
-				transformIndex->second = rig->Transformations[i];
+				transformIndex->second = rig->Nodes[i].Transformation;
 		}
 
 		std::vector<const ItemModel*> addedModels;
 
-		Matrix4F hatTransform;
-		Vector3SF hatOffset;
-
-		const auto& hat = ActiveSlots.find("CP");
-
-		if (hat != ActiveSlots.end() && hat->second.Item->Customization.HatAttach)
-		{
-			const auto& hatAsset = hat->second.Slot->Assets[0];
-			ModelData* hatModel = hatAsset.Model;
-
-			for (size_t i = 0; i < hatModel->NodeNames.size(); ++i)
-			{
-				if (hatAsset.SelfNode == hatModel->NodeNames[i].substr(0, hatAsset.SelfNode.size()))
-				{
-					hatOffset = -hatModel->Transformations[i].Translation();
-
-					break;
-				}
-			}
-
-			const auto& hair = ActiveSlots.find("HR");
-
-			if (hair != ActiveSlots.end())
-			{
-				ModelData* hairModel = hair->second.Slot->Assets[0].Model;
-				const HatItem* hatData = reinterpret_cast<const HatItem*>(hat->second.Customization);
-
-				RayHit hitData = castRay(hairModel, hatData->AttachOrigin, hatData->AttachDirection);
-
-				if (hitData.Hit)
-				{
-					Vector3SF itemUp(1, 0, 0);
-
-					Vector3SF front = hitData.Normal.Unit();
-					Vector3SF right = front.Cross(itemUp).Unit();
-					Vector3SF up = front.Cross(right).Unit();
-					
-					Matrix4F rotation = getMatrix(Vector3SF(0, 0, 0), hatData->AttachRotation, 1, true);
-
-					hatTransform = Matrix4F(hitData.Intersection, front, -up, -right) * rotation;
-				}
-			}
-		}
+		Matrix4F hatTransform = ComputeHatTransform();
 
 		for (auto& activeSlot : ActiveSlots)
 		{
@@ -376,16 +334,16 @@ namespace MapLoader
 
 				if (slot->Name == "CP" && activeSlot.second.Item->Customization.HatAttach)
 				{
-					assetTransform = assetTransform * hatTransform * Matrix4F(hatOffset);
+					assetTransform = assetTransform * hatTransform;
 				}
 
 				if (asset.SelfNode == asset.TargetNode)
 				{
-					for (size_t i = 0; i < asset.Model->NodeNames.size(); ++i)
+					for (size_t i = 0; i < asset.Model->Nodes.size(); ++i)
 					{
-						if (asset.SelfNode == asset.Model->NodeNames[i].substr(0, asset.SelfNode.size()))
+						if (asset.SelfNode == asset.Model->Nodes[i].Name.substr(0, asset.SelfNode.size()))
 						{
-							assetTransform = assetTransform * asset.Model->Transformations[i].Inverted();
+							assetTransform = assetTransform * asset.Model->Nodes[i].Transformation.Inverted();
 					
 							break;
 						}
@@ -395,5 +353,80 @@ namespace MapLoader
 				spawnModel(asset.Model, transform * assetTransform, spawnCallback);
 			}
 		}
+	}
+
+	Matrix4F Character::ComputeHatTransform()
+	{
+		const auto& hat = ActiveSlots.find("CP");
+
+		if (hat == ActiveSlots.end() || !hat->second.Item->Customization.HatAttach) return Matrix4F();
+
+		const auto& hair = ActiveSlots.find("HR");
+
+		if (hair == ActiveSlots.end()) return Matrix4F();
+
+		Vector3SF hatOffset;
+
+		const auto& hatAsset = hat->second.Slot->Assets[0];
+		ModelData* hatModel = hatAsset.Model;
+
+		for (size_t i = 0; i < hatModel->Nodes.size(); ++i)
+		{
+			if (hatAsset.SelfNode == hatModel->Nodes[i].Name.substr(0, hatAsset.SelfNode.size()))
+			{
+				hatOffset = -hatModel->Nodes[i].Transformation.Translation();
+
+				break;
+			}
+		}
+
+		ModelData* hairModel = hair->second.Slot->Assets[0].Model;
+		const HatItem* hatData = reinterpret_cast<const HatItem*>(hat->second.Customization);
+
+		RayHit hitData = castRay(hairModel, hatData->AttachOrigin, hatData->AttachDirection);
+
+		if (!hitData.Hit) return Matrix4F();
+
+		Vector3SF itemUp(1, 0, 0);
+
+		Vector3SF front = hitData.Normal.Unit();
+		Vector3SF right = front.Cross(itemUp).Unit();
+		Vector3SF up = front.Cross(right).Unit();
+
+		Matrix4F rotation = getMatrix(Vector3SF(0, 0, 0), hatData->AttachRotation, 1, true);
+
+		return Matrix4F(hitData.Intersection, front, -up, -right) * rotation * Matrix4F(hatOffset);
+	}
+
+	void Character::CreateRigDebugMesh(MapLoader::ModelData* rig, const Matrix4F transform)
+	{
+		std::vector<VertexPosBinding> vertices;
+		std::vector<int> indices;
+		std::unordered_map<size_t, size_t> boneMap;
+		
+		for (size_t i = 0; i < rig->Nodes.size(); ++i)
+		{
+			const ModelNode& node = rig->Nodes[i];
+
+			if (!node.IsBone) continue;
+
+			boneMap[i] = vertices.size();
+			vertices.push_back({});
+
+			VertexPosBinding& vertex = vertices.back();
+
+			vertex.position = node.Transformation.Translation();
+			vertex.color = 0x00FF00FF;
+
+			if (node.AttachedTo != (size_t)-1)
+			{
+				indices.push_back((int)boneMap[node.AttachedTo]);
+				indices.push_back((int)vertices.size() - 1);
+			}
+		}
+
+		uint32_t id = AssetLibrary->GetModels().LoadWireframeMesh(vertices, indices);
+
+		spawnWireframe(id, transform);
 	}
 }

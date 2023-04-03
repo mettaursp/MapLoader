@@ -31,6 +31,7 @@ namespace Graphics
 		void ReleaseResources();
 
 		void Configure(const std::vector<VkFormat> colorAttachments, VkFormat depthAttachment, bool clear = true, VkImageLayout initialLayout = VK_IMAGE_LAYOUT_UNDEFINED, VkImageLayout finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+		void Configure(const std::vector<VkFormat> colorAttachments, VkFormat depthAttachment, bool clear, bool clearDepth, VkImageLayout initialLayout = VK_IMAGE_LAYOUT_UNDEFINED, VkImageLayout finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
 		void SetInputAttachments(const std::vector<size_t>& subpasses, const std::vector<uint32_t>& attachments);
 		void SetColorAttachments(const std::vector<size_t>& subpasses, const std::vector<uint32_t>& attachments);
 		void SetResolveAttachments(const std::vector<size_t>& subpasses, const std::vector<uint32_t>& attachments);

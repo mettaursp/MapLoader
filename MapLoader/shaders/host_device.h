@@ -87,6 +87,12 @@ struct MeshDesc
 	uint64_t materialIndexAddress WITH_DEFAULT(0);  // Address of the triangle material index buffer
 };
 
+struct WireframeDesc
+{
+	uint64_t vertexAddress WITH_DEFAULT(0);      // Address of the Vertex buffer
+	uint64_t indexAddress WITH_DEFAULT(0);          // Address of the index buffer
+};
+
 struct InstDesc
 {
 	vec3 color;
@@ -116,6 +122,8 @@ struct GlobalUniforms
 	mat4 viewProj;     // Camera view * projection
 	mat4 viewInverse;  // Camera inverse view matrix
 	mat4 projInverse;  // Camera inverse projection matrix
+	float nearPlane WITH_DEFAULT(1);
+	float fov WITH_DEFAULT(60);
 	int lightCount WITH_DEFAULT(0);
 	int mouseX WITH_DEFAULT(0);
 	int mouseY WITH_DEFAULT(0);
@@ -158,32 +166,12 @@ struct TextureTransform
 	int mode WITH_DEFAULT(0);
 };
 
-struct Vertex  // See ObjLoader, copy of VertexObj, could be compressed for device
-{
-	vec3 pos;
-	vec3 nrm;
-	vec4 color;
-	vec2 texcoord;
-	vec3 binormal;
-	vec3 tangent;
-};
-
 struct VertexPosBinding
 {
 	vec3 position;
 	vec2 texcoord;
 	vec3 normal;
 	u8vec4 color WITH_DEFAULT(0xFFFFFFFF);
-};
-
-struct VertexAttribBinding
-{
-	int a;
-};
-
-struct VertexColorBinding
-{
-	int a;
 };
 
 struct VertexBinormalBinding

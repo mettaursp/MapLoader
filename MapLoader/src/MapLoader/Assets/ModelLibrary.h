@@ -34,11 +34,15 @@ namespace MapLoader
 		const auto& GetUnmappedMaterials() const { return UnmappedMaterials; }
 		const auto& GetModels() const { return Models; }
 		const auto& GetMeshDescriptions() const { return MeshDescriptions; }
+		const auto& GetWireframeDescriptions() const { return WireframeDescriptions; }
 		const auto& GetGpuData() const { return GpuMeshData; }
+		const auto& GetGpuWireframeData() const { return GpuWireframeData; }
 		const auto& GetTextureTransforms() const { return TextureTransforms; }
 		auto& GetMaterialTextures() { return MaterialTextures; }
 		const auto& GetMaterialTextures() const { return MaterialTextures; }
 		auto& GetTextureTransforms() { return TextureTransforms; }
+		uint32_t LoadWireframeMesh(const std::vector<VertexPosBinding>& vertices, const std::vector<int>& indices);
+		const auto& GetMeshFormat() const { return MeshFormat; }
 
 		void FreeResources();
 
@@ -47,10 +51,8 @@ namespace MapLoader
 	private:
 		struct MeshBuffers
 		{
-			void* VertexBindings[6] = { 0 };
+			void* VertexBindings[4] = { 0 };
 			std::vector<VertexPosBinding> VertexPositions;
-			std::vector<VertexAttribBinding> VertexAttributes;
-			std::vector<VertexColorBinding> VertexColors;
 			std::vector<VertexBinormalBinding> VertexBinormals;
 			std::vector<VertexMorphBinding> VertexMorphPos;
 			std::vector<VertexSkeletonBinding> VertexSkeleton;
@@ -65,7 +67,9 @@ namespace MapLoader
 		std::vector<TextureTransform> TextureTransforms;
 		std::vector<std::unique_ptr<ModelData>> Models;
 		std::vector<MeshDesc> GpuMeshData;
+		std::vector<WireframeDesc> GpuWireframeData;
 		std::vector<MeshDescription> MeshDescriptions;
+		std::vector<WireframeDescription> WireframeDescriptions;
 		std::vector<MaterialTextures> MaterialTextures;
 		int DuplicateFormatUses = 0;
 

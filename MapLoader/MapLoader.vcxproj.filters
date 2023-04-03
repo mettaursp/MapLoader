@@ -255,5 +255,11 @@
     <CustomBuild Include="shaders\frag_shader.frag">
       <Filter>Shaders</Filter>
     </CustomBuild>
+    <CustomBuild Include="shaders\wireframe.frag">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="shaders\wireframe.vert">
+      <Filter>Shaders</Filter>
+    </CustomBuild>
   </ItemGroup>
 </Project>

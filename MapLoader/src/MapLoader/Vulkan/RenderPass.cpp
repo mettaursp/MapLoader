@@ -60,6 +60,11 @@ namespace Graphics
 
 	void RenderPass::Configure(const std::vector<VkFormat> colorAttachments, VkFormat depthAttachment, bool clear, VkImageLayout initialLayout, VkImageLayout finalLayout)
 	{
+		Configure(colorAttachments, depthAttachment, clear, clear, initialLayout, finalLayout);
+	}
+
+	void RenderPass::Configure(const std::vector<VkFormat> colorAttachments, VkFormat depthAttachment, bool clear, bool clearDepth, VkImageLayout initialLayout, VkImageLayout finalLayout)
+	{
 		size_t attachmentCount = colorAttachments.size();
 
 		if (depthAttachment != VK_FORMAT_UNDEFINED)
@@ -93,7 +98,7 @@ namespace Graphics
 			attachment.samples = VK_SAMPLE_COUNT_1_BIT;
 			attachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
 
-			if (!clear)
+			if (!clearDepth)
 			{
 				attachment.loadOp = initialLayout == VK_IMAGE_LAYOUT_UNDEFINED ? VK_ATTACHMENT_LOAD_OP_DONT_CARE : VK_ATTACHMENT_LOAD_OP_LOAD;
 			}

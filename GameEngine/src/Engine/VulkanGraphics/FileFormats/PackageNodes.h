@@ -24,9 +24,11 @@ namespace Engine
 			std::string Name;
 			size_t AttachedTo = (size_t)-1;
 			size_t MaterialIndex = (size_t)-1;
+			bool IsBone = false;
 			std::shared_ptr<Engine::Graphics::MeshFormat> Format;
 			std::shared_ptr<Engine::Graphics::MeshData> Mesh;
 			std::shared_ptr<Engine::Transform> Transform;
+			std::vector<size_t> Bones;
 		};
 
 		struct ModelPackageTextureTransform
@@ -138,6 +140,7 @@ namespace Engine
 
 		struct ModelPackage
 		{
+			std::vector<size_t> Bones;
 			std::vector<ModelPackageNode> Nodes;
 			std::vector<ModelPackageMaterial> Materials;
 		};

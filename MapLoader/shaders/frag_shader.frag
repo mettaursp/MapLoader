@@ -44,8 +44,6 @@ layout(location = 4) in vec2 i_texCoord;
 layout(location = 0) out vec4 o_color;
 
 layout(buffer_reference, scalar) buffer VertexPos {VertexPosBinding v[]; }; // Positions of an object
-layout(buffer_reference, scalar) buffer VertexAttrib {VertexAttribBinding v[]; }; // Positions of an object
-layout(buffer_reference, scalar) buffer VertexColor {VertexColorBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexSkeleton {VertexSkeletonBinding v[]; }; // Positions of an object

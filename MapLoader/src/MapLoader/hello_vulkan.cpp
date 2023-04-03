@@ -73,6 +73,8 @@ void HelloVulkan::updateUniformBuffer(const VkCommandBuffer& cmdBuf)
 
 	hostUBO.viewProj    = proj * view;
 	hostUBO.viewInverse = view.Inverted();
+	hostUBO.nearPlane = 0.1f;
+	hostUBO.fov = CameraManip.getFov() * nv_to_rad;
 	hostUBO.projInverse = proj.Inverted();
 	hostUBO.lightCount = (int)lights.size();
 
@@ -119,16 +121,7 @@ void HelloVulkan::updateUniformBuffer(const VkCommandBuffer& cmdBuf)
 //
 void HelloVulkan::createDescriptorSetLayout()
 {
-	std::vector<Engine::Graphics::VertexAttributeFormat> attributes;
-
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "position", 0 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "normal", 0 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 4, "color", 0 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 2, "texcoord", 0 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 0 });
-	attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 0 });
-
-	ShaderVertexFormat = Engine::Graphics::MeshFormat::GetFormat(attributes);
+	ShaderVertexFormat = AssetLibrary->GetModels().GetMeshFormat();
 
 	DescriptorSetLibrary = std::make_shared<Graphics::DescriptorSetLibrary>(VulkanContext);
 	RasterPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
@@ -148,6 +141,24 @@ void HelloVulkan::createDescriptorSetLayout()
 	}
 
 	RasterPipeline->LoadDescriptors();
+
+	WireframePipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
+	WireframePipeline->BindDescriptorSet("common", 1);
+	WireframePipeline->SetVertexFormat(ShaderVertexFormat);
+
+	{
+		Graphics::Shader* shaders[] = {
+			ShaderLibrary->FetchShader("wireframe.vert", VK_SHADER_STAGE_VERTEX_BIT),
+			ShaderLibrary->FetchShader("wireframe.frag", VK_SHADER_STAGE_FRAGMENT_BIT)
+		};
+
+		for (auto& shader : shaders)
+		{
+			WireframePipeline->AddStage(shader);
+		}
+	}
+
+	WireframePipeline->LoadDescriptors();
 
 	Shaders = {
 		ShaderLibrary->FetchShader("raytrace.rgen", VK_SHADER_STAGE_RAYGEN_BIT_KHR),
@@ -247,6 +258,17 @@ void HelloVulkan::updateDescriptorSet()
 
 	// Writing the information
 	vkUpdateDescriptorSets(VulkanContext->Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+
+	{
+		std::vector<VkWriteDescriptorSet> writes;
+
+		auto m_descSet = WireframePipeline->GetDescriptorSets()[0];
+
+		VkDescriptorBufferInfo dbiUnif{ m_bGlobals.buffer, 0, VK_WHOLE_SIZE };
+		writes.emplace_back(m_descSet->MakeWrite(SceneBindings::eGlobals, &dbiUnif));
+
+		vkUpdateDescriptorSets(VulkanContext->Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
+	}
 }
 
 
@@ -259,6 +281,15 @@ void HelloVulkan::createGraphicsPipeline()
 	RasterPipeline->SetAttachmentsAlphaBlend();
 	RasterPipeline->CreatePipelineLayout();
 	RasterPipeline->CreateRasterPipeline();
+
+	WireframePipeline->SetRenderPass(WireframeRenderPass);
+	WireframePipeline->GetInputAssemblyState().topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
+	WireframePipeline->GetRasterizationState().polygonMode = VK_POLYGON_MODE_LINE;
+	WireframePipeline->GetRasterizationState().cullMode = VK_CULL_MODE_NONE;
+	WireframePipeline->GetRasterizationState().lineWidth = 1;
+	WireframePipeline->SetAttachmentsAlphaBlend();
+	WireframePipeline->CreatePipelineLayout();
+	WireframePipeline->CreateRasterPipeline();
 }
 
 void HelloVulkan::loadModelInstance(uint32_t index, mat4 transform)
@@ -267,6 +298,14 @@ void HelloVulkan::loadModelInstance(uint32_t index, mat4 transform)
 	instance.transform = transform;
 	instance.objIndex = index;
 	m_instances.push_back(instance);
+}
+
+void HelloVulkan::loadWireframeInstance(uint32_t index, mat4 transform)
+{
+	ObjInstance instance;
+	instance.transform = transform;
+	instance.objIndex = index;
+	m_wireframeInstances.push_back(instance);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -495,6 +534,7 @@ void HelloVulkan::destroyResources()
 	DescriptorSetLibrary->ReleaseResources();
 
 	RasterPipeline->ReleaseResources();
+	WireframePipeline->ReleaseResources();
 	DeviceRenderPass->ReleaseResources();
 	ShaderLibrary->ReleaseModules();
 
@@ -518,7 +558,9 @@ void HelloVulkan::destroyResources()
 	PostPipeline->ReleaseResources();
 	
 	RasterRenderPass->ReleaseResources();
+	WireframeRenderPass->ReleaseResources();
 	OffscreenBuffer->ReleaseResources();
+	OffscreenWireframeBuffer->ReleaseResources();
 
 	// #VKRay
 	Scene->FreeResources();
@@ -555,6 +597,43 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 	vkCmdPushConstants(cmdBuf, RasterPipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
 						 sizeof(PushConstantRaster), &m_pcRaster);
 	vkCmdBindVertexBuffers(cmdBuf, 0, 5, &model.VertexPosBuffer.buffer, &offset);
+	vkCmdBindIndexBuffer(cmdBuf, model.IndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
+	vkCmdDrawIndexed(cmdBuf, model.IndexCount, 1, 0, 0, 0);
+	}
+	VulkanContext->Debug.endLabel(cmdBuf);
+}
+
+void HelloVulkan::drawWireframes(const VkCommandBuffer& cmdBuf)
+{
+
+	VkDeviceSize offset{0};
+
+	VulkanContext->Debug.beginLabel(cmdBuf, "Rasterize");
+
+	// Dynamic Viewport
+	setViewport(cmdBuf);
+
+	auto& m_descSet = DescriptorSetLibrary->FetchDescriptorSet("common")->DescriptorSet;
+
+	std::vector<VkDescriptorSet> descSets;
+	const auto& descriptorSets = WireframePipeline->GetDescriptorSets();
+	for (size_t i = 0; i < descriptorSets.size(); ++i)
+		descSets.push_back(descriptorSets[i]->DescriptorSet);
+
+	// Drawing all triangles
+	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, WireframePipeline->GetPipeline());
+	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, WireframePipeline->GetPipelineLayout(), 0, (uint32_t)descSets.size(), descSets.data(), 0, nullptr);
+
+
+	for(const HelloVulkan::ObjInstance& inst : m_wireframeInstances)
+	{
+	auto& model            = AssetLibrary->GetModels().GetWireframeDescriptions()[inst.objIndex];
+	m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
+	m_pcRaster.modelMatrix = inst.transform;
+
+	vkCmdPushConstants(cmdBuf, WireframePipeline->GetPipelineLayout(), VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT, 0,
+						 sizeof(PushConstantRaster), &m_pcRaster);
+	vkCmdBindVertexBuffers(cmdBuf, 0, 1, &model.VertexBuffer.buffer, &offset);
 	vkCmdBindIndexBuffer(cmdBuf, model.IndexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
 	vkCmdDrawIndexed(cmdBuf, model.IndexCount, 1, 0, 0, 0);
 	}
@@ -680,14 +759,44 @@ void HelloVulkan::createOffscreenRender()
 		RasterRenderPass->Create();
 	}
 
+	if (WireframeRenderPass.get() == nullptr)
+	{
+		WireframeRenderPass = std::make_shared<Graphics::RenderPass>(VulkanContext);
+		WireframeRenderPass->Configure({ m_offscreenColorFormat }, m_offscreenDepthFormat, false, true, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_GENERAL);
+		WireframeRenderPass->AddSubpass();
+		WireframeRenderPass->SetColorAttachments({ 0 }, { 0 });
+		WireframeRenderPass->SetDepthAttachments({ 0 }, 1);
+		auto& dependency = WireframeRenderPass->GetDependency(0);
+		//dependency.srcStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+		//dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+		//dependency.srcAccessMask = 0;
+		//dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+		//dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+		//VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT
+		WireframeRenderPass->Create();
+	}
+
 	OffscreenBuffer = std::make_unique<Graphics::FrameBuffer>(RasterRenderPass);
 	OffscreenBuffer->SetResolution(m_size.width, m_size.height, 1);
 
-	auto& attachments = OffscreenBuffer->GetAttachments();
-	attachments[0] = m_offscreenColor.descriptor.imageView;
-	attachments[1] = m_offscreenDepth.descriptor.imageView;
+	{
+		auto& attachments = OffscreenBuffer->GetAttachments();
+		attachments[0] = m_offscreenColor.descriptor.imageView;
+		attachments[1] = m_offscreenDepth.descriptor.imageView;
+	}
 
 	OffscreenBuffer->Create();
+
+	OffscreenWireframeBuffer = std::make_unique<Graphics::FrameBuffer>(WireframeRenderPass);
+	OffscreenWireframeBuffer->SetResolution(m_size.width, m_size.height, 1);
+
+	{
+		auto& attachments = OffscreenWireframeBuffer->GetAttachments();
+		attachments[0] = m_offscreenColor.descriptor.imageView;
+		attachments[1] = m_offscreenDepth.descriptor.imageView;
+	}
+
+	OffscreenWireframeBuffer->Create();
 }
 
 //--------------------------------------------------------------------------------------------------

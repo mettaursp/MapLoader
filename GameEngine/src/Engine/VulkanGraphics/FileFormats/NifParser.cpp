@@ -631,7 +631,7 @@ void NifDocument::ParserNoOp(std::string_view& stream, BlockData& block)
 	advanceStream(stream, block.BlockSize);
 }
 
-std::map<std::string, NifDocument::BlockParseFunction> parserFunctions = {
+std::unordered_map<std::string, NifDocument::BlockParseFunction> parserFunctions = {
 	{ "NiNode", &NifDocument::ParseNode },
 	{ "NiMesh", &NifDocument::ParseMesh },
 	{ "NiTexturingProperty", &NifDocument::ParseTexturingProperty },
@@ -667,7 +667,7 @@ std::set<std::string> ignoreBlockName = {
 	"NiTransformData"
 };
 
-std::map<std::string, std::string> attributeAliases = {
+std::unordered_map<std::string, std::string> attributeAliases = {
 	{ "POSITION", "position" },
 	{ "POSITION_BP", "position" },
 	{ "NORMAL", "normal" },
@@ -830,10 +830,12 @@ void NifParser::Parse(std::string_view stream)
 		}
 	}
 
-	std::map<unsigned int, BlockData*> parents;
-	std::map<unsigned int, size_t> parentEntries;
-	std::map<unsigned int, size_t> parentLinkTypes;
-	std::map<unsigned int, size_t> materials;
+	std::unordered_map<unsigned int, BlockData*> parents;
+	std::unordered_map<unsigned int, size_t> parentEntries;
+	std::unordered_map<unsigned int, size_t> parentLinkTypes;
+	std::unordered_map<unsigned int, size_t> materials;
+	std::unordered_map<unsigned int, size_t> nodeIndices;
+	std::unordered_map<size_t, size_t> boneIndices;
 
 	for (unsigned int blockIndex = 0; blockIndex < numBlocks; ++blockIndex)
 	{
@@ -848,6 +850,8 @@ void NifParser::Parse(std::string_view stream)
 		if (block.BlockType == "NiNode")
 		{
 			NiNode* data = block.Data->Cast<NiNode>();
+
+			nodeIndices[data->BlockIndex] = Package->Nodes.size();
 
 			for (size_t i = 0; i < data->Children.size(); ++i)
 			{
@@ -866,11 +870,13 @@ void NifParser::Parse(std::string_view stream)
 			transform->SetInheritsTransformation((data->Flags & 0x4 || true) != 0);// || true);
 			transform->Name = block.BlockName;
 
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, (size_t)-1, nullptr, nullptr, transform });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, (size_t)-1, false, nullptr, nullptr, transform });
 		}
 		else if (block.BlockType == "NiMesh")
 		{
 			NiMesh* data = block.Data->Cast<NiMesh>();
+
+			nodeIndices[data->BlockIndex] = Package->Nodes.size();
 
 			size_t materialIndex = (size_t)-1;
 
@@ -1168,13 +1174,53 @@ void NifParser::Parse(std::string_view stream)
 
 			ImportedMeshes.push_back(mesh);
 
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, mesh.Format, mesh.Mesh, transform });
+			std::vector<size_t> bones;
+
+			for (size_t i = 0; i < data->Modifiers.size(); ++i)
+			{
+				if (data->Modifiers[i]->BlockType == "NiSkinningMeshModifier")
+				{
+					const BlockData* skinBlock = data->Modifiers[i];
+					NiSkinningMeshModifier* skinData = skinBlock->Data->Cast<NiSkinningMeshModifier>();
+					size_t skinRootIndex = nodeIndices[skinData->SkeletonRoot->BlockIndex];
+					
+					MarkBone(skinRootIndex, boneIndices);
+
+					bones.push_back(boneIndices[skinRootIndex]);
+
+					for (size_t j = 0; j < skinData->Bones.size(); ++j)
+					{
+						const BlockData* boneData = skinData->Bones[j];
+						size_t boneIndex = nodeIndices[boneData->BlockIndex];
+
+						MarkBone(boneIndex, boneIndices);
+
+						bones.push_back(boneIndices[boneIndex]);
+					}
+				}
+			}
+
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, false, mesh.Format, mesh.Mesh, transform, bones });
 		}
 	}
 
 	for (size_t i = 0; i < Package->Nodes.size(); ++i)
 		if (Package->Nodes[i].AttachedTo != (size_t)-1)
 			Package->Nodes[i].Transform->SetParent(Package->Nodes[Package->Nodes[i].AttachedTo].Transform);
+}
+
+void NifParser::MarkBone(size_t index, std::unordered_map<size_t, size_t>& boneIndices)
+{
+	if (Package->Nodes[index].IsBone) return;
+
+	boneIndices[index] = Package->Bones.size();
+	Package->Bones.push_back(index);
+	Package->Nodes[index].IsBone = true;
+
+	for (size_t parent = index; parent != (size_t)-1 && !Package->Nodes[parent].IsBone; parent = Package->Nodes[parent].AttachedTo)
+	{
+		Package->Nodes[parent].IsBone = true;
+	}
 }
 
 std::unordered_set<std::string> NifParser::SemanticsFound = {};

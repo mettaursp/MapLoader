@@ -16,16 +16,25 @@ namespace MapLoader
 
 	class RTScene;
 
+	struct ModelNode
+	{
+		int MeshId = -1;
+		bool IsBone = false;
+		size_t AttachedTo = (size_t)-1;
+		Matrix4F Transformation;
+		std::string Shader;
+		std::string MaterialName;
+		std::string Name;
+		MaterialObj Material;
+		std::shared_ptr<Engine::Graphics::MeshData> Mesh;
+		std::vector<size_t> Bones;
+	};
+
 	struct ModelData
 	{
 		uint32_t Index = 0;
-		std::vector<int> MeshIds;
-		std::vector<Matrix4F> Transformations;
-		std::vector<std::string> Shaders;
-		std::vector<std::string> MaterialNames;
-		std::vector<std::string> NodeNames;
-		std::vector<MaterialObj> Materials;
-		std::vector<std::shared_ptr<Engine::Graphics::MeshData>> Meshes;
+		std::vector<ModelNode> Nodes;
+		std::vector<size_t> BoneIndices;
 		const Archive::Metadata::Entry* Entry = nullptr;
 		int DuplicateFormatUses = 0;
 
@@ -47,5 +56,13 @@ namespace MapLoader
 		nvvk::Buffer IndexBuffer;     // Device buffer of the indices forming triangles
 		nvvk::Buffer MatColorBuffer;  // Device buffer of array of 'Wavefront material'
 		nvvk::Buffer MatIndexBuffer;  // Device buffer of array of 'Wavefront material'
+	};
+
+	struct WireframeDescription
+	{
+		uint32_t IndexCount = 0;
+		uint32_t VertexCount = 0;
+		nvvk::Buffer VertexBuffer;
+		nvvk::Buffer IndexBuffer;
 	};
 }

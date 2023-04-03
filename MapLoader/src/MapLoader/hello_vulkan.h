@@ -59,6 +59,7 @@ public:
 	void createDescriptorSetLayout();
 	void createGraphicsPipeline();
 	void loadModelInstance(uint32_t index, mat4 transform = mat4(1));
+	void loadWireframeInstance(uint32_t index, mat4 transform = mat4(1));
 	void updateDescriptorSet();
 	void createUniformBuffer();
 	void createObjDescriptionBuffer();
@@ -66,6 +67,7 @@ public:
 	void onResize(int /*w*/, int /*h*/) override;
 	void destroyResources();
 	void rasterize(const VkCommandBuffer& cmdBuff);
+	void drawWireframes(const VkCommandBuffer& cmdBuff);
 	void screenshot();
 	bool startScreenshot();
 
@@ -94,6 +96,7 @@ public:
 
 	// Array of objects and instances in the scene
 	std::vector<ObjInstance> m_instances;  // Scene model instances
+	std::vector<ObjInstance> m_wireframeInstances;  // Scene model instances
 	std::vector<LightDesc>   lights;
 	std::vector<InstDesc> instanceDescriptions;
 	MouseRayOut mouseIO = { vec3(), -1 };
@@ -103,11 +106,14 @@ public:
 	std::vector<Graphics::Shader*> Shaders;
 	std::unique_ptr<Graphics::ShaderPipeline> RTPipeline;
 	std::unique_ptr<Graphics::ShaderPipeline> RasterPipeline;
+	std::unique_ptr<Graphics::ShaderPipeline> WireframePipeline;
 	std::unique_ptr<Graphics::ShaderPipeline> PostPipeline;
 	std::shared_ptr<Graphics::RenderPass> RasterRenderPass;
+	std::shared_ptr<Graphics::RenderPass> WireframeRenderPass;
 	std::shared_ptr<Graphics::DescriptorSetLibrary> DescriptorSetLibrary;
 	std::unique_ptr<Graphics::FrameBuffer> DeviceBuffers[3];
 	std::unique_ptr<Graphics::FrameBuffer> OffscreenBuffer;
+	std::unique_ptr<Graphics::FrameBuffer> OffscreenWireframeBuffer;
 	std::shared_ptr<Graphics::RenderPass> DeviceRenderPass;
 	std::unique_ptr<Graphics::ShaderLibrary> ShaderLibrary;
 

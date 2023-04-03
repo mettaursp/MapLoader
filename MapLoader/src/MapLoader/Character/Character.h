@@ -98,5 +98,8 @@ namespace MapLoader
 		std::vector<std::string> CutMeshes;
 		std::unordered_map<std::string, Matrix4F> Transforms;
 		Matrix4F Transform;
+
+		Matrix4F ComputeHatTransform();
+		void CreateRigDebugMesh(MapLoader::ModelData* rig, const Matrix4F transform);
 	};
 }

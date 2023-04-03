@@ -820,7 +820,7 @@ template <typename Number>
 Matrix4Type<Number> Matrix4Type<Number>::NewProjection(Number fov, Number aspectRatio, Number nearPlane, Number farPlane)
 {
 	Number distance = nearPlane;
-	Number height = 2 * nearPlane * std::tan(fov * (Number)0.5);
+	Number height = 2 * distance * std::tan(fov * (Number)0.5);
 	Number width = aspectRatio * height;
 
 	return Matrix4Type(true).Projection(distance, nearPlane, farPlane, width, height);

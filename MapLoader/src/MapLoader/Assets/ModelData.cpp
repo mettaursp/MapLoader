@@ -4,15 +4,15 @@ namespace MapLoader
 {
 	bool ModelData::IsLoaded(size_t index) const
 	{
-		if (index < 0 || index >= MeshIds.size())
+		if (index < 0 || index >= Nodes.size())
 			return false;
 
-		return MeshIds[index] != -1;
+		return Nodes[index].MeshId != -1;
 	}
 
 	uint32_t ModelData::GetId(size_t index) const
 	{
-		return (uint32_t)MeshIds[index];
+		return (uint32_t)Nodes[index].MeshId;
 	}
 
 }

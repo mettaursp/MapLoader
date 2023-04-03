@@ -72,6 +72,7 @@ namespace Graphics
 		void SetAttachmentAlphaBlend(size_t index, bool premultiplyAlpha = false);
 		void SetAttachmentsAlphaBlend(bool premultiplyAlpha = false);
 		VkPipelineDepthStencilStateCreateInfo& GetDepthStencilState();
+		VkPipelineInputAssemblyStateCreateInfo& GetInputAssemblyState();
 		VkPipelineColorBlendAttachmentState& GetAttachmentBlendState(size_t index);
 		VkPipelineRasterizationStateCreateInfo& GetRasterizationState();
 

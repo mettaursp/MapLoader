@@ -66,7 +66,7 @@ namespace Graphics
 		if (!PipelineLayout) return;
 		if (Pipeline) return;
 
-		Type = PipelineType::RayTracing;
+		Type = PipelineType::Raster;
 
 		CreateInfo->PipelineCreateInfo.layout = PipelineLayout;
 
@@ -93,6 +93,7 @@ namespace Graphics
 
 		for (size_t i = 0; i < pipelines.size(); ++i)
 		{
+			pipelines[i]->Type = PipelineType::Raster;
 			pipelines[i]->Pipeline = pipelineHandles[i];
 		}
 	}
@@ -242,6 +243,11 @@ namespace Graphics
 		return CreateInfo->DepthStencilState;
 	}
 
+	VkPipelineInputAssemblyStateCreateInfo& ShaderPipeline::GetInputAssemblyState()
+	{
+		return CreateInfo->InputAssemblyState;
+	}
+
 	VkPipelineColorBlendAttachmentState& ShaderPipeline::GetAttachmentBlendState(size_t index)
 	{
 		return CreateInfo->BlendStates[index];
@@ -254,6 +260,8 @@ namespace Graphics
 
 	void ShaderPipeline::CreateRTPipeline()
 	{
+		Type = PipelineType::RayTracing;
+
 		std::vector<VkPipelineShaderStageCreateInfo> stages;
 		stages.resize(Shaders.size(), { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO });
 

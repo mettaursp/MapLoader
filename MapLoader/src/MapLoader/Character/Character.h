@@ -4,6 +4,8 @@
 #include <Engine/Math/Matrix4.h>
 #include <MapLoader/Items/Dyes.h>
 #include <MapLoader/Items/ItemData.h>
+#include <nvvk/resourceallocator_vk.hpp>
+#include <MapLoader/Assets/SkinnedModel.h>
 
 namespace MapLoader
 {
@@ -91,6 +93,16 @@ namespace MapLoader
 		void Load(CharacterData* customization, const Matrix4F transform = Matrix4F());
 
 	private:
+		struct SpawningData
+		{
+			std::string FaceFile;
+			std::string FaceControl;
+			EquippedSlot* FaceDecor = nullptr;
+			EquippedSlot* CurrentSlot = nullptr;
+			DyeColor CurrentDyeColor;
+			bool SpawningRig = false;
+		};
+
 		std::shared_ptr<GameAssetLibrary> AssetLibrary;
 		CharacterData* Customization = nullptr;
 		bool HideEars = false;
@@ -98,8 +110,13 @@ namespace MapLoader
 		std::vector<std::string> CutMeshes;
 		std::unordered_map<std::string, Matrix4F> Transforms;
 		Matrix4F Transform;
+		nvvk::Buffer SkeletonBuffer;
+		std::vector<Matrix4F> SkeletonData;
+		SpawningData* SpawnParameters = nullptr;
+		std::unique_ptr<SkinnedModel> Model;
 
 		Matrix4F ComputeHatTransform();
+		bool SpawnModelCallback(MapLoader::ModelData* model, size_t i, InstDesc& instance);
 		void CreateRigDebugMesh(MapLoader::ModelData* rig, const Matrix4F transform);
 	};
 }

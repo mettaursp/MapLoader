@@ -183,125 +183,38 @@ namespace MapLoader
 		if (HideEars)
 			CutMeshes.push_back("FA_EA");
 
-		DyeColor dyeColor = Customization->SkinColor;
-		bool spawningRig = true;
+		SpawningData parameters
+		{
+			.CurrentSlot{ nullptr },
+			.CurrentDyeColor{ Customization->SkinColor },
+			.SpawningRig{ true },
+		};
 
-		EquippedSlot* currentSlot = nullptr;
+		SpawnParameters = &parameters;
 
 		const auto faceDecor = ActiveSlots.find("FD");
 
-		EmotionTexture face = AssetLibrary->GetEmotions().GetFace(Customization->Gender, Customization->Emotion, Customization->EmotionFrame, Customization->Face.Id);
+		if (faceDecor != ActiveSlots.end())
+			parameters.FaceDecor = &faceDecor->second;
+		else
+			parameters.FaceDecor = nullptr;
 
-		const auto spawnCallback = [this, &dyeColor, &spawningRig, &currentSlot, &faceDecor, &face](MapLoader::ModelData* model, size_t i, InstDesc& instance)
+		auto face = AssetLibrary->GetEmotions().GetFace(Customization->Gender, Customization->Emotion, Customization->EmotionFrame, Customization->Face.Id);
+		parameters.FaceFile = face.File;
+		parameters.FaceControl = face.Control;
+
+		auto spawnCallback = [this](auto model, auto i, auto& instance)
 		{
-			const std::string& meshName = model->Nodes[i].Name;
-
-			if (contains(CutMeshes, meshName))
-				return false;
-
-			const auto equippedIndex = ActiveSlots.find(meshName.substr(0, 2));
-
-			if (spawningRig && equippedIndex != ActiveSlots.end() && equippedIndex->second.Replaces && meshName != "FA_EA")
-				return false;
-
-			const DyeColor& color = model->Nodes[i].Shader == "MS2CharacterSkinMaterial" ? Customization->SkinColor : dyeColor;
-
-			instance.primaryColor = vec3(color.Primary.R, color.Primary.G, color.Primary.B);
-			instance.secondaryColor = vec3(color.Secondary.R, color.Secondary.G, color.Secondary.B);
-
-			if (meshName == "FA")
-			{
-				instance.flags |= 2;
-			}
-
-			if (currentSlot != nullptr && (currentSlot->Slot->Decals.size() > 0 || currentSlot->Slot->Name == "FA"))
-			{
-				auto& materialTextures = AssetLibrary->GetModels().GetMaterialTextures();
-
-				instance.textureOverride = (int)materialTextures.size();
-
-				materialTextures.push_back(materialTextures[model->Nodes[i].Material.textures]);
-
-				MaterialTextures& overrides = materialTextures.back();
-
-				for (const ItemDecal& decal : currentSlot->Slot->Decals)
-				{
-					int preset = std::max(-1, std::min((int)decal.Transforms.size() - 1, currentSlot->Customization->Preset));
-
-					if (decal.Texture != -1)
-					{
-						overrides.decal.id = decal.Texture;
-
-						if (decal.Transforms.size() > 0)
-						{
-							overrides.decal.transformId = decal.Transforms[preset].TextureTransformId;
-						}
-					}
-
-					if (decal.ControlTexture != -1)
-					{
-						overrides.colorOverride.id = decal.ControlTexture;
-
-						if (decal.Transforms.size() > 0)
-						{
-							overrides.colorOverride.transformId = decal.Transforms[preset].TextureTransformId;
-						}
-					}
-				}
-
-				if (currentSlot->Slot->Name == "FA" && model->Nodes[i].Name == "FA")
-				{
-					int diffuseTexture = AssetLibrary->GetTextures().FetchTexture("Resource/Model/Textures/" + face.File, VK_FORMAT_R8G8B8A8_UNORM);
-					int controlTexture = AssetLibrary->GetTextures().FetchTexture("Resource/Model/Textures/" + face.Control, VK_FORMAT_R8G8B8A8_UNORM);
-
-					if (diffuseTexture != -1)
-					{
-						overrides.diffuse.id = diffuseTexture;
-					}
-
-					if (controlTexture != -1)
-					{
-						overrides.colorOverride.id = controlTexture;
-					}
-				}
-
-				if (currentSlot->Slot->Name == "FA" && model->Nodes[i].Name == "FA_Skin" && faceDecor != ActiveSlots.end())
-				{
-					for (const ItemDecal& decal : faceDecor->second.Slot->Decals)
-					{
-						int preset = std::max(-1, std::min((int)decal.Transforms.size() - 1, faceDecor->second.Customization->Preset));
-
-						if (decal.Texture != -1)
-						{
-							overrides.decal.id = decal.Texture;
-
-							if (decal.Transforms.size() > 0)
-							{
-								overrides.decal.transformId = decal.Transforms[preset].TextureTransformId;
-							}
-						}
-
-						if (decal.ControlTexture != -1)
-						{
-							overrides.colorOverride.id = decal.ControlTexture;
-
-							if (decal.Transforms.size() > 0)
-							{
-								overrides.colorOverride.transformId = decal.Transforms[preset].TextureTransformId;
-							}
-						}
-					}
-				}
-			}
-
-			return true;
+			return SpawnModelCallback(model, i, instance);
 		};
 
-		spawnModel(rig, transform, spawnCallback);
+		Model = std::make_unique<SkinnedModel>(AssetLibrary->GetVulkanContext());
+		Model->SetTransformation(transform);
+		Model->AddModel(rig, {}, spawnCallback);
 
-		CreateRigDebugMesh(rig, transform);
+		//CreateRigDebugMesh(rig, transform);
 
-		spawningRig = false;
+		parameters.SpawningRig = false;
 
 		for (size_t i = 0; i < rig->Nodes.size(); ++i)
 		{
@@ -317,42 +230,28 @@ namespace MapLoader
 
 		for (auto& activeSlot : ActiveSlots)
 		{
-			currentSlot = &activeSlot.second;
+			parameters.CurrentSlot = &activeSlot.second;
 
-			const ItemSlot* slot = currentSlot->Slot;
+			const ItemSlot* slot = parameters.CurrentSlot->Slot;
 
-			dyeColor = currentSlot->Customization->Color;
+			parameters.CurrentDyeColor = parameters.CurrentSlot->Customization->Color;
 
 			for (const ItemData& asset : slot->Assets)
 			{
 				Matrix4F assetTransform;
 
-				const auto transformIndex = Transforms.find(asset.TargetNode);
-
-				if (transformIndex != Transforms.end())
-					assetTransform = transformIndex->second;
-
 				if (slot->Name == "CP" && activeSlot.second.Item->Customization.HatAttach)
 				{
-					assetTransform = assetTransform * hatTransform;
+					assetTransform = hatTransform;
 				}
 
-				if (asset.SelfNode == asset.TargetNode)
-				{
-					for (size_t i = 0; i < asset.Model->Nodes.size(); ++i)
-					{
-						if (asset.SelfNode == asset.Model->Nodes[i].Name.substr(0, asset.SelfNode.size()))
-						{
-							assetTransform = assetTransform * asset.Model->Nodes[i].Transformation.Inverted();
-					
-							break;
-						}
-					}
-				}
-
-				spawnModel(asset.Model, transform * assetTransform, spawnCallback);
+				Model->AddModel(asset.Model, assetTransform, asset.SelfNode, asset.TargetNode, spawnCallback);
 			}
 		}
+
+		Model->CreateRigDebugMesh(AssetLibrary->GetModels());
+
+		SpawnParameters = nullptr;
 	}
 
 	Matrix4F Character::ComputeHatTransform()
@@ -396,6 +295,110 @@ namespace MapLoader
 		Matrix4F rotation = getMatrix(Vector3SF(0, 0, 0), hatData->AttachRotation, 1, true);
 
 		return Matrix4F(hitData.Intersection, front, -up, -right) * rotation * Matrix4F(hatOffset);
+	}
+
+	bool Character::SpawnModelCallback(MapLoader::ModelData* model, size_t i, InstDesc& instance) {
+		const std::string& meshName = model->Nodes[i].Name;
+
+		if (contains(CutMeshes, meshName))
+			return false;
+
+		const auto equippedIndex = ActiveSlots.find(meshName.substr(0, 2));
+
+		if (SpawnParameters->SpawningRig && equippedIndex != ActiveSlots.end() && equippedIndex->second.Replaces && meshName != "FA_EA")
+			return false;
+
+		const DyeColor& color = model->Nodes[i].Shader == "MS2CharacterSkinMaterial" ? Customization->SkinColor : SpawnParameters->CurrentDyeColor;
+
+		instance.primaryColor = vec3(color.Primary.R, color.Primary.G, color.Primary.B);
+		instance.secondaryColor = vec3(color.Secondary.R, color.Secondary.G, color.Secondary.B);
+
+		if (meshName == "FA")
+		{
+			instance.flags |= 2;
+		}
+
+		if (SpawnParameters->CurrentSlot != nullptr && (SpawnParameters->CurrentSlot->Slot->Decals.size() > 0 || SpawnParameters->CurrentSlot->Slot->Name == "FA"))
+		{
+			auto& materialTextures = AssetLibrary->GetModels().GetMaterialTextures();
+
+			instance.textureOverride = (int)materialTextures.size();
+
+			materialTextures.push_back(materialTextures[model->Nodes[i].Material.textures]);
+
+			MaterialTextures& overrides = materialTextures.back();
+
+			for (const ItemDecal& decal : SpawnParameters->CurrentSlot->Slot->Decals)
+			{
+				int preset = std::max(-1, std::min((int)decal.Transforms.size() - 1, SpawnParameters->CurrentSlot->Customization->Preset));
+
+				if (decal.Texture != -1)
+				{
+					overrides.decal.id = decal.Texture;
+
+					if (decal.Transforms.size() > 0)
+					{
+						overrides.decal.transformId = decal.Transforms[preset].TextureTransformId;
+					}
+				}
+
+				if (decal.ControlTexture != -1)
+				{
+					overrides.colorOverride.id = decal.ControlTexture;
+
+					if (decal.Transforms.size() > 0)
+					{
+						overrides.colorOverride.transformId = decal.Transforms[preset].TextureTransformId;
+					}
+				}
+			}
+
+			if (SpawnParameters->CurrentSlot->Slot->Name == "FA" && model->Nodes[i].Name == "FA")
+			{
+				int diffuseTexture = AssetLibrary->GetTextures().FetchTexture("Resource/Model/Textures/" + SpawnParameters->FaceFile, VK_FORMAT_R8G8B8A8_UNORM);
+				int controlTexture = AssetLibrary->GetTextures().FetchTexture("Resource/Model/Textures/" + SpawnParameters->FaceControl, VK_FORMAT_R8G8B8A8_UNORM);
+
+				if (diffuseTexture != -1)
+				{
+					overrides.diffuse.id = diffuseTexture;
+				}
+
+				if (controlTexture != -1)
+				{
+					overrides.colorOverride.id = controlTexture;
+				}
+			}
+
+			if (SpawnParameters->CurrentSlot->Slot->Name == "FA" && model->Nodes[i].Name == "FA_Skin" && SpawnParameters->FaceDecor != nullptr)
+			{
+				for (const ItemDecal& decal : SpawnParameters->FaceDecor->Slot->Decals)
+				{
+					int preset = std::max(-1, std::min((int)decal.Transforms.size() - 1, SpawnParameters->FaceDecor->Customization->Preset));
+
+					if (decal.Texture != -1)
+					{
+						overrides.decal.id = decal.Texture;
+
+						if (decal.Transforms.size() > 0)
+						{
+							overrides.decal.transformId = decal.Transforms[preset].TextureTransformId;
+						}
+					}
+
+					if (decal.ControlTexture != -1)
+					{
+						overrides.colorOverride.id = decal.ControlTexture;
+
+						if (decal.Transforms.size() > 0)
+						{
+							overrides.colorOverride.transformId = decal.Transforms[preset].TextureTransformId;
+						}
+					}
+				}
+			}
+		}
+
+		return true;
 	}
 
 	void Character::CreateRigDebugMesh(MapLoader::ModelData* rig, const Matrix4F transform)

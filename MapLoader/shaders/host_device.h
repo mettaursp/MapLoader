@@ -77,11 +77,9 @@ struct MeshDesc
 {
 	int displayFlags WITH_DEFAULT(0);
 	uint64_t vertexPosAddress WITH_DEFAULT(0);      // Address of the Vertex buffer
-	uint64_t vertexAttribAddress WITH_DEFAULT(0);   // Address of the Vertex buffer
-	uint64_t vertexColorAddress WITH_DEFAULT(0);    // Address of the Vertex buffer
 	uint64_t vertexBinormalAddress WITH_DEFAULT(0); // Address of the Vertex buffer
 	uint64_t vertexMorphAddress WITH_DEFAULT(0);    // Address of the Vertex buffer
-	uint64_t vertexSkeletonAddress WITH_DEFAULT(0); // Address of the Vertex buffer
+	uint64_t vertexBlendAddress WITH_DEFAULT(0); // Address of the Vertex buffer
 	uint64_t indexAddress WITH_DEFAULT(0);          // Address of the index buffer
 	uint64_t materialAddress WITH_DEFAULT(0);       // Address of the material buffer
 	uint64_t materialIndexAddress WITH_DEFAULT(0);  // Address of the triangle material index buffer
@@ -100,6 +98,8 @@ struct InstDesc
 	vec3 primaryColor;
 	int textureOverride WITH_DEFAULT(-1);
 	vec3 secondaryColor;
+	uint64_t vertexPosAddressOverride WITH_DEFAULT(0);
+	uint64_t vertexBinormalAddressOverride WITH_DEFAULT(0);
 };
 
 struct LightDesc
@@ -185,7 +185,7 @@ struct VertexMorphBinding
 	vec3 morphpos;
 };
 
-struct VertexSkeletonBinding
+struct VertexBlendBinding
 {
 	u8vec4 blendindices WITH_DEFAULT(0);
 	vec4 blendweight;

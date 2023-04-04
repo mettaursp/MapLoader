@@ -184,6 +184,7 @@
     <ClCompile Include="src\MapLoader\Assets\GameAssetLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Assets\ModelData.cpp" />
     <ClCompile Include="src\MapLoader\Assets\ModelLibrary.cpp" />
+    <ClCompile Include="src\MapLoader\Assets\SkinnedModel.cpp" />
     <ClCompile Include="src\MapLoader\Assets\TextureAsset.cpp" />
     <ClCompile Include="src\MapLoader\Assets\TextureLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Character\Character.cpp" />
@@ -215,6 +216,7 @@
     <ClInclude Include="src\MapLoader\Assets\GameAssetLibrary.h" />
     <ClInclude Include="src\MapLoader\Assets\ModelData.h" />
     <ClInclude Include="src\MapLoader\Assets\ModelLibrary.h" />
+    <ClInclude Include="src\MapLoader\Assets\SkinnedModel.h" />
     <ClInclude Include="src\MapLoader\Assets\TextureAsset.h" />
     <ClInclude Include="src\MapLoader\Assets\TextureLibrary.h" />
     <ClInclude Include="src\MapLoader\Character\Character.h" />
@@ -370,6 +372,45 @@ exit /b %1
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating $(ProjectName)/spv/post.frag.spv</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\spv\post.frag.spv;%(Outputs)</Outputs>
+    </CustomBuild>
+    <CustomBuild Include="shaders\anim.comp">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+cd $(ProjectDir)
+if %errorlevel% neq 0 goto :cmEnd
+B:
+if %errorlevel% neq 0 goto :cmEnd
+echo B:/VulkanSDK/1.3.239.0/bin/glslangValidator.exe -g --target-env vulkan1.2 -o $(ProjectDir)/spv/anim.comp.spv $(ProjectDir)/shaders/anim.comp
+if %errorlevel% neq 0 goto :cmEnd
+$(VULKAN_SDK)\bin\glslangValidator.exe -g --target-env vulkan1.2 -o $(ProjectDir)/spv/anim.comp.spv $(ProjectDir)/shaders/anim.comp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
+cd $(ProjectDir)
+if %errorlevel% neq 0 goto :cmEnd
+B:
+if %errorlevel% neq 0 goto :cmEnd
+echo B:/VulkanSDK/1.3.239.0/bin/glslangValidator.exe -g --target-env vulkan1.2 -o $(ProjectDir)/spv/anim.comp.spv $(ProjectDir)/shaders/anim.comp
+if %errorlevel% neq 0 goto :cmEnd
+$(VULKAN_SDK)\bin\glslangValidator.exe -g --target-env vulkan1.2 -o $(ProjectDir)/spv/anim.comp.spv $(ProjectDir)/shaders/anim.comp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating $(ProjectName)/spv/anim.comp.spv</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Generating $(ProjectName)/spv/anim.comp.spv</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\spv\anim.comp.spv;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\spv\anim.comp.spv;%(Outputs)</Outputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\shaders\wavefront.glsl;$(ProjectDir)\shaders\host_device.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\shaders\wavefront.glsl;$(ProjectDir)\shaders\host_device.h;%(AdditionalInputs)</AdditionalInputs>
     </CustomBuild>
     <None Include="shaders\raycommon.glsl" />
     <None Include="shaders\raytrace-rahit.glsl" />

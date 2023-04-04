@@ -97,11 +97,15 @@ namespace MapLoader
 
 			modelNode.Name = node.Name;
 			modelNode.IsBone = node.IsBone;
+			modelNode.IsInBoneList = node.IsInBoneList;
 			modelNode.Bones = node.Bones;
 			modelNode.AttachedTo = node.AttachedTo;
 
 			if (node.Transform != nullptr)
+			{
 				modelNode.Transformation = node.Transform->GetWorldTransformation();
+				modelNode.LocalTransformation = node.Transform->GetTransformation();
+			}
 
 			if (node.Mesh != nullptr)
 			{
@@ -337,7 +341,7 @@ namespace MapLoader
 		enableBinding(buffers, bufferFormat, 0, buffers.VertexPositions, vertices);
 		enableBinding(buffers, bufferFormat, 1, buffers.VertexBinormals, vertices);
 		enableBinding(buffers, bufferFormat, 2, buffers.VertexMorphPos, vertices);
-		enableBinding(buffers, bufferFormat, 3, buffers.VertexSkeleton, vertices);
+		enableBinding(buffers, bufferFormat, 3, buffers.VertexBlend, vertices);
 
 		buffers.IndexBuffer = node.Mesh->GetIndexBuffer();
 
@@ -374,7 +378,7 @@ namespace MapLoader
 		mesh.VertexPosBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexPositions, buffers.VertexBindings[0], vertexBufferFlags);
 		mesh.VertexBinormalBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexBinormals, buffers.VertexBindings[1], vertexBufferFlags);
 		mesh.VertexMorphBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexMorphPos, buffers.VertexBindings[2], vertexBufferFlags);
-		mesh.VertexSkeletonBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexSkeleton, buffers.VertexBindings[3], vertexBufferFlags);
+		mesh.VertexBlendBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.VertexBlend, buffers.VertexBindings[3], vertexBufferFlags);
 
 		mesh.IndexBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.IndexBuffer, buffers.IndexBuffer.data(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
 
@@ -404,8 +408,8 @@ namespace MapLoader
 		if (mesh.VertexMorphBuffer.buffer)
 			vulkanContext->Debug.setObjectName(mesh.VertexMorphBuffer.buffer, (std::string("vertexMorph_" + objNb)));
 
-		if (mesh.VertexSkeletonBuffer.buffer)
-			vulkanContext->Debug.setObjectName(mesh.VertexSkeletonBuffer.buffer, (std::string("vertexSkeleton_" + objNb)));
+		if (mesh.VertexBlendBuffer.buffer)
+			vulkanContext->Debug.setObjectName(mesh.VertexBlendBuffer.buffer, (std::string("vertexBlend_" + objNb)));
 
 		vulkanContext->Debug.setObjectName(mesh.IndexBuffer.buffer, (std::string("index_" + objNb)));
 		vulkanContext->Debug.setObjectName(mesh.MatColorBuffer.buffer, (std::string("mat_" + objNb)));
@@ -416,20 +420,14 @@ namespace MapLoader
 		desc.displayFlags = (invisible ? 1 : 0);
 		desc.vertexPosAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexPosBuffer.buffer);
 
-		if (mesh.VertexAttribBuffer.buffer)
-			desc.vertexAttribAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexAttribBuffer.buffer);
-
-		if (mesh.VertexColorBuffer.buffer)
-			desc.vertexColorAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexColorBuffer.buffer);
-
 		if (mesh.VertexBinormalBuffer.buffer)
 			desc.vertexBinormalAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexBinormalBuffer.buffer);
 
 		if (mesh.VertexMorphBuffer.buffer)
 			desc.vertexMorphAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexMorphBuffer.buffer);
 
-		if (mesh.VertexSkeletonBuffer.buffer)
-			desc.vertexSkeletonAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexSkeletonBuffer.buffer);
+		if (mesh.VertexBlendBuffer.buffer)
+			desc.vertexBlendAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexBlendBuffer.buffer);
 
 		desc.indexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.IndexBuffer.buffer);
 		desc.materialAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.MatColorBuffer.buffer);
@@ -495,7 +493,7 @@ namespace MapLoader
 			vulkanContext->Allocator.destroy(m.VertexColorBuffer);
 			vulkanContext->Allocator.destroy(m.VertexBinormalBuffer);
 			vulkanContext->Allocator.destroy(m.VertexMorphBuffer);
-			vulkanContext->Allocator.destroy(m.VertexSkeletonBuffer);
+			vulkanContext->Allocator.destroy(m.VertexBlendBuffer);
 			vulkanContext->Allocator.destroy(m.IndexBuffer);
 			vulkanContext->Allocator.destroy(m.MatColorBuffer);
 			vulkanContext->Allocator.destroy(m.MatIndexBuffer);

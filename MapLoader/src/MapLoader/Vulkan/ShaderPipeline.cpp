@@ -331,7 +331,8 @@ namespace Graphics
 		rayPipelineInfo.maxPipelineRayRecursionDepth = MaxRayRecursionDepth;
 		rayPipelineInfo.layout = PipelineLayout;
 
-		vkCreateRayTracingPipelinesKHR(VulkanContext->Device, {}, {}, 1, &rayPipelineInfo, nullptr, &Pipeline);
+		VkResult result = vkCreateRayTracingPipelinesKHR(VulkanContext->Device, {}, {}, 1, &rayPipelineInfo, nullptr, &Pipeline);
+		assert(result == VK_SUCCESS);
 
 		if (VulkanContext->RTDeviceProperties.maxRayRecursionDepth <= 2)
 		{
@@ -369,7 +370,7 @@ namespace Graphics
 		uint32_t dataSize = handleCount * handleSize;
 		std::vector<uint8_t> handles(dataSize);
 
-		VkResult result = vkGetRayTracingShaderGroupHandlesKHR(VulkanContext->Device, Pipeline, 0, handleCount, dataSize, handles.data());
+		result = vkGetRayTracingShaderGroupHandlesKHR(VulkanContext->Device, Pipeline, 0, handleCount, dataSize, handles.data());
 		assert(result == VK_SUCCESS);
 
 		VkBufferUsageFlags bufferUsage = VK_BUFFER_USAGE_TRANSFER_SRC_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_SHADER_BINDING_TABLE_BIT_KHR;
@@ -412,6 +413,29 @@ namespace Graphics
 
 		VulkanContext->Allocator.unmap(ShaderBindingTableBuffer);
 		VulkanContext->Allocator.finalizeAndReleaseStaging();
+	}
+
+	void ShaderPipeline::CreateComputePipeline(size_t stageIndex)
+	{
+		Type = PipelineType::Compute;
+
+		VkPipelineShaderStageCreateInfo stage = { VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO };
+
+		auto& shader = Shaders[stageIndex].Shader;
+
+		shader->LoadModule();
+
+		stage.pName = Shaders[stageIndex].EntryPoint != "" ? Shaders[stageIndex].EntryPoint.c_str() : shader->GetEntryPoint().c_str();
+		stage.module = shader->GetModule();
+		stage.stage = shader->GetShaderStage();
+
+		VkComputePipelineCreateInfo computePipelineCreateInfo{ VK_STRUCTURE_TYPE_COMPUTE_PIPELINE_CREATE_INFO };
+		computePipelineCreateInfo.layout = PipelineLayout;
+
+		computePipelineCreateInfo.stage = stage;
+
+		VkResult result =vkCreateComputePipelines(VulkanContext->Device, {}, 1, &computePipelineCreateInfo, nullptr, &Pipeline);
+		assert(result == VK_SUCCESS);
 	}
 
 	void ShaderPipeline::AddRayGenGroup(uint32_t rayGenIndex)

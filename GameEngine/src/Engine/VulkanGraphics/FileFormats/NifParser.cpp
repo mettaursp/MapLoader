@@ -870,7 +870,7 @@ void NifParser::Parse(std::string_view stream)
 			transform->SetInheritsTransformation((data->Flags & 0x4 || true) != 0);// || true);
 			transform->Name = block.BlockName;
 
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, (size_t)-1, false, nullptr, nullptr, transform });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, (size_t)-1, false, false, nullptr, nullptr, transform });
 		}
 		else if (block.BlockType == "NiMesh")
 		{
@@ -1200,7 +1200,7 @@ void NifParser::Parse(std::string_view stream)
 				}
 			}
 
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, false, mesh.Format, mesh.Mesh, transform, bones });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, false, false, mesh.Format, mesh.Mesh, transform, bones });
 		}
 	}
 
@@ -1211,13 +1211,14 @@ void NifParser::Parse(std::string_view stream)
 
 void NifParser::MarkBone(size_t index, std::unordered_map<size_t, size_t>& boneIndices)
 {
-	if (Package->Nodes[index].IsBone) return;
+	if (Package->Nodes[index].IsInBoneList) return;
 
 	boneIndices[index] = Package->Bones.size();
 	Package->Bones.push_back(index);
 	Package->Nodes[index].IsBone = true;
+	Package->Nodes[index].IsInBoneList = true;
 
-	for (size_t parent = index; parent != (size_t)-1 && !Package->Nodes[parent].IsBone; parent = Package->Nodes[parent].AttachedTo)
+	for (size_t parent = Package->Nodes[index].AttachedTo; parent != (size_t)-1 && !Package->Nodes[parent].IsBone; parent = Package->Nodes[parent].AttachedTo)
 	{
 		Package->Nodes[parent].IsBone = true;
 	}

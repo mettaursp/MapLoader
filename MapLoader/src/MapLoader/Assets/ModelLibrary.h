@@ -55,7 +55,7 @@ namespace MapLoader
 			std::vector<VertexPosBinding> VertexPositions;
 			std::vector<VertexBinormalBinding> VertexBinormals;
 			std::vector<VertexMorphBinding> VertexMorphPos;
-			std::vector<VertexSkeletonBinding> VertexSkeleton;
+			std::vector<VertexBlendBinding> VertexBlend;
 			std::vector<int> IndexBuffer;
 			MaterialObj Material;
 		};

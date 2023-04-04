@@ -18,13 +18,15 @@ namespace MapLoader
 
 	struct ModelNode
 	{
+		std::string Name;
 		int MeshId = -1;
 		bool IsBone = false;
+		bool IsInBoneList = false;
 		size_t AttachedTo = (size_t)-1;
 		Matrix4F Transformation;
+		Matrix4F LocalTransformation;
 		std::string Shader;
 		std::string MaterialName;
-		std::string Name;
 		MaterialObj Material;
 		std::shared_ptr<Engine::Graphics::MeshData> Mesh;
 		std::vector<size_t> Bones;
@@ -52,7 +54,7 @@ namespace MapLoader
 		nvvk::Buffer VertexColorBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer VertexBinormalBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer VertexMorphBuffer;    // Device buffer of all 'Vertex'
-		nvvk::Buffer VertexSkeletonBuffer;    // Device buffer of all 'Vertex'
+		nvvk::Buffer VertexBlendBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer IndexBuffer;     // Device buffer of the indices forming triangles
 		nvvk::Buffer MatColorBuffer;  // Device buffer of array of 'Wavefront material'
 		nvvk::Buffer MatIndexBuffer;  // Device buffer of array of 'Wavefront material'

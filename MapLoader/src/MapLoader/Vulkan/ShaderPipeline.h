@@ -53,6 +53,7 @@ namespace Graphics
 		void CreateRasterPipeline();
 		static void CreateRasterPipelines(RenderPass& renderPass, const std::vector<ShaderPipeline*>& pipelines);
 		void CreateRTPipeline();
+		void CreateComputePipeline(size_t stageIndex = 0);
 
 		void ReleaseResources();
 

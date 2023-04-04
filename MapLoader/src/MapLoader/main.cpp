@@ -80,6 +80,7 @@
 #include "Items/EmotionLibrary.h"
 #include "Character/Character.h"
 #include "Scene/RTScene.h"
+#include "Assets/SkinnedModel.h"
 
 using DyeColor = MapLoader::DyeColor;
 using EmotionTexture = MapLoader::EmotionTexture;
@@ -971,6 +972,23 @@ int main(int argc, char** argv)
 	Character hornetCharacter(AssetLibrary);
 
 	hornetCharacter.Load(&hornetsp, Matrix4F(120, 0, 3000) * Matrix4F::RollRotation(PI));
+
+
+	const Archive::Metadata::Entry* derpPandaEntry = Archive::Metadata::Entry::FindFirstEntryByTags("60000053_LesserPanda", "gamebryo-scenegraph");
+	MapLoader::ModelData* derpPandaModel = nullptr;
+	std::unique_ptr<MapLoader::SkinnedModel> derpPandaRig = std::make_unique<MapLoader::SkinnedModel>(VulkanContext);
+	derpPandaRig->SetTransformation(Matrix4F(60, 20, 3000) * Matrix4F::RollRotation(PI));
+
+	if (derpPandaEntry != nullptr)
+	{
+		derpPandaModel = AssetLibrary->GetModels().FetchModel(derpPandaEntry);
+		derpPandaRig->AddModel(derpPandaModel, {}, [](MapLoader::ModelData* model, size_t i, InstDesc& instance)
+			{
+				return true;
+			}
+		);
+		derpPandaRig->CreateRigDebugMesh(AssetLibrary->GetModels());
+	}
 
 
 	//loadMap("02000376"); //sb map

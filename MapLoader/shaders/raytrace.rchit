@@ -55,7 +55,7 @@ layout(set = 1, binding = eTextureOverrides, scalar) buffer MaterialTextures_ { 
 layout(push_constant) uniform _PushConstantRay { PushConstantRay pcRay; };
 
 layout(shaderRecordEXT) buffer SBTData {
-    float material_id;
+	float material_id;
 };
 // clang-format on
 
@@ -117,7 +117,7 @@ void main()
 	// Indices of the triangle
 	ivec3 ind = indices.i[gl_PrimitiveID];
 
-	VertexPos vertices = VertexPos(objResource.vertexPosAddress);
+	VertexPos vertices = VertexPos(instanceDesc.vertexPosAddressOverride != 0 ? instanceDesc.vertexPosAddressOverride : objResource.vertexPosAddress);
 
 	// Vertex of the triangle
 	VertexPosBinding v0 = vertices.v[ind.x];
@@ -263,7 +263,7 @@ void main()
 
 	if (objResource.vertexBinormalAddress != 0 && (textures.anisotropic.id >= 0 || textures.normal.id >= 0))
 	{
-		VertexBinormal tbn = VertexBinormal(objResource.vertexBinormalAddress);
+		VertexBinormal tbn = VertexBinormal(instanceDesc.vertexBinormalAddressOverride != 0 ? instanceDesc.vertexBinormalAddressOverride : objResource.vertexBinormalAddress);
 
 		VertexBinormalBinding v0tbn = tbn.v[ind.x];
 		VertexBinormalBinding v1tbn = tbn.v[ind.y];

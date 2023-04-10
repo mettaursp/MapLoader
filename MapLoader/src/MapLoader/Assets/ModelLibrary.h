@@ -9,6 +9,7 @@
 #include <host_device.h>
 #include <MapLoader/obj_loader.h>
 #include <host_device.h>
+#include <Engine/Math/Matrix4.h>
 
 namespace Engine
 {
@@ -17,20 +18,69 @@ namespace Engine
 		struct ModelPackageNode;
 		struct ModelPackageMaterial;
 	}
+
+	class Transform;
 }
 
 namespace MapLoader
 {
+	class SceneObject;
+}
+
+struct SpawnedMesh
+{
+	std::shared_ptr<Engine::Transform> Transform;
+	std::shared_ptr<MapLoader::SceneObject> SceneObject;
+};
+
+struct SpawnedEntity
+{
+	MapLoader::ModelData* Model = nullptr;
+	const Archive::Metadata::Entry* FlatEntry = nullptr;
+	std::string Id;
+	std::string Name;
+	Vector3SF Position;
+	Vector3SF WorldPosition;
+	int MapIndex = -1;
+	int PortalIndex = -1;
+	int LineNumber = -1;
+	std::vector<SpawnedMesh> Meshes;
+};
+
+struct ModelSpawnParameters
+{
+	MapLoader::ModelData* Model;
+	size_t MeshIndex = (size_t)-1; // Mesh index in model
+	InstDesc& NewInstance;
+	size_t MeshId = (size_t)-1; // Spawned model instance index
+	size_t VertexCount = 0;
+	size_t IndexCount = 0;
+};
+
+typedef std::function<bool(ModelSpawnParameters&)> ModelSpawnCallback;
+
+namespace MapLoader
+{
 	class GameAssetLibrary;
+	class RTScene;
 
 	class ModelLibrary
 	{
 	public:
+		struct SpawnedModel
+		{
+			int EntityId = -1;
+			int ModelId = -1;
+			int MaterialId = -1;
+		};
+
 		ModelLibrary(GameAssetLibrary& assetLibrary);
 		~ModelLibrary();
 
 		ModelData* FetchModel(const Archive::Metadata::Entry* entry, bool keepRawData = false);
+		void SetCurrentMapTransform(const Matrix4F& mapTransform);
 
+		const Matrix4F& GetCurrentMapTransform() const { return CurrentMapTransform; }
 		const auto& GetUnmappedMaterials() const { return UnmappedMaterials; }
 		const auto& GetModels() const { return Models; }
 		const auto& GetMeshDescriptions() const { return MeshDescriptions; }
@@ -43,6 +93,14 @@ namespace MapLoader
 		auto& GetTextureTransforms() { return TextureTransforms; }
 		uint32_t LoadWireframeMesh(const std::vector<VertexPosBinding>& vertices, const std::vector<int>& indices);
 		const auto& GetMeshFormat() const { return MeshFormat; }
+		const auto& GetSpawnedInstances() const { return SpawnedInstances; }
+		const auto& GetSpawnedWireframeInstances() const { return SpawnedWireframeInstances; }
+		const auto& GetSpawnedModels() const { return SpawnedModels; }
+		const auto& GetSpawnedEntities() const { return SpawnedEntities; }
+		const auto& GetGpuEntityData() const { return GpuEntityData; }
+
+		SpawnedEntity* SpawnModel(RTScene* scene, ModelData* model, const Matrix4F& transform = Matrix4F(), const ModelSpawnCallback& callback = nullptr);
+		void SpawnWireframe(RTScene* scene, uint32_t index, const Matrix4F& transform = Matrix4F());
 
 		void FreeResources();
 
@@ -60,6 +118,12 @@ namespace MapLoader
 			MaterialObj Material;
 		};
 
+		struct ObjInstance
+		{
+			mat4 transform;
+			uint32_t objIndex = 0;
+		};
+
 		GameAssetLibrary& AssetLibrary;
 		std::string NifDocumentBuffer;
 		std::shared_ptr<Engine::Graphics::MeshFormat> MeshFormat;
@@ -71,7 +135,13 @@ namespace MapLoader
 		std::vector<MeshDescription> MeshDescriptions;
 		std::vector<WireframeDescription> WireframeDescriptions;
 		std::vector<MaterialTextures> MaterialTextures;
+		std::vector<SpawnedEntity> SpawnedEntities;
+		std::vector<ObjInstance> SpawnedInstances;
+		std::vector<ObjInstance> SpawnedWireframeInstances;
+		std::vector<SpawnedModel> SpawnedModels;
+		std::vector<InstDesc> GpuEntityData;
 		int DuplicateFormatUses = 0;
+		Matrix4F CurrentMapTransform;
 
 		static std::unordered_set<std::string> UnmappedMaterials;
 
@@ -79,5 +149,7 @@ namespace MapLoader
 		void LoadMaterial(MaterialObj& material, const Engine::Graphics::ModelPackageMaterial& packageMaterial);
 		void LoadBuffers(MeshBuffers& buffers, Engine::Graphics::ModelPackageNode& node);
 		uint32_t LoadModel(MeshBuffers& buffers, const Matrix4F& transform = Matrix4F(), bool invisible = false);
+		void LoadModelInstance(uint32_t index, Matrix4F transform = Matrix4F());
+		void LoadWireframeInstance(uint32_t index, Matrix4F transform = Matrix4F());
 	};
 }

@@ -2,46 +2,48 @@
 
 #include <MapLoader/Scene/RTScene.h>
 #include <MapLoader/Assets/ModelLibrary.h>
+#include <nvvk/buffers_vk.hpp>
 
 namespace MapLoader
 {
-	SkinnedModel::SkinnedModel(const std::shared_ptr<Graphics::VulkanContext>& vulkanContext) : VulkanContext(vulkanContext)
+	SkinnedModel::SkinnedModel(const std::shared_ptr<GameAssetLibrary>& assetLibrary, const std::shared_ptr<RTScene>& scene) : AssetLibrary(assetLibrary), Scene(scene)
 	{
-
+		VulkanContext = AssetLibrary->GetVulkanContext();
 	}
 
 	SkinnedModel::~SkinnedModel()
 	{
-
+		ReleaseResources();
 	}
 
-	void SkinnedModel::SetTransformation(const Matrix4F& transformation)
+	void SkinnedModel::ReleaseResources()
 	{
-		Transformation = transformation;
+		for (size_t i = 0; i < Models.size(); ++i)
+		{
+			for (size_t j = 0; j < Models[i].Meshes.size(); ++j)
+			{
+				auto& skinnedMesh = Models[i].Meshes[j];
+
+				if (skinnedMesh.SkeletonSectionIndicesBuffer.buffer != nullptr)
+					VulkanContext->Allocator.destroy(skinnedMesh.SkeletonSectionIndicesBuffer);
+
+				if (skinnedMesh.VertexPosOverride.buffer != nullptr)
+					VulkanContext->Allocator.destroy(skinnedMesh.VertexPosOverride);
+
+				if (skinnedMesh.VertexBinormalOverride.buffer != nullptr)
+					VulkanContext->Allocator.destroy(skinnedMesh.VertexBinormalOverride);
+			}
+		}
+		
+		if (SkeletonBuffer.buffer != nullptr)
+		{
+			VulkanContext->Allocator.destroy(SkeletonBuffer);
+		}
 	}
 
 	void SkinnedModel::AddModel(struct ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback)
 	{
-		AddRigNodes(model, transformation, "");
-
-		Models.push_back({});
-
-		SpawningData parameters
-		{
-			.Callback = callback,
-			.CurrentEntry = Models.back()
-		};
-
-		SpawnParameters = &parameters;
-
-		auto spawnCallback = [this](MapLoader::ModelData* model, size_t i, InstDesc& instance)
-		{
-			return SpawnModelCallback(model, i, instance);
-		};
-
-		spawnModel(model, Transformation * transformation, spawnCallback);
-
-		SpawnParameters = nullptr;
+		AddModels(model, transformation, callback);
 	}
 
 	void SkinnedModel::AddModel(struct ModelData* model, const Matrix4F& transformation, const std::string& selfNode, const std::string& targetNode, const ModelSpawnCallback& callback)
@@ -63,7 +65,7 @@ namespace MapLoader
 
 		if (parentRigNode == (size_t)-1)
 		{
-			std::cout << "rig does not have target node '" << targetNode << "'" << std::endl;
+			std::cout << "rig does not have target node '" << targetNode << "' while adding model '" << model->Entry->Name << "'" << std::endl;
 
 			return;
 		}
@@ -94,24 +96,38 @@ namespace MapLoader
 			return;
 		}
 
-		AddRigNodes(model, attachmentTransformation, selfNode, parentRigNode);
+		AddModels(model, attachmentTransformation, callback, selfNode, parentRigNode);
+	}
 
-		Models.push_back({});
+	void SkinnedModel::AddModels(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback, const std::string& selfNode, size_t parentIndex)
+	{
+		SkeletonDataIsStale = true;
+		MarkStale(true);
+
+		AddRigNodes(model, transformation, selfNode, parentIndex);
+
+		Models.push_back({ model });
 
 		SpawningData parameters
 		{
 			.Callback = callback,
-			.CurrentEntry = Models.back()
+			.CurrentEntry = Models.back(),
+			.CmdGen = nvvk::CommandPool(VulkanContext->Device, VulkanContext->GraphicsQueueIndex)
 		};
 
 		SpawnParameters = &parameters;
 
-		auto spawnCallback = [this](MapLoader::ModelData* model, size_t i, InstDesc& instance)
+		auto spawnCallback = [this](ModelSpawnParameters& spawnParameters)
 		{
-			return SpawnModelCallback(model, i, instance);
+			return SpawnModelCallback(spawnParameters);
 		};
 
-		spawnModel(model, Transformation * RigNodes[parentRigNode].Transformation * attachmentTransformation, spawnCallback);
+		Matrix4F modelTransformation = GetTransform()->GetWorldTransformation();
+
+		if (parentIndex != (size_t)-1)
+			modelTransformation *= RigNodes[parentIndex].Transformation;
+
+		AssetLibrary->GetModels().SpawnModel(Scene.get(), model, modelTransformation * transformation, spawnCallback);
 
 		SpawnParameters = nullptr;
 	}
@@ -173,11 +189,92 @@ namespace MapLoader
 		}
 	}
 
-	bool SkinnedModel::SpawnModelCallback(MapLoader::ModelData* model, size_t i, InstDesc& instance)
+	bool SkinnedModel::SpawnModelCallback(ModelSpawnParameters& spawnParameters)
 	{
-		bool doSpawn = SpawnParameters->Callback(model, i, instance);
+		bool doSpawn = SpawnParameters->Callback(spawnParameters);
 
 		if (!doSpawn) return false;
+
+		SpawnParameters->CurrentEntry.Meshes.push_back({});
+		auto& skinnedMesh = SpawnParameters->CurrentEntry.Meshes.back();
+
+		skinnedMesh.MeshIndex = spawnParameters.MeshIndex;
+		skinnedMesh.MeshId = spawnParameters.MeshId;
+
+		auto& modelNode = spawnParameters.Model->Nodes[spawnParameters.MeshIndex];
+
+		skinnedMesh.HasSkeleton = modelNode.Bones.size() > 0;
+		skinnedMesh.HasMorphAnimation = modelNode.Mesh != nullptr && modelNode.Mesh->GetFormat()->GetAttribute("morphpos") != nullptr;
+
+		if (!skinnedMesh.HasSkeleton && !skinnedMesh.HasMorphAnimation) return true;
+
+		VkBufferUsageFlags usageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
+
+		if (skinnedMesh.HasSkeleton)
+		{
+			VkCommandBuffer cmdBuf = SpawnParameters->CmdGen.createCommandBuffer();
+
+			std::vector<unsigned char> meshBoneIndices(modelNode.Bones.size());
+
+			for (size_t i = 0; i < modelNode.Bones.size(); ++i)
+			{
+				size_t boneIndex = spawnParameters.Model->BoneIndices[modelNode.Bones[i]];
+				const std::string& boneName = spawnParameters.Model->Nodes[boneIndex].Name;
+
+				auto nodeIndex = NodeIndices.find(boneName);
+
+				if (nodeIndex == NodeIndices.end())
+				{
+					std::cout << "mesh #" << spawnParameters.MeshIndex << " '" << modelNode.Name << "' in model '" << spawnParameters.Model->Entry->Name << "' bone #" << i << " '" << boneName << "' couldn't be found in rig\n";
+
+					meshBoneIndices.push_back(0);
+
+					continue;
+				}
+
+				const auto& rigNode = RigNodes[nodeIndex->second];
+
+				if (rigNode.SkeletonIndex == (size_t)-1)
+				{
+					std::cout << "mesh #" << spawnParameters.MeshIndex << " '" << modelNode.Name << "' in model '" << spawnParameters.Model->Entry->Name << "' bone #" << i << " '" << boneName << "' isn't mapped to skeleton index\n";
+
+					meshBoneIndices.push_back(0);
+
+					continue;
+				}
+
+				meshBoneIndices.push_back((unsigned char)rigNode.SkeletonIndex);
+			}
+
+			skinnedMesh.SkeletonSectionIndicesBuffer = VulkanContext->Allocator.createBuffer(cmdBuf, meshBoneIndices, usageFlags | VK_BUFFER_USAGE_TRANSFER_DST_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+			SpawnParameters->CmdGen.submitAndWait(cmdBuf);
+			VulkanContext->Allocator.finalizeAndReleaseStaging();
+		}
+
+		{
+			VkCommandBuffer cmdBuf = SpawnParameters->CmdGen.createCommandBuffer();
+			std::vector<VertexPosBinding> vertices(spawnParameters.VertexCount);
+
+			skinnedMesh.VertexPosOverride = VulkanContext->Allocator.createBuffer(cmdBuf, vertices, usageFlags);
+
+			SpawnParameters->CmdGen.submitAndWait(cmdBuf);
+			VulkanContext->Allocator.finalizeAndReleaseStaging();
+
+			spawnParameters.NewInstance.vertexPosAddressOverride = nvvk::getBufferDeviceAddress(VulkanContext->Device, skinnedMesh.VertexPosOverride.buffer);
+		}
+
+		{
+			VkCommandBuffer cmdBuf = SpawnParameters->CmdGen.createCommandBuffer();
+			std::vector<VertexBinormalBinding> vertices(spawnParameters.VertexCount);
+
+			skinnedMesh.VertexBinormalOverride = VulkanContext->Allocator.createBuffer(cmdBuf, vertices, usageFlags);
+
+			SpawnParameters->CmdGen.submitAndWait(cmdBuf);
+			VulkanContext->Allocator.finalizeAndReleaseStaging();
+
+			spawnParameters.NewInstance.vertexBinormalAddressOverride = nvvk::getBufferDeviceAddress(VulkanContext->Device, skinnedMesh.VertexBinormalOverride.buffer);
+		}
 
 		return true;
 	}
@@ -211,11 +308,15 @@ namespace MapLoader
 
 		uint32_t id = modelLibrary.LoadWireframeMesh(vertices, indices);
 
-		spawnWireframe(id, Transformation);
+		AssetLibrary->GetModels().SpawnWireframe(Scene.get(), id, GetTransform()->GetWorldTransformation());
 	}
 
-	void SkinnedModel::UpdateGpuData()
+	void SkinnedModel::SendSkeletonToGpu()
 	{
+		if (!SkeletonDataIsStale) return;
+
+		auto cmdGen = nvvk::CommandPool(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
+
 		for (size_t i = 0; i < RigNodes.size(); ++i)
 		{
 			auto& rigNode = RigNodes[i];
@@ -234,5 +335,49 @@ namespace MapLoader
 				SkeletonData[rigNode.SkeletonIndex] = rigNode.Transformation * rigNode.BaseTransform;
 			}
 		}
+
+		if (SkeletonBuffer.buffer != nullptr && LastSkeletonDataSize != SkeletonData.size())
+		{
+			VulkanContext->Allocator.destroy(SkeletonBuffer);
+		}
+
+		if (SkeletonBuffer.buffer == nullptr)
+		{
+			VkCommandBuffer cmdBuf = cmdGen.createCommandBuffer();
+
+			VkBufferUsageFlags usageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
+
+			SkeletonBuffer = VulkanContext->Allocator.createBuffer(cmdBuf, SkeletonData, usageFlags, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+			cmdGen.submitAndWait(cmdBuf);
+			VulkanContext->Allocator.finalizeAndReleaseStaging();
+
+			return;
+		}
+
+		auto     uboUsageStages = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR;
+
+		VkCommandBuffer cmdBuf = cmdGen.createCommandBuffer();
+		uint32_t size = sizeof(SkeletonData[0]) * (uint32_t)SkeletonData.size();
+
+		VkBufferMemoryBarrier beforeBarrier{ VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER };
+		beforeBarrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		beforeBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		beforeBarrier.buffer = SkeletonBuffer.buffer;
+		beforeBarrier.offset = 0;
+		beforeBarrier.size = size;
+		vkCmdPipelineBarrier(cmdBuf, uboUsageStages, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
+			nullptr, 1, &beforeBarrier, 0, nullptr);
+
+		vkCmdUpdateBuffer(cmdBuf, SkeletonBuffer.buffer, 0, size, SkeletonData.data());
+
+		VkBufferMemoryBarrier afterBarrier{ VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER };
+		afterBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		afterBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		afterBarrier.buffer = SkeletonBuffer.buffer;
+		afterBarrier.offset = 0;
+		afterBarrier.size = size;
+		vkCmdPipelineBarrier(cmdBuf, VK_PIPELINE_STAGE_TRANSFER_BIT, uboUsageStages, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
+			nullptr, 1, &afterBarrier, 0, nullptr);
 	}
 }

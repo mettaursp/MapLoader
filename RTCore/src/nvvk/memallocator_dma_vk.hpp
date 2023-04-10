@@ -46,7 +46,7 @@ public:
   void deinit() { m_dma = nullptr; }
 
   // Implement MemAllocator interface
-  virtual MemHandle allocMemory(const MemAllocateInfo& allocInfo, VkResult* pResult = nullptr) override { return m_dma->allocMemory(allocInfo, pResult); }
+  virtual MemHandle allocMemory(const MemAllocateInfo& allocInfo, VkResult* pResult = nullptr CALLER_TRACKER_SOURCE) override { return m_dma->allocMemory(allocInfo, pResult PASS_CALLER_TRACKER); }
   virtual void      freeMemory(MemHandle memHandle) override { return m_dma->freeMemory(memHandle); }
   virtual MemInfo   getMemoryInfo(MemHandle memHandle) const override { return m_dma->getMemoryInfo(memHandle); }
   virtual void*     map(MemHandle memHandle, VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE, VkResult* pResult = nullptr) override { return m_dma->map(memHandle, offset, size, pResult); }

@@ -5,7 +5,13 @@
 #include <MapLoader/Items/Dyes.h>
 #include <MapLoader/Items/ItemData.h>
 #include <nvvk/resourceallocator_vk.hpp>
-#include <MapLoader/Assets/SkinnedModel.h>
+
+struct ModelSpawnParameters;
+
+namespace Engine
+{
+	class Transform;
+}
 
 namespace MapLoader
 {
@@ -82,11 +88,16 @@ namespace MapLoader
 	};
 
 	class GameAssetLibrary;
+	class SkinnedModel;
 
 	class Character
 	{
 	public:
-		Character(const std::shared_ptr<GameAssetLibrary>& assetLibrary);
+		Character(const std::shared_ptr<GameAssetLibrary>& assetLibrary, const std::shared_ptr<RTScene>& scene);
+		~Character();
+
+		void ReleaseResources();
+
 		void EquipItem(const ItemModel* item, Item& customization);
 		void EquipItem(Item& item);
 		void LoadTab(InventoryTab& equips);
@@ -104,19 +115,20 @@ namespace MapLoader
 		};
 
 		std::shared_ptr<GameAssetLibrary> AssetLibrary;
+		std::shared_ptr<RTScene> Scene;
 		CharacterData* Customization = nullptr;
 		bool HideEars = false;
 		std::unordered_map<std::string, EquippedSlot> ActiveSlots;
 		std::vector<std::string> CutMeshes;
 		std::unordered_map<std::string, Matrix4F> Transforms;
-		Matrix4F Transform;
+		std::shared_ptr<Engine::Transform> Transform;
 		nvvk::Buffer SkeletonBuffer;
 		std::vector<Matrix4F> SkeletonData;
 		SpawningData* SpawnParameters = nullptr;
-		std::unique_ptr<SkinnedModel> Model;
+		std::shared_ptr<SkinnedModel> Model;
 
 		Matrix4F ComputeHatTransform();
-		bool SpawnModelCallback(MapLoader::ModelData* model, size_t i, InstDesc& instance);
+		bool SpawnModelCallback(ModelSpawnParameters& spawnParameters);
 		void CreateRigDebugMesh(MapLoader::ModelData* rig, const Matrix4F transform);
 	};
 }

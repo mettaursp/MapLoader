@@ -133,6 +133,25 @@ struct GlobalUniforms
 	int drawMode WITH_DEFAULT(0);
 };
 
+struct AnimationTask
+{
+	mat4 modelMatrix;
+
+	uint64_t vertices WITH_DEFAULT(0);
+
+	uint64_t vertexPosAddress WITH_DEFAULT(0);      // Address of the Vertex buffer
+	uint64_t vertexBinormalAddress WITH_DEFAULT(0); // Address of the Vertex buffer
+	uint64_t vertexMorphAddress WITH_DEFAULT(0);    // Address of the Vertex buffer
+	uint64_t vertexBlendAddress WITH_DEFAULT(0); // Address of the Vertex buffer
+	uint64_t indexAddress WITH_DEFAULT(0);          // Address of the index buffer
+
+	uint64_t skeletonAddress WITH_DEFAULT(0);
+	uint64_t skeletonIndicesAddress WITH_DEFAULT(0);
+	
+	uint64_t vertexPosAddressOverride WITH_DEFAULT(0);
+	uint64_t vertexBinormalAddressOverride WITH_DEFAULT(0);
+};
+
 // Push constant structure for the raster
 struct PushConstantRaster
 {

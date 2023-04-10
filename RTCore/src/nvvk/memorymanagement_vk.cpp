@@ -20,6 +20,7 @@
 
 #include <algorithm>
 #include <string>
+#include <iostream>
 
 #include "debug_util_vk.hpp"
 #include "error_vk.hpp"
@@ -109,7 +110,7 @@ DMAMemoryHandle* castDMAMemoryHandle(MemHandle memHandle)
   return dmaMemHandle;
 }
 
-MemHandle DeviceMemoryAllocator::allocMemory(const MemAllocateInfo& allocInfo, VkResult *pResult)
+MemHandle DeviceMemoryAllocator::allocMemory(const MemAllocateInfo& allocInfo, VkResult *pResult CALLER_TRACKER)
 {
   BakedAllocateInfo bakedInfo;
   fillBakedAllocateInfo(getMemoryProperties(), allocInfo, bakedInfo);
@@ -123,7 +124,7 @@ MemHandle DeviceMemoryAllocator::allocMemory(const MemAllocateInfo& allocInfo, V
 
   auto dmaHandle = allocInternal(allocInfo.getMemoryRequirements(), allocInfo.getMemoryProperties(),
                                 !allocInfo.getTilingOptimal() /*isLinear*/,
-                                isDedicatedAllocation ? &bakedInfo.dedicatedInfo : nullptr, result, true, state);
+                                isDedicatedAllocation ? &bakedInfo.dedicatedInfo : nullptr, result, true, state PASS_CALLER_TRACKER);
 
   if (pResult)
   {
@@ -212,7 +213,7 @@ int DeviceMemoryAllocator::s_allocDebugBias = 0;
 
 //#define DEBUG_ALLOCID   8
 
-nvvk::AllocationID DeviceMemoryAllocator::createID(Allocation& allocation, BlockID block, uint32_t blockOffset, uint32_t blockSize)
+nvvk::AllocationID DeviceMemoryAllocator::createID(Allocation& allocation, BlockID block, uint32_t blockOffset, uint32_t blockSize CALLER_TRACKER)
 {
   // find free slot
   if(m_freeAllocationIndex != INVALID_ID_INDEX)
@@ -224,6 +225,9 @@ nvvk::AllocationID DeviceMemoryAllocator::createID(Allocation& allocation, Block
     m_allocations[index].block       = block;
     m_allocations[index].blockOffset = blockOffset;
     m_allocations[index].blockSize   = blockSize;
+#ifdef _DEBUG
+    m_allocations[index].allocationLocation = allocationLocation;
+#endif
 #if DEBUG_ALLOCID
     // debug some specific id, useful to track allocation leaks
     if(index == DEBUG_ALLOCID)
@@ -349,15 +353,27 @@ void DeviceMemoryAllocator::deinit()
     }
   }
 
+  bool remainingAllocations = false;
   for(size_t i = 0; i < m_allocations.size(); i++)
   {
     if(m_allocations[i].id.index == (uint32_t)i)
     {
-      assert(0 && i && "AllocationID not freed");
-
+        remainingAllocations = true;
+#ifdef _DEBUG
+        std::cout << "[" << i << "] file: "
+            << m_allocations[i].allocationLocation.file_name() << "("
+            << m_allocations[i].allocationLocation.line() << ":"
+            << m_allocations[i].allocationLocation.column() << ") `"
+            << m_allocations[i].allocationLocation.function_name() << "`: AllocationID not freed"
+            << std::endl;
+#elif
+        std::cout << "[" << i << "]" << std::endl;
+#endif
       // set DEBUG_ALLOCID define further up to trace this id
     }
   }
+
+  assert(!remainingAllocations && "AllocationID not freed");
 
   m_allocations.clear();
   m_blocks.clear();
@@ -479,7 +495,8 @@ AllocationID DeviceMemoryAllocator::allocInternal(const VkMemoryRequirements&   
                                                   const VkMemoryDedicatedAllocateInfo* dedicated,
                                                   VkResult&                            result,
                                                   bool                                 preferDevice,
-                                                  const State&                         state)
+                                                  const State&                         state
+                                                  CALLER_TRACKER)
 {
   VkMemoryAllocateInfo memInfo;
 
@@ -534,7 +551,7 @@ AllocationID DeviceMemoryAllocator::allocInternal(const VkMemoryRequirements&   
 
         m_usedSize += blockSize;
 
-        return createID(allocation, block.id, blockOffset, blockSize);
+        return createID(allocation, block.id, blockOffset, blockSize PASS_CALLER_TRACKER);
       }
     }
   }
@@ -633,7 +650,7 @@ AllocationID DeviceMemoryAllocator::allocInternal(const VkMemoryRequirements&   
 
     m_activeBlockCount++;
 
-    return createID(allocation, id, blockOffset, blockSize);
+    return createID(allocation, id, blockOffset, blockSize PASS_CALLER_TRACKER);
   }
   else
   {
@@ -645,7 +662,7 @@ AllocationID DeviceMemoryAllocator::allocInternal(const VkMemoryRequirements&   
     {
       // downgrade memory property to zero and/or not preferDevice
       LOGW("downgrade memory\n");
-      return allocInternal(memReqs, 0, isLinear, dedicated, result, !preferDevice, state);
+      return allocInternal(memReqs, 0, isLinear, dedicated, result, !preferDevice, state PASS_CALLER_TRACKER);
     }
     else
     {

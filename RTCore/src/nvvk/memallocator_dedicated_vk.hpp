@@ -41,7 +41,7 @@ public:
   bool init(VkDevice device, VkPhysicalDevice physDevice);
   void deinit();
 
-  virtual MemHandle allocMemory(const MemAllocateInfo& allocInfo, VkResult* pResult = nullptr) override;
+  virtual MemHandle allocMemory(const MemAllocateInfo& allocInfo, VkResult* pResult = nullptr CALLER_TRACKER_SOURCE) override;
   virtual void      freeMemory(MemHandle memHandle) override;
   virtual MemInfo   getMemoryInfo(MemHandle memHandle) const override;
   virtual void*     map(MemHandle memHandle, VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE, VkResult* pResult = nullptr) override;

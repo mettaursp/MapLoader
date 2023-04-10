@@ -5,6 +5,15 @@
 
 namespace MapLoader
 {
+	enum class SceneObjectType
+	{
+		Static,
+		Dynamic,
+		Skinned,
+
+		None
+	};
+
 	enum class ObjectVisibilityType
 	{
 		Disabled = 0,
@@ -23,7 +32,9 @@ namespace MapLoader
 	class SceneObject : public Engine::Object
 	{
 	public:
-		void AddToScene(RTScene* scene, size_t index);
+		~SceneObject();
+
+		void AddToScene(RTScene* scene, size_t index, SceneObjectType type);
 		void RemoveFromScene(RTScene* scene);
 
 		ObjectVisibilityType GetVisibilityType() const;
@@ -35,16 +46,20 @@ namespace MapLoader
 		bool HasModel() const;
 		size_t GetSceneIndex(RTScene* scene) const;
 
+		void MarkStale(bool isStale);
 		void SetStatic(bool isStatic);
 		void SetVisibilityType(ObjectVisibilityType visibilityType);
 		void SetTransform(Engine::Transform* transform);
 		void SetModel(ModelData* model, size_t index);
+
+		SceneObjectType GetObjectType(RTScene* scene) const;
 
 	private:
 		struct SceneEntry
 		{
 			RTScene* Scene = nullptr;
 			size_t Index = (size_t)-1;
+			SceneObjectType Type = SceneObjectType::None;
 		};
 
 		bool IsStale = false;

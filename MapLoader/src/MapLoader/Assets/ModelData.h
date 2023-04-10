@@ -30,6 +30,8 @@ namespace MapLoader
 		MaterialObj Material;
 		std::shared_ptr<Engine::Graphics::MeshData> Mesh;
 		std::vector<size_t> Bones;
+		size_t Vertices = 0;
+		size_t Indices = 0;
 	};
 
 	struct ModelData

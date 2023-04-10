@@ -67,6 +67,7 @@ public:
 	void onResize(int /*w*/, int /*h*/) override;
 	void destroyResources();
 	void rasterize(const VkCommandBuffer& cmdBuff);
+	void animate();
 	void drawWireframes(const VkCommandBuffer& cmdBuff);
 	void screenshot();
 	bool startScreenshot();
@@ -79,12 +80,6 @@ public:
 	std::vector<char> screenshotBuffer;
 	nvvk::Image screenshotImage;
 
-	struct ObjInstance
-	{
-		mat4 transform;    // Matrix of the instance
-		uint32_t      objIndex{ 0 };  // Model index reference
-	};
-
 	// Information pushed at each draw call
 	PushConstantRaster m_pcRaster{
 			{1},                // Identity matrix
@@ -95,10 +90,7 @@ public:
 	};
 
 	// Array of objects and instances in the scene
-	std::vector<ObjInstance> m_instances;  // Scene model instances
-	std::vector<ObjInstance> m_wireframeInstances;  // Scene model instances
 	std::vector<LightDesc>   lights;
-	std::vector<InstDesc> instanceDescriptions;
 	MouseRayOut mouseIO = { vec3(), -1 };
 	MouseRayOut* mouseIOPtr = nullptr;
 
@@ -108,6 +100,7 @@ public:
 	std::unique_ptr<Graphics::ShaderPipeline> RasterPipeline;
 	std::unique_ptr<Graphics::ShaderPipeline> WireframePipeline;
 	std::unique_ptr<Graphics::ShaderPipeline> PostPipeline;
+	std::unique_ptr<Graphics::ShaderPipeline> AnimationPipeline;
 	std::shared_ptr<Graphics::RenderPass> RasterRenderPass;
 	std::shared_ptr<Graphics::RenderPass> WireframeRenderPass;
 	std::shared_ptr<Graphics::DescriptorSetLibrary> DescriptorSetLibrary;
@@ -116,6 +109,8 @@ public:
 	std::unique_ptr<Graphics::FrameBuffer> OffscreenWireframeBuffer;
 	std::shared_ptr<Graphics::RenderPass> DeviceRenderPass;
 	std::unique_ptr<Graphics::ShaderLibrary> ShaderLibrary;
+	size_t QueuedAnimationTasks = 0;
+	int MaxAnimatedVertices = 0;
 
 	nvvk::Buffer m_bGlobals;  // Device-Host of the camera matrices
 	nvvk::Buffer m_bObjDesc;  // Device buffer of the OBJ descriptions
@@ -124,6 +119,7 @@ public:
 	nvvk::Buffer m_mouseIO;
 	nvvk::Buffer m_InstDesc;
 	nvvk::Buffer m_textureOverride;
+	nvvk::Buffer m_animationTasks;
 	GlobalUniforms hostUBO;
 
 	std::shared_ptr<MapLoader::GameAssetLibrary> AssetLibrary;

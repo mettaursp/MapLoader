@@ -22,6 +22,7 @@
 #include <vulkan/vulkan_core.h>
 
 #include <string>
+#include <source_location>
 
 namespace nvvk {
 class MemHandleBase;
@@ -129,6 +130,16 @@ uint32_t getMemoryType(const VkPhysicalDeviceMemoryProperties& memoryProperties,
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef _DEBUG
+#define CALLER_TRACKER_SOURCE , const std::source_location& allocationLocation = std::source_location::current()
+#define CALLER_TRACKER , const std::source_location& allocationLocation
+#define PASS_CALLER_TRACKER , allocationLocation
+#elif
+#define CALLER_TRACKER_SOURCE
+#define CALLER_TRACKER
+#define PASS_CALLER_TRACKER
+#endif
+
 /**
   \class nvvk::MemAllocator
 
@@ -154,7 +165,7 @@ public:
 
   // Allocate a piece of memory according to the requirements of allocInfo.
   // may return NullMemHandle on error (provide pResult for details)
-  virtual MemHandle allocMemory(const MemAllocateInfo& allocInfo, VkResult* pResult = nullptr) = 0;
+  virtual MemHandle allocMemory(const MemAllocateInfo& allocInfo, VkResult* pResult = nullptr CALLER_TRACKER_SOURCE) = 0;
 
   // Free the memory backing 'memHandle'.
   // memHandle may be nullptr;

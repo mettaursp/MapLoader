@@ -4,6 +4,8 @@
 #include <MapLoader/Assets/GameAssetLibrary.h>
 #include <MapLoader/Scene/RTScene.h>
 #include <MapLoader/Map/FlatLibrary.h>
+#include <MapLoader/Assets/SkinnedModel.h>
+#include <Engine/Objects/Transform.h>
 
 namespace MapLoader
 {
@@ -101,9 +103,23 @@ namespace MapLoader
 		return false;
 	}
 
-	Character::Character(const std::shared_ptr<GameAssetLibrary>& assetLibrary) : AssetLibrary(assetLibrary)
+	Character::Character(const std::shared_ptr<GameAssetLibrary>& assetLibrary, const std::shared_ptr<RTScene>& scene) : AssetLibrary(assetLibrary), Scene(scene)
 	{
 
+	}
+
+	Character::~Character()
+	{
+		ReleaseResources();
+	}
+
+	void Character::ReleaseResources()
+	{
+		if (Model != nullptr)
+			Model->ReleaseResources();
+
+		if (SkeletonBuffer.buffer != nullptr)
+			AssetLibrary->GetVulkanContext()->Allocator.destroy(SkeletonBuffer);
 	}
 
 	void Character::EquipItem(const ItemModel* item, Item& customization)
@@ -203,13 +219,18 @@ namespace MapLoader
 		parameters.FaceFile = face.File;
 		parameters.FaceControl = face.Control;
 
-		auto spawnCallback = [this](auto model, auto i, auto& instance)
+		auto spawnCallback = [this](ModelSpawnParameters& spawnParameters)
 		{
-			return SpawnModelCallback(model, i, instance);
+			return SpawnModelCallback(spawnParameters);
 		};
 
-		Model = std::make_unique<SkinnedModel>(AssetLibrary->GetVulkanContext());
-		Model->SetTransformation(transform);
+		Transform = Engine::Create<Engine::Transform>();
+		Transform->SetTransformation(transform);
+		Transform->Update(0);
+
+		Model = Engine::Create<SkinnedModel>(AssetLibrary, Scene);
+		Model->SetParent(Transform);
+		Model->SetTransform(Transform.get());
 		Model->AddModel(rig, {}, spawnCallback);
 
 		//CreateRigDebugMesh(rig, transform);
@@ -250,6 +271,8 @@ namespace MapLoader
 		}
 
 		Model->CreateRigDebugMesh(AssetLibrary->GetModels());
+
+		Scene->AddSkinnedModel(Model);
 
 		SpawnParameters = nullptr;
 	}
@@ -297,8 +320,9 @@ namespace MapLoader
 		return Matrix4F(hitData.Intersection, front, -up, -right) * rotation * Matrix4F(hatOffset);
 	}
 
-	bool Character::SpawnModelCallback(MapLoader::ModelData* model, size_t i, InstDesc& instance) {
-		const std::string& meshName = model->Nodes[i].Name;
+	bool Character::SpawnModelCallback(ModelSpawnParameters& spawnParameters) {
+		auto& modelNode = spawnParameters.Model->Nodes[spawnParameters.MeshIndex];
+		const std::string& meshName = modelNode.Name;
 
 		if (contains(CutMeshes, meshName))
 			return false;
@@ -308,23 +332,23 @@ namespace MapLoader
 		if (SpawnParameters->SpawningRig && equippedIndex != ActiveSlots.end() && equippedIndex->second.Replaces && meshName != "FA_EA")
 			return false;
 
-		const DyeColor& color = model->Nodes[i].Shader == "MS2CharacterSkinMaterial" ? Customization->SkinColor : SpawnParameters->CurrentDyeColor;
+		const DyeColor& color = modelNode.Shader == "MS2CharacterSkinMaterial" ? Customization->SkinColor : SpawnParameters->CurrentDyeColor;
 
-		instance.primaryColor = vec3(color.Primary.R, color.Primary.G, color.Primary.B);
-		instance.secondaryColor = vec3(color.Secondary.R, color.Secondary.G, color.Secondary.B);
+		spawnParameters.NewInstance.primaryColor = vec3(color.Primary.R, color.Primary.G, color.Primary.B);
+		spawnParameters.NewInstance.secondaryColor = vec3(color.Secondary.R, color.Secondary.G, color.Secondary.B);
 
 		if (meshName == "FA")
 		{
-			instance.flags |= 2;
+			spawnParameters.NewInstance.flags |= 2;
 		}
 
 		if (SpawnParameters->CurrentSlot != nullptr && (SpawnParameters->CurrentSlot->Slot->Decals.size() > 0 || SpawnParameters->CurrentSlot->Slot->Name == "FA"))
 		{
 			auto& materialTextures = AssetLibrary->GetModels().GetMaterialTextures();
 
-			instance.textureOverride = (int)materialTextures.size();
+			spawnParameters.NewInstance.textureOverride = (int)materialTextures.size();
 
-			materialTextures.push_back(materialTextures[model->Nodes[i].Material.textures]);
+			materialTextures.push_back(materialTextures[modelNode.Material.textures]);
 
 			MaterialTextures& overrides = materialTextures.back();
 
@@ -353,7 +377,7 @@ namespace MapLoader
 				}
 			}
 
-			if (SpawnParameters->CurrentSlot->Slot->Name == "FA" && model->Nodes[i].Name == "FA")
+			if (SpawnParameters->CurrentSlot->Slot->Name == "FA" && modelNode.Name == "FA")
 			{
 				int diffuseTexture = AssetLibrary->GetTextures().FetchTexture("Resource/Model/Textures/" + SpawnParameters->FaceFile, VK_FORMAT_R8G8B8A8_UNORM);
 				int controlTexture = AssetLibrary->GetTextures().FetchTexture("Resource/Model/Textures/" + SpawnParameters->FaceControl, VK_FORMAT_R8G8B8A8_UNORM);
@@ -369,7 +393,7 @@ namespace MapLoader
 				}
 			}
 
-			if (SpawnParameters->CurrentSlot->Slot->Name == "FA" && model->Nodes[i].Name == "FA_Skin" && SpawnParameters->FaceDecor != nullptr)
+			if (SpawnParameters->CurrentSlot->Slot->Name == "FA" && modelNode.Name == "FA_Skin" && SpawnParameters->FaceDecor != nullptr)
 			{
 				for (const ItemDecal& decal : SpawnParameters->FaceDecor->Slot->Decals)
 				{
@@ -430,6 +454,6 @@ namespace MapLoader
 
 		uint32_t id = AssetLibrary->GetModels().LoadWireframeMesh(vertices, indices);
 
-		spawnWireframe(id, transform);
+		AssetLibrary->GetModels().SpawnWireframe(Scene.get(), id, transform);
 	}
 }

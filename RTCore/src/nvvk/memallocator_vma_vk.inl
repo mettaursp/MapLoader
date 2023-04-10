@@ -98,7 +98,7 @@ inline void VMAMemoryAllocator::deinit()
   m_vma = 0;
 }
 
-inline MemHandle VMAMemoryAllocator::allocMemory(const MemAllocateInfo& allocInfo, VkResult* pResult)
+inline MemHandle VMAMemoryAllocator::allocMemory(const MemAllocateInfo& allocInfo, VkResult* pResult CALLER_TRACKER)
 {
   VmaAllocationCreateInfo vmaAllocInfo = {};
   vmaAllocInfo.usage                   = vkToVmaMemoryUsage(allocInfo.getMemoryProperties());

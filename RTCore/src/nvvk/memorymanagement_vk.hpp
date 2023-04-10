@@ -23,6 +23,7 @@
 #include <cassert>
 #include <vector>
 #include <string>
+#include <source_location>
 
 #include <nvvk/memallocator_vk.hpp>
 #include <nvh/trangeallocator.hpp>
@@ -227,7 +228,7 @@ public:
   //////////////////////////////////////////////////////////////////////////
   
   // Implement MemAllocator interface
-  virtual MemHandle allocMemory(const MemAllocateInfo& allocInfo, VkResult *pResult = nullptr) override;
+  virtual MemHandle allocMemory(const MemAllocateInfo& allocInfo, VkResult *pResult = nullptr CALLER_TRACKER_SOURCE) override;
   virtual void      freeMemory(MemHandle memHandle) override;
   virtual MemInfo   getMemoryInfo(MemHandle memHandle) const override;
   virtual void*     map(MemHandle memHandle, VkDeviceSize offset = 0, VkDeviceSize size = VK_WHOLE_SIZE, VkResult *pResult = nullptr) override;
@@ -293,9 +294,10 @@ public:
                      VkMemoryPropertyFlags       memProps,
                      bool                        isLinear,  // buffers are linear, optimal tiling textures are not
                      const VkMemoryDedicatedAllocateInfo* dedicated,
-                     VkResult&                            result)
+                     VkResult&                            result
+                     CALLER_TRACKER_SOURCE)
   {
-    return allocInternal(memReqs, memProps, isLinear, dedicated, result, true, m_defaultState);
+    return allocInternal(memReqs, memProps, isLinear, dedicated, result, true, m_defaultState PASS_CALLER_TRACKER);
   }
 
   // make individual raw allocations.
@@ -306,18 +308,20 @@ public:
                      bool                        isLinear,  // buffers are linear, optimal tiling textures are not
                      const VkMemoryDedicatedAllocateInfo* dedicated,
                      State&                               state,
-                     VkResult&                            result)
+                     VkResult&                            result
+                     CALLER_TRACKER_SOURCE)
   {
-    return allocInternal(memReqs, memProps, isLinear, dedicated, result, true, state);
+    return allocInternal(memReqs, memProps, isLinear, dedicated, result, true, state PASS_CALLER_TRACKER);
   }
 
   AllocationID alloc(const VkMemoryRequirements& memReqs,
                      VkMemoryPropertyFlags       memProps = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT,
                      bool isLinear = true,  // buffers are linear, optimal tiling textures are not
-                     const VkMemoryDedicatedAllocateInfo* dedicated = nullptr)
+                     const VkMemoryDedicatedAllocateInfo* dedicated = nullptr
+                     CALLER_TRACKER_SOURCE)
   {
     VkResult result;
-    return allocInternal(memReqs, memProps, isLinear, dedicated, result, true, m_defaultState);
+    return allocInternal(memReqs, memProps, isLinear, dedicated, result, true, m_defaultState PASS_CALLER_TRACKER);
   }
 
   // unless you use the freeAll mechanism, each allocation must be freed individually
@@ -469,6 +473,9 @@ protected:
     uint32_t     blockOffset = 0;
     uint32_t     blockSize   = 0;
     BlockID      block{};
+#ifdef _DEBUG
+    std::source_location allocationLocation;
+#endif
   };
 
   VkDevice     m_device            = VK_NULL_HANDLE;
@@ -505,9 +512,10 @@ protected:
                              const VkMemoryDedicatedAllocateInfo* dedicated,
                              VkResult&                            result,
                              bool                                 preferDevice,
-                             const State&                         state);
+                             const State&                         state
+                             CALLER_TRACKER);
 
-  AllocationID createID(Allocation& allocation, BlockID block, uint32_t blockOffset, uint32_t blockSize);
+  AllocationID createID(Allocation& allocation, BlockID block, uint32_t blockOffset, uint32_t blockSize CALLER_TRACKER);
   void         destroyID(AllocationID id);
 
   const AllocationInfo& getInfo(AllocationID id) const

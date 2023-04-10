@@ -6,11 +6,11 @@
 #extension GL_EXT_buffer_reference2 : require
 #include "wavefront.glsl"
 
-layout(binding = 0, scalar) buffer Vertices_
+layout(binding = 0, scalar) buffer Tasks_
 {
-  VertexPosBinding v[];
+	AnimationTask v[];
 }
-vertices;
+tasks;
 
 layout(buffer_reference, scalar) buffer VertexPos {VertexPosBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[]; }; // Positions of an object
@@ -22,34 +22,29 @@ layout(set = 1, binding = eInstDescs, scalar) buffer InstanceDescription_ { Inst
 
 layout(push_constant) uniform shaderInformation
 {
-  float iTime;
+	float iTime;
 }
 pushc;
 
 void main()
 {
-  VertexPosBinding v0 = vertices.v[gl_GlobalInvocationID.x];
+	AnimationTask task = tasks.v[gl_GlobalInvocationID.x];
 
-  // Compute vertex position
-  //const float PI       = 3.14159265;
-  //const float signY    = (v0.pos.y >= 0 ? 1 : -1);
-  //const float radius   = length(v0.pos.xz);
-  //const float argument = pushc.iTime * 4 + radius * PI;
-  //const float s        = sin(argument);
-  //v0.pos.y             = signY * abs(s) * 0.5;
-//
-  //// Compute normal
-  //if(radius == 0.0f)
-  //{
-  //  v0.nrm = vec3(0.0f, signY, 0.0f);
-  //}
-  //else
-  //{
-  //  const float c        = cos(argument);
-  //  const float xzFactor = -PI * s * c;
-  //  const float yFactor  = 2.0f * signY * radius * abs(s);
-  //  v0.nrm               = normalize(vec3(v0.pos.x * xzFactor, yFactor, v0.pos.z * xzFactor));
-  //}
+	if (gl_GlobalInvocationID.y >= task.vertices) return;
 
-  vertices.v[gl_GlobalInvocationID.x] = v0;
+	VertexPos vertices = VertexPos(task.vertexPosAddress);
+
+
+	VertexPos outVertices = VertexPos(task.vertexPosAddressOverride);
+
+	outVertices.v[gl_GlobalInvocationID.y] = vertices.v[gl_GlobalInvocationID.y];
+
+	if (task.vertexBinormalAddressOverride == 0) return;
+
+	VertexBinormal vertexBinormals = VertexBinormal(task.vertexBinormalAddress);
+
+
+	VertexBinormal outVertexBinormals = VertexBinormal(task.vertexBinormalAddressOverride);
+
+	outVertexBinormals.v[gl_GlobalInvocationID.y] = vertexBinormals.v[gl_GlobalInvocationID.y];
 }

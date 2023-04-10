@@ -89,7 +89,7 @@ void DedicatedMemoryAllocator::deinit()
   m_device = NULL;
 }
 
-MemHandle DedicatedMemoryAllocator::allocMemory(const MemAllocateInfo& allocInfo, VkResult *pResult)
+MemHandle DedicatedMemoryAllocator::allocMemory(const MemAllocateInfo& allocInfo, VkResult *pResult CALLER_TRACKER)
 {
   MemAllocateInfo   localInfo(allocInfo);
   localInfo.setAllocationFlags(allocInfo.getAllocationFlags() | m_flags);

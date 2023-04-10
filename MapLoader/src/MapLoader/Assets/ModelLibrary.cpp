@@ -54,6 +54,11 @@ namespace MapLoader
 		return &loadedModel;
 	}
 
+	void ModelLibrary::SetCurrentMapTransform(const Matrix4F& mapTransform)
+	{
+		CurrentMapTransform = mapTransform;
+	}
+
 	bool ModelLibrary::FetchModel(const Archive::ArchivePath& file, ModelData& loadedModel, bool keepRawData)
 	{
 		if (!file.Loaded())
@@ -111,6 +116,9 @@ namespace MapLoader
 			{
 				if (keepRawData)
 					modelNode.Mesh = node.Mesh;
+
+				modelNode.Vertices = node.Mesh->GetVertices();
+				modelNode.Indices = node.Mesh->GetIndices();
 
 				MeshBuffers meshBuffers;
 
@@ -482,6 +490,68 @@ namespace MapLoader
 		return index;
 	}
 
+	SpawnedEntity* ModelLibrary::SpawnModel(RTScene* scene, MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback)
+	{
+		if (model == nullptr)
+			return nullptr;
+
+		int entityId = (int)SpawnedEntities.size();
+		SpawnedEntities.push_back(SpawnedEntity{ model });
+		auto& spawnedEntity = SpawnedEntities.back();
+
+		for (size_t i = 0; i < model->Nodes.size(); ++i)
+		{
+			if (model->IsLoaded(i))
+			{
+				InstDesc instance;
+
+				if (callback != nullptr)
+				{
+					const auto& meshDescription = GetMeshDescriptions()[model->Nodes[i].MeshId];
+
+					ModelSpawnParameters parameters
+					{
+						.Model = model,
+						.MeshIndex = i,
+						.NewInstance = instance,
+						.MeshId = GpuEntityData.size(),
+						.VertexCount = meshDescription.VertexCount,
+						.IndexCount = meshDescription.IndexCount
+					};
+
+					if (!callback(parameters))
+						continue;
+				}
+
+				Matrix4F modelTransform = model->Nodes[i].Transformation;
+
+				LoadModelInstance(model->GetId(i), CurrentMapTransform * transformation * modelTransform);
+
+				SpawnedModels.push_back(SpawnedModel{ entityId, (int)i });
+
+				std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
+				std::shared_ptr<MapLoader::SceneObject> sceneObject = Engine::Create<MapLoader::SceneObject>();
+
+				transform->SetTransformation(CurrentMapTransform * transformation * modelTransform);
+				sceneObject->SetTransform(transform.get());
+				sceneObject->SetModel(model, i);
+				sceneObject->SetStatic(true);
+				sceneObject->SetParent(transform);
+				scene->AddObject(sceneObject);
+				spawnedEntity.Meshes.push_back({ transform, sceneObject });
+
+				GpuEntityData.push_back(instance);
+			}
+		}
+
+		return &spawnedEntity;
+	}
+
+	void ModelLibrary::SpawnWireframe(RTScene* scene, uint32_t index, const Matrix4F& transform)
+	{
+		LoadWireframeInstance(index, CurrentMapTransform * transform);
+	}
+
 	void ModelLibrary::FreeResources()
 	{
 		const auto& vulkanContext = AssetLibrary.GetVulkanContext();
@@ -511,5 +581,21 @@ namespace MapLoader
 		GpuWireframeData.clear();
 		MeshDescriptions.clear();
 		WireframeDescriptions.clear();
+	}
+
+	void ModelLibrary::LoadModelInstance(uint32_t index, Matrix4F transform)
+	{
+		ObjInstance instance;
+		instance.transform = transform;
+		instance.objIndex = index;
+		SpawnedInstances.push_back(instance);
+	}
+
+	void ModelLibrary::LoadWireframeInstance(uint32_t index, Matrix4F transform)
+	{
+		ObjInstance instance;
+		instance.transform = transform;
+		instance.objIndex = index;
+		SpawnedWireframeInstances.push_back(instance);
 	}
 }

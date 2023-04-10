@@ -52,7 +52,7 @@ void ResourceAllocator::deinit()
   m_staging.reset();
 }
 
-Buffer ResourceAllocator::createBuffer(const VkBufferCreateInfo& info_, const VkMemoryPropertyFlags memProperties_)
+Buffer ResourceAllocator::createBuffer(const VkBufferCreateInfo& info_, const VkMemoryPropertyFlags memProperties_ CALLER_TRACKER)
 {
   Buffer resultBuffer;
   // Create Buffer (can be overloaded)
@@ -81,7 +81,7 @@ Buffer ResourceAllocator::createBuffer(const VkBufferCreateInfo& info_, const Vk
   }
 
   // Allocate memory
-  resultBuffer.memHandle = AllocateMemory(allocInfo);
+  resultBuffer.memHandle = AllocateMemory(allocInfo PASS_CALLER_TRACKER);
   if (resultBuffer.memHandle)
   {
     const auto memInfo = m_memAlloc->getMemoryInfo(resultBuffer.memHandle);
@@ -96,25 +96,26 @@ Buffer ResourceAllocator::createBuffer(const VkBufferCreateInfo& info_, const Vk
   return resultBuffer;
 }
 
-Buffer ResourceAllocator::createBuffer(VkDeviceSize size_, VkBufferUsageFlags usage_, const VkMemoryPropertyFlags memUsage_)
+Buffer ResourceAllocator::createBuffer(VkDeviceSize size_, VkBufferUsageFlags usage_, const VkMemoryPropertyFlags memUsage_ CALLER_TRACKER)
 {
   VkBufferCreateInfo info{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
   info.size  = size_;
   info.usage = usage_ | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
-  return createBuffer(info, memUsage_);
+  return createBuffer(info, memUsage_ PASS_CALLER_TRACKER);
 }
 
 Buffer ResourceAllocator::createBuffer(const VkCommandBuffer& cmdBuf,
                                        const VkDeviceSize&    size_,
                                        const void*            data_,
                                        VkBufferUsageFlags     usage_,
-                                       VkMemoryPropertyFlags  memProps)
+                                       VkMemoryPropertyFlags  memProps
+                                       CALLER_TRACKER)
 {
   VkBufferCreateInfo createInfoR{VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO};
   createInfoR.size    = size_;
   createInfoR.usage   = usage_ | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
-  Buffer resultBuffer = createBuffer(createInfoR, memProps);
+  Buffer resultBuffer = createBuffer(createInfoR, memProps PASS_CALLER_TRACKER);
 
   if(data_)
   {
@@ -124,7 +125,7 @@ Buffer ResourceAllocator::createBuffer(const VkCommandBuffer& cmdBuf,
   return resultBuffer;
 }
 
-Image ResourceAllocator::createImage(const VkImageCreateInfo& info_, const VkMemoryPropertyFlags memUsage_)
+Image ResourceAllocator::createImage(const VkImageCreateInfo& info_, const VkMemoryPropertyFlags memUsage_ CALLER_TRACKER)
 {
   Image resultImage;
   // Create image
@@ -148,7 +149,7 @@ Image ResourceAllocator::createImage(const VkImageCreateInfo& info_, const VkMem
   }
 
   // Allocate memory
-  resultImage.memHandle = AllocateMemory(allocInfo);
+  resultImage.memHandle = AllocateMemory(allocInfo PASS_CALLER_TRACKER);
   if(resultImage.memHandle)
   {
     const auto memInfo = m_memAlloc->getMemoryInfo(resultImage.memHandle);
@@ -418,9 +419,9 @@ void ResourceAllocator::unmap(const Image& image)
   m_memAlloc->unmap(image.memHandle);
 }
 
-MemHandle ResourceAllocator::AllocateMemory(const MemAllocateInfo& allocateInfo)
+MemHandle ResourceAllocator::AllocateMemory(const MemAllocateInfo& allocateInfo CALLER_TRACKER)
 {
-  return m_memAlloc->allocMemory(allocateInfo);
+  return m_memAlloc->allocMemory(allocateInfo, nullptr PASS_CALLER_TRACKER);
 }
 
 void ResourceAllocator::CreateBufferEx(const VkBufferCreateInfo& info_, VkBuffer* buffer)
@@ -447,7 +448,7 @@ uint32_t ResourceAllocator::getMemoryType(uint32_t typeBits, const VkMemoryPrope
 }
 
 
-AccelNV ResourceAllocator::createAcceleration(VkAccelerationStructureCreateInfoNV& accel_)
+AccelNV ResourceAllocator::createAcceleration(VkAccelerationStructureCreateInfoNV& accel_ CALLER_TRACKER)
 {
   AccelNV resultAccel;
   // Create the acceleration structure
@@ -461,7 +462,7 @@ AccelNV ResourceAllocator::createAcceleration(VkAccelerationStructureCreateInfoN
 
   // Allocate memory
   MemAllocateInfo info(memReqs.memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, false);
-  resultAccel.memHandle = AllocateMemory(info);
+  resultAccel.memHandle = AllocateMemory(info PASS_CALLER_TRACKER);
   if(resultAccel.memHandle)
   {
     const auto memInfo = m_memAlloc->getMemoryInfo(resultAccel.memHandle);
@@ -555,11 +556,11 @@ void ExportResourceAllocator::CreateImageEx(const VkImageCreateInfo& info_, VkIm
   NVVK_CHECK(vkCreateImage(m_device, &info, nullptr, image));
 }
 
-MemHandle ExportResourceAllocator::AllocateMemory(const MemAllocateInfo& allocateInfo)
+MemHandle ExportResourceAllocator::AllocateMemory(const MemAllocateInfo& allocateInfo CALLER_TRACKER)
 {
   MemAllocateInfo exportAllocateInfo(allocateInfo);
   exportAllocateInfo.setExportable(true);
-  return ResourceAllocator::AllocateMemory(exportAllocateInfo);
+  return ResourceAllocator::AllocateMemory(exportAllocateInfo PASS_CALLER_TRACKER);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -610,12 +611,12 @@ void ExplicitDeviceMaskResourceAllocator::init(VkDevice device, VkPhysicalDevice
   m_deviceMask = deviceMask;
 }
 
-MemHandle ExplicitDeviceMaskResourceAllocator::AllocateMemory(const MemAllocateInfo& allocateInfo)
+MemHandle ExplicitDeviceMaskResourceAllocator::AllocateMemory(const MemAllocateInfo& allocateInfo CALLER_TRACKER)
 {
   MemAllocateInfo deviceMaskAllocateInfo(allocateInfo);
   deviceMaskAllocateInfo.setDeviceMask(m_deviceMask);
 
-  return ResourceAllocator::AllocateMemory(deviceMaskAllocateInfo);
+  return ResourceAllocator::AllocateMemory(deviceMaskAllocateInfo PASS_CALLER_TRACKER);
 }
 
 

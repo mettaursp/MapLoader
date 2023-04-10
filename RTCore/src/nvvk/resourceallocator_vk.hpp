@@ -193,14 +193,16 @@ public:
   //--------------------------------------------------------------------------------------------------
   // Basic buffer creation
   virtual nvvk::Buffer createBuffer(const VkBufferCreateInfo&   info_,
-                                    const VkMemoryPropertyFlags memUsage_ = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+                                    const VkMemoryPropertyFlags memUsage_ = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+                                    CALLER_TRACKER_SOURCE);
 
   //--------------------------------------------------------------------------------------------------
   // Simple buffer creation
   // implicitly sets VK_BUFFER_USAGE_TRANSFER_DST_BIT
   nvvk::Buffer createBuffer(VkDeviceSize                size_     = 0,
                             VkBufferUsageFlags          usage_    = VkBufferUsageFlags(),
-                            const VkMemoryPropertyFlags memUsage_ = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+                            const VkMemoryPropertyFlags memUsage_ = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+                            CALLER_TRACKER_SOURCE);
 
   //--------------------------------------------------------------------------------------------------
   // Simple buffer creation with data uploaded through staging manager
@@ -209,7 +211,8 @@ public:
                             const VkDeviceSize&    size_,
                             const void*            data_,
                             VkBufferUsageFlags     usage_,
-                            VkMemoryPropertyFlags  memProps = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+                            VkMemoryPropertyFlags  memProps = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+                            CALLER_TRACKER_SOURCE);
 
   //--------------------------------------------------------------------------------------------------
   // Simple buffer creation with data uploaded through staging manager
@@ -218,15 +221,16 @@ public:
   nvvk::Buffer createBuffer(const VkCommandBuffer& cmdBuf,
                             const std::vector<T>&  data_,
                             VkBufferUsageFlags     usage_,
-                            VkMemoryPropertyFlags  memProps_ = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT)
+                            VkMemoryPropertyFlags  memProps_ = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT
+                            CALLER_TRACKER_SOURCE)
   {
-    return createBuffer(cmdBuf, sizeof(T) * data_.size(), data_.data(), usage_, memProps_);
+    return createBuffer(cmdBuf, sizeof(T) * data_.size(), data_.data(), usage_, memProps_ PASS_CALLER_TRACKER);
   }
 
 
   //--------------------------------------------------------------------------------------------------
   // Basic image creation
-  nvvk::Image createImage(const VkImageCreateInfo& info_, const VkMemoryPropertyFlags memUsage_ = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+  nvvk::Image createImage(const VkImageCreateInfo& info_, const VkMemoryPropertyFlags memUsage_ = VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT CALLER_TRACKER_SOURCE);
 
 
   //--------------------------------------------------------------------------------------------------
@@ -290,7 +294,7 @@ public:
   //--------------------------------------------------------------------------------------------------
   // Create the acceleration structure
   //
-  nvvk::AccelNV createAcceleration(VkAccelerationStructureCreateInfoNV& accel_);
+  nvvk::AccelNV createAcceleration(VkAccelerationStructureCreateInfoNV& accel_ CALLER_TRACKER_SOURCE);
 
 
   //--------------------------------------------------------------------------------------------------
@@ -338,7 +342,7 @@ public:
 protected:
   // If necessary, these can be overriden to specialize the allocation, for instance to
   // enforce allocation of exportable
-  virtual MemHandle AllocateMemory(const MemAllocateInfo& allocateInfo);
+  virtual MemHandle AllocateMemory(const MemAllocateInfo& allocateInfo CALLER_TRACKER_SOURCE);
   virtual void      CreateBufferEx(const VkBufferCreateInfo& info_, VkBuffer* buffer);
   virtual void      CreateImageEx(const VkImageCreateInfo& info_, VkImage* image);
 
@@ -491,7 +495,7 @@ public:
                           VkDeviceSize     stagingBlockSize = NVVK_DEFAULT_STAGING_BLOCKSIZE);
 
 protected:
-  virtual MemHandle AllocateMemory(const MemAllocateInfo& allocateInfo) override;
+  virtual MemHandle AllocateMemory(const MemAllocateInfo& allocateInfo CALLER_TRACKER_SOURCE) override;
   virtual void      CreateBufferEx(const VkBufferCreateInfo& info_, VkBuffer* buffer) override;
   virtual void      CreateImageEx(const VkImageCreateInfo& info_, VkImage* image) override;
 };
@@ -537,7 +541,7 @@ public:
   void init(VkDevice device, VkPhysicalDevice physicalDevice, MemAllocator* memAlloc, uint32_t deviceMask);
 
 protected:
-  virtual MemHandle AllocateMemory(const MemAllocateInfo& allocateInfo) override;
+  virtual MemHandle AllocateMemory(const MemAllocateInfo& allocateInfo CALLER_TRACKER_SOURCE) override;
 
   uint32_t m_deviceMask;
 };

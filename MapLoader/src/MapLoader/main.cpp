@@ -129,26 +129,6 @@ namespace fs = std::filesystem;
 
 struct EntityData;
 
-struct SpawnedEntity
-{
-	MapLoader::ModelData* Model = nullptr;
-	const Archive::Metadata::Entry* FlatEntry = nullptr;
-	std::string Id;
-	std::string Name;
-	Vector3SF Position;
-	Vector3SF WorldPosition;
-	int MapIndex = -1;
-	int PortalIndex = -1;
-	int LineNumber = -1;
-};
-
-struct SpawnedModel
-{
-	int EntityId = -1;
-	int ModelId = -1;
-	int MaterialId = -1;
-};
-
 struct LoadedMap
 {
 	std::string Id;
@@ -180,8 +160,6 @@ fs::path ms2Root = "B:/Files/Maplstory 2 Client/appdata";
 fs::path ms2RootExtracted = "B:/Files/ms2export/export/";
 fs::path tableroot = fs::path("Xml/table/");
 bool loadLights = true;
-std::vector<SpawnedModel> spawnedModels;
-std::vector<SpawnedEntity> spawnedEntities;
 std::vector<LoadedMap> loadedMaps;
 std::vector<SpawnedPortal> spawnedPortals;
 std::unordered_map<std::string, std::string> mapNames;
@@ -217,58 +195,6 @@ void getBounds(const MapLoader::ModelData* model, Bounds& bounds)
 			}
 		);
 	}
-}
-
-int duplicateFormatUses = 0;
-
-SpawnedEntity* spawnModel(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback)
-{
-	if (model == nullptr)
-		return nullptr;
-
-	int entityId = (int)spawnedEntities.size();
-	spawnedEntities.push_back(SpawnedEntity{ model });
-	duplicateFormatUses += model->DuplicateFormatUses;
-
-	for (size_t i = 0; i < model->Nodes.size(); ++i)
-	{
-		if (model->IsLoaded(i))
-		{
-			InstDesc instance;
-
-			if (callback != nullptr)
-			{
-				if (!callback(model, i, instance))
-					continue;
-			}
-
-			Matrix4F modelTransform = model->Nodes[i].Transformation;
-
-			helloVkPtr->loadModelInstance(model->GetId(i), ms2ToWorld * transformation * modelTransform);
-
-			spawnedModels.push_back(SpawnedModel{ entityId, (int)i });
-
-			std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
-			std::shared_ptr<MapLoader::SceneObject> sceneObject = Engine::Create<MapLoader::SceneObject>();
-
-			transform->SetTransformation(ms2ToWorld * transformation * modelTransform);
-			transform->SetParent(mapTransform);
-			sceneObject->SetTransform(transform.get());
-			sceneObject->SetModel(model, i);
-			sceneObject->SetStatic(true);
-			sceneObject->SetParent(transform);
-			Scene->AddObject(sceneObject);
-
-			helloVkPtr->instanceDescriptions.push_back(instance);
-		}
-	}
-
-	return &spawnedEntities.back();
-}
-
-void spawnWireframe(uint32_t index, const Matrix4F& transform)
-{
-	helloVkPtr->loadWireframeInstance(index, ms2ToWorld * transform);
 }
 
 template <>
@@ -451,10 +377,10 @@ void loadMap(const std::string& mapId)
 		if (entityEntry.Mesh == nullptr || entityEntry.Mesh->Model == nullptr)
 			continue;
 
-		SpawnedEntity* newModel = spawnModel(entityEntry.Mesh->Model, entityEntry.Placeable->Transformation, [&entityEntry](MapLoader::ModelData* model, size_t i, InstDesc& instance)
+		SpawnedEntity* newModel = AssetLibrary->GetModels().SpawnModel(Scene.get(), entityEntry.Mesh->Model, entityEntry.Placeable->Transformation, [&entityEntry](ModelSpawnParameters& spawnParameters)
 			{
-				instance.color = (Vector3)entityEntry.Mesh->MaterialColor;
-				instance.flags = entityEntry.Placeable->IsVisible ? 0 : 1;
+				spawnParameters.NewInstance.color = (Vector3)entityEntry.Mesh->MaterialColor;
+				spawnParameters.NewInstance.flags = entityEntry.Placeable->IsVisible ? 0 : 1;
 
 				return true;
 			}
@@ -470,7 +396,7 @@ void loadMap(const std::string& mapId)
 		if (entityEntry.Portal != nullptr)
 		{
 			newModel->PortalIndex = (int)spawnedPortals.size();
-			loadedMaps.back().Portals[entityEntry.Portal->PortalId] = (int)spawnedEntities.size() - 1;
+			loadedMaps.back().Portals[entityEntry.Portal->PortalId] = (int)AssetLibrary->GetModels().GetSpawnedEntities().size() - 1;
 
 			spawnedPortals.push_back(SpawnedPortal{ entityEntry.Portal->TargetField, entityEntry.Portal->TargetPortal, entityEntry.Portal->PortalId });
 		}
@@ -920,6 +846,8 @@ int main(int argc, char** argv)
 	{
 		ms2ToWorld = maps[i].offset * ms2toworld;
 
+		AssetLibrary->GetModels().SetCurrentMapTransform(ms2ToWorld);
+
 		std::cout << "loading map " << maps[i].id << std::endl;
 
 		loadMap(maps[i].id);
@@ -928,6 +856,7 @@ int main(int argc, char** argv)
 	}
 
 	ms2ToWorld = ms2toworld;
+	AssetLibrary->GetModels().SetCurrentMapTransform(ms2ToWorld);
 	loadLights = true;
 
 	if (mapId != nullptr)
@@ -946,7 +875,7 @@ int main(int argc, char** argv)
 	baadf00d.Cosmetics.Gloves = { 11620024, dyeColors.GetDyeColor("Red") };
 	baadf00d.Cosmetics.Shoes = { 11700313, dyeColors.GetDyeColor("Light Pink") };
 
-	Character f00dCharacter(AssetLibrary);
+	Character f00dCharacter(AssetLibrary, Scene);
 
 	f00dCharacter.Load(&baadf00d, Matrix4F(0, 0, 3000) * Matrix4F::RollRotation(PI));
 
@@ -969,20 +898,26 @@ int main(int argc, char** argv)
 	hornetsp.Gear.Ring = { 12060106, dyeColors.GetDyeColor("Green") };
 	hornetsp.Gear.Weapon = { 15460178, dyeColors.GetDyeColor("Green") };
 
-	Character hornetCharacter(AssetLibrary);
+	Character hornetCharacter(AssetLibrary, Scene);
 
 	hornetCharacter.Load(&hornetsp, Matrix4F(120, 0, 3000) * Matrix4F::RollRotation(PI));
 
 
 	const Archive::Metadata::Entry* derpPandaEntry = Archive::Metadata::Entry::FindFirstEntryByTags("60000053_LesserPanda", "gamebryo-scenegraph");
 	MapLoader::ModelData* derpPandaModel = nullptr;
-	std::unique_ptr<MapLoader::SkinnedModel> derpPandaRig = std::make_unique<MapLoader::SkinnedModel>(VulkanContext);
-	derpPandaRig->SetTransformation(Matrix4F(60, 20, 3000) * Matrix4F::RollRotation(PI));
+	std::shared_ptr<MapLoader::SkinnedModel> derpPandaRig = Engine::Create<MapLoader::SkinnedModel>(AssetLibrary, Scene);
+
+	std::shared_ptr<Engine::Transform> derpPandaTransform = Engine::Create<Engine::Transform>();
+	derpPandaTransform->SetTransformation(Matrix4F(60, 20, 3000) * Matrix4F::RollRotation(PI));
+	derpPandaTransform->Update(0);
+
+	derpPandaRig->SetParent(derpPandaTransform);
+	derpPandaRig->SetTransform(derpPandaTransform.get());
 
 	if (derpPandaEntry != nullptr)
 	{
 		derpPandaModel = AssetLibrary->GetModels().FetchModel(derpPandaEntry);
-		derpPandaRig->AddModel(derpPandaModel, {}, [](MapLoader::ModelData* model, size_t i, InstDesc& instance)
+		derpPandaRig->AddModel(derpPandaModel, {}, [](auto&)
 			{
 				return true;
 			}
@@ -990,6 +925,7 @@ int main(int argc, char** argv)
 		derpPandaRig->CreateRigDebugMesh(AssetLibrary->GetModels());
 	}
 
+	Scene->AddSkinnedModel(derpPandaRig);
 
 	//loadMap("02000376"); //sb map
 	//loadMap("02010011"); // ludari promenade
@@ -1076,11 +1012,11 @@ int main(int argc, char** argv)
 					helloVk.hostUBO.mouseY = (int)helloVk.mousePosYF;
 					ImGui::Text("Mouse: %d, %d", helloVk.hostUBO.mouseX, helloVk.hostUBO.mouseY);
 
-					if (modelId >= 0 && modelId < (int)spawnedModels.size())
+					if (modelId >= 0 && modelId < (int)AssetLibrary->GetModels().GetSpawnedModels().size())
 					{
-						int entityId = spawnedModels[modelId].EntityId;
+						int entityId = AssetLibrary->GetModels().GetSpawnedModels()[modelId].EntityId;
 
-						const SpawnedEntity& entity = spawnedEntities[entityId];
+						const SpawnedEntity& entity = AssetLibrary->GetModels().GetSpawnedEntities()[entityId];
 
 
 						struct ModifierKeysEnum
@@ -1116,7 +1052,7 @@ int main(int argc, char** argv)
 							ImGui::Text("Map: [%s] %s", loadedMaps[entity.MapIndex].Id.c_str(), loadedMaps[entity.MapIndex].Name.c_str());
 						}
 
-						int spawnedModelId = spawnedModels[modelId].ModelId;
+						int spawnedModelId = AssetLibrary->GetModels().GetSpawnedModels()[modelId].ModelId;
 
 						ImGui::Text("Entity Name: %s", entity.Name.c_str());
 
@@ -1242,7 +1178,7 @@ int main(int argc, char** argv)
 
 									if (targetPortalIndex != map.Portals.end())
 									{
-										const SpawnedEntity& targetPortal = spawnedEntities[targetPortalIndex->second];
+										const SpawnedEntity& targetPortal = AssetLibrary->GetModels().GetSpawnedEntities()[targetPortalIndex->second];
 
 										ImGui::Text("Target Portal Entity Name: %s", targetPortal.Name.c_str());
 
@@ -1403,6 +1339,7 @@ int main(int argc, char** argv)
 
 		// Updating camera buffer
 		helloVk.updateUniformBuffer(cmdBuf);
+		helloVk.animate();
 
 		// Clearing screen
 		std::array<VkClearValue, 2> clearValues{};
@@ -1472,6 +1409,9 @@ int main(int argc, char** argv)
 	// Cleanup
 	vkDeviceWaitIdle(helloVk.getDevice());
 
+	hornetCharacter.ReleaseResources();
+	f00dCharacter.ReleaseResources();
+	derpPandaRig->ReleaseResources();
 	helloVk.destroyResources();
 	helloVk.destroy();
 	vkctx.deinit();

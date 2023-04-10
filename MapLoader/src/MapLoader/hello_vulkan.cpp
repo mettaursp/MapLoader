@@ -201,6 +201,22 @@ void HelloVulkan::createDescriptorSetLayout()
 
 	PostPipeline->LoadDescriptors();
 
+	AnimationPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
+	AnimationPipeline->BindDescriptorSet("common", 1);
+
+	{
+		Graphics::Shader* shaders[] = {
+			ShaderLibrary->FetchShader("anim.comp", VK_SHADER_STAGE_COMPUTE_BIT),
+		};
+
+		for (auto& shader : shaders)
+		{
+			AnimationPipeline->AddStage(shader);
+		}
+	}
+
+	AnimationPipeline->LoadDescriptors();
+
 	uint32_t textureCount = (uint32_t)AssetLibrary->GetTextures().GetAssets().size();
 
 	auto& descriptor = DescriptorSetLibrary->FetchDescriptorSet("common")->FetchBinding(eTextures).Binding;
@@ -292,22 +308,6 @@ void HelloVulkan::createGraphicsPipeline()
 	WireframePipeline->CreateRasterPipeline();
 }
 
-void HelloVulkan::loadModelInstance(uint32_t index, mat4 transform)
-{
-	ObjInstance instance;
-	instance.transform = transform;
-	instance.objIndex = index;
-	m_instances.push_back(instance);
-}
-
-void HelloVulkan::loadWireframeInstance(uint32_t index, mat4 transform)
-{
-	ObjInstance instance;
-	instance.transform = transform;
-	instance.objIndex = index;
-	m_wireframeInstances.push_back(instance);
-}
-
 //--------------------------------------------------------------------------------------------------
 // Creating the uniform buffer holding the camera matrices
 // - Buffer is host visible
@@ -360,7 +360,7 @@ void HelloVulkan::createObjDescriptionBuffer()
 	VulkanContext->Debug.setObjectName(m_textureTransformDesc.buffer, "TextureTransformDescs");
 
 	auto cmdBuf4 = cmdGen.createCommandBuffer();
-	m_InstDesc = VulkanContext->Allocator.createBuffer(cmdBuf4, instanceDescriptions, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+	m_InstDesc = VulkanContext->Allocator.createBuffer(cmdBuf4, AssetLibrary->GetModels().GetGpuEntityData(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
 	cmdGen.submitAndWait(cmdBuf4);
 	VulkanContext->Allocator.finalizeAndReleaseStaging();
 	VulkanContext->Debug.setObjectName(m_InstDesc.buffer, "InstanceDescs");
@@ -549,6 +549,11 @@ void HelloVulkan::destroyResources()
 	VulkanContext->Allocator.destroy(m_InstDesc);
 	VulkanContext->Allocator.destroy(m_textureOverride);
 
+	if (m_animationTasks.buffer != nullptr)
+	{
+		VulkanContext->Allocator.destroy(m_animationTasks);
+	}
+
 	AssetLibrary->GetModels().FreeResources();
 	AssetLibrary->GetTextures().FreeResources();
 
@@ -565,6 +570,7 @@ void HelloVulkan::destroyResources()
 	// #VKRay
 	Scene->FreeResources();
 	RTPipeline->ReleaseResources();
+	AnimationPipeline->ReleaseResources();
 
 	VulkanContext->Allocator.deinit();
 }
@@ -588,7 +594,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, RasterPipeline->GetPipelineLayout(), 0, 1, &m_descSet, 0, nullptr);
 
 
-	for(const HelloVulkan::ObjInstance& inst : m_instances)
+	for(const auto& inst : AssetLibrary->GetModels().GetSpawnedInstances())
 	{
 	auto& model            = AssetLibrary->GetModels().GetMeshDescriptions()[inst.objIndex];
 	m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
@@ -601,6 +607,27 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 	vkCmdDrawIndexed(cmdBuf, model.IndexCount, 1, 0, 0, 0);
 	}
 	VulkanContext->Debug.endLabel(cmdBuf);
+}
+
+void HelloVulkan::animate()
+{
+	if (QueuedAnimationTasks == 0) return;
+
+	nvvk::CommandPool genCmdBuf(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
+	VkCommandBuffer   cmdBuf = genCmdBuf.createCommandBuffer();
+
+	auto m_compDescSet = AnimationPipeline->GetDescriptorSets()[0]->DescriptorSet;
+
+	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_COMPUTE, AnimationPipeline->GetPipeline());
+	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_COMPUTE, AnimationPipeline->GetPipelineLayout(), 0, 1, &m_compDescSet, 0, nullptr);
+	//vkCmdPushConstants(cmdBuf, AnimationPipeline->GetPipelineLayout(), VK_SHADER_STAGE_COMPUTE_BIT, 0, sizeof(float), &time);
+	vkCmdDispatch(cmdBuf, (uint32_t)QueuedAnimationTasks, (uint32_t)MaxAnimatedVertices, 1);
+
+	genCmdBuf.submitAndWait(cmdBuf);
+
+	//m_rtBuilder.updateBlas(sphereId, m_blas[sphereId],
+	//	VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR);
+
 }
 
 void HelloVulkan::drawWireframes(const VkCommandBuffer& cmdBuf)
@@ -625,7 +652,7 @@ void HelloVulkan::drawWireframes(const VkCommandBuffer& cmdBuf)
 	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, WireframePipeline->GetPipelineLayout(), 0, (uint32_t)descSets.size(), descSets.data(), 0, nullptr);
 
 
-	for(const HelloVulkan::ObjInstance& inst : m_wireframeInstances)
+	for (const auto& inst : AssetLibrary->GetModels().GetSpawnedWireframeInstances())
 	{
 	auto& model            = AssetLibrary->GetModels().GetWireframeDescriptions()[inst.objIndex];
 	m_pcRaster.objIndex    = inst.objIndex;  // Telling which object is drawn
@@ -810,6 +837,9 @@ void HelloVulkan::createPostPipeline()
 	PostPipeline->GetRasterizationState().cullMode = VK_CULL_MODE_NONE;
 	PostPipeline->GetDepthStencilState().stencilTestEnable = VK_FALSE;
 	PostPipeline->CreateRasterPipeline();
+
+	AnimationPipeline->CreatePipelineLayout();
+	AnimationPipeline->CreateComputePipeline();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -824,6 +854,35 @@ void HelloVulkan::updatePostDescriptorSet()
 		postDescSet->MakeWrite(1, &dbiUnif)
 	};
 	vkUpdateDescriptorSets(VulkanContext->Device, sizeof(writeDescriptorSets) / sizeof(writeDescriptorSets[0]), writeDescriptorSets, 0, nullptr);
+
+	const auto& animationTasks = Scene->GetAnimationTasks();
+	QueuedAnimationTasks = animationTasks.size();
+	MaxAnimatedVertices = Scene->GetMaxAnimatedVertices();
+
+	if (animationTasks.size() > 0)
+	{
+		if (m_animationTasks.buffer != nullptr)
+		{
+			VulkanContext->Allocator.destroy(m_animationTasks);
+		}
+
+		nvvk::CommandPool cmdGen(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
+
+		auto cmdBuf = cmdGen.createCommandBuffer();
+		m_animationTasks = VulkanContext->Allocator.createBuffer(cmdBuf, animationTasks, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+		cmdGen.submitAndWait(cmdBuf);
+		VulkanContext->Allocator.finalizeAndReleaseStaging();
+		VulkanContext->Debug.setObjectName(m_animationTasks.buffer, "AnimationTasks");
+
+		VkDescriptorBufferInfo dbiUnif{ m_animationTasks.buffer, 0, VK_WHOLE_SIZE };
+		auto postDescSet = AnimationPipeline->GetDescriptorSets()[0];
+		VkWriteDescriptorSet writeDescriptorSets[1] = {
+			postDescSet->MakeWrite(0, &dbiUnif)
+		};
+		vkUpdateDescriptorSets(VulkanContext->Device, sizeof(writeDescriptorSets) / sizeof(writeDescriptorSets[0]), writeDescriptorSets, 0, nullptr);
+
+		Scene->ClearAnimationTasks();
+	}
 }
 
 //--------------------------------------------------------------------------------------------------

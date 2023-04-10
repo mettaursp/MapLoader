@@ -5,18 +5,30 @@
 
 namespace MapLoader
 {
-	void SceneObject::AddToScene(RTScene* scene, size_t index)
+	SceneObject::~SceneObject()
+	{
+		if (Scene.Scene != nullptr)
+			Scene.Scene->RemoveObject(this);
+
+		for (size_t i = 0; i < Scenes.size(); ++i)
+		{
+			if (Scenes[i].Scene != nullptr)
+				Scenes[i].Scene->RemoveObject(this);
+		}
+	}
+
+	void SceneObject::AddToScene(RTScene* scene, size_t index, SceneObjectType type)
 	{
 		if (scene == nullptr) return;
 
 		if (Scene.Scene == nullptr)
 		{
-			Scene = { scene, index };
+			Scene = { scene, index, type };
 			
 			return;
 		}
 
-		Scenes.push_back({ scene, index });
+		Scenes.push_back({ scene, index, type });
 	}
 
 	void SceneObject::RemoveFromScene(RTScene* scene)
@@ -78,6 +90,8 @@ namespace MapLoader
 	{
 		if (Transform == nullptr) return false;
 
+		if (IsStale) return true;
+
 		return Transform->HasMoved();
 	}
 
@@ -103,24 +117,53 @@ namespace MapLoader
 		return Model->GetId(ModelIndex);
 	}
 
+	void SceneObject::MarkStale(bool isStale)
+	{
+		IsStale = isStale;
+	}
+
 	void SceneObject::SetStatic(bool isStatic)
 	{
+		IsStale = true;
+
 		IsStaticObject = isStatic;
 	}
 
 	void SceneObject::SetVisibilityType(ObjectVisibilityType visibilityType)
 	{
+		IsStale = true;
+
 		VisibilityType = visibilityType;
 	}
 
 	void SceneObject::SetTransform(Engine::Transform* transform)
 	{
+		IsStale = true;
+
 		Transform = transform;
 	}
 
 	void SceneObject::SetModel(ModelData* model, size_t index)
 	{
+		IsStale = true;
+
 		Model = model;
 		ModelIndex = index;
+	}
+
+	SceneObjectType SceneObject::GetObjectType(RTScene* scene) const
+	{
+		if (Scene.Scene == scene)
+			return Scene.Type;
+
+		for (const SceneEntry& entry : Scenes)
+		{
+			if (entry.Scene == scene)
+			{
+				return entry.Type;
+			}
+		}
+
+		return SceneObjectType::None;
 	}
 }

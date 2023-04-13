@@ -4,6 +4,7 @@
 #include <ArchiveParser/ArchiveReader.h>
 #include <MapLoader/Assets/ModelLibrary.h>
 #include <MapLoader/Assets/TextureLibrary.h>
+#include <MapLoader/Assets/AnimationLibrary.h>
 #include <MapLoader/Map/FlatLibrary.h>
 #include <MapLoader/Items/ItemLibrary.h>
 #include <MapLoader/Items/EmotionLibrary.h>
@@ -30,6 +31,8 @@ namespace MapLoader
 		const auto& GetItems() const { return Items; }
 		auto& GetEmotions() { return Emotions; }
 		const auto& GetEmotions() const { return Emotions; }
+		auto& GetAnimations() { return Animations; }
+		const auto& GetAnimations() const { return Animations; }
 		const auto& GetVulkanContext() const { return VulkanContext; }
 
 	private:
@@ -41,5 +44,6 @@ namespace MapLoader
 		FlatLibrary MapData;
 		ItemLibrary Items;
 		EmotionLibrary Emotions;
+		AnimationLibrary Animations;
 	};
 }

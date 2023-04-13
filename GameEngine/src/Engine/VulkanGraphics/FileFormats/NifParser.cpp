@@ -498,9 +498,9 @@ void NifDocument::ParseBSplineCompTransformEvaluator(std::string_view& stream, B
 	data->ScaleHalfRange = Endian.read<float>(stream);
 }
 
-void NifDocument::ParseBSpineData(std::string_view& stream, BlockData& block)
+void NifDocument::ParseBSplineData(std::string_view& stream, BlockData& block)
 {
-	NiBSpineData* data = block.AddData<NiBSpineData>();
+	NiBSplineData* data = block.AddData<NiBSplineData>();
 
 	unsigned int numFloatControlPoints = Endian.read<unsigned int>(stream);
 
@@ -641,7 +641,7 @@ std::unordered_map<std::string, NifDocument::BlockParseFunction> parserFunctions
 	{ "NiSkinningMeshModifier", &NifDocument::ParseSkinningMeshModifier },
 	{ "NiSequenceData", &NifDocument::ParseSequenceData },
 	{ "NiBSplineCompTransformEvaluator", &NifDocument::ParseBSplineCompTransformEvaluator },
-	{ "NiBSpineData", &NifDocument::ParseBSpineData },
+	{ "NiBSplineData", &NifDocument::ParseBSplineData },
 	{ "NiBSplineBasisData", &NifDocument::ParseBSplineBasisData },
 	{ "NiTransformEvaluator", &NifDocument::ParseTransformEvaluator },
 	{ "NiTransformData", &NifDocument::ParseTransformData },
@@ -699,6 +699,22 @@ void NifParser::Parse(std::istream& stream)
 	Parse(buffer);
 }
 
+std::ostream& operator<<(std::ostream& out, const BlockData* block)
+{
+	return out << "[" << block->BlockIndex << "] " << block->BlockType << " \"" << block->BlockName << "\"";
+}
+
+std::ostream& operator<<(std::ostream& out, const NiDataBlock* blockData)
+{
+	const BlockData* block = &blockData->Document->Blocks[blockData->BlockIndex];
+	return out << "[" << block->BlockIndex << "] " << block->BlockType << " \"" << block->BlockName << "\"";
+}
+
+struct VersionHeader
+{
+	unsigned short Numbers[4] = { 0 };
+};
+
 void NifParser::Parse(std::string_view stream)
 {
 	std::string_view streamStart = stream;
@@ -712,6 +728,28 @@ void NifParser::Parse(std::string_view stream)
 	for (index; stream[index] != 0x0A; ++index);
 
 	headerString.append(stream.data(), index);
+
+	size_t versionStart;
+
+	for (versionStart = headerString.size(); versionStart > 0 && (headerString[versionStart - 1] == '.' || (headerString[versionStart - 1] >= '0' && headerString[versionStart - 1] <= '9')); --versionStart);
+
+	VersionHeader version;
+
+	for (size_t i = 0; i < 4; ++i)
+	{
+		version.Numbers[i] = std::atoi(headerString.data() + versionStart);
+
+		for (versionStart; headerString[versionStart] && headerString[versionStart] != '.'; ++versionStart);
+
+		++versionStart;
+	}
+
+	if (version.Numbers[0] < 30)
+	{
+		std::cout << Name << " version number too low: " << headerString << std::endl;
+
+		return;
+	}
 
 	advanceStream(stream, index + 1);
 	advanceStream(stream, 4);
@@ -1201,6 +1239,268 @@ void NifParser::Parse(std::string_view stream)
 			}
 
 			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, false, false, mesh.Format, mesh.Mesh, transform, bones });
+		}
+		else if (block.BlockType == "NiSequenceData")
+		{
+			Package->Animations.push_back({});
+
+			ModelPackageAnimation& animation = Package->Animations.back();
+			NiSequenceData* data = block.Data->Cast<NiSequenceData>();
+
+			animation.Name = block.BlockName;
+			animation.RootName = data->AccumRootName;
+			animation.Duration = data->Duration;
+			animation.CycleType = (AnimationCycleType)(int)data->CycleType;
+			animation.PlaybackSpeed = data->Frequency;
+
+			if (data->TextKeys != nullptr)
+			{
+				NiTextKeyExtraData* textKeyData = data->TextKeys->Data->Cast<NiTextKeyExtraData>();
+
+				animation.Events.resize(textKeyData->TextKeys.size());
+
+				for (size_t i = 0; i < textKeyData->TextKeys.size(); ++i)
+				{
+					animation.Events[i] = { textKeyData->TextKeys[i].Time, textKeyData->TextKeys[i].Value };
+				}
+			}
+
+			for (size_t i = 0; i < data->Evaluators.size(); ++i)
+			{
+				const BlockData* evaluator = data->Evaluators[i];
+
+				if (evaluator->Data == nullptr)
+				{
+					continue;
+				}
+
+				NiEvaluator* evaluatorData = evaluator->Data->Cast<NiEvaluator>();
+
+				if (animation.NodeMap.find(evaluatorData->NodeName) != animation.NodeMap.end())
+				{
+					std::cout << Name << ": " << "repeated animated node reference found " << evaluator << "" << std::endl;
+				}
+
+				animation.NodeMap[evaluatorData->NodeName] = nullptr;
+
+				bool channelTypesRecognized = evaluatorData->PositionChannel == ChannelType::Vector3 || evaluatorData->PositionChannel == ChannelType::Invalid;
+				channelTypesRecognized |= evaluatorData->RotationChannel == ChannelType::Quaternion || evaluatorData->RotationChannel == ChannelType::Invalid;
+				channelTypesRecognized |= evaluatorData->ScaleChannel == ChannelType::Float || evaluatorData->ScaleChannel == ChannelType::Invalid;
+
+				if (!channelTypesRecognized)
+				{
+					const char* const typeNames[] = { "Invalid", "Color", "Bool", "Float", "Vector3", "Rotation" };
+
+					std::cout << Name << ": " << "unsupported channel type in " << evaluator << std::endl;
+					std::cout << Name << ": " << "\t" << "Position: " << typeNames[evaluatorData->PositionChannel] << "\n";
+					std::cout << Name << ": " << "\t" << "Rotation: " << typeNames[evaluatorData->RotationChannel] << "\n";
+					std::cout << Name << ": " << "\t" << "Scale: " << typeNames[evaluatorData->ScaleChannel] << std::endl;
+				}
+
+				if (evaluator->BlockType == "NiTransformEvaluator")
+				{
+					NiTransformEvaluator* transformEvaluatorData = evaluator->Data->Cast<NiTransformEvaluator>();
+
+					if (transformEvaluatorData->Data == nullptr) continue;
+
+					if (transformEvaluatorData->Data->BlockType == "NiTransformData")
+					{
+						NiTransformData* transformData = transformEvaluatorData->Data->Data->Cast<NiTransformData>();
+
+						animation.Nodes.push_back({});
+						ModelPackageAnimationNode& node = animation.Nodes.back();
+
+						node.NodeName = transformEvaluatorData->NodeName;
+
+						static const auto loadKeyframes = [](auto& keyframeData, const auto& data, NiTransformData* transformData, const std::string& Name)
+						{
+							typedef std::remove_cvref_t<decltype(data)> AnyKeyType;
+
+							keyframeData.Type = data.KeyCount > 0 ? (AnimationInterpolationType)(int)data.Interpolation : AnimationInterpolationType::None;
+
+							if (data.KeyCount == 0) return;
+							if (keyframeData.Type == AnimationInterpolationType::XyzRotation) return;
+
+							keyframeData.Keyframes.resize(data.KeyCount);
+
+							for (size_t i = 0; i < data.KeyCount; ++i)
+							{
+								auto& keyframe = keyframeData.Keyframes[i];
+								
+								typedef std::remove_cvref_t<decltype(keyframe)> KeyframeType;
+								const bool hasParams = KeyframeType::HasParameters;
+
+								RotationType interpolation = data.Interpolation;
+
+								if constexpr (std::is_same_v<Quaternion, typename AnyKeyType::KeyType>)
+								{
+									if (interpolation == RotationType::QuadraticKey)
+										interpolation = RotationType::LinearKey;
+								}
+
+								switch (interpolation)
+								{
+								case RotationType::LinearKey:
+									keyframe.Value = data.LinearKeys[i].Value;
+									keyframe.Time = data.LinearKeys[i].Time;
+									break;
+								case RotationType::QuadraticKey:
+									keyframe.Value = data.QuadraticKeys[i].Value;
+									keyframe.Time = data.QuadraticKeys[i].Time;
+
+									if constexpr (hasParams)
+									{
+										if constexpr (std::is_same_v<decltype(data.QuadraticKeys[i].Forward), float>)
+										{
+											keyframe.Params = Vector3SF(data.QuadraticKeys[i].Forward, data.QuadraticKeys[i].Backward, 0);
+										}
+										else
+										{
+											keyframe.Params1 = data.QuadraticKeys[i].Forward;
+											keyframe.Params2 = data.QuadraticKeys[i].Backward;
+										}
+									}
+
+									break;
+								case RotationType::TbcKey:
+									keyframe.Value = data.TbcKeys[i].Value;
+									keyframe.Time = data.TbcKeys[i].Time;
+
+									if constexpr (hasParams)
+									{
+										if constexpr (std::is_same_v<decltype(data.TbcKeys[i].Value), float>)
+										{
+											keyframe.Params = Vector3SF(data.TbcKeys[i].Tension, data.TbcKeys[i].Bias, data.TbcKeys[i].Continuity);
+										}
+										else
+										{
+											keyframe.Params1 = Vector3SF(data.TbcKeys[i].Tension, data.TbcKeys[i].Bias, data.TbcKeys[i].Continuity);
+										}
+									}
+									break;
+								default:
+									std::cout << Name << ": " << "unsupported interpolation type: " << data.Interpolation << " in " << transformData << " [" << i << "]" << std::endl;
+								}
+							}
+						};
+
+						if (node.Rotation.Type != AnimationInterpolationType::XyzRotation)
+						{
+							loadKeyframes(node.Rotation, transformData->RotationKeys, transformData, Name);
+						}
+
+						if (node.Rotation.Type == AnimationInterpolationType::XyzRotation)
+						{
+							if (transformData->RotationKeys.XyzKeys.size() != 1)
+							{
+								std::cout << Name << ": " << "unsupported NiTransformData xyz rotation key count: " << transformData->RotationKeys.XyzKeys.size() << " in " << transformData << std::endl;
+							}
+
+							auto loadAxisKeys = [](ModelPackageAnimationEulerAxisNode& axis, const AnyKeysNoRotate<float>& data, NiTransformData* transformData, const std::string& Name)
+							{
+								loadKeyframes(axis, data, transformData, Name);
+							};
+
+							loadAxisKeys(node.EulerRotation.X, transformData->RotationKeys.XyzKeys[0].KeysX, transformData, Name);
+							loadAxisKeys(node.EulerRotation.Y, transformData->RotationKeys.XyzKeys[0].KeysY, transformData, Name);
+							loadAxisKeys(node.EulerRotation.Z, transformData->RotationKeys.XyzKeys[0].KeysZ, transformData, Name);
+						}
+
+						loadKeyframes(node.Translation, transformData->TranslationKeys, transformData, Name);
+						loadKeyframes(node.Scale, transformData->ScaleKeys, transformData, Name);
+					}
+					else
+					{
+						std::cout << Name << ": " << "unsupported NiTransformEvaluator data type '" << transformEvaluatorData->Data << "'" << std::endl;
+					}
+				}
+				else if (evaluator->BlockType == "NiBSplineCompTransformEvaluator")
+				{
+					NiBSplineCompTransformEvaluator* transformData = evaluator->Data->Cast<NiBSplineCompTransformEvaluator>();
+
+					if (transformData->Data == nullptr) continue;
+					if (transformData->BasisData == nullptr) continue;
+
+					NiBSplineData* splineData = transformData->Data->Data->Cast<NiBSplineData>();
+					NiBSplineBasisData* splineBasisData = transformData->BasisData->Data->Cast<NiBSplineBasisData>();
+
+					animation.Nodes.push_back({});
+					ModelPackageAnimationNode& node = animation.Nodes.back();
+
+					node.NodeName = transformData->NodeName;
+					
+					const auto loadSpline = [](auto& spline, unsigned short handle, float offset, float halfRange, NiBSplineData* splineData, NiBSplineBasisData* splineBasisData)
+					{
+						if (handle == 0xFFFF) return;
+
+						typedef std::remove_cvref_t<decltype(spline)> SplineType;
+						typedef SplineType::PointType PointType;
+
+						spline.ControlPoints.resize(splineBasisData->NumControlPoints);
+
+						if (splineData->FloatControlPoints.size() > 0)
+						{
+							PointType* data = reinterpret_cast<PointType*>(splineData->FloatControlPoints.data() + handle);
+
+							for (unsigned int i = 0; i < splineBasisData->NumControlPoints; ++i)
+							{
+								spline.ControlPoints[i] = data[i];
+							}
+						}
+						else
+						{
+							float pointData[SplineType::Dimension] = {};
+							PointType* data = reinterpret_cast<PointType*>(pointData);
+							unsigned int index = handle;
+
+							for (unsigned int i = 0; i < splineBasisData->NumControlPoints; ++i)
+							{
+								for (size_t j = 0; j < SplineType::Dimension; ++j, ++index)
+								{
+									pointData[j] = ((float)splineData->CompactControlPoints[index] / (float)0x7FFF) * halfRange + offset;
+								}
+
+								spline.ControlPoints[i] = *data;
+							}
+						}
+					};
+
+					loadSpline(node.TranslationSpline, transformData->TranslationHandle, transformData->TranslationOffset, transformData->TranslationHalfRange, splineData, splineBasisData);
+					loadSpline(node.RotationSpline, transformData->RotationHandle, transformData->RotationOffset, transformData->RotationHalfRange, splineData, splineBasisData);
+					loadSpline(node.ScaleSpline, transformData->ScaleHandle, transformData->ScaleOffset, transformData->ScaleHalfRange, splineData, splineBasisData);
+
+					node.NodeName = node.NodeName;
+
+					//if (transformEvaluatorData->Data == nullptr) continue;
+					//
+					//if (transformEvaluatorData->Data->BlockType == "NiTransformData")
+					//{
+					//	NiTransformData* transformData = transformEvaluatorData->Data->Data->Cast<NiTransformData>();
+					//}
+					//else
+					//{
+					//	std::cout << "unsupported NiTransformEvaluator data type '" << transformEvaluatorData->Data << "'" << std::endl;
+					//}
+					if (transformData->Data->BlockType != "NiBSplineData")
+					{
+						std::cout << Name << ": " << "unsupported spline data data type '" << transformData->Data << "'" << std::endl;
+					}
+				}
+				else
+				{
+					std::cout << Name << ": " << "unsupported animation evaluator type '" << evaluator << "'" << std::endl;
+				}
+			}
+		}
+	}
+
+	for (size_t i = 0; i < Package->Animations.size(); ++i)
+	{
+		auto& animation = Package->Animations[i];
+
+		for (size_t j = 0; j < animation.Nodes.size(); ++j)
+		{
+			animation.NodeMap[animation.Nodes[j].NodeName] = &animation.Nodes[j];
 		}
 	}
 

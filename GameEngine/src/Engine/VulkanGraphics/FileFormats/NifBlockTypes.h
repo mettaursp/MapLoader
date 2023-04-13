@@ -526,7 +526,7 @@ struct NiBSplineCompTransformEvaluator : public NiEvaluator
 	float ScaleHalfRange = 0;
 };
 
-struct NiBSpineData : public NiDataBlock
+struct NiBSplineData : public NiDataBlock
 {
 	static inline const std::string BlockTypeName = "NiBSpineData";
 
@@ -553,11 +553,12 @@ struct RotationTypeEnum
 {
 	enum RotationType
 	{
+		None,
 		LinearKey = 1,
 		QuadraticKey = 2, // quadratic interpolation, forward n back tangents stored
 		TbcKey = 3, // tension bias continuity interolation
 		XyzRotationKey = 4, // rotation, seperate x, y, z keys instead of quaternions
-		ConstKey = 5 // step function
+		ConstKey = 5, // step function
 	};
 };
 
@@ -624,10 +625,13 @@ struct Keys
 	void Parse(NifDocument* document, std::string_view& stream);
 };
 
-template <typename KeyType>
+template <typename AnyKeyType>
 struct AnyKeysNoRotate
 {
+	typedef AnyKeyType KeyType;
+
 	RotationType Interpolation;
+	size_t KeyCount = 0;
 	std::vector<LinearKey<KeyType>> LinearKeys;
 	std::vector<QuadraticKey<KeyType>> QuadraticKeys;
 	std::vector<TbcKey<KeyType>> TbcKeys;
@@ -639,6 +643,8 @@ struct AnyKeysNoRotate
 
 struct XyzKeys
 {
+	typedef float KeyType;
+
 	static const RotationType Type = RotationType::XyzRotationKey;
 
 	AnyKeysNoRotate<float> KeysX;
@@ -653,10 +659,13 @@ struct XyzKeys
 	}
 };
 
-template <typename KeyType>
+template <typename AnyKeyType>
 struct AnyKeys
 {
-	RotationType Interpolation;
+	typedef AnyKeyType KeyType;
+
+	RotationType Interpolation = RotationType::None;
+	size_t KeyCount = 0;
 	std::vector<LinearKey<KeyType>> LinearKeys;
 	std::vector<QuadraticKey<KeyType>> QuadraticKeys;
 	std::vector<TbcKey<KeyType>> TbcKeys;
@@ -716,7 +725,7 @@ struct NifDocument
 	void ParseSkinningMeshModifier(std::string_view& stream, BlockData& block);
 	void ParseSequenceData(std::string_view& stream, BlockData& block);
 	void ParseBSplineCompTransformEvaluator(std::string_view& stream, BlockData& block);
-	void ParseBSpineData(std::string_view& stream, BlockData& block);
+	void ParseBSplineData(std::string_view& stream, BlockData& block);
 	void ParseEvaluator(std::string_view& stream, BlockData& block, NiEvaluator* data);
 	void ParseBSplineBasisData(std::string_view& stream, BlockData& block);
 	void ParseTransformEvaluator(std::string_view& stream, BlockData& block);
@@ -854,6 +863,8 @@ void AnyKeys<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 
 	if (length == 0) return;
 
+	KeyCount = length;
+
 	Interpolation = (RotationType)document->Endian.read<unsigned int>(stream);
 
 	if (Interpolation == RotationType::ConstKey)
@@ -894,6 +905,8 @@ void AnyKeysNoRotate<KeyType>::Parse(NifDocument* document, std::string_view& st
 	unsigned int length = document->Endian.read<unsigned int>(stream);
 
 	if (length == 0) return;
+
+	KeyCount = length;
 
 	Interpolation = (RotationType)document->Endian.read<unsigned int>(stream);
 

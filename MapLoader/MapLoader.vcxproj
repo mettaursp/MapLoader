@@ -181,9 +181,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\MapLoader\Assets\AnimationLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Assets\GameAssetLibrary.cpp" />
     <ClCompile Include="src\MapLoader\Assets\ModelData.cpp" />
     <ClCompile Include="src\MapLoader\Assets\ModelLibrary.cpp" />
+    <ClCompile Include="src\MapLoader\Assets\RigAnimationData.cpp" />
     <ClCompile Include="src\MapLoader\Assets\SkinnedModel.cpp" />
     <ClCompile Include="src\MapLoader\Assets\TextureAsset.cpp" />
     <ClCompile Include="src\MapLoader\Assets\TextureLibrary.cpp" />
@@ -213,9 +215,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="shaders\host_device.h" />
+    <ClInclude Include="src\MapLoader\Assets\AnimationLibrary.h" />
     <ClInclude Include="src\MapLoader\Assets\GameAssetLibrary.h" />
     <ClInclude Include="src\MapLoader\Assets\ModelData.h" />
     <ClInclude Include="src\MapLoader\Assets\ModelLibrary.h" />
+    <ClInclude Include="src\MapLoader\Assets\RigAnimationData.h" />
     <ClInclude Include="src\MapLoader\Assets\SkinnedModel.h" />
     <ClInclude Include="src\MapLoader\Assets\TextureAsset.h" />
     <ClInclude Include="src\MapLoader\Assets\TextureLibrary.h" />

@@ -3,9 +3,12 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <unordered_map>
 
 #include <Engine/Math/Color3.h>
 #include <Engine/Math/Vector2S.h>
+#include <Engine/Math/Vector3S.h>
+#include <Engine/Math/Quaternion.h>
 
 namespace Engine
 {
@@ -139,11 +142,139 @@ namespace Engine
 			std::shared_ptr<ShaderGroup> ShaderGroup;
 		};
 
+		enum class AnimationInterpolationType
+		{
+			None = 0,
+			Linear = 1,
+			Quadratic = 2,
+			TensionBiasContinuity = 3,
+			XyzRotation = 4,
+			Const = 5,
+
+			Count
+		};
+
+		enum class AnimationCycleType
+		{
+			Loop = 0,
+			Reverse = 1,
+			Clamp = 2
+		};
+
+		struct ModelPackageAnimationVectorKeyframe
+		{
+			static const bool HasParameters = true;
+
+			Vector3SF Value;
+			float Time = 0;
+			bool NoChange = false;
+			Vector3SF Params1;
+			Vector3SF Params2;
+		};
+
+		struct ModelPackageAnimationQuaternionKeyframe
+		{
+			static const bool HasParameters = false;
+
+			Quaternion Value;
+			float Time = 0;
+			bool NoChange = false;
+		};
+
+		struct ModelPackageAnimationFloatKeyframe
+		{
+			static const bool HasParameters = true;
+
+			float Value = 0;
+			float Time = 0;
+			bool NoChange = false;
+			Vector3SF Params;
+		};
+
+		struct ModelPackageAnimationAxisKeyframe
+		{
+			static const bool HasParameters = false;
+
+			float Value = 0;
+			float Time = 0;
+			bool NoChange = false;
+		};
+
+		struct ModelPackageAnimationFloatNode
+		{
+			AnimationInterpolationType Type = AnimationInterpolationType::None;
+			std::vector<ModelPackageAnimationFloatKeyframe> Keyframes;
+		};
+
+		struct ModelPackageAnimationEulerAxisNode
+		{
+			AnimationInterpolationType Type = AnimationInterpolationType::None;
+			std::vector<ModelPackageAnimationAxisKeyframe> Keyframes;
+		};
+
+		struct ModelPackageAnimationEulerNode
+		{
+			ModelPackageAnimationEulerAxisNode X;
+			ModelPackageAnimationEulerAxisNode Y;
+			ModelPackageAnimationEulerAxisNode Z;
+		};
+
+		struct ModelPackageAnimationVectorNode
+		{
+			AnimationInterpolationType Type = AnimationInterpolationType::None;
+			std::vector<ModelPackageAnimationVectorKeyframe> Keyframes;
+		};
+
+		struct ModelPackageAnimationQuaternionNode
+		{
+			AnimationInterpolationType Type = AnimationInterpolationType::None;
+			std::vector<ModelPackageAnimationQuaternionKeyframe> Keyframes;
+		};
+
+		template <typename SplinePointType>
+		struct ModelPackageSpline
+		{
+			typedef SplinePointType PointType;
+			static const size_t Dimension = sizeof(PointType) / sizeof(float);
+			std::vector<PointType> ControlPoints;
+		};
+
+		struct ModelPackageAnimationNode
+		{
+			std::string NodeName;
+			ModelPackageAnimationQuaternionNode Rotation;
+			ModelPackageAnimationVectorNode Translation;
+			ModelPackageAnimationFloatNode Scale;
+			ModelPackageAnimationEulerNode EulerRotation;
+			ModelPackageSpline<Vector3SF> TranslationSpline;
+			ModelPackageSpline<Quaternion> RotationSpline;
+			ModelPackageSpline<float> ScaleSpline;
+		};
+
+		struct ModelPackageAnimationEvent
+		{
+			float Time = 0;
+			std::string Name;
+		};
+
+		struct ModelPackageAnimation
+		{
+			std::string Name;
+			std::string RootName;
+			float Duration = 0;
+			float PlaybackSpeed = 1;
+			AnimationCycleType CycleType = AnimationCycleType::Clamp;
+			std::vector<ModelPackageAnimationNode> Nodes;
+			std::unordered_map<std::string, ModelPackageAnimationNode*> NodeMap;
+			std::vector<ModelPackageAnimationEvent> Events;
+		};
+
 		struct ModelPackage
 		{
 			std::vector<size_t> Bones;
 			std::vector<ModelPackageNode> Nodes;
 			std::vector<ModelPackageMaterial> Materials;
+			std::vector<ModelPackageAnimation> Animations;
 		};
 	}
 }

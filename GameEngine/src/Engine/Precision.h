@@ -1,6 +1,6 @@
 #pragma once
 
-typedef double Float;
+typedef float Float;
 typedef int Int;
 
 constexpr Float operator ""_F(long double x) { return (Float)x; }

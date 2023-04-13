@@ -50,6 +50,7 @@
     <ClInclude Include="src\Engine\Reflection\MetaData.h" />
     <ClInclude Include="src\Engine\Reflection\Reflected.h" />
     <ClInclude Include="src\Engine\VulkanGraphics\Core\BufferFormat.h" />
+    <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\KfmParser.h" />
     <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\NifBlockTypes.h" />
     <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\NifComponentInfo.h" />
     <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\NifParser.h" />
@@ -73,9 +74,11 @@
     <ClCompile Include="src\Engine\Reflection\MetaData.cpp" />
     <ClCompile Include="src\Engine\Reflection\Reflected.cpp" />
     <ClCompile Include="src\Engine\VulkanGraphics\Core\BufferFormat.cpp" />
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\KfmParser.cpp" />
     <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\NifBlockTypes.cpp" />
     <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\NifComponentInfo.cpp" />
     <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\NifParser.cpp" />
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\PackageNodes.cpp" />
     <ClCompile Include="src\Engine\VulkanGraphics\Scene\MeshData.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -133,7 +136,6 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="GameEngineInclude.props" />
     <Import Project="..\CppGlobalConfig.props" />
-    <Import Project="..\DebugOptimization.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />

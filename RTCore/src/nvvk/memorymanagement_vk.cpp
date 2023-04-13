@@ -366,7 +366,7 @@ void DeviceMemoryAllocator::deinit()
             << m_allocations[i].allocationLocation.column() << ") `"
             << m_allocations[i].allocationLocation.function_name() << "`: AllocationID not freed"
             << std::endl;
-#elif
+#else
         std::cout << "[" << i << "]" << std::endl;
 #endif
       // set DEBUG_ALLOCID define further up to trace this id

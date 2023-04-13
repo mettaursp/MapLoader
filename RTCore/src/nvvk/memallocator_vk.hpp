@@ -134,7 +134,7 @@ uint32_t getMemoryType(const VkPhysicalDeviceMemoryProperties& memoryProperties,
 #define CALLER_TRACKER_SOURCE , const std::source_location& allocationLocation = std::source_location::current()
 #define CALLER_TRACKER , const std::source_location& allocationLocation
 #define PASS_CALLER_TRACKER , allocationLocation
-#elif
+#else
 #define CALLER_TRACKER_SOURCE
 #define CALLER_TRACKER
 #define PASS_CALLER_TRACKER

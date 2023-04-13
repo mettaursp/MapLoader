@@ -126,6 +126,12 @@
     <ClCompile Include="src\MapLoader\Assets\SkinnedModel.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="src\MapLoader\Assets\AnimationLibrary.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MapLoader\Assets\RigAnimationData.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MapLoader\hello_vulkan.h">
@@ -213,6 +219,12 @@
       <Filter>Source Files\Vulkan</Filter>
     </ClInclude>
     <ClInclude Include="src\MapLoader\Assets\SkinnedModel.h">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Assets\AnimationLibrary.h">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Assets\RigAnimationData.h">
       <Filter>Source Files\Assets</Filter>
     </ClInclude>
   </ItemGroup>

@@ -902,8 +902,10 @@ int main(int argc, char** argv)
 
 	hornetCharacter.Load(&hornetsp, Matrix4F(120, 0, 3000) * Matrix4F::RollRotation(PI));
 
+	const Archive::Metadata::Entry* derpPandaAnimationEntry = Archive::Metadata::Entry::FindFirstEntryByTags("60000053_LesserPanda", "gamebryo-animation");
 
-	const Archive::Metadata::Entry* derpPandaEntry = Archive::Metadata::Entry::FindFirstEntryByTags("60000053_LesserPanda", "gamebryo-scenegraph");
+	MapLoader::RigAnimationData* derpPandaAnimData = AssetLibrary->GetAnimations().FetchRigAnimations(derpPandaAnimationEntry);
+
 	MapLoader::ModelData* derpPandaModel = nullptr;
 	std::shared_ptr<MapLoader::SkinnedModel> derpPandaRig = Engine::Create<MapLoader::SkinnedModel>(AssetLibrary, Scene);
 
@@ -914,18 +916,17 @@ int main(int argc, char** argv)
 	derpPandaRig->SetParent(derpPandaTransform);
 	derpPandaRig->SetTransform(derpPandaTransform.get());
 
-	if (derpPandaEntry != nullptr)
-	{
-		derpPandaModel = AssetLibrary->GetModels().FetchModel(derpPandaEntry);
-		derpPandaRig->AddModel(derpPandaModel, {}, [](auto&)
-			{
-				return true;
-			}
-		);
-		derpPandaRig->CreateRigDebugMesh(AssetLibrary->GetModels());
-	}
+	derpPandaModel = AssetLibrary->GetAnimations().FetchRig(derpPandaAnimData);
+	derpPandaRig->AddModel(derpPandaModel, {}, [](auto&)
+		{
+			return true;
+		}
+	);
+	derpPandaRig->CreateRigDebugMesh(AssetLibrary->GetModels());
 
 	Scene->AddSkinnedModel(derpPandaRig);
+
+	MapLoader::ModelData* derpPandaBoreA = AssetLibrary->GetAnimations().FetchAnimation(derpPandaAnimData, "Bore_A");
 
 	//loadMap("02000376"); //sb map
 	//loadMap("02010011"); // ludari promenade

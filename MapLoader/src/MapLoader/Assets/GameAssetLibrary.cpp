@@ -11,7 +11,8 @@ namespace MapLoader
 		Models(*this),
 		Flats(*this),
 		MapData(*this),
-		Items(*this)
+		Items(*this),
+		Animations(*this)
 	{
 
 	}

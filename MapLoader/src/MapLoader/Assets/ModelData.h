@@ -10,6 +10,14 @@
 #include <ArchiveParser/MetadataMapper.h>
 #include <nvvk/resourceallocator_vk.hpp>
 
+namespace Engine
+{
+	namespace Graphics
+	{
+		struct ModelPackageAnimation;
+	}
+}
+
 namespace MapLoader
 {
 	using MaterialObj = WaveFrontMaterial;
@@ -41,6 +49,8 @@ namespace MapLoader
 		std::vector<size_t> BoneIndices;
 		const Archive::Metadata::Entry* Entry = nullptr;
 		int DuplicateFormatUses = 0;
+		std::vector<Engine::Graphics::ModelPackageAnimation> Animations;
+		//ParentNifTransforms NodeTransforms;
 
 		bool IsLoaded(size_t index) const;
 

@@ -147,6 +147,9 @@
     <ClInclude Include="src\Engine\Assets\ParserUtils.h">
       <Filter>Source Files\Assets</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\KfmParser.h">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Precision.cpp">
@@ -208,6 +211,12 @@
     </ClCompile>
     <ClCompile Include="src\Engine\IdentifierHeap.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\KfmParser.cpp">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\PackageNodes.cpp">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

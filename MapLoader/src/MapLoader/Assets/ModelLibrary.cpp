@@ -25,7 +25,7 @@ namespace MapLoader
 
 	std::unordered_set<std::string> ModelLibrary::UnmappedMaterials = {};
 
-	ModelData* ModelLibrary::FetchModel(const Archive::Metadata::Entry* entry, bool keepRawData)
+	ModelData* ModelLibrary::FetchModel(const Archive::Metadata::Entry* entry, bool keepRawData, ModelData* parentRig)
 	{
 		if (entry == nullptr) return nullptr;
 
@@ -49,9 +49,23 @@ namespace MapLoader
 		loadedModel.Entry = entry;
 		loadedModel.Index = (uint32_t)Models.size() - 1;
 
-		FetchModel(AssetLibrary.GetReader()->GetPath(filepath), loadedModel, keepRawData);
+		FetchModel(AssetLibrary.GetReader()->GetPath(filepath), loadedModel, keepRawData, parentRig);
 
 		return &loadedModel;
+	}
+
+	ModelData* ModelLibrary::FindModel(const Archive::Metadata::Entry* entry)
+	{
+		if (entry == nullptr) return nullptr;
+
+		const auto& asset = ModelMap.find(entry);
+
+		if (asset != ModelMap.end())
+		{
+			return Models[asset->second].get();
+		}
+
+		return nullptr;
 	}
 
 	void ModelLibrary::SetCurrentMapTransform(const Matrix4F& mapTransform)
@@ -59,7 +73,7 @@ namespace MapLoader
 		CurrentMapTransform = mapTransform;
 	}
 
-	bool ModelLibrary::FetchModel(const Archive::ArchivePath& file, ModelData& loadedModel, bool keepRawData)
+	bool ModelLibrary::FetchModel(const Archive::ArchivePath& file, ModelData& loadedModel, bool keepRawData, ModelData* parentRig)
 	{
 		if (!file.Loaded())
 		{
@@ -71,21 +85,33 @@ namespace MapLoader
 
 		NifParser parser;
 		parser.Package = &package;
+		parser.Name = loadedModel.Entry->RelativePath.string();
+
+		//if (parentRig != nullptr)
+		//{
+		//	ParentNifTransforms& parentTransforms = parentRig->NodeTransforms;
+		//
+		//	parser.ParentNodes = &parentTransforms;
+		//
+		//	if (parentRig->NodeTransforms.size() == 0)
+		//	{
+		//		parentTransforms.Nodes.resize(parentRig->Nodes.size());
+		//
+		//		for (size_t i = 0; i < parentRig->Nodes.size(); ++i)
+		//		{
+		//			parentTransforms.Nodes[i].Name = parentRig->Nodes[i].Name;
+		//			parentTransforms.Nodes[i].Transform = parentRig->Nodes[i].LocalTransformation;
+		//		}
+		//	}
+		//}
 
 		file.Read(NifDocumentBuffer);
 		parser.Parse(NifDocumentBuffer);
 
 		size_t nodeCount = parser.Package->Nodes.size();
 
+		loadedModel.Animations = std::move(package.Animations);
 		loadedModel.Nodes.resize(nodeCount);
-		//loadedModel.MeshIds.resize(nodeCount);
-		//loadedModel.Transformations.resize(nodeCount);
-		//loadedModel.Materials.resize(nodeCount);
-		//loadedModel.Shaders.resize(nodeCount);
-		//loadedModel.MaterialNames.resize(nodeCount);
-		//loadedModel.NodeNames.resize(nodeCount);
-		//loadedModel.Meshes.resize(nodeCount);
-		//loadedModel.MeshSkins.resize(nodeCount);
 		loadedModel.BoneIndices = parser.Package->Bones;
 
 		if (parser.Package->Nodes.size() > 0)

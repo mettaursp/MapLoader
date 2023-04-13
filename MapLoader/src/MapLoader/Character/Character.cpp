@@ -190,11 +190,13 @@ namespace MapLoader
 
 		EquipItem(Customization->Hair);
 
-		std::string rigPath = Customization->Gender == Gender::Male ? "/Model/Character/male/m_body.nif" : "/Model/Character/female/f_body.nif";
+		std::string rigName = Customization->Gender == Gender::Male ? "Male" : "Female";
 
-		const Archive::Metadata::Entry* rigEntry = Archive::Metadata::Entry::FindFirstEntryByTagWithRelPath(rigPath, "gamebryo-scenegraph");
+		const Archive::Metadata::Entry* rigAnimationEntry = Archive::Metadata::Entry::FindFirstEntryByTags(rigName, "gamebryo-animation");
 
-		MapLoader::ModelData* rig = AssetLibrary->GetModels().FetchModel(rigEntry, true);
+		RigAnimationData* animData = AssetLibrary->GetAnimations().FetchRigAnimations(rigAnimationEntry);
+
+		MapLoader::ModelData* rig = AssetLibrary->GetAnimations().FetchRig(animData);
 
 		if (HideEars)
 			CutMeshes.push_back("FA_EA");

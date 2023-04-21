@@ -93,6 +93,7 @@ namespace MapLoader
 		const auto& GetMaterialTextures() const { return MaterialTextures; }
 		auto& GetTextureTransforms() { return TextureTransforms; }
 		uint32_t LoadWireframeMesh(const std::vector<VertexPosBinding>& vertices, const std::vector<int>& indices);
+		void UpdateWireframeMesh(uint32_t index, const std::vector<VertexPosBinding>& vertices, const std::vector<int>& indices);
 		const auto& GetMeshFormat() const { return MeshFormat; }
 		const auto& GetSpawnedInstances() const { return SpawnedInstances; }
 		const auto& GetSpawnedWireframeInstances() const { return SpawnedWireframeInstances; }

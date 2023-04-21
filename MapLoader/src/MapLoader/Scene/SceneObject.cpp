@@ -17,26 +17,28 @@ namespace MapLoader
 		}
 	}
 
-	void SceneObject::AddToScene(RTScene* scene, size_t index, SceneObjectType type)
+	void SceneObject::AddToScene(RTScene* scene, size_t id, size_t index, SceneObjectType type)
 	{
 		if (scene == nullptr) return;
 
 		if (Scene.Scene == nullptr)
 		{
-			Scene = { scene, index, type };
+			Scene = { scene, id, index, type };
 			
 			return;
 		}
 
-		Scenes.push_back({ scene, index, type });
+		Scenes.push_back({ scene, id, index, type });
 	}
 
-	void SceneObject::RemoveFromScene(RTScene* scene)
+	size_t SceneObject::RemoveFromScene(RTScene* scene)
 	{
-		if (scene == nullptr) return;
+		if (scene == nullptr) return (size_t)-1;
 
 		if (Scene.Scene == scene)
 		{
+			size_t index = Scene.Id;
+
 			if (Scenes.size() > 0)
 			{
 				Scene = Scenes.back();
@@ -45,17 +47,19 @@ namespace MapLoader
 			else
 				Scene = {};
 
-			return;
+			return index;
 		}
 
 		for (SceneEntry& entry : Scenes)
 		{
 			if (entry.Scene == scene)
 			{
+				size_t index = entry.Id;
+
 				std::swap(entry, Scenes.back());
 				Scenes.pop_back();
 
-				return;
+				return index;
 			}
 		}
 	}
@@ -70,6 +74,22 @@ namespace MapLoader
 			if (entry.Scene == scene)
 			{
 				return entry.Index;
+			}
+		}
+
+		return (size_t)-1;
+	}
+
+	size_t SceneObject::GetSceneId(RTScene* scene) const
+	{
+		if (Scene.Scene == scene)
+			return Scene.Id;
+
+		for (const SceneEntry& entry : Scenes)
+		{
+			if (entry.Scene == scene)
+			{
+				return entry.Id;
 			}
 		}
 
@@ -165,5 +185,27 @@ namespace MapLoader
 		}
 
 		return SceneObjectType::None;
+	}
+
+	void SceneObject::SetObjectType(RTScene* scene, SceneObjectType type, size_t index)
+	{
+		if (Scene.Scene == scene)
+		{
+			Scene.Type = type;
+			Scene.Index = index;
+
+			return;
+		}
+
+		for (SceneEntry& entry : Scenes)
+		{
+			if (entry.Scene == scene)
+			{
+				entry.Type = type;
+				entry.Index = index;
+
+				return;
+			}
+		}
 	}
 }

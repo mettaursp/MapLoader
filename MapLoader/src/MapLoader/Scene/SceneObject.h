@@ -10,6 +10,9 @@ namespace MapLoader
 		Static,
 		Dynamic,
 		Skinned,
+		Wireframe,
+
+		Count,
 
 		None
 	};
@@ -34,30 +37,33 @@ namespace MapLoader
 	public:
 		~SceneObject();
 
-		void AddToScene(RTScene* scene, size_t index, SceneObjectType type);
-		void RemoveFromScene(RTScene* scene);
+		void AddToScene(RTScene* scene, size_t id, size_t index, SceneObjectType type);
+		size_t RemoveFromScene(RTScene* scene);
 
 		ObjectVisibilityType GetVisibilityType() const;
 		uint32_t GetVisibilityTypeBit() const;
-		bool HasChanged() const;
+		virtual bool HasChanged() const;
 		bool IsStatic() const;
 		Engine::Transform* GetTransform() const;
 		uint32_t GetModelId() const;
 		bool HasModel() const;
 		size_t GetSceneIndex(RTScene* scene) const;
+		size_t GetSceneId(RTScene* scene) const;
 
-		void MarkStale(bool isStale);
+		virtual void MarkStale(bool isStale);
 		void SetStatic(bool isStatic);
 		void SetVisibilityType(ObjectVisibilityType visibilityType);
 		void SetTransform(Engine::Transform* transform);
 		void SetModel(ModelData* model, size_t index);
 
 		SceneObjectType GetObjectType(RTScene* scene) const;
+		void SetObjectType(RTScene* scene, SceneObjectType type, size_t index);
 
 	private:
 		struct SceneEntry
 		{
 			RTScene* Scene = nullptr;
+			size_t Id = (size_t)-1;
 			size_t Index = (size_t)-1;
 			SceneObjectType Type = SceneObjectType::None;
 		};

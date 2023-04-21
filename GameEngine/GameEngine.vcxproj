@@ -44,6 +44,7 @@
     <ClInclude Include="src\Engine\Math\Vector3S.h" />
     <ClInclude Include="src\Engine\ObjectAllocator.h" />
     <ClInclude Include="src\Engine\Objects\Object.h" />
+    <ClInclude Include="src\Engine\Objects\Simulation.h" />
     <ClInclude Include="src\Engine\Objects\Transform.h" />
     <ClInclude Include="src\Engine\PageAllocator.h" />
     <ClInclude Include="src\Engine\Precision.h" />
@@ -69,6 +70,7 @@
     <ClCompile Include="src\Engine\Math\Color4I.cpp" />
     <ClCompile Include="src\Engine\Math\Quaternion.cpp" />
     <ClCompile Include="src\Engine\Objects\Object.cpp" />
+    <ClCompile Include="src\Engine\Objects\Simulation.cpp" />
     <ClCompile Include="src\Engine\Objects\Transform.cpp" />
     <ClCompile Include="src\Engine\Precision.cpp" />
     <ClCompile Include="src\Engine\Reflection\MetaData.cpp" />
@@ -136,6 +138,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="GameEngineInclude.props" />
     <Import Project="..\CppGlobalConfig.props" />
+    <Import Project="..\DebugOptimization.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />

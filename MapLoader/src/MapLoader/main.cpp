@@ -81,6 +81,7 @@
 #include "Character/Character.h"
 #include "Scene/RTScene.h"
 #include "Assets/SkinnedModel.h"
+#include "Scene/AnimationPlayer.h"
 
 using DyeColor = MapLoader::DyeColor;
 using EmotionTexture = MapLoader::EmotionTexture;
@@ -922,11 +923,29 @@ int main(int argc, char** argv)
 			return true;
 		}
 	);
-	derpPandaRig->CreateRigDebugMesh(AssetLibrary->GetModels());
+	derpPandaRig->CreateRigDebugMesh();
+	derpPandaRig->SetRigAnimations("60000053_LesserPanda");
 
 	Scene->AddSkinnedModel(derpPandaRig);
 
-	MapLoader::ModelData* derpPandaBoreA = AssetLibrary->GetAnimations().FetchAnimation(derpPandaAnimData, "Bore_A");
+	MapLoader::ModelData* derpPandaBoreA = AssetLibrary->GetAnimations().FetchAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
+
+	size_t kr = Archive::Metadata::Entry::GetTag("kr");
+	size_t cn = Archive::Metadata::Entry::GetTag("cn");
+	size_t jp = Archive::Metadata::Entry::GetTag("jp");
+
+	//for (auto index : Archive::Metadata::Entry::GetTagData("gamebryo-sequence-file")->Ids)
+	//{
+	//	bool skip = false;
+	//	for (size_t i = 0; i < index.second->Tags.size() && !skip; ++i)
+	//	{
+	//		skip |= index.second->Tags[i] == kr;
+	//		skip |= index.second->Tags[i] == cn;
+	//		skip |= index.second->Tags[i] == jp;
+	//	}
+	//	if (skip) continue;
+	//	AssetLibrary->GetModels().FetchModel(index.second);
+	//}
 
 	//loadMap("02000376"); //sb map
 	//loadMap("02010011"); // ludari promenade
@@ -984,6 +1003,8 @@ int main(int argc, char** argv)
 		// Start the Dear ImGui frame
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
+
+		Scene->Update(1 / ImGui::GetIO().Framerate);
 
 		bool takeScreenshot = false;
 
@@ -1300,6 +1321,11 @@ int main(int argc, char** argv)
 					if (!helloVk.takingScreenshot)
 					{
 						ImGui::Checkbox("Combine Large Screenshot", &helloVk.combineScreenshot);
+					}
+
+					if (ImGui::Button("Play Animation"))
+					{
+						derpPandaRig->GetAnimationPlayer()->PlayAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
 					}
 
 					ImGui::EndTabItem();

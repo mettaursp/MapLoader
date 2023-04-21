@@ -132,6 +132,9 @@
     <ClCompile Include="src\MapLoader\Assets\RigAnimationData.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="src\MapLoader\Scene\AnimationPlayer.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\MapLoader\hello_vulkan.h">
@@ -226,6 +229,9 @@
     </ClInclude>
     <ClInclude Include="src\MapLoader\Assets\RigAnimationData.h">
       <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MapLoader\Scene\AnimationPlayer.h">
+      <Filter>Source Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

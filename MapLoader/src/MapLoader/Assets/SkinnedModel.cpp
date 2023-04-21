@@ -2,6 +2,8 @@
 
 #include <MapLoader/Scene/RTScene.h>
 #include <MapLoader/Assets/ModelLibrary.h>
+#include <MapLoader/Scene/AnimationPlayer.h>
+#include <MapLoader/Assets/RigAnimationData.h>
 #include <nvvk/buffers_vk.hpp>
 
 namespace MapLoader
@@ -134,11 +136,15 @@ namespace MapLoader
 
 	void SkinnedModel::AddRigNodes(MapLoader::ModelData* model, const Matrix4F& transformation, const std::string& selfNode, size_t parentIndex)
 	{
+		bool changedMappings = false;
+
 		for (size_t i = 0; i < model->Nodes.size(); ++i)
 		{
 			const auto& node = model->Nodes[i];
 
 			if (NodeIndices.contains(node.Name)) continue;
+
+			changedMappings = true;
 
 			NodeIndices[node.Name] = RigNodes.size();
 			RigNodes.push_back({});
@@ -177,7 +183,8 @@ namespace MapLoader
 				rigNode.Transformation = rigNode.LocalTransformation;
 			}
 
-			rigNode.BaseTransform = rigNode.Transformation.Inverted();
+			rigNode.BaseTransform = rigNode.LocalTransformation;
+			//rigNode.BaseTransform = rigNode.Transformation.Inverted();
 
 			if (node.IsInBoneList)
 			{
@@ -187,6 +194,9 @@ namespace MapLoader
 				SkeletonData.push_back(rigNode.Transformation);
 			}
 		}
+
+		if (changedMappings)
+			++RigVersion;
 	}
 
 	bool SkinnedModel::SpawnModelCallback(ModelSpawnParameters& spawnParameters)
@@ -279,11 +289,11 @@ namespace MapLoader
 		return true;
 	}
 
-	void SkinnedModel::CreateRigDebugMesh(ModelLibrary& modelLibrary)
+	void SkinnedModel::ComputeWireframe()
 	{
-		std::vector<VertexPosBinding> vertices;
-		std::vector<int> indices;
-		std::unordered_map<size_t, size_t> boneMap;
+		WireframeVertices.clear();
+		WireframeIndices.clear();
+		WireframeBoneMap.clear();
 
 		for (size_t i = 0; i < RigNodes.size(); ++i)
 		{
@@ -291,24 +301,49 @@ namespace MapLoader
 
 			if (!node.IsBone) continue;
 
-			boneMap[i] = vertices.size();
-			vertices.push_back({});
+			WireframeBoneMap[i] = WireframeVertices.size();
+			WireframeVertices.push_back({});
 
-			VertexPosBinding& vertex = vertices.back();
+			VertexPosBinding& vertex = WireframeVertices.back();
 
 			vertex.position = node.Transformation.Translation();
 			vertex.color = 0x00FF00FF;
 
 			if (node.ParentIndex != (size_t)-1)
 			{
-				indices.push_back((int)boneMap[node.ParentIndex]);
-				indices.push_back((int)vertices.size() - 1);
+				WireframeIndices.push_back((int)WireframeBoneMap[node.ParentIndex]);
+				WireframeIndices.push_back((int)WireframeVertices.size() - 1);
 			}
 		}
+	}
 
-		uint32_t id = modelLibrary.LoadWireframeMesh(vertices, indices);
+	void SkinnedModel::CreateRigDebugMesh()
+	{
+		ComputeWireframe();
 
-		AssetLibrary->GetModels().SpawnWireframe(Scene.get(), id, GetTransform()->GetWorldTransformation());
+		WireframeId = AssetLibrary->GetModels().LoadWireframeMesh(WireframeVertices, WireframeIndices);
+
+		AssetLibrary->GetModels().SpawnWireframe(Scene.get(), WireframeId, GetTransform()->GetWorldTransformation());
+	}
+
+	void SkinnedModel::UpdateRigDebugMesh()
+	{
+		if (WireframeId == (uint32_t)-1) return;
+
+		ComputeWireframe();
+
+		AssetLibrary->GetModels().UpdateWireframeMesh(WireframeId, WireframeVertices, WireframeIndices);
+	}
+
+	bool SkinnedModel::HasChanged() const
+	{
+		return SkeletonDataIsStale || SceneObject::HasChanged();
+	}
+
+	void SkinnedModel::MarkStale(bool isStale)
+	{
+		SkeletonDataIsStale = isStale;
+		SceneObject::MarkStale(isStale);
 	}
 
 	void SkinnedModel::SendSkeletonToGpu()
@@ -317,24 +352,7 @@ namespace MapLoader
 
 		auto cmdGen = nvvk::CommandPool(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
 
-		for (size_t i = 0; i < RigNodes.size(); ++i)
-		{
-			auto& rigNode = RigNodes[i];
-
-			if (rigNode.ParentIndex != (size_t)-1)
-			{
-				rigNode.Transformation = RigNodes[rigNode.ParentIndex].Transformation * rigNode.LocalTransformation;
-			}
-			else
-			{
-				rigNode.Transformation = rigNode.LocalTransformation;
-			}
-
-			if (rigNode.SkeletonIndex != (size_t)-1)
-			{
-				SkeletonData[rigNode.SkeletonIndex] = rigNode.Transformation * rigNode.BaseTransform;
-			}
-		}
+		UpdateRig();
 
 		if (SkeletonBuffer.buffer != nullptr && LastSkeletonDataSize != SkeletonData.size())
 		{
@@ -379,5 +397,77 @@ namespace MapLoader
 		afterBarrier.size = size;
 		vkCmdPipelineBarrier(cmdBuf, VK_PIPELINE_STAGE_TRANSFER_BIT, uboUsageStages, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
 			nullptr, 1, &afterBarrier, 0, nullptr);
+
+		SkeletonDataIsStale = false;
+	}
+
+	void SkinnedModel::SetRigAnimations(const Archive::Metadata::Entry* entry)
+	{
+		RigAnimationData* rig = AssetLibrary->GetAnimations().FetchRigAnimations(entry);
+
+		if (rig == nullptr) return;
+
+		SetRigAnimations(rig);
+	}
+
+	void SkinnedModel::SetRigAnimations(const std::string& rigName)
+	{
+		const Archive::Metadata::Entry* rigEntry = Archive::Metadata::Entry::FindFirstEntryByTags(rigName, "gamebryo-animation");
+
+		if (rigEntry == nullptr) return;
+
+		SetRigAnimations(rigEntry);
+	}
+
+	void SkinnedModel::SetRigAnimations(RigAnimationData* rig)
+	{
+		RigAnimations = rig;
+
+		AnimationPlayer = std::make_unique<MapLoader::AnimationPlayer>(AssetLibrary);
+		AnimationPlayer->SetRig(this);
+	}
+
+	void SkinnedModel::UpdateRig()
+	{
+		if (!SkeletonDataIsStale) return;
+
+		for (size_t i = 0; i < RigNodes.size(); ++i)
+		{
+			RigNode& node = RigNodes[i];
+
+			if (node.ParentIndex != (size_t)-1 && RigNodes[node.ParentIndex].IsStale)
+				node.IsStale = true;
+
+			if (!node.IsStale) continue;
+
+			if (node.ParentIndex != (size_t)-1)
+			{
+				RigNode& parent = RigNodes[node.ParentIndex];
+
+				node.Transformation = parent.Transformation * node.LocalTransformation;
+			}
+			else
+				node.Transformation = node.LocalTransformation;
+
+			if (node.SkeletonIndex != (size_t)-1)
+			{
+				SkeletonData[node.SkeletonIndex] = node.Transformation * node.BaseTransformInverse;
+			}
+		}
+
+		for (size_t i = 0; i < RigNodes.size(); ++i)
+		{
+			RigNodes[i].IsStale = false;
+		}
+	}
+
+	void SkinnedModel::SetRigNodeTransform(size_t index, const Matrix4F& transformation)
+	{
+		if (index >= RigNodes.size()) return;
+
+		RigNodes[index].LocalTransformation = transformation;
+		RigNodes[index].IsStale = true;
+
+		SkeletonDataIsStale = true;
 	}
 }

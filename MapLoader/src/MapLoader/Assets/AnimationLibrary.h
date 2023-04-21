@@ -17,7 +17,6 @@ namespace MapLoader
 
 		RigAnimationData* FetchRigAnimations(const Archive::Metadata::Entry* entry);
 		ModelData* FetchRig(RigAnimationData* rigAnimationData);
-		ModelData* FetchAnimation(RigAnimationData* rigAnimationData, const std::string& name);
 		ModelData* FetchAnimation(RigAnimation* rigAnimation, RigAnimationData* rigAnimationData = nullptr);
 
 	private:
@@ -28,5 +27,6 @@ namespace MapLoader
 		std::vector<std::unique_ptr<RigAnimationData>> Rigs;
 
 		bool FetchRigAnimations(const Archive::ArchivePath& file, RigAnimationData& loadedRig);
+		void LoadRigAnimation(RigAnimation& rigAnimation, ModelData* package);
 	};
 }

@@ -9,6 +9,7 @@
 #include "SceneObject.h"
 #include "nvvk/raytraceKHR_vk.hpp"
 #include <host_device.h>
+#include <Engine/Objects/Simulation.h>
 
 namespace Graphics
 {
@@ -19,7 +20,7 @@ namespace MapLoader
 {
 	class SkinnedModel;
 
-	class RTScene
+	class RTScene : public Engine::Simulation
 	{
 	public:
 		RTScene(const std::shared_ptr<Graphics::VulkanContext>& context);
@@ -39,26 +40,55 @@ namespace MapLoader
 
 		void ClearAnimationTasks();
 
+		virtual void TransformChanged(Engine::Transform* transform, bool firstChange) override;
+		virtual void TransformStaticChanged(Engine::Transform* transform, bool isNowStatic) override;
+
 		const auto& GetAnimationTasks() const { return AnimationTasks; }
 		int GetMaxAnimatedVertices() const { return MaxAnimatedVertices; }
 
 	private:
+		struct SceneObjectEntry
+		{
+			std::shared_ptr<SceneObject> Object;
+			SceneObjectType Type = SceneObjectType::None;
+			SkinnedModel* SkinnedModelReference = nullptr;
+			Engine::Transform* Transform = nullptr;
+			size_t ChangedIndex = (size_t)-1;
+			size_t StructureIndex = (size_t)-1;
+			bool JustAddedToStructure = false;
+		};
+
+		struct EntryList
+		{
+			IDHeap Ids;
+			std::vector<size_t> Entries;
+
+			void Remove(size_t index);
+		};
+
+		struct StructureEntry
+		{
+			size_t ObjectId = (size_t)-1;
+			bool RegisteredChange = false;
+		};
+
 		std::shared_ptr<Graphics::VulkanContext> VulkanContext;
 		bool RegenerateTLAS = false;
-		size_t AddedStaticObjects = 0;
-		size_t RemovedStaticObjects = 0;
-		size_t DynamicObjectOffset = 0;
-		IDHeap DynamicObjectIds;
-		IDHeap StaticObjectIds;
-		IDHeap SkinnedObjectIds;
+		IDHeap SceneObjectIds;
 		std::vector<VkAccelerationStructureInstanceKHR> AccelStructureInstances;
-		std::vector<std::shared_ptr<SceneObject>> StaticObjects;
-		std::vector<std::shared_ptr<SceneObject>> DynamicObjects;
-		std::vector<std::shared_ptr<SceneObject>> WireframeObjects;
+		EntryList EntryTypes[(int)SceneObjectType::Count] = {};
+		std::vector<size_t> ChangedStructureObjects;
+		std::vector<StructureEntry> StructureEntries;
+		IDHeap StructureIds;
+		std::vector<SceneObjectEntry> Entries;
 		std::vector<AnimationTask> AnimationTasks;
 		int MaxAnimatedVertices = 0;
-		std::vector< std::shared_ptr<SkinnedModel>> SkinnedModels;
 		nvvk::RaytracingBuilderKHR RTBuilder;
+		std::unordered_map<Engine::Transform*, size_t> TransformMap;
+
+		size_t AddObject(const std::shared_ptr<SceneObject>& object, SceneObjectType type, size_t id = (size_t)-1, SkinnedModel* skinnedModel = nullptr);
+		size_t ChangeType(size_t id, SceneObjectType type);
+		void RemoveObject(size_t id);
 
 		void WriteInstance(size_t index, SceneObject* sceneObject);
 		void UpdateInstance(size_t index, SceneObject* sceneObject);

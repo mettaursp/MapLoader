@@ -7,6 +7,8 @@
 
 namespace Engine
 {
+	class Simulation;
+
 	class Transform : public Object
 	{
 	public:
@@ -74,14 +76,24 @@ namespace Engine
 		void TransformByRelative(const Matrix4& transformation);
 		void TransformByRelative(const Quaternion& transformation, const Vector3& point = Vector3());
 
+		void AddToSimulation(Simulation* simulation, size_t index);
+		size_t RemoveFromSimulation(Simulation* simulation);
+
 		//Event<Transform*> TransformMoved;
 
 	private:
+		struct SimulationEntry
+		{
+			Simulation* Listener = nullptr;
+			size_t Index = 0;
+		};
+
 		Matrix4 Transformation;
 		Matrix4 WorldTransformation;
 		Matrix4 WorldTransformationInverse;
 		Matrix4 WorldRotation;
 		Matrix4 WorldNormalTransformation;
+		std::vector<SimulationEntry> Simulations;
 
 		bool HasChanged();
 		void Recompute(bool doUpdate = false);

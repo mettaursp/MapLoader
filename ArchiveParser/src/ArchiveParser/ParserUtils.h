@@ -11,6 +11,7 @@
 #include "ArchiveReader.h"
 
 std::string lower(const std::string& text);
+bool matchesCaseInsensitive(const std::string& text1, const std::string& text2);
 std::string padId(std::string id);
 
 template <typename T>

@@ -163,41 +163,33 @@ namespace Engine
 
 		struct ModelPackageAnimationVectorKeyframe
 		{
-			static const bool HasParameters = true;
+			static const bool HasQuadraticParams = true;
 
 			Vector3SF Value;
 			float Time = 0;
 			bool NoChange = false;
-			Vector3SF Params1;
-			Vector3SF Params2;
+			Vector3SF Params;
+			Vector3SF Backward;
 		};
 
 		struct ModelPackageAnimationQuaternionKeyframe
 		{
-			static const bool HasParameters = false;
+			static const bool HasQuadraticParams = false;
 
 			Quaternion Value;
-			float Time = 0;
-			bool NoChange = false;
-		};
-
-		struct ModelPackageAnimationFloatKeyframe
-		{
-			static const bool HasParameters = true;
-
-			float Value = 0;
 			float Time = 0;
 			bool NoChange = false;
 			Vector3SF Params;
 		};
 
-		struct ModelPackageAnimationAxisKeyframe
+		struct ModelPackageAnimationFloatKeyframe
 		{
-			static const bool HasParameters = false;
+			static const bool HasQuadraticParams = true;
 
 			float Value = 0;
 			float Time = 0;
 			bool NoChange = false;
+			Vector3SF Params;
 		};
 
 		struct ModelPackageAnimationFloatNode
@@ -209,7 +201,7 @@ namespace Engine
 		struct ModelPackageAnimationEulerAxisNode
 		{
 			AnimationInterpolationType Type = AnimationInterpolationType::None;
-			std::vector<ModelPackageAnimationAxisKeyframe> Keyframes;
+			std::vector<ModelPackageAnimationFloatKeyframe> Keyframes;
 		};
 
 		struct ModelPackageAnimationEulerNode
@@ -237,11 +229,14 @@ namespace Engine
 			typedef SplinePointType PointType;
 			static const size_t Dimension = sizeof(PointType) / sizeof(float);
 			std::vector<PointType> ControlPoints;
+			float Start = 0;
+			float End = 0;
 		};
 
 		struct ModelPackageAnimationNode
 		{
 			std::string NodeName;
+			bool IsSpline = false;
 			ModelPackageAnimationQuaternionNode Rotation;
 			ModelPackageAnimationVectorNode Translation;
 			ModelPackageAnimationFloatNode Scale;
@@ -277,4 +272,10 @@ namespace Engine
 			std::vector<ModelPackageAnimation> Animations;
 		};
 	}
+}
+
+namespace Enum
+{
+	typedef Engine::Graphics::AnimationInterpolationType AnimationInterpolationType;
+	typedef Engine::Graphics::AnimationCycleType AnimationCycleType;
 }

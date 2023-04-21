@@ -2,6 +2,7 @@
 
 #include <ArchiveParser/ParserUtils.h>
 #include <Engine/VulkanGraphics/FileFormats/KfmParser.h>
+#include <Engine/VulkanGraphics/FileFormats/PackageNodes.h>
 
 #include "GameAssetLibrary.h"
 
@@ -100,11 +101,18 @@ namespace MapLoader
 			animation.Index = i;
 			animation.ParentEntry = loadedRig.Entry;
 			animation.Entry = GetEntry(documentAnimation.Path, loadedRig.Entry, "gamebryo-sequence-file");
-			animation.Animation = AssetLibrary.GetModels().FindModel(animation.Entry);
+			animation.AnimationPackage = AssetLibrary.GetModels().FindModel(animation.Entry);
+
+			if (animation.AnimationPackage != nullptr)
+			{
+				LoadRigAnimation(animation, animation.AnimationPackage);
+			}
+
 			animation.Id = documentAnimation.Id;
 			animation.Name = documentAnimation.Name;
 
 			loadedRig.AnimationMap[animation.Name] = &animation;
+			loadedRig.AnimationEntryMap[animation.Entry] = &animation;
 		}
 
 		return true;
@@ -120,27 +128,64 @@ namespace MapLoader
 		return rigAnimationData->Rig;
 	}
 
-	ModelData* AnimationLibrary::FetchAnimation(RigAnimationData* rigAnimationData, const std::string& name)
-	{
-		if (rigAnimationData == nullptr) return nullptr;
-
-		auto animationIndex = rigAnimationData->AnimationMap.find(name);
-
-		if (animationIndex == rigAnimationData->AnimationMap.end()) return nullptr;
-
-		return FetchAnimation(animationIndex->second);
-	}
-
 	ModelData* AnimationLibrary::FetchAnimation(RigAnimation* rigAnimation, RigAnimationData* rigAnimationData)
 	{
 		if (rigAnimation == nullptr) return nullptr;
-		if (rigAnimation->Animation != nullptr) return rigAnimation->Animation;
+		if (rigAnimation->Animation != nullptr) return rigAnimation->AnimationPackage;
 
 		if (rigAnimationData == nullptr)
 			rigAnimationData = FetchRigAnimations(rigAnimation->ParentEntry);
 
-		rigAnimation->Animation = AssetLibrary.GetModels().FetchModel(rigAnimation->Entry, false, FetchRig(rigAnimationData));
+		LoadRigAnimation(*rigAnimation, AssetLibrary.GetModels().FetchModel(rigAnimation->Entry, false, FetchRig(rigAnimationData)));
 
-		return rigAnimation->Animation;
+		return rigAnimation->AnimationPackage;
+	}
+
+	void AnimationLibrary::LoadRigAnimation(RigAnimation& rigAnimation, ModelData* package)
+	{
+		rigAnimation.AnimationPackage = package;
+
+		for (size_t i = 0; i < rigAnimation.AnimationPackage->Animations.size(); ++i)
+		{
+			Engine::Graphics::ModelPackageAnimation* animation = &rigAnimation.AnimationPackage->Animations[i];
+
+			if (matchesCaseInsensitive(animation->Name, rigAnimation.Name))
+			{
+				rigAnimation.Animation = animation;
+				rigAnimation.Duration = rigAnimation.Animation->Duration;
+
+				for (size_t i = 0; i < animation->Nodes.size(); ++i)
+				{
+					const Engine::Graphics::ModelPackageAnimationNode& node = animation->Nodes[i];
+
+					if (!node.IsSpline) continue;
+
+					static const auto cacheKnots = [](const auto& spline)
+					{
+						size_t count = spline.ControlPoints.size();
+
+						if (count == 0) return;
+
+						if (KnotVectors.size() <= count)
+							KnotVectors.resize(count + 1);
+
+						auto& knotVector = KnotVectors[count];
+
+						if (knotVector.size() > 0) return;
+
+						knotVector.resize(count + SplineDegree - 1);
+
+						for (int i = 0; i < (int)knotVector.size(); ++i)
+							knotVector[i] = (float)std::max(0, std::min(i - (int)SplineDegree + 1, (int)count - (int)SplineDegree));
+					};
+
+					cacheKnots(node.TranslationSpline);
+					cacheKnots(node.RotationSpline);
+					cacheKnots(node.ScaleSpline);
+				}
+
+				return;
+			}
+		}
 	}
 }

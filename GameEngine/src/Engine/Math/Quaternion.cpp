@@ -104,18 +104,18 @@ Matrix4 Quaternion::Matrix() const
 
 Quaternion::Quaternion(const Matrix4& matrix)
 {
-	Float traceW = matrix[0][0] + matrix[1][1] + matrix[2][2];
-	Float traceX = matrix[0][0] - matrix[1][1] - matrix[2][2];
-	Float traceY = -matrix[0][0] + matrix[1][1] - matrix[2][2];
-	Float traceZ = -matrix[0][0] - matrix[1][1] + matrix[2][2];
+	Float traceW = matrix.Fetch(0, 0) + matrix.Fetch(1, 1) + matrix.Fetch(2, 2);
+	Float traceX = matrix.Fetch(0, 0) - matrix.Fetch(1, 1) - matrix.Fetch(2, 2);
+	Float traceY = -matrix.Fetch(0, 0) + matrix.Fetch(1, 1) - matrix.Fetch(2, 2);
+	Float traceZ = -matrix.Fetch(0, 0) - matrix.Fetch(1, 1) + matrix.Fetch(2, 2);
 
-	Float axis1 = (matrix[2][1] + matrix[1][2]);
-	Float axis2 = (matrix[0][2] + matrix[2][0]);
-	Float axis3 = (matrix[1][0] + matrix[0][1]);
+	Float axis1 = (matrix.Fetch(2, 1) + matrix.Fetch(1, 2));
+	Float axis2 = (matrix.Fetch(0, 2) + matrix.Fetch(2, 0));
+	Float axis3 = (matrix.Fetch(1, 0) + matrix.Fetch(0, 1));
 
-	Float axis1N = (matrix[2][1] - matrix[1][2]);
-	Float axis2N = (matrix[0][2] - matrix[2][0]);
-	Float axis3N = (matrix[1][0] - matrix[0][1]);
+	Float axis1N = (matrix.Fetch(2, 1) - matrix.Fetch(1, 2));
+	Float axis2N = (matrix.Fetch(0, 2) - matrix.Fetch(2, 0));
+	Float axis3N = (matrix.Fetch(1, 0) - matrix.Fetch(0, 1));
 
 	if (traceW > traceX && traceW > traceY && traceW > traceZ)
 	{
@@ -264,10 +264,10 @@ Quaternion Quaternion::operator*(Float scalar) const
 // assignment
 Quaternion& Quaternion::operator=(const Quaternion& other)
 {
-	W = other.X;
-	X = other.Y;
-	Y = other.Z;
-	Z = other.W;
+	W = other.W;
+	X = other.X;
+	Y = other.Y;
+	Z = other.Z;
 
 	return *this;
 }

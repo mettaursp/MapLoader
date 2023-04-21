@@ -40,12 +40,12 @@ void NifDocument::ParseTransform(std::string_view& stream, NiTransform& transfor
 	}
 	else
 	{
+		float w = Endian.read<float>(stream);
 		float x = Endian.read<float>(stream);
 		float y = Endian.read<float>(stream);
 		float z = Endian.read<float>(stream);
-		float w = Endian.read<float>(stream);
 
-		transform.Rotation = Quaternion(Vector3(x, y, z, w)).MatrixF();
+		transform.Rotation = Quaternion(w, x, y, z).MatrixF();
 	}
 
 	if (!translationFirst)
@@ -543,16 +543,16 @@ float ParseKey<float>(NifDocument* document, std::string_view& stream)
 template <>
 Quaternion ParseKey<Quaternion>(NifDocument* document, std::string_view& stream)
 {
+	float w = document->Endian.read<float>(stream);
 	float x = document->Endian.read<float>(stream);
 	float y = document->Endian.read<float>(stream);
 	float z = document->Endian.read<float>(stream);
-	float w = document->Endian.read<float>(stream);
 
-	return Quaternion(Vector3(x, y, z, w));
+	return Quaternion(w, x, y, z);
 }
 
 template <>
-Vector3F ParseKey<Vector3F>(NifDocument* document, std::string_view& stream)
+Vector3SF ParseKey<Vector3SF>(NifDocument* document, std::string_view& stream)
 {
 	float x = document->Endian.read<float>(stream);
 	float y = document->Endian.read<float>(stream);
@@ -1328,7 +1328,7 @@ void NifParser::Parse(std::string_view stream)
 								auto& keyframe = keyframeData.Keyframes[i];
 								
 								typedef std::remove_cvref_t<decltype(keyframe)> KeyframeType;
-								const bool hasParams = KeyframeType::HasParameters;
+								const bool hasParams = KeyframeType::HasQuadraticParams;
 
 								RotationType interpolation = data.Interpolation;
 
@@ -1350,15 +1350,13 @@ void NifParser::Parse(std::string_view stream)
 
 									if constexpr (hasParams)
 									{
-										if constexpr (std::is_same_v<decltype(data.QuadraticKeys[i].Forward), float>)
+										if constexpr (std::is_same_v<Vector3SF, typename AnyKeyType::KeyType>)
 										{
-											keyframe.Params = Vector3SF(data.QuadraticKeys[i].Forward, data.QuadraticKeys[i].Backward, 0);
+											keyframe.Params = data.QuadraticKeys[i].Forward;
+											keyframe.Backward = data.QuadraticKeys[i].Backward;
 										}
 										else
-										{
-											keyframe.Params1 = data.QuadraticKeys[i].Forward;
-											keyframe.Params2 = data.QuadraticKeys[i].Backward;
-										}
+											keyframe.Params = Vector3SF(data.QuadraticKeys[i].Forward, data.QuadraticKeys[i].Backward, 0);
 									}
 
 									break;
@@ -1366,17 +1364,8 @@ void NifParser::Parse(std::string_view stream)
 									keyframe.Value = data.TbcKeys[i].Value;
 									keyframe.Time = data.TbcKeys[i].Time;
 
-									if constexpr (hasParams)
-									{
-										if constexpr (std::is_same_v<decltype(data.TbcKeys[i].Value), float>)
-										{
-											keyframe.Params = Vector3SF(data.TbcKeys[i].Tension, data.TbcKeys[i].Bias, data.TbcKeys[i].Continuity);
-										}
-										else
-										{
-											keyframe.Params1 = Vector3SF(data.TbcKeys[i].Tension, data.TbcKeys[i].Bias, data.TbcKeys[i].Continuity);
-										}
-									}
+									keyframe.Params = Vector3SF(data.TbcKeys[i].Tension, data.TbcKeys[i].Bias, data.TbcKeys[i].Continuity);
+
 									break;
 								default:
 									std::cout << Name << ": " << "unsupported interpolation type: " << data.Interpolation << " in " << transformData << " [" << i << "]" << std::endl;
@@ -1428,23 +1417,37 @@ void NifParser::Parse(std::string_view stream)
 					ModelPackageAnimationNode& node = animation.Nodes.back();
 
 					node.NodeName = transformData->NodeName;
+					node.IsSpline = true;
 					
-					const auto loadSpline = [](auto& spline, unsigned short handle, float offset, float halfRange, NiBSplineData* splineData, NiBSplineBasisData* splineBasisData)
+					const auto loadSpline = [](auto& spline, NiBSplineCompTransformEvaluator* transformData, unsigned short handle, float offset, float halfRange, NiBSplineData* splineData, NiBSplineBasisData* splineBasisData)
 					{
 						if (handle == 0xFFFF) return;
 
 						typedef std::remove_cvref_t<decltype(spline)> SplineType;
 						typedef SplineType::PointType PointType;
 
+						spline.Start = transformData->StartTime;
+						spline.End = transformData->EndTime;
 						spline.ControlPoints.resize(splineBasisData->NumControlPoints);
 
 						if (splineData->FloatControlPoints.size() > 0)
 						{
-							PointType* data = reinterpret_cast<PointType*>(splineData->FloatControlPoints.data() + handle);
-
-							for (unsigned int i = 0; i < splineBasisData->NumControlPoints; ++i)
+							if constexpr (std::is_same_v<Quaternion, PointType>)
 							{
-								spline.ControlPoints[i] = data[i];
+								for (unsigned int i = 0; i < splineBasisData->NumControlPoints; ++i)
+								{
+									float* data = splineData->FloatControlPoints.data() + (4 * i);
+									spline.ControlPoints[i] = Quaternion(data[0], data[1], data[2], data[3]);
+								}
+							}
+							else
+							{
+								PointType* data = reinterpret_cast<PointType*>(splineData->FloatControlPoints.data() + handle);
+
+								for (unsigned int i = 0; i < splineBasisData->NumControlPoints; ++i)
+								{
+									spline.ControlPoints[i] = data[i];
+								}
 							}
 						}
 						else
@@ -1460,27 +1463,22 @@ void NifParser::Parse(std::string_view stream)
 									pointData[j] = ((float)splineData->CompactControlPoints[index] / (float)0x7FFF) * halfRange + offset;
 								}
 
-								spline.ControlPoints[i] = *data;
+								if constexpr (std::is_same_v<Quaternion, PointType>)
+								{
+									spline.ControlPoints[i] = Quaternion(pointData[0], pointData[1], pointData[2], pointData[3]);
+								}
+								else
+								{
+									spline.ControlPoints[i] = *data;
+								}
 							}
 						}
 					};
 
-					loadSpline(node.TranslationSpline, transformData->TranslationHandle, transformData->TranslationOffset, transformData->TranslationHalfRange, splineData, splineBasisData);
-					loadSpline(node.RotationSpline, transformData->RotationHandle, transformData->RotationOffset, transformData->RotationHalfRange, splineData, splineBasisData);
-					loadSpline(node.ScaleSpline, transformData->ScaleHandle, transformData->ScaleOffset, transformData->ScaleHalfRange, splineData, splineBasisData);
+					loadSpline(node.TranslationSpline, transformData, transformData->TranslationHandle, transformData->TranslationOffset, transformData->TranslationHalfRange, splineData, splineBasisData);
+					loadSpline(node.RotationSpline, transformData, transformData->RotationHandle, transformData->RotationOffset, transformData->RotationHalfRange, splineData, splineBasisData);
+					loadSpline(node.ScaleSpline, transformData, transformData->ScaleHandle, transformData->ScaleOffset, transformData->ScaleHalfRange, splineData, splineBasisData);
 
-					node.NodeName = node.NodeName;
-
-					//if (transformEvaluatorData->Data == nullptr) continue;
-					//
-					//if (transformEvaluatorData->Data->BlockType == "NiTransformData")
-					//{
-					//	NiTransformData* transformData = transformEvaluatorData->Data->Data->Cast<NiTransformData>();
-					//}
-					//else
-					//{
-					//	std::cout << "unsupported NiTransformEvaluator data type '" << transformEvaluatorData->Data << "'" << std::endl;
-					//}
 					if (transformData->Data->BlockType != "NiBSplineData")
 					{
 						std::cout << Name << ": " << "unsupported spline data data type '" << transformData->Data << "'" << std::endl;

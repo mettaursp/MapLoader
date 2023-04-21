@@ -169,8 +169,8 @@ namespace Engine
 
 	Vector3 Transform::GetWorldPosition()
 	{
-		if (Moved || InheritTransformation)
-			Recompute();
+		//if (Moved || InheritTransformation)
+		//	Recompute();
 		
 		return WorldTransformation.Translation();
 	}
@@ -182,8 +182,8 @@ namespace Engine
 
 	const Matrix4& Transform::GetWorldTransformation()
 	{
-		if (Moved || InheritTransformation)
-			Recompute();
+		//if (Moved || InheritTransformation)
+		//	Recompute();
 		
 		return WorldTransformation;
 	}
@@ -411,5 +411,26 @@ namespace Engine
 		Transformation.SetTranslation(Vector3());
 
 		Transformation = (Matrix4(transformation).SetTranslation(point) * Transformation).SetTranslation(translation);
+	}
+
+	void Transform::AddToSimulation(Simulation* simulation, size_t index)
+	{
+		Simulations.push_back({ simulation, index });
+	}
+
+	size_t Transform::RemoveFromSimulation(Simulation* simulation)
+	{
+		for (size_t i = 0; i < Simulations.size(); ++i)
+		{
+			if (Simulations[i].Listener == simulation)
+			{
+				Simulations[i] = Simulations.back();
+				Simulations.pop_back();
+
+				return i;
+			}
+		}
+
+		return (size_t)-1;
 	}
 }

@@ -576,7 +576,7 @@ template <>
 Quaternion ParseKey<Quaternion>(NifDocument* document, std::string_view& stream);
 
 template <>
-Vector3F ParseKey<Vector3F>(NifDocument* document, std::string_view& stream);
+Vector3SF ParseKey<Vector3SF>(NifDocument* document, std::string_view& stream);
 
 template <typename KeyType>
 struct LinearKey
@@ -681,7 +681,7 @@ struct NiTransformData : public NiDataBlock
 	static inline const std::string BlockTypeName = "NiTransformData";
 
 	AnyKeys<Quaternion> RotationKeys;
-	AnyKeys<Vector3F> TranslationKeys;
+	AnyKeys<Vector3SF> TranslationKeys;
 	AnyKeys<float> ScaleKeys;
 };
 
@@ -870,13 +870,21 @@ void AnyKeys<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 	if (Interpolation == RotationType::ConstKey)
 		throw "unsupported";
 
-	if (IsQuaternion<KeyType>())
+	if constexpr (std::is_same_v<Quaternion, KeyType>)
 	{
 		if (Interpolation == RotationType::QuadraticKey)
 		{
 			ParseKeyVector(document, stream, LinearKeys, length);
 
 			return;
+		}
+	}
+
+	if constexpr (std::is_same_v<Vector3SF, KeyType>)
+	{
+		if (Interpolation == RotationType::QuadraticKey)
+		{
+			std::cout << "found" << std::endl;
 		}
 	}
 

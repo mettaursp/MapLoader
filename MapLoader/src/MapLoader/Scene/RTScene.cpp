@@ -2,6 +2,7 @@
 
 #include <MapLoader/Vulkan/VulkanContext.h>
 #include <MapLoader/Assets/SkinnedModel.h>
+#include <MapLoader/Scene/AnimationPlayer.h>
 #include <nvvk/buffers_vk.hpp>
 
 namespace MapLoader
@@ -13,22 +14,10 @@ namespace MapLoader
 
 	RTScene::~RTScene()
 	{
-		for (size_t i = 0; i < StaticObjects.size(); ++i)
+		for (size_t i = 0; i < Entries.size(); ++i)
 		{
-			if (StaticObjects[i] != nullptr)
-				StaticObjects[i]->RemoveFromScene(this);
-		}
-
-		for (size_t i = 0; i < StaticObjects.size(); ++i)
-		{
-			if (DynamicObjects[i] != nullptr)
-				DynamicObjects[i]->RemoveFromScene(this);
-		}
-
-		for (size_t i = 0; i < StaticObjects.size(); ++i)
-		{
-			if (SkinnedModels[i] != nullptr)
-				SkinnedModels[i]->RemoveFromScene(this);
+			if (Entries[i].Object != nullptr)
+				Entries[i].Object->RemoveFromScene(this);
 		}
 	}
 
@@ -48,124 +37,47 @@ namespace MapLoader
 
 		RegenerateTLAS = true;
 
-		if (object->IsStatic())
-		{
-			++AddedStaticObjects;
-
-			size_t index = StaticObjectIds.Allocate(StaticObjects, object);
-
-			object->AddToScene(this, index, SceneObjectType::Static);
-
-			return;
-		}
-
-		size_t index = DynamicObjectIds.Allocate(DynamicObjects, object);
-
-		WriteInstance(index, object.get());
-
-		object->AddToScene(this, index, SceneObjectType::Dynamic);
+		AddObject(object, object->IsStatic() ? SceneObjectType::Static : SceneObjectType::Dynamic);
 	}
 
 	void RTScene::RemoveObject(const std::shared_ptr<SceneObject>& object)
 	{
-		size_t index = object->GetSceneIndex(this);
+		size_t id = object->GetSceneId(this);
 
-		if (index == (size_t)-1) return;
+		if (id == (size_t)-1) return;
 
 		RegenerateTLAS = true;
 
-		if (object->IsStatic())
-		{
-			++RemovedStaticObjects;
-
-			StaticObjectIds.Release(index);
-			StaticObjects[index] = nullptr;
-
-			if (index < DynamicObjectOffset)
-				AccelStructureInstances[index].mask = 0;
-
-			object->RemoveFromScene(this);
-
-			return;
-		}
-
-		DynamicObjectIds.Release(index);
-		DynamicObjects[index] = nullptr;
-		AccelStructureInstances[index + DynamicObjectOffset].mask = 0;
-
-		object->RemoveFromScene(this);
+		RemoveObject(id);
 	}
 
 	void RTScene::RemoveObject(SceneObject* object)
 	{
-		size_t index = object->GetSceneIndex(this);
+		size_t index = object->GetSceneId(this);
 
 		if (index == (size_t)-1) return;
 
 		RegenerateTLAS = true;
 
-		SceneObjectType type = object->GetObjectType(this);
-
-		if (type == SceneObjectType::None) return;
-
-		if (type == SceneObjectType::Static)
-		{
-			++RemovedStaticObjects;
-
-			StaticObjectIds.Release(index);
-			StaticObjects[index] = nullptr;
-
-			if (index < DynamicObjectOffset)
-				AccelStructureInstances[index].mask = 0;
-
-			object->RemoveFromScene(this);
-
-			return;
-		}
-
-		if (type == SceneObjectType::Dynamic)
-		{
-			DynamicObjectIds.Release(index);
-			DynamicObjects[index] = nullptr;
-			AccelStructureInstances[index + DynamicObjectOffset].mask = 0;
-
-			object->RemoveFromScene(this);
-
-			return;
-		}
-
-		if (type == SceneObjectType::Skinned)
-		{
-			SkinnedObjectIds.Release(index);
-			SkinnedModels[index] = nullptr;
-
-			object->RemoveFromScene(this);
-
-			return;
-		}
+		RemoveObject(object->GetSceneId(this));
 	}
 
 	void RTScene::AddSkinnedModel(const std::shared_ptr<SkinnedModel>& object)
 	{
-		size_t index = object->GetSceneIndex(this);
+		size_t index = object->GetSceneId(this);
 
 		if (index != (size_t)-1) return;
 
-		index = SkinnedObjectIds.Allocate(SkinnedModels, object);
-
-		object->AddToScene(this, index, SceneObjectType::Skinned);
+		AddObject(object, SceneObjectType::Skinned, (size_t)-1, object.get());
 	}
 
 	void RTScene::RemoveSkinnedModel(const std::shared_ptr<SkinnedModel>& object)
 	{
-		size_t index = object->GetSceneIndex(this);
+		size_t index = object->GetSceneId(this);
 
 		if (index == (size_t)-1) return;
 
-		SkinnedObjectIds.Release(index);
-		SkinnedModels[index] = nullptr;
-
-		object->RemoveFromScene(this);
+		RemoveObject(object->GetSceneId(this));
 	}
 
 	void RTScene::ClearAnimationTasks()
@@ -174,89 +86,28 @@ namespace MapLoader
 		MaxAnimatedVertices = 0;
 	}
 
-	void RTScene::Update(float)
+	void RTScene::Update(float delta)
 	{
-		bool updateStaticObjects = false;
+		auto& skinnedModels = EntryTypes[(int)SceneObjectType::Skinned];
 
-		if (AddedStaticObjects != 0 || RemovedStaticObjects != 0)
+		for (size_t i = 0; i < skinnedModels.Entries.size(); ++i)
 		{
-			if (RemovedStaticObjects > AddedStaticObjects)
-			{
-				size_t removed = 0;
+			if (skinnedModels.Entries[i] == (size_t)-1) continue;
 
-				for (size_t i = 0; i < StaticObjects.size(); ++i)
-				{
-					if (StaticObjects[i] != nullptr)
-						StaticObjects[i - removed] = StaticObjects[i];
-					else
-						++removed;
-				}
+			SceneObjectEntry& entry = Entries[skinnedModels.Entries[i]];
 
-				StaticObjects.resize(StaticObjects.size() - removed);
-				StaticObjectIds.ShrinkToAllocated();
-			}
+			AnimationPlayer* player = entry.SkinnedModelReference->GetAnimationPlayer();
 
-			long long offset = (long long)AddedStaticObjects - (long long)RemovedStaticObjects;
+			if (player != nullptr)
+				player->Update(delta);
 
-			if (offset != 0)
-			{
-				if (offset > 0)
-				{
-					AccelStructureInstances.resize(AccelStructureInstances.size() + offset);
-				}
-
-				size_t start = offset < 0 ? 0 : DynamicObjects.size() - 1;
-				long long increment = offset < 0 ? 1 : -1;
-
-				for (size_t i = start; i < DynamicObjects.size(); i += increment)
-				{
-					AccelStructureInstances[DynamicObjectOffset + i + offset] = AccelStructureInstances[DynamicObjectOffset + i];
-				}
-
-				if (offset < 0)
-				{
-					AccelStructureInstances.resize(AccelStructureInstances.size() + offset);
-				}
-
-				DynamicObjectOffset += offset;
-			}
-
-			for (size_t i = 0; i < StaticObjects.size(); ++i)
-				WriteInstance(i, StaticObjects[i].get());
-		}
-		else
-		{
-			for (size_t i = 0; i < StaticObjects.size(); ++i)
-			{
-				if (StaticObjects[i]->HasChanged())
-				{
-					updateStaticObjects = true;
-
-					UpdateInstance(i, StaticObjects[i].get());
-				}
-			}
-		}
-
-		bool updateDynamicObjects = false;
-
-		for (size_t i = 0; i < DynamicObjects.size(); ++i)
-		{
-			if (DynamicObjects[i]->HasChanged())
-			{
-				updateDynamicObjects = true;
-
-				UpdateInstance(i, DynamicObjects[i].get());
-			}
-		}
-
-		for (size_t i = 0; i < SkinnedModels.size(); ++i)
-		{
-			const auto& model = SkinnedModels[i];
+			const auto& model = entry.SkinnedModelReference;
 
 			if (!model->HasChanged()) continue;
 
-			model->MarkStale(false);
 			model->SendSkeletonToGpu();
+			entry.SkinnedModelReference->UpdateRigDebugMesh();
+			model->MarkStale(false);
 
 			const auto& models = model->GetModels();
 
@@ -307,10 +158,159 @@ namespace MapLoader
 			}
 		}
 
-		if (RegenerateTLAS || updateStaticObjects || updateDynamicObjects)
+		bool regenerateTLAS = ChangedStructureObjects.size() > 0;
+		bool rebuildTLAS = AccelStructureInstances.size() != StructureEntries.size();
+		size_t rangeMin = (size_t)-1;
+		size_t rangeMax = 0;
+
+		AccelStructureInstances.resize(StructureEntries.size());
+
+		for (size_t i = 0; i < ChangedStructureObjects.size(); ++i)
 		{
-			RTBuilder.buildTlas(AccelStructureInstances, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, !RegenerateTLAS);
+			size_t index = ChangedStructureObjects[i];
+
+			rangeMin = std::min(rangeMin, index);
+			rangeMax = std::max(rangeMax, index);
+
+			if (StructureEntries[index].ObjectId == (size_t)-1)
+			{
+				AccelStructureInstances[index].mask = 0;
+
+				continue;
+			}
+
+			SceneObjectEntry& entry = Entries[StructureEntries[index].ObjectId];
+
+			if (entry.JustAddedToStructure)
+				WriteInstance(index, entry.Object.get());
+			else
+				UpdateInstance(index, entry.Object.get());
+
+			entry.JustAddedToStructure = false;
 		}
+
+		ChangedStructureObjects.clear();
+
+		if (regenerateTLAS)
+		{
+			RTBuilder.buildTlas(AccelStructureInstances, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, !rebuildTLAS);
+
+			regenerateTLAS = false;
+		}
+	}
+
+	size_t RTScene::AddObject(const std::shared_ptr<SceneObject>& object, SceneObjectType type, size_t id, SkinnedModel* skinnedModel)
+	{
+		if (id != (size_t)-1) return ChangeType(id, type);
+
+		Engine::Transform* transform = object->GetTransform();
+
+		id = SceneObjectIds.Allocate(Entries, { object, SceneObjectType::None, skinnedModel, transform });
+		TransformMap[transform] = id;
+		AddTransform(transform);
+
+		object->AddToScene(this, id, (size_t)-1, SceneObjectType::None);
+
+		return ChangeType(id, type);
+	}
+
+	void RTScene::EntryList::Remove(size_t index)
+	{
+		Ids.Release(index);
+		Entries[index] = (size_t)-1;
+	}
+
+	size_t RTScene::ChangeType(size_t id, SceneObjectType type)
+	{
+		SceneObjectEntry& entry = Entries[id];
+
+		if (entry.Type == type) return entry.Object->GetSceneIndex(this);
+
+		if (entry.Type != SceneObjectType::None)
+		{
+			EntryList& entries = EntryTypes[(int)entry.Type];
+			entries.Remove(entry.Object->GetSceneIndex(this));
+		}
+
+		if (entry.StructureIndex != (size_t)-1 && type != SceneObjectType::Static && type != SceneObjectType::Dynamic)
+		{
+			size_t structureIndex = entry.StructureIndex;
+
+			StructureIds.Release(structureIndex);
+			entry.StructureIndex = (size_t)-1;
+
+			if (!StructureEntries[structureIndex].RegisteredChange)
+			{
+				ChangedStructureObjects.push_back(structureIndex);
+			}
+
+			StructureEntries[structureIndex].RegisteredChange = true;
+			StructureEntries[structureIndex].ObjectId = (size_t)-1;
+		}
+
+		entry.Type = type;
+
+		if (type == SceneObjectType::None)
+		{
+			entry.Object->SetObjectType(this, type, (size_t)-1);
+
+			return (size_t)-1;
+		}
+
+		if ((type == SceneObjectType::Static || type == SceneObjectType::Dynamic) && entry.StructureIndex == (size_t)-1)
+		{
+			entry.StructureIndex = StructureIds.RequestID();
+			entry.JustAddedToStructure = true;
+
+			if (entry.StructureIndex >= StructureEntries.size())
+			{
+				StructureEntries.push_back({ id, false });
+			}
+
+			if (!StructureEntries[entry.StructureIndex].RegisteredChange)
+				ChangedStructureObjects.push_back(entry.StructureIndex);
+		}
+
+		EntryList& entries = EntryTypes[(int)entry.Type];
+
+		size_t index = entries.Ids.Allocate(entries.Entries, id);
+		
+		entry.Object->SetObjectType(this, type, index);
+
+		return index;
+	}
+
+	void RTScene::RemoveObject(size_t id)
+	{
+		SceneObjectEntry& entry = Entries[id];
+
+		if (entry.StructureIndex != (size_t)-1)
+		{
+			size_t structureIndex = entry.StructureIndex;
+
+			StructureIds.Release(structureIndex);
+			entry.StructureIndex = (size_t)-1;
+
+			if (!StructureEntries[structureIndex].RegisteredChange)
+			{
+				ChangedStructureObjects.push_back(structureIndex);
+			}
+
+			StructureEntries[structureIndex].RegisteredChange = true;
+			StructureEntries[structureIndex].ObjectId = (size_t)-1;
+		}
+
+		if (entry.Type != SceneObjectType::None)
+		{
+			EntryList& entries = EntryTypes[(int)entry.Type];
+			entries.Remove(entry.Object->GetSceneIndex(this));
+		}
+
+		SceneObjectIds.Release(id);
+		TransformMap.erase(entry.Transform);
+		RemoveTransform(entry.Transform);
+		entry.Object->RemoveFromScene(this);
+		entry = {};
 	}
 
 	void RTScene::WriteInstance(size_t index, SceneObject* sceneObject)
@@ -330,5 +330,17 @@ namespace MapLoader
 	{
 		VkAccelerationStructureInstanceKHR& instance = AccelStructureInstances[index];
 		instance.transform = nvvk::toTransformMatrixKHR(sceneObject->GetTransform()->GetWorldTransformation());  // Position of the instance
+	}
+
+	void RTScene::TransformChanged(Engine::Transform* transform, bool firstChange)
+	{
+		if (!firstChange) return;
+
+
+	}
+
+	void RTScene::TransformStaticChanged(Engine::Transform* transform, bool isNowStatic)
+	{
+
 	}
 }

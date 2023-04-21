@@ -489,12 +489,9 @@ namespace MapLoader
 		nvvk::CommandPool  cmdBufGet(vulkanContext->Device, vulkanContext->GraphicsQueueIndex);
 		VkCommandBuffer    cmdBuf = cmdBufGet.createCommandBuffer();
 		VkBufferUsageFlags flag = VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
-		VkBufferUsageFlags rayTracingFlags =  // used also for building acceleration structures
-			flag | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR | VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
-		VkBufferUsageFlags vertexBufferFlags = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | rayTracingFlags;
 
-		mesh.VertexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, vertices, vertexBufferFlags);
-		mesh.IndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
+		mesh.VertexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, vertices, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | flag);
+		mesh.IndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, indices, VK_BUFFER_USAGE_INDEX_BUFFER_BIT | flag);
 
 		cmdBufGet.submitAndWait(cmdBuf);
 		vulkanContext->Allocator.finalizeAndReleaseStaging();
@@ -514,6 +511,55 @@ namespace MapLoader
 		GpuWireframeData.emplace_back(desc);
 
 		return index;
+	}
+
+	void ModelLibrary::UpdateWireframeMesh(uint32_t index, const std::vector<VertexPosBinding>& vertices, const std::vector<int>& indices)
+	{
+		if (index >= WireframeDescriptions.size()) return;
+
+		WireframeDescription& mesh = WireframeDescriptions[index];
+
+		const auto& vulkanContext = AssetLibrary.GetVulkanContext();
+		VkBuffer deviceUBO = mesh.VertexBuffer.buffer;
+
+		nvvk::CommandPool  cmdBufGet(vulkanContext->Device, vulkanContext->GraphicsQueueIndex);
+		VkCommandBuffer    cmdBuf = cmdBufGet.createCommandBuffer();
+
+		// Ensure that the modified UBO is not visible to previous frames.
+		VkBufferMemoryBarrier vertexBeforeBarrier{ VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER };
+		vertexBeforeBarrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		vertexBeforeBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		vertexBeforeBarrier.buffer = mesh.VertexBuffer.buffer;
+		vertexBeforeBarrier.offset = 0;
+		vertexBeforeBarrier.size = (VkDeviceSize)(vertices.size() * sizeof(vertices[0]));
+
+		vkCmdPipelineBarrier(cmdBuf, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
+			nullptr, 1, &vertexBeforeBarrier, 0, nullptr);
+
+		vkCmdUpdateBuffer(cmdBuf, vertexBeforeBarrier.buffer, vertexBeforeBarrier.offset, vertexBeforeBarrier.size, vertices.data());
+
+		VkBufferMemoryBarrier indexBeforeBarrier = vertexBeforeBarrier;
+		indexBeforeBarrier.buffer = mesh.IndexBuffer.buffer;
+		indexBeforeBarrier.size = (VkDeviceSize)(indices.size() * sizeof(indices[0]));
+
+		vkCmdPipelineBarrier(cmdBuf, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
+			nullptr, 1, &indexBeforeBarrier, 0, nullptr);
+
+		vkCmdUpdateBuffer(cmdBuf, indexBeforeBarrier.buffer, indexBeforeBarrier.offset, indexBeforeBarrier.size, indices.data());
+
+		VkBufferMemoryBarrier vertexAfterBarrier = vertexBeforeBarrier;
+		vertexAfterBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		vertexAfterBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		vkCmdPipelineBarrier(cmdBuf, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
+			nullptr, 1, &vertexAfterBarrier, 0, nullptr);
+
+		VkBufferMemoryBarrier indexAfterBarrier = indexBeforeBarrier;
+		indexAfterBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
+		indexAfterBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
+		vkCmdPipelineBarrier(cmdBuf, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
+			nullptr, 1, &indexAfterBarrier, 0, nullptr);
+
+		cmdBufGet.submitAndWait(cmdBuf);
 	}
 
 	SpawnedEntity* ModelLibrary::SpawnModel(RTScene* scene, MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback)

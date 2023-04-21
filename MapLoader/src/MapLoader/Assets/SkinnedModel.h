@@ -37,7 +37,11 @@ namespace MapLoader
 		Matrix4F Transformation;
 		Matrix4F LocalTransformation;
 		Matrix4F BaseTransform;
+		Matrix4F BaseTransformInverse;
+		bool IsStale = false;
 	};
+
+	class AnimationPlayer;
 
 	class SkinnedModel : public SceneObject
 	{
@@ -48,15 +52,28 @@ namespace MapLoader
 		void AddModel(struct ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback);
 		void AddModel(struct ModelData* model, const Matrix4F& transformation, const std::string& selfNode, const std::string& targetNode, const ModelSpawnCallback& callback);
 		void SendSkeletonToGpu();
+		void SetRigAnimations(const Archive::Metadata::Entry* entry);
+		void SetRigAnimations(const std::string& rigName);
+		void SetRigAnimations(struct RigAnimationData* rig);
+
+		void SetRigNodeTransform(size_t index, const Matrix4F& transformation);
 
 		void ReleaseResources();
 
-		void CreateRigDebugMesh(class ModelLibrary& modelLibrary);
+		void CreateRigDebugMesh();
+		void UpdateRigDebugMesh();
 
+		virtual bool HasChanged() const override;
+		virtual void MarkStale(bool isStale) override;
+
+		size_t GetRigVersion() const { return RigVersion; }
 		const auto& GetRigNodes() const { return RigNodes; }
+		const auto& GetNodeIndices() const { return NodeIndices; }
 		const auto& GetSkeletonBuffer() const { return SkeletonBuffer; }
 		const auto& GetModels() const { return Models; }
 		const auto& GetAssetLibrary() const { return AssetLibrary; }
+		auto* GetAnimationPlayer() const { return AnimationPlayer.get(); }
+		auto* GetRigAnimations() const { return RigAnimations; }
 
 	private:
 		struct SpawningData
@@ -80,13 +97,23 @@ namespace MapLoader
 		std::vector<SkinnedModelEntry> Models;
 		std::unordered_map<std::string, size_t> NodeIndices;
 		SpawningData* SpawnParameters = nullptr;
+		struct RigAnimationData* RigAnimations = nullptr;
 		bool SkeletonDataIsStale = false;
 		size_t LastSkeletonDataSize = 0;
 		nvvk::Buffer SkeletonBuffer;
+		size_t RigVersion = 0;
 
+		std::vector<VertexPosBinding> WireframeVertices;
+		std::vector<int> WireframeIndices;
+		std::unordered_map<size_t, size_t> WireframeBoneMap;
+		uint32_t WireframeId = (uint32_t)-1;
+
+		std::unique_ptr<AnimationPlayer> AnimationPlayer;
+
+		void ComputeWireframe();
 		void AddModels(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback, const std::string& selfNode = "", size_t parentIndex = (size_t)-1);
 		void AddRigNodes(MapLoader::ModelData* model, const Matrix4F& transformation, const std::string& selfNode = "", size_t parentIndex = (size_t)-1);
 		bool SpawnModelCallback(ModelSpawnParameters& spawnParameters);
-		void UpdateGpuData();
+		void UpdateRig();
 	};
 }

@@ -272,7 +272,7 @@ namespace MapLoader
 			}
 		}
 
-		Model->CreateRigDebugMesh(AssetLibrary->GetModels());
+		Model->CreateRigDebugMesh();
 
 		Scene->AddSkinnedModel(Model);
 

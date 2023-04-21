@@ -5,6 +5,11 @@
 std::unordered_map<std::string, int> features;
 std::string locale;
 
+char lower(char character)
+{
+	return character + (int)(character >= 'A' && character <= 'Z') * ('a' - 'A');
+}
+
 std::string lower(const std::string& text)
 {
 	std::string lower = text;
@@ -14,6 +19,18 @@ std::string lower(const std::string& text)
 			lower[i] += 'a' - 'A';
 
 	return lower;
+}
+
+bool matchesCaseInsensitive(const std::string& text1, const std::string& text2)
+{
+	if (text1.size() != text2.size()) return false;
+
+	for (size_t i = 0; i < text1.size(); ++i)
+	{
+		if (lower(text1[i]) != lower(text2[i])) return false;
+	}
+
+	return true;
 }
 
 std::string padId(std::string id)

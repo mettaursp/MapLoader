@@ -19,16 +19,18 @@ namespace Graphics
 namespace MapLoader
 {
 	class SkinnedModel;
+	class GameAssetLibrary;
 
 	class RTScene : public Engine::Simulation
 	{
 	public:
-		RTScene(const std::shared_ptr<Graphics::VulkanContext>& context);
+		RTScene(const std::shared_ptr<GameAssetLibrary>& assetLibrary);
 		~RTScene();
 
 		void Initialize();
 		void FreeResources();
-		void Update(float);
+		void Update(float delta);
+		void UpdateAnimations(float delta);
 		void AddObject(const std::shared_ptr<SceneObject>& object);
 		void RemoveObject(const std::shared_ptr<SceneObject>& object);
 		void RemoveObject(SceneObject* object);
@@ -39,11 +41,13 @@ namespace MapLoader
 		nvvk::RaytracingBuilderKHR& GetRTBuilder() { return RTBuilder; }
 
 		void ClearAnimationTasks();
+		void ClearStaleBlasIds();
 
 		virtual void TransformChanged(Engine::Transform* transform, bool firstChange) override;
 		virtual void TransformStaticChanged(Engine::Transform* transform, bool isNowStatic) override;
 
 		const auto& GetAnimationTasks() const { return AnimationTasks; }
+		const auto& GetStaleBlasIds() const { return StaleBlasIds; }
 		int GetMaxAnimatedVertices() const { return MaxAnimatedVertices; }
 
 	private:
@@ -72,6 +76,7 @@ namespace MapLoader
 			bool RegisteredChange = false;
 		};
 
+		std::shared_ptr<GameAssetLibrary> AssetLibrary;
 		std::shared_ptr<Graphics::VulkanContext> VulkanContext;
 		bool RegenerateTLAS = false;
 		IDHeap SceneObjectIds;
@@ -84,7 +89,9 @@ namespace MapLoader
 		std::vector<AnimationTask> AnimationTasks;
 		int MaxAnimatedVertices = 0;
 		nvvk::RaytracingBuilderKHR RTBuilder;
+		IDHeap BlasIds;
 		std::unordered_map<Engine::Transform*, size_t> TransformMap;
+		std::vector<size_t> StaleBlasIds;
 
 		size_t AddObject(const std::shared_ptr<SceneObject>& object, SceneObjectType type, size_t id = (size_t)-1, SkinnedModel* skinnedModel = nullptr);
 		size_t ChangeType(size_t id, SceneObjectType type);
@@ -92,5 +99,6 @@ namespace MapLoader
 
 		void WriteInstance(size_t index, SceneObject* sceneObject);
 		void UpdateInstance(size_t index, SceneObject* sceneObject);
+		void OverrideInstanceBlas(size_t index, SceneObject* sceneObject, uint32_t blasId);
 	};
 }

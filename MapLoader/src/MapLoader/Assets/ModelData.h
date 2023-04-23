@@ -61,6 +61,7 @@ namespace MapLoader
 	{
 		uint32_t IndexCount = 0;
 		uint32_t VertexCount = 0;
+		size_t BlasIndex = (size_t)-1;
 		nvvk::Buffer VertexPosBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer VertexAttribBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer VertexColorBuffer;    // Device buffer of all 'Vertex'

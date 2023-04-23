@@ -129,7 +129,21 @@ namespace MapLoader
 		if (parentIndex != (size_t)-1)
 			modelTransformation *= RigNodes[parentIndex].Transformation;
 
-		AssetLibrary->GetModels().SpawnModel(Scene.get(), model, modelTransformation * transformation, spawnCallback);
+		auto& models = AssetLibrary->GetModels();
+
+		models.SpawnModel(Scene.get(), model, modelTransformation * transformation, spawnCallback);
+
+		for (size_t i = 0; i < Models.size(); ++i)
+		{
+			for (size_t j = 0; j < Models[i].Meshes.size(); ++j)
+			{
+				auto& skinnedMesh = Models[i].Meshes[j];
+
+				if (skinnedMesh.BlasInstanceId != (size_t)-1) continue;
+
+				skinnedMesh.BlasInstanceId = models.GetSpawnedModels()[skinnedMesh.MeshId].BlasInstanceId;
+			}
+		}
 
 		SpawnParameters = nullptr;
 	}
@@ -184,14 +198,14 @@ namespace MapLoader
 			}
 
 			rigNode.BaseTransform = rigNode.LocalTransformation;
-			//rigNode.BaseTransform = rigNode.Transformation.Inverted();
+			rigNode.BaseTransformInverse = rigNode.Transformation.Inverted();
 
 			if (node.IsInBoneList)
 			{
 				SkeletonDataIsStale = true;
 
 				rigNode.SkeletonIndex = SkeletonData.size();
-				SkeletonData.push_back(rigNode.Transformation);
+				SkeletonData.push_back(rigNode.Transformation * rigNode.BaseTransformInverse);
 			}
 		}
 
@@ -224,7 +238,8 @@ namespace MapLoader
 		{
 			VkCommandBuffer cmdBuf = SpawnParameters->CmdGen.createCommandBuffer();
 
-			std::vector<unsigned char> meshBoneIndices(modelNode.Bones.size());
+			std::vector<unsigned char> meshBoneIndices;
+			meshBoneIndices.reserve(modelNode.Bones.size());
 
 			for (size_t i = 0; i < modelNode.Bones.size(); ++i)
 			{
@@ -266,7 +281,7 @@ namespace MapLoader
 			VkCommandBuffer cmdBuf = SpawnParameters->CmdGen.createCommandBuffer();
 			std::vector<VertexPosBinding> vertices(spawnParameters.VertexCount);
 
-			skinnedMesh.VertexPosOverride = VulkanContext->Allocator.createBuffer(cmdBuf, vertices, usageFlags);
+			skinnedMesh.VertexPosOverride = VulkanContext->Allocator.createBuffer(cmdBuf, vertices, usageFlags | VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR);
 
 			SpawnParameters->CmdGen.submitAndWait(cmdBuf);
 			VulkanContext->Allocator.finalizeAndReleaseStaging();
@@ -305,14 +320,64 @@ namespace MapLoader
 			WireframeVertices.push_back({});
 
 			VertexPosBinding& vertex = WireframeVertices.back();
+			
+			Vector3SF translation = node.Transformation.Translation();
 
-			vertex.position = node.Transformation.Translation();
+			vertex.position = translation;
 			vertex.color = 0x00FF00FF;
 
 			if (node.ParentIndex != (size_t)-1)
 			{
 				WireframeIndices.push_back((int)WireframeBoneMap[node.ParentIndex]);
 				WireframeIndices.push_back((int)WireframeVertices.size() - 1);
+			}
+
+			size_t loopStart = WireframeVertices.size();
+			const size_t count = 8;
+			const float handleSize = 3.f;
+
+			Vector3SF right = node.Transformation.RightVector();
+			Vector3SF up = node.Transformation.UpVector();
+			Vector3SF front = node.Transformation.FrontVector();
+
+			for (size_t i = 0; i < count; ++i)
+			{
+				WireframeIndices.push_back((int)(loopStart + ((i + 1 + count) % count)));
+				WireframeIndices.push_back((int)(loopStart + i));
+
+				WireframeVertices.push_back({});
+
+				VertexPosBinding& vertex = WireframeVertices.back();
+
+				float angle = 2 * PI * ((float)i / (float)count);
+
+				vertex.position = translation + handleSize * std::cosf(angle) * up + handleSize * std::sinf(angle) * front;
+				vertex.color = 0x0000FFFF;
+			}
+
+			WireframeIndices.push_back((int)WireframeVertices.size());
+			WireframeIndices.push_back((int)WireframeVertices.size() + 1);
+
+			WireframeVertices.push_back({});
+
+			{
+				VertexPosBinding& vertex = WireframeVertices.back();
+
+				float angle = 2 * PI * ((float)i / (float)count);
+
+				vertex.position = translation;
+				vertex.color = 0xFF0000FF;
+			}
+
+			WireframeVertices.push_back({});
+
+			{
+				VertexPosBinding& vertex = WireframeVertices.back();
+
+				float angle = 2 * PI * ((float)i / (float)count);
+
+				vertex.position = translation + handleSize * right;
+				vertex.color = 0xFF0000FF;
 			}
 		}
 	}
@@ -365,38 +430,23 @@ namespace MapLoader
 
 			VkBufferUsageFlags usageFlags = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT | VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT;
 
-			SkeletonBuffer = VulkanContext->Allocator.createBuffer(cmdBuf, SkeletonData, usageFlags, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+			VkMemoryPropertyFlags propertyFlags = VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT | VK_MEMORY_PROPERTY_HOST_CACHED_BIT;
+
+			SkeletonBuffer = VulkanContext->Allocator.createBuffer(cmdBuf, SkeletonData, usageFlags, propertyFlags);
 
 			cmdGen.submitAndWait(cmdBuf);
 			VulkanContext->Allocator.finalizeAndReleaseStaging();
 
+			LastSkeletonDataSize = SkeletonData.size();
+
 			return;
 		}
 
-		auto     uboUsageStages = VK_PIPELINE_STAGE_VERTEX_SHADER_BIT | VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT | VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_KHR;
-
-		VkCommandBuffer cmdBuf = cmdGen.createCommandBuffer();
 		uint32_t size = sizeof(SkeletonData[0]) * (uint32_t)SkeletonData.size();
 
-		VkBufferMemoryBarrier beforeBarrier{ VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER };
-		beforeBarrier.srcAccessMask = VK_ACCESS_SHADER_READ_BIT;
-		beforeBarrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		beforeBarrier.buffer = SkeletonBuffer.buffer;
-		beforeBarrier.offset = 0;
-		beforeBarrier.size = size;
-		vkCmdPipelineBarrier(cmdBuf, uboUsageStages, VK_PIPELINE_STAGE_TRANSFER_BIT, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
-			nullptr, 1, &beforeBarrier, 0, nullptr);
-
-		vkCmdUpdateBuffer(cmdBuf, SkeletonBuffer.buffer, 0, size, SkeletonData.data());
-
-		VkBufferMemoryBarrier afterBarrier{ VK_STRUCTURE_TYPE_BUFFER_MEMORY_BARRIER };
-		afterBarrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-		afterBarrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-		afterBarrier.buffer = SkeletonBuffer.buffer;
-		afterBarrier.offset = 0;
-		afterBarrier.size = size;
-		vkCmdPipelineBarrier(cmdBuf, VK_PIPELINE_STAGE_TRANSFER_BIT, uboUsageStages, VK_DEPENDENCY_DEVICE_GROUP_BIT, 0,
-			nullptr, 1, &afterBarrier, 0, nullptr);
+		Matrix4F* skeletonData = reinterpret_cast<Matrix4F*>(VulkanContext->Allocator.map(SkeletonBuffer));
+		std::memcpy(skeletonData, SkeletonData.data(), size);
+		VulkanContext->Allocator.unmap(SkeletonBuffer);
 
 		SkeletonDataIsStale = false;
 	}
@@ -452,6 +502,7 @@ namespace MapLoader
 			if (node.SkeletonIndex != (size_t)-1)
 			{
 				SkeletonData[node.SkeletonIndex] = node.Transformation * node.BaseTransformInverse;
+				node.SkeletonIndex += 0;
 			}
 		}
 

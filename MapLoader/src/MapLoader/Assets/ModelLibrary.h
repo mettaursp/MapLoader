@@ -72,6 +72,8 @@ namespace MapLoader
 			int EntityId = -1;
 			int ModelId = -1;
 			int MaterialId = -1;
+			size_t BlasInstanceId = (size_t)-1;
+			std::shared_ptr<MapLoader::SceneObject> SceneObject;
 		};
 
 		ModelLibrary(GameAssetLibrary& assetLibrary);
@@ -80,6 +82,8 @@ namespace MapLoader
 		ModelData* FetchModel(const Archive::Metadata::Entry* entry, bool keepRawData = false, ModelData* parentRig = nullptr);
 		ModelData* FindModel(const Archive::Metadata::Entry* entry);
 		void SetCurrentMapTransform(const Matrix4F& mapTransform);
+		void SetMeshBlasId(size_t meshId, size_t blasId);
+		void SetBlasInstanceId(size_t blasInstanceId, size_t blasId);
 
 		const Matrix4F& GetCurrentMapTransform() const { return CurrentMapTransform; }
 		const auto& GetUnmappedMaterials() const { return UnmappedMaterials; }
@@ -100,6 +104,7 @@ namespace MapLoader
 		const auto& GetSpawnedModels() const { return SpawnedModels; }
 		const auto& GetSpawnedEntities() const { return SpawnedEntities; }
 		const auto& GetGpuEntityData() const { return GpuEntityData; }
+		const auto& GetBlasInstances() const { return BlasInstances; }
 
 		SpawnedEntity* SpawnModel(RTScene* scene, ModelData* model, const Matrix4F& transform = Matrix4F(), const ModelSpawnCallback& callback = nullptr);
 		void SpawnWireframe(RTScene* scene, uint32_t index, const Matrix4F& transform = Matrix4F());
@@ -124,6 +129,16 @@ namespace MapLoader
 		{
 			mat4 transform;
 			uint32_t objIndex = 0;
+			size_t customBlasInstance = (size_t)-1;
+		};
+
+		struct BlasInstance
+		{
+			uint32_t VertexCount = 0;
+			uint32_t IndexCount = 0;
+			VkDeviceAddress VertexBufferAddress = (uint64_t)-1;
+			VkDeviceAddress IndexBufferAddress = (uint64_t)-1;
+			size_t blasId = (size_t)-1;
 		};
 
 		GameAssetLibrary& AssetLibrary;
@@ -142,6 +157,7 @@ namespace MapLoader
 		std::vector<ObjInstance> SpawnedWireframeInstances;
 		std::vector<SpawnedModel> SpawnedModels;
 		std::vector<InstDesc> GpuEntityData;
+		std::vector<BlasInstance> BlasInstances;
 		int DuplicateFormatUses = 0;
 		Matrix4F CurrentMapTransform;
 
@@ -151,7 +167,7 @@ namespace MapLoader
 		void LoadMaterial(MaterialObj& material, const Engine::Graphics::ModelPackageMaterial& packageMaterial);
 		void LoadBuffers(MeshBuffers& buffers, Engine::Graphics::ModelPackageNode& node);
 		uint32_t LoadModel(MeshBuffers& buffers, const Matrix4F& transform = Matrix4F(), bool invisible = false);
-		void LoadModelInstance(uint32_t index, Matrix4F transform = Matrix4F());
+		void LoadModelInstance(uint32_t index, Matrix4F transform = Matrix4F(), size_t customBlasInstance = (size_t)-1);
 		void LoadWireframeInstance(uint32_t index, Matrix4F transform = Matrix4F());
 	};
 }

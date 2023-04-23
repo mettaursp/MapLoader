@@ -73,6 +73,20 @@ namespace MapLoader
 		CurrentMapTransform = mapTransform;
 	}
 
+	void ModelLibrary::SetMeshBlasId(size_t meshId, size_t blasId)
+	{
+		if (meshId >= MeshDescriptions.size()) return;
+
+		MeshDescriptions[meshId].BlasIndex = blasId;
+	}
+
+	void ModelLibrary::SetBlasInstanceId(size_t blasInstanceId, size_t blasId)
+	{
+		if (blasInstanceId >= BlasInstances.size()) return;
+
+		BlasInstances[blasInstanceId].blasId = blasId;
+	}
+
 	bool ModelLibrary::FetchModel(const Archive::ArchivePath& file, ModelData& loadedModel, bool keepRawData, ModelData* parentRig)
 	{
 		if (!file.Loaded())
@@ -576,17 +590,17 @@ namespace MapLoader
 			if (model->IsLoaded(i))
 			{
 				InstDesc instance;
+				const auto& meshDescription = GetMeshDescriptions()[model->Nodes[i].MeshId];
+				size_t meshId = GpuEntityData.size();
 
 				if (callback != nullptr)
 				{
-					const auto& meshDescription = GetMeshDescriptions()[model->Nodes[i].MeshId];
-
 					ModelSpawnParameters parameters
 					{
 						.Model = model,
 						.MeshIndex = i,
 						.NewInstance = instance,
-						.MeshId = GpuEntityData.size(),
+						.MeshId = meshId,
 						.VertexCount = meshDescription.VertexCount,
 						.IndexCount = meshDescription.IndexCount
 					};
@@ -596,17 +610,33 @@ namespace MapLoader
 				}
 
 				Matrix4F modelTransform = model->Nodes[i].Transformation;
+				size_t blasInstanceId = (size_t)-1;
 
-				LoadModelInstance(model->GetId(i), CurrentMapTransform * transformation * modelTransform);
+				if (instance.vertexPosAddressOverride != (uint64_t)0)
+				{
+					blasInstanceId = BlasInstances.size();
+					BlasInstances.push_back(
+						{
+							.VertexCount = meshDescription.VertexCount,
+							.IndexCount = meshDescription.IndexCount,
+							.VertexBufferAddress = instance.vertexPosAddressOverride,
+							.IndexBufferAddress = nvvk::getBufferDeviceAddress(AssetLibrary.GetVulkanContext()->Device, meshDescription.IndexBuffer.buffer)
+						}
+					);
+				}
 
-				SpawnedModels.push_back(SpawnedModel{ entityId, (int)i });
+				LoadModelInstance(model->GetId(i), CurrentMapTransform * transformation * modelTransform, blasInstanceId);
+
+				std::shared_ptr<MapLoader::SceneObject> sceneObject = Engine::Create<MapLoader::SceneObject>();
+
+				SpawnedModels.push_back(SpawnedModel{ entityId, (int)i, -1, blasInstanceId, sceneObject });
 
 				std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
-				std::shared_ptr<MapLoader::SceneObject> sceneObject = Engine::Create<MapLoader::SceneObject>();
 
 				transform->SetTransformation(CurrentMapTransform * transformation * modelTransform);
 				sceneObject->SetTransform(transform.get());
 				sceneObject->SetModel(model, i);
+				sceneObject->SetInstanceId(meshId);
 				sceneObject->SetStatic(true);
 				sceneObject->SetParent(transform);
 				scene->AddObject(sceneObject);
@@ -655,11 +685,13 @@ namespace MapLoader
 		WireframeDescriptions.clear();
 	}
 
-	void ModelLibrary::LoadModelInstance(uint32_t index, Matrix4F transform)
+	void ModelLibrary::LoadModelInstance(uint32_t index, Matrix4F transform, size_t customBlasInstance)
 	{
-		ObjInstance instance;
-		instance.transform = transform;
-		instance.objIndex = index;
+		ObjInstance instance {
+			.transform = transform,
+			.objIndex = index,
+			.customBlasInstance = customBlasInstance
+		};
 		SpawnedInstances.push_back(instance);
 	}
 

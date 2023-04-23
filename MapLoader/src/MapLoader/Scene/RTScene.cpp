@@ -1,5 +1,6 @@
 #include "RTScene.h"
 
+#include <MapLoader/Assets/GameAssetLibrary.h>
 #include <MapLoader/Vulkan/VulkanContext.h>
 #include <MapLoader/Assets/SkinnedModel.h>
 #include <MapLoader/Scene/AnimationPlayer.h>
@@ -7,7 +8,7 @@
 
 namespace MapLoader
 {
-	RTScene::RTScene(const std::shared_ptr<Graphics::VulkanContext>& context) : VulkanContext(context)
+	RTScene::RTScene(const std::shared_ptr<GameAssetLibrary>& assetLibrary) : AssetLibrary(assetLibrary), VulkanContext(AssetLibrary->GetVulkanContext())
 	{
 		
 	}
@@ -86,7 +87,68 @@ namespace MapLoader
 		MaxAnimatedVertices = 0;
 	}
 
+	void RTScene::ClearStaleBlasIds()
+	{
+		StaleBlasIds.clear();
+	}
+
 	void RTScene::Update(float delta)
+	{
+
+		bool regenerateTLAS = ChangedStructureObjects.size() > 0;
+		bool rebuildTLAS = AccelStructureInstances.size() != StructureEntries.size();
+		size_t rangeMin = (size_t)-1;
+		size_t rangeMax = 0;
+
+		const auto& spawnedModels = AssetLibrary->GetModels().GetSpawnedModels();
+		const auto& blasInstances = AssetLibrary->GetModels().GetBlasInstances();
+
+		AccelStructureInstances.resize(StructureEntries.size());
+
+		for (size_t i = 0; i < ChangedStructureObjects.size(); ++i)
+		{
+			size_t index = ChangedStructureObjects[i];
+
+			rangeMin = std::min(rangeMin, index);
+			rangeMax = std::max(rangeMax, index);
+
+			if (StructureEntries[index].ObjectId == (size_t)-1)
+			{
+				AccelStructureInstances[index].mask = 0;
+
+				continue;
+			}
+
+			SceneObjectEntry& entry = Entries[StructureEntries[index].ObjectId];
+
+			if (entry.JustAddedToStructure)
+				WriteInstance(index, entry.Object.get());
+			else
+				UpdateInstance(index, entry.Object.get());
+
+			size_t instanceId = entry.Object->GetInstanceId();
+			size_t blasInstanceId = spawnedModels[instanceId].BlasInstanceId;
+
+			if (blasInstanceId != (size_t)-1)
+			{
+				const auto& blasInstance = blasInstances[blasInstanceId];
+				OverrideInstanceBlas(index, entry.Object.get(), (uint32_t)blasInstance.blasId);
+			}
+
+			entry.JustAddedToStructure = false;
+		}
+
+		ChangedStructureObjects.clear();
+
+		if (regenerateTLAS)
+		{
+			RTBuilder.buildTlas(AccelStructureInstances, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, !rebuildTLAS);
+
+			regenerateTLAS = false;
+		}
+	}
+
+	void RTScene::UpdateAnimations(float delta)
 	{
 		auto& skinnedModels = EntryTypes[(int)SceneObjectType::Skinned];
 
@@ -130,6 +192,15 @@ namespace MapLoader
 					const auto& gpuMeshInstance = modelLibrary.GetGpuEntityData()[mesh.MeshId];
 					const auto& gpuMeshData = modelLibrary.GetGpuData()[meshId];
 
+					SceneObject* sceneObject = modelLibrary.GetSpawnedModels()[mesh.MeshId].SceneObject.get();
+
+					size_t entryIndex = sceneObject->GetSceneId(this);
+					SceneObjectEntry& entry = Entries[entryIndex];
+
+					ChangedStructureObjects.push_back(entry.StructureIndex);
+
+					sceneObject->MarkStale(true);
+
 					AnimationTasks.push_back({});
 
 					auto& animationTask = AnimationTasks.back();
@@ -154,48 +225,10 @@ namespace MapLoader
 					}
 
 					MaxAnimatedVertices = std::max(MaxAnimatedVertices, (int)animationTask.vertices);
+
+					StaleBlasIds.push_back(mesh.BlasInstanceId);
 				}
 			}
-		}
-
-		bool regenerateTLAS = ChangedStructureObjects.size() > 0;
-		bool rebuildTLAS = AccelStructureInstances.size() != StructureEntries.size();
-		size_t rangeMin = (size_t)-1;
-		size_t rangeMax = 0;
-
-		AccelStructureInstances.resize(StructureEntries.size());
-
-		for (size_t i = 0; i < ChangedStructureObjects.size(); ++i)
-		{
-			size_t index = ChangedStructureObjects[i];
-
-			rangeMin = std::min(rangeMin, index);
-			rangeMax = std::max(rangeMax, index);
-
-			if (StructureEntries[index].ObjectId == (size_t)-1)
-			{
-				AccelStructureInstances[index].mask = 0;
-
-				continue;
-			}
-
-			SceneObjectEntry& entry = Entries[StructureEntries[index].ObjectId];
-
-			if (entry.JustAddedToStructure)
-				WriteInstance(index, entry.Object.get());
-			else
-				UpdateInstance(index, entry.Object.get());
-
-			entry.JustAddedToStructure = false;
-		}
-
-		ChangedStructureObjects.clear();
-
-		if (regenerateTLAS)
-		{
-			RTBuilder.buildTlas(AccelStructureInstances, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, !rebuildTLAS);
-
-			regenerateTLAS = false;
 		}
 	}
 
@@ -330,6 +363,12 @@ namespace MapLoader
 	{
 		VkAccelerationStructureInstanceKHR& instance = AccelStructureInstances[index];
 		instance.transform = nvvk::toTransformMatrixKHR(sceneObject->GetTransform()->GetWorldTransformation());  // Position of the instance
+	}
+
+	void RTScene::OverrideInstanceBlas(size_t index, SceneObject* sceneObject, uint32_t blasId)
+	{
+		VkAccelerationStructureInstanceKHR& instance = AccelStructureInstances[index];
+		instance.accelerationStructureReference = RTBuilder.getBlasDeviceAddress(blasId);
 	}
 
 	void RTScene::TransformChanged(Engine::Transform* transform, bool firstChange)

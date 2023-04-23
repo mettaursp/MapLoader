@@ -150,6 +150,8 @@ struct AnimationTask
 	
 	uint64_t vertexPosAddressOverride WITH_DEFAULT(0);
 	uint64_t vertexBinormalAddressOverride WITH_DEFAULT(0);
+
+	float morphWeight WITH_DEFAULT(0);
 };
 
 // Push constant structure for the raster

@@ -16,6 +16,8 @@ layout(buffer_reference, scalar) buffer VertexPos {VertexPosBinding v[]; }; // P
 layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexBlend {VertexBlendBinding v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer VertexBoneIndices {uint8_t v[]; }; // Positions of an object
+layout(buffer_reference, scalar) buffer Skeleton {mat4 v[]; }; // Positions of an object
 
 layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { MeshDesc i[]; } objDesc;
 layout(set = 1, binding = eInstDescs, scalar) buffer InstanceDescription_ { InstDesc i[]; } instDesc;
@@ -33,18 +35,70 @@ void main()
 	if (gl_GlobalInvocationID.y >= task.vertices) return;
 
 	VertexPos vertices = VertexPos(task.vertexPosAddress);
-
-
 	VertexPos outVertices = VertexPos(task.vertexPosAddressOverride);
 
-	outVertices.v[gl_GlobalInvocationID.y] = vertices.v[gl_GlobalInvocationID.y];
+	VertexPosBinding vertex = vertices.v[gl_GlobalInvocationID.y];
+	VertexBinormalBinding vertexBinormal;
+
+	if (task.vertexBinormalAddress != 0)
+	{
+		VertexBinormal vertexBinormals = VertexBinormal(task.vertexBinormalAddress);
+		vertexBinormal = vertexBinormals.v[gl_GlobalInvocationID.y];
+	}
+
+	if (task.vertexMorphAddress != 0)
+	{
+		VertexMorph vertexMorph = VertexMorph(task.vertexMorphAddress);
+
+		vertex.position += task.morphWeight * vertexMorph.v[gl_GlobalInvocationID.y].morphpos; 
+	}
+
+	if (task.vertexBlendAddress != 0)
+	{
+		Skeleton skeleton = Skeleton(task.skeletonAddress);
+		VertexBoneIndices skeletonIndices = VertexBoneIndices(task.skeletonIndicesAddress);
+
+		VertexBlend vertexBlends = VertexBlend(task.vertexBlendAddress);
+		VertexBlendBinding vertexBlend = vertexBlends.v[gl_GlobalInvocationID.y];
+		VertexPosBinding sourceVertex = vertex;
+		VertexBinormalBinding sourceVertexBinormal = vertexBinormal;
+
+		vertex.position = vec3(0, 0, 0);
+		vertex.normal = vec3(0, 0, 0);
+		vertexBinormal.binormal = vec3(0, 0, 0);
+		vertexBinormal.tangent = vec3(0, 0, 0);
+		float totalWeight = dot(vertexBlend.blendweight, vec4(1, 1, 1, 1));
+
+		for (int i = 0; i < 4 && vertexBlend.blendweight[i] != 0; ++i)
+		{
+			uint8_t index = skeletonIndices.v[vertexBlend.blendindices[i]];
+			float weight = vertexBlend.blendweight[i] / totalWeight;
+			mat4 transform = skeleton.v[index];
+			mat4 normalTransform = transpose(inverse(transform));
+
+			vertex.position += weight * (transform * vec4(sourceVertex.position, 1)).xyz;
+			vertex.normal += weight * (normalTransform * vec4(sourceVertex.normal, 0)).xyz;
+
+			if (task.vertexBinormalAddress != 0)
+			{
+				vertexBinormal.binormal += weight * (normalTransform * vec4(sourceVertexBinormal.binormal, 0)).xyz;
+				vertexBinormal.tangent += weight * (normalTransform * vec4(sourceVertexBinormal.tangent, 0)).xyz;
+			}
+		}
+
+		vertex.normal = normalize(vertex.normal);
+		if (task.vertexBinormalAddress != 0)
+		{
+			vertexBinormal.binormal += normalize(vertexBinormal.binormal);
+			vertexBinormal.tangent += normalize(vertexBinormal.tangent);
+		}
+	}
+
+	outVertices.v[gl_GlobalInvocationID.y] = vertex;
 
 	if (task.vertexBinormalAddressOverride == 0) return;
 
-	VertexBinormal vertexBinormals = VertexBinormal(task.vertexBinormalAddress);
-
-
 	VertexBinormal outVertexBinormals = VertexBinormal(task.vertexBinormalAddressOverride);
 
-	outVertexBinormals.v[gl_GlobalInvocationID.y] = vertexBinormals.v[gl_GlobalInvocationID.y];
+	outVertexBinormals.v[gl_GlobalInvocationID.y] = vertexBinormal;
 }

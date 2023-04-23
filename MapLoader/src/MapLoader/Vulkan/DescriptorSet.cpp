@@ -49,9 +49,19 @@ namespace Graphics
 		return { descriptor, name };
 	}
 
-	VkWriteDescriptorSet DescriptorSet::MakeWriteArray(uint32_t binding, const VkDescriptorImageInfo* pImageInfo, uint32_t index, uint32_t count)
+	VkDescriptorSet& DescriptorSet::Get(size_t frame)
 	{
-		VkWriteDescriptorSet writeSet = MakeWriteArray(binding, index, count);
+		return DescriptorSets[frame];
+	}
+
+	const VkDescriptorSet& DescriptorSet::Get(size_t frame) const
+	{
+		return DescriptorSets[frame];
+	}
+
+	VkWriteDescriptorSet DescriptorSet::MakeWriteArray(uint32_t binding, const VkDescriptorImageInfo* pImageInfo, size_t frame, uint32_t index, uint32_t count)
+	{
+		VkWriteDescriptorSet writeSet = MakeWriteArray(binding, frame, index, count);
 
 		assert(
 			writeSet.descriptorType == VK_DESCRIPTOR_TYPE_SAMPLER ||
@@ -66,14 +76,14 @@ namespace Graphics
 		return writeSet;
 	}
 
-	VkWriteDescriptorSet DescriptorSet::MakeWrite(uint32_t binding, const VkDescriptorImageInfo* pImageInfo, uint32_t index)
+	VkWriteDescriptorSet DescriptorSet::MakeWrite(uint32_t binding, const VkDescriptorImageInfo* pImageInfo, size_t frame, uint32_t index)
 	{
-		return MakeWriteArray(binding, pImageInfo, index, 1);
+		return MakeWriteArray(binding, pImageInfo, frame, index, 1);
 	}
 
-	VkWriteDescriptorSet DescriptorSet::MakeWriteArray(uint32_t binding, const VkDescriptorBufferInfo* pBufferInfo, uint32_t index, uint32_t count)
+	VkWriteDescriptorSet DescriptorSet::MakeWriteArray(uint32_t binding, const VkDescriptorBufferInfo* pBufferInfo, size_t frame, uint32_t index, uint32_t count)
 	{
-		VkWriteDescriptorSet writeSet = MakeWriteArray(binding, index, count);
+		VkWriteDescriptorSet writeSet = MakeWriteArray(binding, frame, index, count);
 
 		assert(
 			writeSet.descriptorType == VK_DESCRIPTOR_TYPE_STORAGE_BUFFER ||
@@ -87,14 +97,14 @@ namespace Graphics
 		return writeSet;
 	}
 
-	VkWriteDescriptorSet DescriptorSet::MakeWrite(uint32_t binding, const VkDescriptorBufferInfo* pBufferInfo, uint32_t index)
+	VkWriteDescriptorSet DescriptorSet::MakeWrite(uint32_t binding, const VkDescriptorBufferInfo* pBufferInfo, size_t frame, uint32_t index)
 	{
-		return MakeWriteArray(binding, pBufferInfo, index, 1);
+		return MakeWriteArray(binding, pBufferInfo, frame, index, 1);
 	}
 
-	VkWriteDescriptorSet DescriptorSet::MakeWriteArray(uint32_t binding, const VkWriteDescriptorSetAccelerationStructureKHR* pAccel, uint32_t index, uint32_t count)
+	VkWriteDescriptorSet DescriptorSet::MakeWriteArray(uint32_t binding, const VkWriteDescriptorSetAccelerationStructureKHR* pAccel, size_t frame, uint32_t index, uint32_t count)
 	{
-		VkWriteDescriptorSet writeSet = MakeWriteArray(binding, index, count);
+		VkWriteDescriptorSet writeSet = MakeWriteArray(binding, frame, index, count);
 
 		assert(writeSet.descriptorType == VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR);
 
@@ -103,12 +113,12 @@ namespace Graphics
 		return writeSet;
 	}
 
-	VkWriteDescriptorSet DescriptorSet::MakeWrite(uint32_t binding, const VkWriteDescriptorSetAccelerationStructureKHR* pAccel, uint32_t index)
+	VkWriteDescriptorSet DescriptorSet::MakeWrite(uint32_t binding, const VkWriteDescriptorSetAccelerationStructureKHR* pAccel, size_t frame, uint32_t index)
 	{
-		return MakeWriteArray(binding, pAccel, index, 1);
+		return MakeWriteArray(binding, pAccel, frame, index, 1);
 	}
 
-	VkWriteDescriptorSet DescriptorSet::MakeWriteArray(uint32_t binding, uint32_t index, uint32_t count)
+	VkWriteDescriptorSet DescriptorSet::MakeWriteArray(uint32_t binding, size_t frame, uint32_t index, uint32_t count)
 	{
 		VkWriteDescriptorSet writeSet = { VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET };
 		
@@ -121,7 +131,7 @@ namespace Graphics
 				writeSet.descriptorCount = count == 0 ? descriptor.descriptorCount : count;
 				writeSet.descriptorType = descriptor.descriptorType;
 				writeSet.dstBinding = binding;
-				writeSet.dstSet = DescriptorSet;
+				writeSet.dstSet = DescriptorSets[frame];
 				writeSet.dstArrayElement = index;
 
 				return writeSet;

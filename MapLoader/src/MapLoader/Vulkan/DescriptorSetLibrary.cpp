@@ -111,8 +111,15 @@ namespace Graphics
 			}
 		}
 
+		uint32_t setCount = 0;
+
+		for (size_t i = 0; i < DescriptorSets.size(); ++i)
+		{
+			setCount += (uint32_t)DescriptorSets[i]->DescriptorSets.size();
+		}
+
 		VkDescriptorPoolCreateInfo createInfo = { VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO };
-		createInfo.maxSets = maxSets * (uint32_t)DescriptorSets.size();
+		createInfo.maxSets = setCount;
 		createInfo.poolSizeCount = (uint32_t)poolSizes.size();
 		createInfo.pPoolSizes = poolSizes.data();
 		createInfo.flags = flags;
@@ -123,14 +130,19 @@ namespace Graphics
 
 	void DescriptorSetLibrary::Allocate(DescriptorSet* descriptorSet)
 	{
-		const uint32_t maxSets = 1;
+		const uint32_t maxSets = (uint32_t)descriptorSet->DescriptorSets.size();
+
+		std::vector<VkDescriptorSetLayout> layouts(maxSets);
+
+		for (uint32_t i = 0; i < maxSets; ++i)
+			layouts[i] = descriptorSet->Layout;
 
 		VkDescriptorSetAllocateInfo allocateInfo = { VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO };
 		allocateInfo.descriptorPool = DescriptorPool;
 		allocateInfo.descriptorSetCount = maxSets;
-		allocateInfo.pSetLayouts = &descriptorSet->Layout;
+		allocateInfo.pSetLayouts = layouts.data();
 
-		VkResult result = vkAllocateDescriptorSets(VulkanContext->Device, &allocateInfo, &descriptorSet->DescriptorSet);
+		VkResult result = vkAllocateDescriptorSets(VulkanContext->Device, &allocateInfo, descriptorSet->DescriptorSets.data());
 		assert(result == VK_SUCCESS);
 	}
 

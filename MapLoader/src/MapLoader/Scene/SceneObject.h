@@ -46,6 +46,7 @@ namespace MapLoader
 		bool IsStatic() const;
 		Engine::Transform* GetTransform() const;
 		uint32_t GetModelId() const;
+		size_t GetInstanceId() const;
 		bool HasModel() const;
 		size_t GetSceneIndex(RTScene* scene) const;
 		size_t GetSceneId(RTScene* scene) const;
@@ -55,6 +56,7 @@ namespace MapLoader
 		void SetVisibilityType(ObjectVisibilityType visibilityType);
 		void SetTransform(Engine::Transform* transform);
 		void SetModel(ModelData* model, size_t index);
+		void SetInstanceId(size_t instanceId);
 
 		SceneObjectType GetObjectType(RTScene* scene) const;
 		void SetObjectType(RTScene* scene, SceneObjectType type, size_t index);
@@ -72,6 +74,7 @@ namespace MapLoader
 		bool IsStaticObject = false;
 		ModelData* Model = nullptr;
 		size_t ModelIndex = 0;
+		size_t InstanceId = 0;
 		Engine::Transform* Transform = nullptr;
 		ObjectVisibilityType VisibilityType = ObjectVisibilityType::Normal;
 		SceneEntry Scene;

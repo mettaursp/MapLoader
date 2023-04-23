@@ -1221,15 +1221,25 @@ void NifParser::Parse(std::string_view stream)
 					const BlockData* skinBlock = data->Modifiers[i];
 					NiSkinningMeshModifier* skinData = skinBlock->Data->Cast<NiSkinningMeshModifier>();
 					size_t skinRootIndex = nodeIndices[skinData->SkeletonRoot->BlockIndex];
-					
-					MarkBone(skinRootIndex, boneIndices);
 
-					bones.push_back(boneIndices[skinRootIndex]);
+					if (skinData->SkeletonRoot->BlockIndex >= blockIndex)
+					{
+						std::cout << "linked to uninitialized block index" << std::endl;
+					}
+
+					//MarkBone(skinRootIndex, boneIndices);
+
+					//bones.push_back(boneIndices[skinRootIndex]);
 
 					for (size_t j = 0; j < skinData->Bones.size(); ++j)
 					{
 						const BlockData* boneData = skinData->Bones[j];
 						size_t boneIndex = nodeIndices[boneData->BlockIndex];
+
+						if (boneData->BlockIndex >= blockIndex)
+						{
+							std::cout << "linked to uninitialized block index" << std::endl;
+						}
 
 						MarkBone(boneIndex, boneIndices);
 

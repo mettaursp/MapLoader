@@ -634,7 +634,7 @@ int main(int argc, char** argv)
 
 	VulkanContext = std::make_shared<Graphics::VulkanContext>();
 	AssetLibrary = std::make_shared<MapLoader::GameAssetLibrary>(Reader, VulkanContext);
-	Scene = std::make_shared<MapLoader::RTScene>(VulkanContext);
+	Scene = std::make_shared<MapLoader::RTScene>(AssetLibrary);
 	mapTransform = Engine::Create<Engine::Transform>();
 
 	// Create example
@@ -878,7 +878,7 @@ int main(int argc, char** argv)
 
 	Character f00dCharacter(AssetLibrary, Scene);
 
-	f00dCharacter.Load(&baadf00d, Matrix4F(0, 0, 3000) * Matrix4F::RollRotation(PI));
+	f00dCharacter.Load(&baadf00d, Matrix4F(-2250, -1200, 1785) * Matrix4F::RollRotation(-0.5f * PI));
 
 	MapLoader::CharacterData hornetsp;
 
@@ -901,7 +901,7 @@ int main(int argc, char** argv)
 
 	Character hornetCharacter(AssetLibrary, Scene);
 
-	hornetCharacter.Load(&hornetsp, Matrix4F(120, 0, 3000) * Matrix4F::RollRotation(PI));
+	hornetCharacter.Load(&hornetsp, Matrix4F(-2250, -1050, 1785) * Matrix4F::RollRotation(-0.5f * PI));
 
 	const Archive::Metadata::Entry* derpPandaAnimationEntry = Archive::Metadata::Entry::FindFirstEntryByTags("60000053_LesserPanda", "gamebryo-animation");
 
@@ -911,7 +911,7 @@ int main(int argc, char** argv)
 	std::shared_ptr<MapLoader::SkinnedModel> derpPandaRig = Engine::Create<MapLoader::SkinnedModel>(AssetLibrary, Scene);
 
 	std::shared_ptr<Engine::Transform> derpPandaTransform = Engine::Create<Engine::Transform>();
-	derpPandaTransform->SetTransformation(Matrix4F(60, 20, 3000) * Matrix4F::RollRotation(PI));
+	derpPandaTransform->SetTransformation(Matrix4F(-2270, -1125, 1785) * Matrix4F::RollRotation(-0.5f * PI));
 	derpPandaTransform->Update(0);
 
 	derpPandaRig->SetParent(derpPandaTransform);
@@ -973,12 +973,17 @@ int main(int argc, char** argv)
 	helloVk.initRayTracing();
 	Scene->Initialize();
 	helloVk.createBottomLevelAS();
-	Scene->Update(0);
 	helloVk.createRtDescriptorSet();
 	helloVk.createRtPipeline();
 
 	helloVk.createPostPipeline();
 	helloVk.updatePostDescriptorSet();
+
+	Scene->UpdateAnimations(0);
+	helloVk.updateAnimations();
+	helloVk.animate();
+	helloVk.updateStaleBlas();
+	Scene->Update(0);
 
 
 	vec4 clearColor   = vec4(1, 1, 1, 1.00f);
@@ -1003,8 +1008,6 @@ int main(int argc, char** argv)
 		// Start the Dear ImGui frame
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		Scene->Update(1 / ImGui::GetIO().Framerate);
 
 		bool takeScreenshot = false;
 
@@ -1355,6 +1358,13 @@ int main(int argc, char** argv)
 		}
 
 		//helloVk.updateTopLevelAS();
+		float delta = 1 / ImGui::GetIO().Framerate;
+		Scene->UpdateAnimations(delta);
+		helloVk.updateAnimations();
+		helloVk.animate();
+		helloVk.updateStaleBlas();
+		Scene->Update(delta);
+		helloVk.updateRtDescriptorSet();
 
 		// Start command buffer of this frame
 		auto                   curFrame = helloVk.getCurFrame();
@@ -1366,7 +1376,6 @@ int main(int argc, char** argv)
 
 		// Updating camera buffer
 		helloVk.updateUniformBuffer(cmdBuf);
-		helloVk.animate();
 
 		// Clearing screen
 		std::array<VkClearValue, 2> clearValues{};
@@ -1430,7 +1439,6 @@ int main(int argc, char** argv)
 		// Submit for display
 		vkEndCommandBuffer(cmdBuf);
 		helloVk.submitFrame();
-
 	}
 
 	// Cleanup

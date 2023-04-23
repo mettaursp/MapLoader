@@ -110,7 +110,7 @@ void main()
 
 	const vec3 barycentrics = vec3(1.0 - attributes.x - attributes.y, attributes.x, attributes.y);
 
-	VertexPos vertices = VertexPos(objResource.vertexPosAddress);
+	VertexPos vertices = VertexPos(instanceDesc.vertexPosAddressOverride != 0 ? instanceDesc.vertexPosAddressOverride : objResource.vertexPosAddress);
 
 	VertexPosBinding v0 = vertices.v[ind.x];
 	VertexPosBinding v1 = vertices.v[ind.y];
@@ -140,7 +140,7 @@ void main()
 		return;
 	}
 
-	vec3 nrm = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
+	vec3 nrm = cross(v1.position - v0.position, v2.position - v0.position);
 	vec2 texCoord = v0.texcoord * barycentrics.x + v1.texcoord * barycentrics.y + v2.texcoord * barycentrics.z;
 
 	const vec3 worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));	// Transforming the normal to world space

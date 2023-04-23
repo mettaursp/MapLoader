@@ -31,7 +31,7 @@ namespace MapLoader
 
 		if (!node->IsSpline && node->Rotation.Type == Enum::AnimationInterpolationType::XyzRotation)
 		{
-			Vector3SF rotation = baseTransformation.ExtractEulerAngles(Enum::EulerAnglesOrder::PitchYawRoll);
+			Vector3SF rotation = baseTransformation.ExtractEulerAngles(Enum::EulerAnglesOrder::RollYawPitch);
 
 			ComputeKeyframeAnimationFrame(translation, rotation, scale, node, time);
 
@@ -275,9 +275,9 @@ namespace MapLoader
 	void RigAnimation::ComputeKeyframeAnimationFrame(Vector3SF& translation, Vector3SF& rotation, float& scale, Engine::Graphics::ModelPackageAnimationNode* node, float time)
 	{
 		Interpolate(translation, node, time, node->Translation);
-		Interpolate(rotation.X, node, time, node->EulerRotation.X);
+		Interpolate(rotation.Z, node, time, node->EulerRotation.X);
 		Interpolate(rotation.Y, node, time, node->EulerRotation.Y);
-		Interpolate(rotation.Z, node, time, node->EulerRotation.Z);
+		Interpolate(rotation.X, node, time, node->EulerRotation.Z);
 		Interpolate(scale, node, time, node->Scale);
 	}
 
@@ -295,10 +295,10 @@ namespace MapLoader
 
 	Matrix4F RigAnimation::ComputeAnimationMatrix(const Vector3SF& translation, const Vector3SF& rotation, float scale)
 	{
-		Matrix4F roll = Matrix4F::RollRotation(rotation.Z);
+		Matrix4F roll = Matrix4F::RollRotation(rotation.X);
 		Matrix4F yaw = Matrix4F::YawRotation(rotation.Y);
-		Matrix4F pitch = Matrix4F::PitchRotation(rotation.X);
-		Matrix4F transformation = pitch * yaw * roll;
+		Matrix4F pitch = Matrix4F::PitchRotation(rotation.Z);
+		Matrix4F transformation = roll * yaw * pitch;
 
 		transformation.SetTranslation(translation);
 

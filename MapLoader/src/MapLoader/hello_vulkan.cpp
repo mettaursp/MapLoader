@@ -68,7 +68,7 @@ void HelloVulkan::updateUniformBuffer(const VkCommandBuffer& cmdBuf)
 	// Prepare new UBO contents on host.
 	const float    aspectRatio = m_size.width / static_cast<float>(m_size.height);
 	const auto&    view        = CameraManip.getMatrix();
-	const auto& proj = mat4::NewProjection(CameraManip.getFov()*nv_to_rad, aspectRatio, 0.1f, 1000.0f)*mat4::NewScale(1,-1,1);
+	const auto& proj = mat4::NewProjection(CameraManip.getFov()*nv_to_rad, aspectRatio, 0.001f, 1000.0f)*mat4::NewScale(1,-1,1);
 	// proj[1][1] *= -1;  // Inverting Y for Vulkan (not needed with perspectiveVK).
 
 	hostUBO.viewProj    = proj * view;
@@ -184,6 +184,7 @@ void HelloVulkan::createDescriptorSetLayout()
 	RTPipeline->AddMissGroup(2);
 	RTPipeline->AddHitGroup({ 3, 4 });
 	RTPipeline->AddHitGroup({ 5, 6 });
+	RTPipeline->GetDescriptorSets()[0]->DescriptorSets.resize(3);
 
 	PostPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
 
@@ -587,7 +588,7 @@ void HelloVulkan::rasterize(const VkCommandBuffer& cmdBuf)
 	// Dynamic Viewport
 	setViewport(cmdBuf);
 
-	auto& m_descSet = DescriptorSetLibrary->FetchDescriptorSet("common")->DescriptorSet;
+	auto& m_descSet = DescriptorSetLibrary->FetchDescriptorSet("common")->Get();
 
 	// Drawing all triangles
 	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, RasterPipeline->GetPipeline());
@@ -616,7 +617,7 @@ void HelloVulkan::animate()
 	nvvk::CommandPool genCmdBuf(VulkanContext->Device, VulkanContext->GraphicsQueueIndex);
 	VkCommandBuffer   cmdBuf = genCmdBuf.createCommandBuffer();
 
-	auto m_compDescSet = AnimationPipeline->GetDescriptorSets()[0]->DescriptorSet;
+	auto m_compDescSet = AnimationPipeline->GetDescriptorSets()[0]->Get();
 
 	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_COMPUTE, AnimationPipeline->GetPipeline());
 	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_COMPUTE, AnimationPipeline->GetPipelineLayout(), 0, 1, &m_compDescSet, 0, nullptr);
@@ -640,12 +641,12 @@ void HelloVulkan::drawWireframes(const VkCommandBuffer& cmdBuf)
 	// Dynamic Viewport
 	setViewport(cmdBuf);
 
-	auto& m_descSet = DescriptorSetLibrary->FetchDescriptorSet("common")->DescriptorSet;
+	auto& m_descSet = DescriptorSetLibrary->FetchDescriptorSet("common")->Get();
 
 	std::vector<VkDescriptorSet> descSets;
 	const auto& descriptorSets = WireframePipeline->GetDescriptorSets();
 	for (size_t i = 0; i < descriptorSets.size(); ++i)
-		descSets.push_back(descriptorSets[i]->DescriptorSet);
+		descSets.push_back(descriptorSets[i]->Get());
 
 	// Drawing all triangles
 	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, WireframePipeline->GetPipeline());
@@ -854,7 +855,10 @@ void HelloVulkan::updatePostDescriptorSet()
 		postDescSet->MakeWrite(1, &dbiUnif)
 	};
 	vkUpdateDescriptorSets(VulkanContext->Device, sizeof(writeDescriptorSets) / sizeof(writeDescriptorSets[0]), writeDescriptorSets, 0, nullptr);
+}
 
+void HelloVulkan::updateAnimations()
+{
 	const auto& animationTasks = Scene->GetAnimationTasks();
 	QueuedAnimationTasks = animationTasks.size();
 	MaxAnimatedVertices = Scene->GetMaxAnimatedVertices();
@@ -897,7 +901,7 @@ void HelloVulkan::drawPost(VkCommandBuffer cmdBuf)
 	auto aspectRatio = static_cast<float>(m_size.width) / static_cast<float>(m_size.height);
 	vkCmdPushConstants(cmdBuf, PostPipeline->GetPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(float), &aspectRatio);
 	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, PostPipeline->GetPipeline());
-	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, PostPipeline->GetPipelineLayout(), 0, 1, &PostPipeline->GetDescriptorSets()[0]->DescriptorSet, 0, nullptr);
+	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_GRAPHICS, PostPipeline->GetPipelineLayout(), 0, 1, &PostPipeline->GetDescriptorSets()[0]->Get(), 0, nullptr);
 	vkCmdDraw(cmdBuf, 3, 1, 0, 0);
 
 	VulkanContext->Debug.endLabel(cmdBuf);
@@ -921,13 +925,9 @@ void HelloVulkan::initRayTracing()
 //--------------------------------------------------------------------------------------------------
 // Convert an OBJ model into the ray tracing geometry used to build the BLAS
 //
-auto HelloVulkan::objectToVkGeometryKHR(const MapLoader::MeshDescription& model)
+auto HelloVulkan::objectToVkGeometryKHR(uint32_t vertexCount, uint32_t indexCount, VkDeviceAddress vertexAddress, VkDeviceAddress indexAddress)
 {
-	// BLAS builder requires raw device addresses.
-	VkDeviceAddress vertexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, model.VertexPosBuffer.buffer);
-	VkDeviceAddress indexAddress  = nvvk::getBufferDeviceAddress(VulkanContext->Device, model.IndexBuffer.buffer);
-
-	uint32_t maxPrimitiveCount = model.IndexCount / 3;
+	uint32_t maxPrimitiveCount = indexCount / 3;
 
 	// Describe buffer as array of VertexObj.
 	VkAccelerationStructureGeometryTrianglesDataKHR triangles{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR};
@@ -939,7 +939,7 @@ auto HelloVulkan::objectToVkGeometryKHR(const MapLoader::MeshDescription& model)
 	triangles.indexData.deviceAddress = indexAddress;
 	// Indicate identity transform by setting transformData to null device pointer.
 	//triangles.transformData = {};
-	triangles.maxVertex = model.VertexCount;
+	triangles.maxVertex = vertexCount;
 
 	// Identify the above data as containing opaque triangles.
 	VkAccelerationStructureGeometryKHR asGeom{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_KHR};
@@ -967,17 +967,57 @@ auto HelloVulkan::objectToVkGeometryKHR(const MapLoader::MeshDescription& model)
 //
 void HelloVulkan::createBottomLevelAS()
 {
+	auto& models = AssetLibrary->GetModels();
+	size_t id = Scene->GetRTBuilder().getNumBlas();
+	const auto& meshDescriptions = models.GetMeshDescriptions();
+	const auto& blasInstances = models.GetBlasInstances();
+
 	// BLAS - Storing each primitive in a geometry
 	std::vector<nvvk::RaytracingBuilderKHR::BlasInput> allBlas;
-	allBlas.reserve(AssetLibrary->GetModels().GetMeshDescriptions().size());
-	for(const auto& obj : AssetLibrary->GetModels().GetMeshDescriptions())
-	{
-	auto blas = objectToVkGeometryKHR(obj);
+	allBlas.reserve(meshDescriptions.size() + blasInstances.size());
 
-	// We could add more geometry in each BLAS, but we add only one for now
-	allBlas.emplace_back(blas);
+	for(size_t i = 0; i < meshDescriptions.size(); ++i, ++id)
+	{
+		const auto& obj = meshDescriptions[i];
+
+		VkDeviceAddress vertexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, obj.VertexPosBuffer.buffer);
+		VkDeviceAddress indexAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, obj.IndexBuffer.buffer);
+
+		auto blas = objectToVkGeometryKHR(obj.VertexCount, obj.IndexCount, vertexAddress, indexAddress);
+		models.SetMeshBlasId(i, id);
+		// We could add more geometry in each BLAS, but we add only one for now
+		allBlas.emplace_back(blas);
 	}
 	Scene->GetRTBuilder().buildBlas(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR);
+	allBlas.clear();
+	for (size_t i = 0; i < blasInstances.size(); ++i, ++id)
+	{
+		const auto& obj = blasInstances[i];
+		auto blas = objectToVkGeometryKHR(obj.VertexCount, obj.IndexCount, obj.VertexBufferAddress, obj.IndexBufferAddress);
+		//models.SetMeshBlasId(i, id);
+		models.SetBlasInstanceId(i, id);
+		// We could add more geometry in each BLAS, but we add only one for now
+		allBlas.emplace_back(blas);
+
+	}
+	Scene->GetRTBuilder().buildBlas(allBlas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
+}
+
+void HelloVulkan::updateStaleBlas()
+{
+	auto& models = AssetLibrary->GetModels();
+	const auto& blasInstances = models.GetBlasInstances();
+	const auto& staleBlasIds = Scene->GetStaleBlasIds();
+
+	for (size_t i = 0; i < staleBlasIds.size(); ++i)
+	{
+		const auto& obj = blasInstances[staleBlasIds[i]];
+		auto blas = objectToVkGeometryKHR(obj.VertexCount, obj.IndexCount, obj.VertexBufferAddress, obj.IndexBufferAddress);
+
+		Scene->GetRTBuilder().updateBlas((uint32_t)obj.blasId, blas, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR);
+	}
+
+	Scene->ClearStaleBlasIds();
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -1014,9 +1054,15 @@ void HelloVulkan::updateRtDescriptorSet()
 	auto& descriptorSets = RTPipeline->GetDescriptorSets();
 	// (1) Output buffer
 	auto rtDescSet = RTPipeline->GetDescriptorSets()[0];
+	VkAccelerationStructureKHR                   tlas = Scene->GetRTBuilder().getAccelerationStructure();
+	VkWriteDescriptorSetAccelerationStructureKHR descASInfo{ VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR };
+	descASInfo.accelerationStructureCount = 1;
+	descASInfo.pAccelerationStructures = &tlas;
 	VkDescriptorImageInfo imageInfo{{}, m_offscreenColor.descriptor.imageView, VK_IMAGE_LAYOUT_GENERAL};
-	VkWriteDescriptorSet  wds = rtDescSet->MakeWrite(RtxBindings::eOutImage, &imageInfo);
-	vkUpdateDescriptorSets(VulkanContext->Device, 1, &wds, 0, nullptr);
+	std::vector<VkWriteDescriptorSet> writes;
+	writes.emplace_back(rtDescSet->MakeWrite(RtxBindings::eTlas, &descASInfo, getCurFrame()));
+	writes.emplace_back(rtDescSet->MakeWrite(RtxBindings::eOutImage, &imageInfo, getCurFrame()));
+	vkUpdateDescriptorSets(VulkanContext->Device, static_cast<uint32_t>(writes.size()), writes.data(), 0, nullptr);
 }
 
 
@@ -1048,7 +1094,7 @@ void HelloVulkan::raytrace(const VkCommandBuffer& cmdBuf, const vec4& clearColor
 
 	auto& descriptorSets = RTPipeline->GetDescriptorSets();
 
-	std::vector<VkDescriptorSet> descSets{descriptorSets[0]->DescriptorSet, descriptorSets[1]->DescriptorSet };
+	std::vector<VkDescriptorSet> descSets{descriptorSets[0]->Get(getCurFrame()), descriptorSets[1]->Get()};
 	vkCmdBindPipeline(cmdBuf, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, RTPipeline->GetPipeline());
 	vkCmdBindDescriptorSets(cmdBuf, VK_PIPELINE_BIND_POINT_RAY_TRACING_KHR, RTPipeline->GetPipelineLayout(), 0,
 							(uint32_t)descSets.size(), descSets.data(), 0, nullptr);

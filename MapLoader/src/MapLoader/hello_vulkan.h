@@ -131,6 +131,7 @@ public:
 	void createOffscreenRender();
 	void createPostPipeline();
 	void updatePostDescriptorSet();
+	void updateAnimations();
 	void drawPost(VkCommandBuffer cmdBuf);
 
 	nvvk::Texture               m_offscreenColor;
@@ -140,8 +141,9 @@ public:
 
 	// #VKRay
 	void initRayTracing();
-	auto objectToVkGeometryKHR(const MapLoader::MeshDescription& model);
+	auto objectToVkGeometryKHR(uint32_t vertexCount, uint32_t indexCount, VkDeviceAddress vertexAddress, VkDeviceAddress indexAddress);
 	void createBottomLevelAS();
+	void updateStaleBlas();
 	void createRtDescriptorSet();
 	void updateRtDescriptorSet();
 	void createRtPipeline();

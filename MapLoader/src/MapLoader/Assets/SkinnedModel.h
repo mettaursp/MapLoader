@@ -18,6 +18,7 @@ namespace MapLoader
 		bool HasMorphAnimation = false;
 		size_t MeshId = (size_t)-1; // Spawned model instance index
 		size_t MeshIndex = (size_t)-1; // Mesh index in model
+		size_t BlasInstanceId = (size_t)-1;
 		nvvk::Buffer SkeletonSectionIndicesBuffer;
 		nvvk::Buffer VertexPosOverride;
 		nvvk::Buffer VertexBinormalOverride;

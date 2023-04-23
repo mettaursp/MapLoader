@@ -207,6 +207,7 @@ public:
   }
 
 #endif
+  size_t getNumBlas() const { return m_blas.size(); }
 
 protected:
   std::vector<nvvk::AccelKHR> m_blas;  // Bottom-level acceleration structure

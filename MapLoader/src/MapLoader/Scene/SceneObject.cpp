@@ -62,6 +62,8 @@ namespace MapLoader
 				return index;
 			}
 		}
+
+		return (size_t)-1;
 	}
 
 	size_t SceneObject::GetSceneIndex(RTScene* scene) const
@@ -137,6 +139,11 @@ namespace MapLoader
 		return Model->GetId(ModelIndex);
 	}
 
+	size_t SceneObject::GetInstanceId() const
+	{
+		return InstanceId;
+	}
+
 	void SceneObject::MarkStale(bool isStale)
 	{
 		IsStale = isStale;
@@ -169,6 +176,11 @@ namespace MapLoader
 
 		Model = model;
 		ModelIndex = index;
+	}
+
+	void SceneObject::SetInstanceId(size_t instanceId)
+	{
+		InstanceId = instanceId;
 	}
 
 	SceneObjectType SceneObject::GetObjectType(RTScene* scene) const

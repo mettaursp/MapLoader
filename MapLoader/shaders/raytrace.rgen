@@ -54,8 +54,19 @@ void main()
 	vec4 target    = vec4(d.x, -d.y, -uni.nearPlane, 1);
 	vec4 direction = uni.viewInverse * vec4(normalize(target.xyz), 0);
 
-	//uint  rayFlags = gl_RayFlagsNoneEXT ;//gl_RayFlagsOpaqueEXT;
-	uint  rayFlags = gl_RayFlagsNoneEXT;//gl_RayFlagsOpaqueEXT;
+	/*
+      gl_RayFlagsNoneEXT -> NoneKHR ray flag
+      gl_RayFlagsOpaqueEXT -> OpaqueKHR ray flag
+      gl_RayFlagsNoOpaqueEXT -> NoOpaqueKHR ray flag
+      gl_RayFlagsTerminateOnFirstHitEXT -> TerminateOnFirstHitKHR ray flag
+      gl_RayFlagsSkipClosestHitShaderEXT -> SkipClosestHitShaderKHR ray flag
+      gl_RayFlagsCullBackFacingTrianglesEXT -> CullBackFacingTrianglesKHR ray flag
+      gl_RayFlagsCullFrontFacingTrianglesEXT -> CullFrontFacingTrianglesKHR ray flag
+      gl_RayFlagsCullOpaqueEXT -> CullOpaqueKHR ray flag
+      gl_RayFlagsCullNoOpaqueEXT -> CullNoOpaqueKHR ray flag
+	*/
+
+	uint  rayFlags = gl_RayFlagsCullBackFacingTrianglesEXT;
 	float tMin     = 0.0001;
 	float tMax     = 10000.0;
 
@@ -81,7 +92,7 @@ void main()
 
 		traceRayEXT(topLevelAS,     // acceleration structure
 								rayFlags,       // rayFlags
-								0xFF,           // cullMask
+								uni.drawMask,//0xFF,           // cullMask
 								0,              // sbtRecordOffset
 								0,              // sbtRecordStride
 								0,              // missIndex

@@ -5,6 +5,21 @@
 
 namespace MapLoader
 {
+	Enum::SceneObjectChanges operator|(Enum::SceneObjectChanges left, Enum::SceneObjectChanges right)
+	{
+		return (Enum::SceneObjectChanges)((uint32_t)left | (uint32_t)right);
+	}
+
+	Enum::SceneObjectChanges operator&(Enum::SceneObjectChanges left, Enum::SceneObjectChanges right)
+	{
+		return (Enum::SceneObjectChanges)((uint32_t)left & (uint32_t)right);
+	}
+
+	Enum::SceneObjectChanges& operator|=(Enum::SceneObjectChanges& left, Enum::SceneObjectChanges right)
+	{
+		return left = left | right;
+	}
+
 	SceneObject::~SceneObject()
 	{
 		if (Scene.Scene != nullptr)
@@ -98,21 +113,39 @@ namespace MapLoader
 		return (size_t)-1;
 	}
 
-	ObjectVisibilityType SceneObject::GetVisibilityType() const
+	VisibilityFlags SceneObject::GetVisibilityFlags() const
 	{
-		return VisibilityType;
+		return ObjectVisibilityType;
 	}
 
-	uint32_t SceneObject::GetVisibilityTypeBit() const
+	void SceneObject::SetVisibilityFlags(VisibilityFlags visibilityFlags)
 	{
-		return 1 << (int)VisibilityType;
+		if (ObjectVisibilityType != visibilityFlags)
+			Changes |= SceneObjectChanges::Visibility;
+
+		ObjectVisibilityType = visibilityFlags;
+	}
+
+	void SceneObject::AddVisibilityFlags(VisibilityFlags visibilityFlags)
+	{
+		SetVisibilityFlags((VisibilityFlags)(ObjectVisibilityType | visibilityFlags));
+	}
+
+	void SceneObject::RemoveVisibilityFlags(VisibilityFlags visibilityFlags)
+	{
+		SetVisibilityFlags((VisibilityFlags)(ObjectVisibilityType & (0xFFFFFFFF ^ visibilityFlags)));
+	}
+
+	bool SceneObject::HasVisibilityFlags(VisibilityFlags visibilityFlags)
+	{
+		return (ObjectVisibilityType & visibilityFlags) == visibilityFlags;
 	}
 
 	bool SceneObject::HasChanged() const
 	{
 		if (Transform == nullptr) return false;
 
-		if (IsStale) return true;
+		if (Changes) return true;
 
 		return Transform->HasMoved();
 	}
@@ -146,33 +179,29 @@ namespace MapLoader
 
 	void SceneObject::MarkStale(bool isStale)
 	{
-		IsStale = isStale;
+		if (isStale)
+			Changes |= SceneObjectChanges::Misc;
+		else
+			Changes = SceneObjectChanges::None;
 	}
 
 	void SceneObject::SetStatic(bool isStatic)
 	{
-		IsStale = true;
+		Changes |= SceneObjectChanges::Static;
 
 		IsStaticObject = isStatic;
 	}
 
-	void SceneObject::SetVisibilityType(ObjectVisibilityType visibilityType)
-	{
-		IsStale = true;
-
-		VisibilityType = visibilityType;
-	}
-
 	void SceneObject::SetTransform(Engine::Transform* transform)
 	{
-		IsStale = true;
+		Changes |= SceneObjectChanges::Transform;
 
 		Transform = transform;
 	}
 
 	void SceneObject::SetModel(ModelData* model, size_t index)
 	{
-		IsStale = true;
+		Changes |= SceneObjectChanges::Model;
 
 		Model = model;
 		ModelIndex = index;

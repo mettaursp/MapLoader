@@ -40,6 +40,8 @@ namespace MapLoader
 		std::vector<size_t> Bones;
 		size_t Vertices = 0;
 		size_t Indices = 0;
+		bool HasTransparency = false;
+		bool HasInvisibility = false;
 	};
 
 	struct ModelData
@@ -62,6 +64,7 @@ namespace MapLoader
 		uint32_t IndexCount = 0;
 		uint32_t VertexCount = 0;
 		size_t BlasIndex = (size_t)-1;
+		uint32_t drawFlags = VisibilityFlags::eStandardVisibility | VisibilityFlags::eHasShadow;
 		nvvk::Buffer VertexPosBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer VertexAttribBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer VertexColorBuffer;    // Device buffer of all 'Vertex'

@@ -341,7 +341,7 @@ namespace MapLoader
 
 		if (meshName == "FA")
 		{
-			spawnParameters.NewInstance.flags |= 2;
+			spawnParameters.NewInstance.drawFlags &= (uint32_t)-1 ^ VisibilityFlags::eHasShadow;
 		}
 
 		if (SpawnParameters->CurrentSlot != nullptr && (SpawnParameters->CurrentSlot->Slot->Decals.size() > 0 || SpawnParameters->CurrentSlot->Slot->Name == "FA"))

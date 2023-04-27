@@ -6,6 +6,7 @@
 #include <tinygltf/stb_image.h>
 #include <ArchiveParser/ParserUtils.h>
 #include <MapLoader/Assets/GameAssetLibrary.h>
+#include <Engine/Assets/ParserUtils.h>
 
 namespace MapLoader
 {
@@ -126,11 +127,23 @@ namespace MapLoader
 				if (extensionText == ".dds")
 				{
 					if (LoadDDS(cmdBuf, asset))
+					{
 						continue;
+					}
 				}
 				else
 				{
 					stbi_load_from_memory(reinterpret_cast<stbi_uc*>(LoadingBuffer.data()), (int)LoadingBuffer.size(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+
+					for (int i = 3; i < texWidth * texHeight && !asset.HasInvisibility; i += 4)
+					{
+						stbi_uc alpha = LoadingBuffer[i];
+						asset.HasTransparency |= alpha != 0xFF;
+						asset.HasInvisibility |= alpha == 0;
+
+						if (asset.HasInvisibility)
+							break;
+					}
 
 					pixels = stbi_pixels;
 				}
@@ -192,6 +205,136 @@ namespace MapLoader
 		DWORD           dwReserved2;
 	};
 
+	void CheckTransparencyDxt1(const char* data, VkDeviceSize size, VkExtent3D dimensions, bool& hasTransparency, bool& hasInvisibility)
+	{
+		Endian endian = Endian(std::endian::little);
+
+		std::string_view stream(data, size);
+
+		for (size_t y = 0; y < dimensions.height; y += 4)
+		{
+			for (size_t x = 0; x < dimensions.width; x += 4)
+			{
+				unsigned short color0 = endian.read<unsigned short>(stream);
+				unsigned short color1 = endian.read<unsigned short>(stream);
+				unsigned int encoding = endian.read<unsigned int>(stream); // blending
+
+				// only full transparency supported
+				if (color0 > color1) continue;
+
+				for (size_t i = 0; i < 4; ++i, encoding >>= 2)
+				{
+					if ((encoding & 3) >= 3)
+					{
+						hasTransparency |= true;
+						hasInvisibility |= true;
+
+						return;
+					}
+				}
+			}
+		}
+	}
+
+	void CheckTransparencyDxt3(const char* data, VkDeviceSize size, VkExtent3D dimensions, bool& hasTransparency, bool& hasInvisibility)
+	{
+		Endian endian = Endian(std::endian::little);
+
+		std::string_view stream(data, size);
+
+		for (size_t y = 0; y < dimensions.height; y += 4)
+		{
+			for (size_t x = 0; x < dimensions.width; x += 4)
+			{
+				unsigned int alpha0 = endian.read<unsigned int>(stream);
+				unsigned int alpha1 = endian.read<unsigned int>(stream);
+
+				endian.read<unsigned short>(stream); // color0
+				endian.read<unsigned short>(stream); // color1
+
+				endian.read<unsigned int>(stream); // blending
+
+
+				for (size_t j = 0; j < 4; ++j)
+				{
+					for (size_t i = 0; i < 4; ++i)
+					{
+						if (x + i >= dimensions.width || y + j >= dimensions.height) continue;
+
+						unsigned char alpha = 0;
+
+						if (j < 2)
+							alpha = 17 * (unsigned char)((alpha0 >> (4 * (4 * j + i))) & 0xF);
+						else
+							alpha = 17 * (unsigned char)((alpha1 >> (4 * (4 * (j - 2) + i))) & 0xF);
+
+						hasTransparency |= alpha != 0xFF;
+						hasInvisibility |= alpha == 0;
+
+						if (hasInvisibility)
+							return;
+					}
+				}
+			}
+		}
+	}
+
+	void CheckTransparencyDxt5(const char* data, VkDeviceSize size, VkExtent3D dimensions, bool& hasTransparency, bool& hasInvisibility)
+	{
+		Endian endian = Endian(std::endian::little);
+
+		std::string_view stream(data, size);
+
+		for (size_t y = 0; y < dimensions.height; y += 4)
+		{
+			for (size_t x = 0; x < dimensions.width; x += 4)
+			{
+				unsigned int alpha0 = endian.read<unsigned char>(stream);
+				unsigned int alpha1 = endian.read<unsigned char>(stream);
+
+				unsigned int alphaBlending0 = endian.read<unsigned int>(stream);
+				unsigned short alphaBlending1 = endian.read<unsigned short>(stream);
+
+				unsigned long long alphaBlending = ((unsigned long long)alphaBlending1 << 32) | alphaBlending0;
+
+				endian.read<unsigned short>(stream); // color0
+				endian.read<unsigned short>(stream); // color1
+
+				endian.read<unsigned int>(stream); // blending
+
+
+				for (size_t j = 0; j < 4; ++j)
+				{
+					for (size_t i = 0; i < 4; ++i)
+					{
+						if (x + i >= dimensions.width || y + j >= dimensions.height) continue;
+
+						unsigned int alpha = (unsigned int)(alphaBlending >> (3 * (4 * j + i))) & 0x7;
+
+						if (alpha == 0)
+							alpha = alpha0;
+						else if (alpha == 1)
+							alpha = alpha1;
+						else if (alpha0 > alpha1)
+							alpha = ((8 - alpha) * alpha0 + (alpha - 1) * alpha1) / 7;
+						else if (alpha == 6)
+							alpha = 0;
+						else if (alpha == 7)
+							alpha = 255;
+						else
+							alpha = (((6 - alpha) * alpha0 + (alpha - 1) * alpha1) / 5);
+
+						hasTransparency |= alpha != 0xFF;
+						hasInvisibility |= alpha == 0;
+
+						if (hasInvisibility)
+							return;
+					}
+				}
+			}
+		}
+	}
+
 	bool TextureLibrary::LoadDDS(const VkCommandBuffer& cmdBuf, TextureAsset& asset)
 	{
 		const char* bufferData = LoadingBuffer.data();
@@ -227,15 +370,24 @@ namespace MapLoader
 
 		VkFormat format = VK_FORMAT_UNDEFINED;
 
+		int formatType = -1;
+
 		if (formatName == std::string("DXT1", 4))
 		{
 			BlockSize = 8;
 			format = VkFormat::VK_FORMAT_BC1_RGBA_UNORM_BLOCK;
+			formatType = 0;
 		}
 		else if (formatName == std::string("DXT3", 4))
+		{
 			format = VkFormat::VK_FORMAT_BC2_UNORM_BLOCK;
+			formatType = 1;
+		}
 		else if (formatName == std::string("DXT5", 4))
+		{
 			format = VkFormat::VK_FORMAT_BC3_UNORM_BLOCK;
+			formatType = 2;
+		}
 		else
 		{
 			std::cout << ("unsupported DDS: '" + asset.Entry->RelativePath.string() + "'");
@@ -246,6 +398,19 @@ namespace MapLoader
 		VkDeviceSize bufferSize = size;//static_cast<uint64_t>(texWidth) * texHeight * sizeof(uint8_t) * 4;
 		auto         imgSize = VkExtent2D{ (uint32_t)ddsHeader->dwWidth, (uint32_t)ddsHeader->dwHeight };
 		auto         imageCreateInfo = nvvk::makeImage2DCreateInfo(imgSize, format, VK_IMAGE_USAGE_SAMPLED_BIT, mipLevels);
+
+		switch (formatType)
+		{
+		case 0:
+			CheckTransparencyDxt1(bufferData, size, imageCreateInfo.extent, asset.HasTransparency, asset.HasInvisibility);
+			break;
+		case 1:
+			CheckTransparencyDxt3(bufferData, size, imageCreateInfo.extent, asset.HasTransparency, asset.HasInvisibility);
+			break;
+		case 2:
+			CheckTransparencyDxt5(bufferData, size, imageCreateInfo.extent, asset.HasTransparency, asset.HasInvisibility);
+			break;
+		}
 
 		{
 			nvvk::Image image = AssetLibrary.GetVulkanContext()->Allocator.createImageDDS(cmdBuf, bufferSize, bufferData, imageCreateInfo, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, BlockSize);

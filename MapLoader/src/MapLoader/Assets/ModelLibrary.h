@@ -123,6 +123,8 @@ namespace MapLoader
 			std::vector<VertexBlendBinding> VertexBlend;
 			std::vector<int> IndexBuffer;
 			MaterialObj Material;
+			bool HasTransparency = false;
+			bool HasInvisibility = false;
 		};
 
 		struct ObjInstance

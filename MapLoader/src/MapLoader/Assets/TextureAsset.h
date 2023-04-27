@@ -13,6 +13,8 @@ namespace MapLoader
 		const Archive::Metadata::Entry* Entry = nullptr;
 		VkFormat Format = VK_FORMAT_R8G8B8A8_SRGB;
 		VkSamplerCreateInfo SamplerInfo = GetDefaultSampler();
+		bool HasTransparency = false;
+		bool HasInvisibility = false;
 
 		static VkSamplerCreateInfo GetDefaultSampler();
 	};

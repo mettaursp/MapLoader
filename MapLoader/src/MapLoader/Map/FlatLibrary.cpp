@@ -246,17 +246,17 @@ namespace MapLoader
 
 	void FlatLibrary::LoadEntityProperties(FlatEntity* entity, tinyxml2::XMLElement* setElement, const char* name)
 	{
-		if (strcmp(name, "NifAsset") == 0 || strcmp(name, "ProxyNifAsset") == 0)
+		if (/*strcmp(name, "NifAsset") == 0 ||*/ strcmp(name, "ProxyNifAsset") == 0)
 		{
 			const char* uuid = readAttribute<const char*>(setElement, "value", "urn:llid:null") + 9;
-
+		
 			const Archive::Metadata::Entry* entry = Archive::Metadata::Entry::FindFirstEntryByTagsWithLink(Archive::ParseHexInt(uuid, 0), "gamebryo-scenegraph");
-
+		
 			if (entry != nullptr)
 			{
 				entity->ProxyModel = AssetLibrary.GetModels().FetchModel(entry);
 			}
-
+		
 			return;
 		}
 	}
@@ -298,7 +298,7 @@ namespace MapLoader
 	{
 		if (mesh == nullptr) return;
 
-		if (strcmp(name, "NifAsset") == 0 || strcmp(name, "ProxyNifAsset") == 0)
+		if (strcmp(name, "NifAsset") == 0/* || strcmp(name, "ProxyNifAsset") == 0*/)
 		{
 			const char* uuid = readAttribute<const char*>(setElement, "value", "urn:llid:null") + 9;
 
@@ -306,7 +306,10 @@ namespace MapLoader
 
 			if (entry != nullptr)
 			{
-				mesh->Model = AssetLibrary.GetModels().FetchModel(entry);
+				//if (strcmp(name, "ProxyNifAsset") == 0)
+				//	mesh->ProxyModel = AssetLibrary.GetModels().FetchModel(entry);
+				//else
+					mesh->Model = AssetLibrary.GetModels().FetchModel(entry);
 			}
 
 			return;

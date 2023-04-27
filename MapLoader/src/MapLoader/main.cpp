@@ -374,33 +374,55 @@ void loadMap(const std::string& mapId)
 				light.castsShadows = entityEntry.Light->CastsShadows;
 			}
 		}
+
+		bool spawningProxy = false;
 		
-		if (entityEntry.Mesh == nullptr || entityEntry.Mesh->Model == nullptr)
-			continue;
-
-		SpawnedEntity* newModel = AssetLibrary->GetModels().SpawnModel(Scene.get(), entityEntry.Mesh->Model, entityEntry.Placeable->Transformation, [&entityEntry](ModelSpawnParameters& spawnParameters)
-			{
-				spawnParameters.NewInstance.color = (Vector3)entityEntry.Mesh->MaterialColor;
-				spawnParameters.NewInstance.flags = entityEntry.Placeable->IsVisible ? 0 : 1;
-
-				return true;
-			}
-		);// *flat->Transformation);
-		newModel->Id = entityEntry.Entity->Id;
-		newModel->Name = entityName;
-		newModel->FlatEntry = flatentry.Entity->Entry;
-		newModel->Position = entityEntry.Placeable->Position;
-		newModel->WorldPosition = ms2ToWorld * Vector3F(entityEntry.Placeable->Position, 1);
-		newModel->MapIndex = (int)loadedMaps.size() - 1;
-		newModel->LineNumber = entityElement->GetLineNum();
-
-		if (entityEntry.Portal != nullptr)
+		const auto spawnNewModel = [&entityEntry, &entityName, &flatentry, &entityElement, &spawningProxy](MapLoader::ModelData* model)
 		{
-			newModel->PortalIndex = (int)spawnedPortals.size();
-			loadedMaps.back().Portals[entityEntry.Portal->PortalId] = (int)AssetLibrary->GetModels().GetSpawnedEntities().size() - 1;
+			SpawnedEntity* newModel = AssetLibrary->GetModels().SpawnModel(Scene.get(), model, entityEntry.Placeable->Transformation,
+				[&entityEntry, &spawningProxy](ModelSpawnParameters& spawnParameters)
+				{
+					if (entityEntry.Mesh != nullptr)
+						spawnParameters.NewInstance.color = (Vector3)entityEntry.Mesh->MaterialColor;
 
-			spawnedPortals.push_back(SpawnedPortal{ entityEntry.Portal->TargetField, entityEntry.Portal->TargetPortal, entityEntry.Portal->PortalId });
-		}
+					uint32_t overrideFlags = 0;
+
+					if (!entityEntry.Placeable->IsVisible)
+						overrideFlags |= VisibilityFlags::eHiddenObject;
+
+					if (spawningProxy)
+						overrideFlags |= VisibilityFlags::eDebugObject;
+
+					if (overrideFlags != 0)
+						spawnParameters.NewInstance.drawFlags = overrideFlags;
+
+					return true;
+				}
+			);// *flat->Transformation);
+			newModel->Id = entityEntry.Entity->Id;
+			newModel->Name = entityName;
+			newModel->FlatEntry = flatentry.Entity->Entry;
+			newModel->Position = entityEntry.Placeable->Position;
+			newModel->WorldPosition = ms2ToWorld * Vector3F(entityEntry.Placeable->Position, 1);
+			newModel->MapIndex = (int)loadedMaps.size() - 1;
+			newModel->LineNumber = entityElement->GetLineNum();
+
+			if (entityEntry.Portal != nullptr)
+			{
+				newModel->PortalIndex = (int)spawnedPortals.size();
+				loadedMaps.back().Portals[entityEntry.Portal->PortalId] = (int)AssetLibrary->GetModels().GetSpawnedEntities().size() - 1;
+
+				spawnedPortals.push_back(SpawnedPortal{ entityEntry.Portal->TargetField, entityEntry.Portal->TargetPortal, entityEntry.Portal->PortalId });
+			}
+		};
+
+		if (entityEntry.Mesh != nullptr && entityEntry.Mesh->Model != nullptr)
+			spawnNewModel(entityEntry.Mesh->Model);
+
+		spawningProxy = true;
+
+		if (entityEntry.Entity != nullptr && entityEntry.Entity->ProxyModel != nullptr)
+			spawnNewModel(entityEntry.Entity->ProxyModel);
 	}
 
 	if (hasAmbient && directionalLight == -1)
@@ -1109,7 +1131,7 @@ int main(int argc, char** argv)
 						if (ImGui::IsKeyPressed(ImGuiKey_Insert) && fs::exists(ms2RootExtracted))
 						{
 							std::cout << modifiers << std::endl;
-							fs::path path = ms2RootExtracted / "Resource/";
+							fs::path path = ms2RootExtracted / "Resource";
 							std::string editor = "cmd.exe /q /c start /b code --goto ";
 							int line = -1;
 							DWORD flags = 0;
@@ -1118,25 +1140,40 @@ int main(int argc, char** argv)
 							{
 								flags = CREATE_NO_WINDOW;
 
-								path = path / entity.FlatEntry->RelativePath;
+								std::string flatPath = entity.FlatEntry->RelativePath.string();
+
+								if (flatPath.size() >= 9 && flatPath.substr(0, 9) == "resource/")
+									path = path.parent_path();
+
+								path += flatPath;
+								std::cout << "using vs code" << std::endl;
 							}
 							else if (modifiers == ModifierKeys::Alt)
 							{
 								editor = "\"B:/Files/NifSkope_2_0_2020-07-09-x64/NifSkope.exe\"";
-								path = path / entity.Model->Entry->RelativePath;
+								path += entity.Model->Entry->RelativePath;
+								std::cout << "using nifskope" << std::endl;
 							}
 							else if (modifiers == ModifierKeys::Ctrl)
 							{
 								flags = CREATE_NO_WINDOW;
 
-								path = loadedMaps[entity.MapIndex].XBlockPath;
+								const std::string& xblockPath = loadedMaps[entity.MapIndex].XBlockPath;
+
+								if (xblockPath.size() >= 9 && xblockPath.substr(0, 9) == "resource/")
+									path = path.parent_path();
+								
+								path = path / xblockPath;
 
 								line = entity.LineNumber;
+								std::cout << "using vs code" << std::endl;
 							}
 							else
 							{
 								path = "err";
 							}
+
+							std::cout << "opening " << path.string() << std::endl;
 
 							if (fs::exists(path))
 							{
@@ -1305,17 +1342,50 @@ int main(int argc, char** argv)
 
 					}
 
-					bool drawInvisible = (helloVk.hostUBO.drawMode & 1) != 0;
-					bool drawDebug = (helloVk.hostUBO.drawMode & 2) != 0;
-					bool highlightDebug = (helloVk.hostUBO.drawMode & 4) != 0;
+					bool drawFlags[8] = { false };
+					bool highlightFlags[8] = { false };
 
-					ImGui::Checkbox("Draw Invisible Objects", &drawInvisible);
-					ImGui::Checkbox("Draw Debug Objects", &drawDebug);
-					ImGui::Checkbox("Highlight Debug Objects", &highlightDebug);
-					ImGui::Checkbox("Draw Rig Skeletons", &debugDisplaySkeletons);
+					for (size_t i = 0; i < 8; ++i)
+					{
+						drawFlags[i] = (helloVk.hostUBO.drawMask & (1 << i)) != 0;
+						highlightFlags[i] = (helloVk.hostUBO.drawMask & (1 << (i + 8))) != 0;
+					}
 
-					helloVk.hostUBO.drawMode &= -1 ^ 7;
-					helloVk.hostUBO.drawMode |= (highlightDebug ? 4 : 0) | (drawDebug ? 2 : 0) | (drawInvisible ? 1 : 0);
+					const char* const drawFlagLabels[8] = {
+						"Standard Objects",
+						"Objects With Transparency",
+						"Objects With Invisibility",
+						"Debug/Proxy Objects",
+						"Hidden Objects",
+						"Objects With Shadows",
+						nullptr
+					};
+
+					if (ImGui::CollapsingHeader("Draw Object Types"))
+					{
+						for (size_t i = 0; i < 8 && drawFlagLabels[i]; ++i)
+						{
+							ImGui::Checkbox(drawFlagLabels[i], &drawFlags[i]);
+						}
+					}
+
+					if (ImGui::CollapsingHeader("Highlight Object Types"))
+					{
+						for (size_t i = 0; i < 8 && drawFlagLabels[i]; ++i)
+						{
+							ImGui::Checkbox(drawFlagLabels[i], &highlightFlags[i]);
+						}
+					}
+
+					uint32_t drawMask = 0;
+
+					for (size_t i = 0; i < 8; ++i)
+					{
+						drawMask |= drawFlags[i] << i;
+						drawMask |= highlightFlags[i] << (i + 8);
+					}
+					
+					helloVk.hostUBO.drawMask = drawMask;
 
 					ImGui::Checkbox("Limit Frame Rate", &helloVk.desiredVSync);
 					takeScreenshot = ImGui::Button("Screenshot");

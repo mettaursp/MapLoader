@@ -65,6 +65,16 @@ void main()
 {
 	// Object data
 	InstDesc    instanceDesc = instDesc.i[gl_InstanceID];
+
+	if ((instanceDesc.drawFlags & eHasTransparency) == 0)
+	{
+		shadowPayload.transmission = vec3(0, 0, 0);
+		shadowPayload.rayLength = 0;
+		shadowPayload.isShadowed = true;
+
+		return;
+	}
+
 	MeshDesc    objResource = objDesc.i[gl_InstanceCustomIndexEXT];
 	MatIndices matIndices  = MatIndices(objResource.materialIndexAddress);
 	Materials  materials   = Materials(objResource.materialAddress);
@@ -87,21 +97,10 @@ void main()
 	VertexPosBinding v1 = vertices.v[ind.y];
 	VertexPosBinding v2 = vertices.v[ind.z];
 
-	vec3 nrm = v0.normal * barycentrics.x + v1.normal * barycentrics.y + v2.normal * barycentrics.z;
 	vec2 texCoord = v0.texcoord * barycentrics.x + v1.texcoord * barycentrics.y + v2.texcoord * barycentrics.z;
-
-	const vec3 worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));  // Transforming the normal to world space
 
 	shadowPayload.nextOrigin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
 
-	//if (dot(worldNrm, gl_WorldRayDirectionEXT) > 0)
-	//{
-	//	shadowPayload.rayLength -= gl_HitTEXT;
-//
-	//	return;
-	//}
-
-	// Computing the normal at hit position
 	vec4 vertexColor      = v0.color * barycentrics.x + v1.color * barycentrics.y + v2.color * barycentrics.z;
 	vertexColor /= 255;
 	

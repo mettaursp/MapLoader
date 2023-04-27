@@ -183,6 +183,20 @@ namespace MapLoader
 
 				modelNode.Material = meshBuffers.Material;
 				modelNode.MeshId = (int)LoadModel(meshBuffers);
+				modelNode.HasTransparency = meshBuffers.HasTransparency;
+				modelNode.HasInvisibility = meshBuffers.HasInvisibility;
+
+				if (meshBuffers.Material.textures == 0) continue;
+				
+				::MaterialTextures& textures = MaterialTextures[meshBuffers.Material.textures];
+
+				if (textures.diffuse.id != -1)
+				{
+					const TextureAsset& texture = AssetLibrary.GetTextures().GetAssets()[textures.diffuse.id];
+
+					modelNode.HasTransparency |= texture.HasTransparency;
+					modelNode.HasInvisibility |= texture.HasInvisibility;
+				}
 			}
 		}
 
@@ -394,6 +408,22 @@ namespace MapLoader
 		buffers.IndexBuffer = node.Mesh->GetIndexBuffer();
 
 		node.Format->Copy(node.Mesh->GetData(), buffers.VertexBindings, bufferFormat, vertices);
+
+		const Engine::Graphics::VertexAttributeFormat* colorAttribute = node.Format->GetAttribute("color");
+
+		if (colorAttribute == nullptr) return;
+
+		size_t vertexSize = node.Format->GetVertexSize(colorAttribute->Binding);
+
+		const char* buffer = reinterpret_cast<const char*>(node.Mesh->GetData()[colorAttribute->Binding]);
+
+		for (size_t i = 0; i < vertices && !buffers.HasInvisibility; ++i)
+		{
+			const Color4I& color = *reinterpret_cast<const Color4I*>(buffer + (i * vertexSize + colorAttribute->Offset));
+
+			buffers.HasTransparency |= color.A != 0xFF;
+			buffers.HasInvisibility |= color.A == 0;
+		}
 	}
 
 	uint32_t ModelLibrary::LoadModel(MeshBuffers& buffers, const Matrix4F& transform, bool invisible)
@@ -465,8 +495,13 @@ namespace MapLoader
 
 		// Creating information for device access
 		MeshDesc desc;
-		desc.displayFlags = (invisible ? 1 : 0);
 		desc.vertexPosAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexPosBuffer.buffer);
+
+		if (invisible)
+		{
+			mesh.drawFlags = VisibilityFlags::eHiddenObject;
+			desc.displayFlags = VisibilityFlags::eHiddenObject;
+		}
 
 		if (mesh.VertexBinormalBuffer.buffer)
 			desc.vertexBinormalAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexBinormalBuffer.buffer);
@@ -590,8 +625,17 @@ namespace MapLoader
 			if (model->IsLoaded(i))
 			{
 				InstDesc instance;
-				const auto& meshDescription = GetMeshDescriptions()[model->Nodes[i].MeshId];
+				const auto& modelNode = model->Nodes[i];
+				const auto& meshDescription = GetMeshDescriptions()[modelNode.MeshId];
 				size_t meshId = GpuEntityData.size();
+
+				instance.drawFlags = meshDescription.drawFlags;
+
+				if (modelNode.HasTransparency)
+					instance.drawFlags |= VisibilityFlags::eHasTransparency;
+
+				if (modelNode.HasInvisibility)
+					instance.drawFlags |= VisibilityFlags::eHasInvisibility;
 
 				if (callback != nullptr)
 				{
@@ -602,7 +646,7 @@ namespace MapLoader
 						.NewInstance = instance,
 						.MeshId = meshId,
 						.VertexCount = meshDescription.VertexCount,
-						.IndexCount = meshDescription.IndexCount
+						.IndexCount = meshDescription.IndexCount,
 					};
 
 					if (!callback(parameters))
@@ -639,6 +683,7 @@ namespace MapLoader
 				sceneObject->SetInstanceId(meshId);
 				sceneObject->SetStatic(true);
 				sceneObject->SetParent(transform);
+				sceneObject->SetVisibilityFlags((VisibilityFlags)(instance.drawFlags & 0xFF));
 				scene->AddObject(sceneObject);
 				spawnedEntity.Meshes.push_back({ transform, sceneObject });
 

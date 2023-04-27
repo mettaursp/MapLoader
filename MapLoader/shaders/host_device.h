@@ -35,6 +35,8 @@ using uint64_t = unsigned long long;
 #define WITH_DEFAULT(x) = x
 #else
 #extension GL_EXT_shader_explicit_arithmetic_types_int8 : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
  #define START_BINDING(a)  const uint
  #define END_BINDING() 
 #define WITH_DEFAULT(x)
@@ -62,7 +64,7 @@ START_BINDING(LightingModels)
 END_BINDING();
 
 START_BINDING(MaterialTypes)
-	eNone = -1,
+	eDefaultMaterial = -1,
 	eMS2StandardMaterial  = 0,
 	eMS2ShimmerMaterial = 1,
 	eMS2GlowMaterial = 2,
@@ -71,11 +73,26 @@ START_BINDING(MaterialTypes)
 	eMS2CharacterHairMaterial = 5,
 	eMS2GlassMaterial = 6
 END_BINDING();
+
+START_BINDING(VisibilityFlags)
+	eDisabledObject = 0x0,
+	eStandardVisibility = 0x1,
+	eHasTransparency = 0x2,
+	eHasInvisibility = 0x4,
+	eDebugObject = 0x8,
+	eHiddenObject = 0x10,
+	eHasShadow = 0x20
+END_BINDING();
+
+START_BINDING(RenderSettingFlags)
+	eHighlightDebugObjects = 0x100
+END_BINDING();
+
 // clang-format on
 
 struct MeshDesc
 {
-	int displayFlags WITH_DEFAULT(0);
+	uint32_t displayFlags WITH_DEFAULT(0);
 	uint64_t vertexPosAddress WITH_DEFAULT(0);      // Address of the Vertex buffer
 	uint64_t vertexBinormalAddress WITH_DEFAULT(0); // Address of the Vertex buffer
 	uint64_t vertexMorphAddress WITH_DEFAULT(0);    // Address of the Vertex buffer
@@ -94,7 +111,7 @@ struct WireframeDesc
 struct InstDesc
 {
 	vec3 color;
-	int flags WITH_DEFAULT(0);
+	uint32_t drawFlags WITH_DEFAULT(eStandardVisibility | eHasShadow);
 	vec3 primaryColor;
 	int textureOverride WITH_DEFAULT(-1);
 	vec3 secondaryColor;
@@ -130,7 +147,7 @@ struct GlobalUniforms
 	int hitIndex WITH_DEFAULT(0);
 	int lightingModel WITH_DEFAULT(1);
 	int skyLightMode WITH_DEFAULT(0);
-	int drawMode WITH_DEFAULT(0);
+	uint32_t drawMask WITH_DEFAULT(eStandardVisibility);
 };
 
 struct AnimationTask

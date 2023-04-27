@@ -350,12 +350,19 @@ namespace MapLoader
 	{
 		int32_t modelIndex = sceneObject->GetModelId();
 
+		VkGeometryInstanceFlagsKHR flags = 0;
+
+		const ModelNode& node = sceneObject->GetModel()->Nodes[sceneObject->GetModelIndex()];
+
+		if (!node.HasInvisibility)
+			flags |= VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR;
+
 		VkAccelerationStructureInstanceKHR& instance = AccelStructureInstances[index];
 		instance.transform = nvvk::toTransformMatrixKHR(sceneObject->GetTransform()->GetWorldTransformation());
 		instance.instanceCustomIndex = modelIndex;
 		instance.accelerationStructureReference = RTBuilder.getBlasDeviceAddress(modelIndex);
-		instance.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
-		instance.mask = sceneObject->GetVisibilityTypeBit();
+		instance.flags = flags;//VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
+		instance.mask = sceneObject->GetVisibilityFlags();
 		instance.instanceShaderBindingTableRecordOffset = 0;
 	}
 

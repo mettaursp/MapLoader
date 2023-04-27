@@ -81,29 +81,16 @@ void main()
 	int							 matIdx = matIndices.i[gl_PrimitiveID];
 	WaveFrontMaterial mat		= materials.m[matIdx];
 
-#ifdef IS_SHADOW_RAY
-	bool noShadows = (instanceDesc.flags & 2) != 0;
-
-	if (noShadows)
-	{
-		ignoreIntersectionEXT;
-
-		return;
-	}
-#endif
-
-	bool debugDrawObject = (mat.shaderType & 0x1) != 0;
-	bool invisibleObject = (instanceDesc.flags & 1) != 0;
-	
-	bool drawInvisible = (uni.drawMode & 1) != 0;
-	bool drawDebug = (uni.drawMode & 2) != 0;
-	
-	if ((invisibleObject && !drawInvisible) || (debugDrawObject && !drawDebug))
-	{
-		ignoreIntersectionEXT;
-	
-		return;
-	}
+//#ifdef IS_SHADOW_RAY
+//	bool noShadows = (instanceDesc.drawFlags & 2) != 0;
+//
+//	if (noShadows)
+//	{
+//		ignoreIntersectionEXT;
+//
+//		return;
+//	}
+//#endif
 
 	// Indices of the triangle
 	ivec3 ind = indices.i[gl_PrimitiveID];
@@ -132,36 +119,36 @@ void main()
 	int texturesIndex = instanceDesc.textureOverride != -1 ? instanceDesc.textureOverride : mat.textures;
 	MaterialTextures textures = texOverride.i[texturesIndex];
 
-	if (textures.diffuse.id < 0 && textures.decal.id < 0)
-	{
-		if (!debugDrawObject)
-			ignoreIntersectionEXT;
+	//if (textures.diffuse.id < 0 && textures.decal.id < 0)
+	//{
+	//	if (!debugDrawObject)
+	//		ignoreIntersectionEXT;
+//
+	//	return;
+	//}
 
-		return;
-	}
-
-	vec3 nrm = cross(v1.position - v0.position, v2.position - v0.position);
 	vec2 texCoord = v0.texcoord * barycentrics.x + v1.texcoord * barycentrics.y + v2.texcoord * barycentrics.z;
-
-	const vec3 worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));	// Transforming the normal to world space
-	
-	float normalDot = dot(worldNrm, gl_WorldRayDirectionEXT);
-
-#ifdef IS_SHADOW_RAY
-	if (normalDot < 0)
-	{
-		ignoreIntersectionEXT;
-
-		return;
-	}
-#else
-	if (normalDot > 0)
-	{
-		ignoreIntersectionEXT;
-
-		return;
-	}
-#endif
+//	vec3 nrm = cross(v1.position - v0.position, v2.position - v0.position);
+//
+//	const vec3 worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));	// Transforming the normal to world space
+//	
+//	float normalDot = dot(worldNrm, gl_WorldRayDirectionEXT);
+//
+//#ifdef IS_SHADOW_RAY
+//	if (normalDot < 0)
+//	{
+//		ignoreIntersectionEXT;
+//
+//		return;
+//	}
+//#else
+//	if (normalDot > 0)
+//	{
+//		ignoreIntersectionEXT;
+//
+//		return;
+//	}
+//#endif
 
 	return;
 

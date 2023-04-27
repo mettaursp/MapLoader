@@ -24,6 +24,7 @@
 #extension GL_GOOGLE_include_directive : enable
 
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
+#extension GL_EXT_shader_explicit_arithmetic_types_int32 : require
 #extension GL_EXT_shader_16bit_storage : require
 #extension GL_EXT_buffer_reference2 : require
 
@@ -149,29 +150,15 @@ void main()
 	int shaderType = mat.shaderType & 0xFFFF0000;
 	shaderType = shaderType < 0 ? -1 : shaderType >> 16;
 
-	bool debugDrawObject = (mat.shaderType & 0x1) != 0;
-	bool invisibleObject = (instanceDesc.flags & 1) != 0;
+	uint32_t highlightMask = (uni.drawMask >> 8) & 0xFF;
 	//if (mat.shaderType == eNone)
 	//{ prd.hitValue = vec3(1, 0, 0); prd.rayLength = 0; return; }
 	//if (shaderType == eMS2GlowMaterial)
 	//{ prd.hitValue = vec3(1, 0, 1); prd.rayLength = 0; return; }
 
-	bool drawInvisible = (uni.drawMode & 1) != 0;
-	bool drawDebug = (uni.drawMode & 2) != 0;
-	bool highlightDebug = (uni.drawMode & 4) != 0;
-	
-	if ((invisibleObject && !drawInvisible) || (debugDrawObject && !drawDebug))
+	if ((instanceDesc.drawFlags & highlightMask) != 0)
 	{
-		prd.nextDirection = gl_WorldRayDirectionEXT;
-		prd.nextOrigin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-		prd.rayLength -= gl_HitTEXT;
-	
-		return;
-	}
-
-	if (debugDrawObject && highlightDebug)
-	{
-		 prd.hitValue = vec3(1, 0, 1);
+		 prd.hitValue = vec3(0.9, 0.1, 0.9) + 0.1 * worldNrm;
 		 prd.rayLength = 0;
 		 return;
 	}
@@ -350,7 +337,8 @@ void main()
 			float tMax   = lightDistance;
 			vec3  rayDir = L;
 			//uint  flags  = gl_RayFlagsTerminateOnFirstHitEXT | gl_RayFlagsOpaqueEXT | gl_RayFlagsSkipClosestHitShaderEXT;
-			uint  flags  = gl_RayFlagsNoneEXT ;
+			//uint  flags  = gl_RayFlagsNoneEXT ;
+			uint  flags  = gl_RayFlagsCullFrontFacingTrianglesEXT ;
 
 			shadowPayload.rayLength = tMax;
 			shadowPayload.nextOrigin = origin;
@@ -361,7 +349,7 @@ void main()
 			{
 				traceRayEXT(topLevelAS,  // acceleration structure
 									flags,       // rayFlags
-									0xFF,        // cullMask
+									eHasShadow,//uni.drawMask,        // cullMask
 									1,           // sbtRecordOffset
 									1,           // sbtRecordStride
 									1,           // missIndex
@@ -371,6 +359,8 @@ void main()
 									shadowPayload.rayLength,        // ray max range
 									1            // payload (location = 1)
 				);
+				
+				if (shadowPayload.isShadowed) break;
 
 				shadowPayload.transmission = max(minTransmission, shadowPayload.transmission);
 

@@ -131,7 +131,7 @@ namespace MapLoader
 
 		auto& models = AssetLibrary->GetModels();
 
-		models.SpawnModel(Scene.get(), model, modelTransformation * transformation, spawnCallback);
+		models.SpawnModel(Scene.get(), model, modelTransformation * transformation, {}, spawnCallback);
 
 		for (size_t i = 0; i < Models.size(); ++i)
 		{

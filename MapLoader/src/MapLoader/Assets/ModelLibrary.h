@@ -107,7 +107,7 @@ namespace MapLoader
 		const auto& GetGpuEntityData() const { return GpuEntityData; }
 		const auto& GetBlasInstances() const { return BlasInstances; }
 
-		SpawnedEntity* SpawnModel(RTScene* scene, ModelData* model, const Matrix4F& transform = Matrix4F(), const ModelSpawnCallback& callback = nullptr);
+		SpawnedEntity* SpawnModel(RTScene* scene, ModelData* model, const Matrix4F& transform, const Vector3SF& mapCoords, const ModelSpawnCallback& callback = nullptr);
 		void SpawnWireframe(RTScene* scene, uint32_t index, const Matrix4F& transform = Matrix4F());
 
 		void FreeResources();

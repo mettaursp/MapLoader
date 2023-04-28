@@ -379,7 +379,7 @@ void loadMap(const std::string& mapId)
 		
 		const auto spawnNewModel = [&entityEntry, &entityName, &flatentry, &entityElement, &spawningProxy](MapLoader::ModelData* model)
 		{
-			SpawnedEntity* newModel = AssetLibrary->GetModels().SpawnModel(Scene.get(), model, entityEntry.Placeable->Transformation,
+			SpawnedEntity* newModel = AssetLibrary->GetModels().SpawnModel(Scene.get(), model, entityEntry.Placeable->Transformation, entityEntry.Placeable->Position,
 				[&entityEntry, &spawningProxy](ModelSpawnParameters& spawnParameters)
 				{
 					if (entityEntry.Mesh != nullptr)
@@ -1357,6 +1357,42 @@ int main(int argc, char** argv)
 
 					}
 
+					ImGui::Checkbox("Limit Frame Rate", &helloVk.desiredVSync);
+					takeScreenshot = ImGui::Button("Screenshot");
+					takingLargeScreenshot |= ImGui::Button("Large Screenshot");
+
+					if (!helloVk.takingScreenshot)
+					{
+						ImGui::Checkbox("Combine Large Screenshot", &helloVk.combineScreenshot);
+					}
+
+					if (ImGui::Button("Play Animation"))
+					{
+						derpPandaRig->GetAnimationPlayer()->PlayAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
+					}
+
+					ImGui::EndTabItem();
+				}
+
+				if (ImGui::BeginTabItem("Debug Settings"))
+				{
+					ImGui::Text("Show World Slice:");
+
+					int sliceIndex = helloVk.hostUBO.sliceAxisIndex;
+
+					ImGui::RadioButton("None", &sliceIndex, -1);
+					ImGui::RadioButton("X", &sliceIndex, 0);
+					ImGui::RadioButton("Y", &sliceIndex, 1);
+					ImGui::RadioButton("Z", &sliceIndex, 2);
+
+					helloVk.hostUBO.sliceAxisIndex = sliceIndex;
+
+					if (sliceIndex != -1)
+					{
+						ImGui::InputFloat("Axis", &helloVk.hostUBO.sliceAxis);
+						ImGui::InputFloat("Epsilon", &helloVk.hostUBO.sliceAxisEpsilon);
+					}
+
 					bool drawFlags[8] = { false };
 					bool highlightFlags[8] = { false };
 
@@ -1399,21 +1435,43 @@ int main(int argc, char** argv)
 						drawMask |= drawFlags[i] << i;
 						drawMask |= highlightFlags[i] << (i + 8);
 					}
-					
+
 					helloVk.hostUBO.drawMask = drawMask;
 
-					ImGui::Checkbox("Limit Frame Rate", &helloVk.desiredVSync);
-					takeScreenshot = ImGui::Button("Screenshot");
-					takingLargeScreenshot |= ImGui::Button("Large Screenshot");
-
-					if (!helloVk.takingScreenshot)
+					if (ImGui::CollapsingHeader("Highlight Materials"))
 					{
-						ImGui::Checkbox("Combine Large Screenshot", &helloVk.combineScreenshot);
-					}
+						bool highlightMaterialFlags[32] = { false };
+						const char* materialNames[16] = { nullptr };
 
-					if (ImGui::Button("Play Animation"))
-					{
-						derpPandaRig->GetAnimationPlayer()->PlayAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
+						const auto& models = AssetLibrary->GetModels();
+
+						for (const auto& index : models.MaterialTypeMap)
+						{
+							size_t i = index.second + 1;
+
+							materialNames[i] = index.first.c_str();
+
+							if (materialNames[i][0] == 0)
+								materialNames[i] = "Default";
+
+							highlightMaterialFlags[i] = (helloVk.hostUBO.highlightMaterialFlags & (1 << i)) != 0;
+						}
+
+						for (size_t i = 0; i < 16; ++i)
+						{
+							if (materialNames[i] == nullptr) continue;
+
+							ImGui::Checkbox(materialNames[i], &highlightMaterialFlags[i]);
+						}
+
+						uint32_t materialMask = 0;
+
+						for (size_t i = 0; i < 16; ++i)
+						{
+							materialMask |= highlightMaterialFlags[i] << i;
+						}
+
+						helloVk.hostUBO.highlightMaterialFlags = materialMask;
 					}
 
 					ImGui::EndTabItem();

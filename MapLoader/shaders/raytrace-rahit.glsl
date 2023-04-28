@@ -71,6 +71,19 @@ void main()
 {
 	// Object data
 	InstDesc		instanceDesc = instDesc.i[gl_InstanceID];
+
+	if (uni.sliceAxisIndex != -1)
+	{
+		if (abs(instanceDesc.mapCoords[uni.sliceAxisIndex] - uni.sliceAxis) > uni.sliceAxisEpsilon)
+		{
+			ignoreIntersectionEXT;
+
+			return;
+		}
+
+		if ((instanceDesc.drawFlags & eHasInvisibility) == 0) return;
+	}
+
 	Indices		indices		 = Indices(instanceDesc.indexAddress);
 
 	// Material of the object

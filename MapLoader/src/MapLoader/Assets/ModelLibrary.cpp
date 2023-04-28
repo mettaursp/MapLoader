@@ -678,7 +678,7 @@ namespace MapLoader
 		cmdBufGet.submitAndWait(cmdBuf);
 	}
 
-	SpawnedEntity* ModelLibrary::SpawnModel(RTScene* scene, MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback)
+	SpawnedEntity* ModelLibrary::SpawnModel(RTScene* scene, MapLoader::ModelData* model, const Matrix4F& transformation, const Vector3SF& mapCoords, const ModelSpawnCallback& callback)
 	{
 		if (model == nullptr)
 			return nullptr;
@@ -698,6 +698,7 @@ namespace MapLoader
 				const auto& gpuMeshData = GpuMeshData[modelNode.MeshId];
 
 				instance.drawFlags = meshDescription.drawFlags;
+				instance.mapCoords = mapCoords;
 
 				if (modelNode.HasTransparency)
 					instance.drawFlags |= VisibilityFlags::eHasTransparency;

@@ -147,6 +147,7 @@ struct InstDesc
 	uint64_t vertexBinormalAddress WITH_DEFAULT(0);
 	uint64_t indexAddress WITH_DEFAULT(0);          // Address of the index buffer
 	uint32_t materialId WITH_DEFAULT(0);          // Address of the index buffer
+	vec3 mapCoords;
 };
 
 struct LightDesc
@@ -179,6 +180,10 @@ struct GlobalUniforms
 	int skyLightMode WITH_DEFAULT(0);
 	uint32_t drawMask WITH_DEFAULT(eStandardVisibility);
 	uint32_t lightingModelOffset WITH_DEFAULT(0);
+	uint32_t highlightMaterialFlags WITH_DEFAULT(0);
+	int8_t sliceAxisIndex WITH_DEFAULT(-1);
+	float sliceAxis WITH_DEFAULT(0);
+	float sliceAxisEpsilon WITH_DEFAULT(20);
 };
 
 struct AnimationTask

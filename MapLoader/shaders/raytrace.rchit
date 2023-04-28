@@ -179,7 +179,9 @@ void main()
 	//if (shaderType == eMS2GlowMaterial)
 	//{ prd.hitValue = vec3(1, 0, 1); prd.rayLength = 0; return; }
 
-	if ((instanceDesc.drawFlags & highlightMask) != 0)
+	bool highlightMaterial = (uni.highlightMaterialFlags & (1 << (SHADER_TYPE + 1))) != 0;
+
+	if ((instanceDesc.drawFlags & highlightMask) != 0 || highlightMaterial)
 	{
 		 prd.hitValue = vec3(0.9, 0.1, 0.9) + 0.1 * worldNrm;
 		 prd.rayLength = 0;

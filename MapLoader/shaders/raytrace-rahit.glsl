@@ -23,14 +23,13 @@ layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[
 layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexBlend { VertexBlendBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer Indices {ivec3 i[]; }; // Triangle indices
-layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
-layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
 layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { MeshDesc i[]; } objDesc;
 layout(set = 1, binding = eInstDescs, scalar) buffer InstanceDescription_ { InstDesc i[]; } instDesc;
 layout(set = 1, binding = eTextures) uniform sampler2D textureSamplers[];
 layout(set = 1, binding = eTextureTransforms, scalar) buffer TextureTransform_ { TextureTransform i[]; } textureTransform;
 layout(set = 1, binding = eGlobals) uniform _GlobalUniforms { GlobalUniforms uni; };
 layout(set = 1, binding = eTextureOverrides, scalar) buffer MaterialTextures_ { MaterialTextures i[]; } texOverride;
+layout(set = 1, binding = eMaterials, scalar) buffer Materials_ { WaveFrontMaterial m[]; } materials;
 
 //layout(push_constant) uniform _PushConstantRay
 //{
@@ -72,14 +71,10 @@ void main()
 {
 	// Object data
 	InstDesc		instanceDesc = instDesc.i[gl_InstanceID];
-	MeshDesc		objResource = objDesc.i[gl_InstanceCustomIndexEXT];
-	MatIndices matIndices	= MatIndices(objResource.materialIndexAddress);
-	Materials	materials	 = Materials(objResource.materialAddress);
-	Indices		indices		 = Indices(objResource.indexAddress);
+	Indices		indices		 = Indices(instanceDesc.indexAddress);
 
 	// Material of the object
-	int							 matIdx = matIndices.i[gl_PrimitiveID];
-	WaveFrontMaterial mat		= materials.m[matIdx];
+	WaveFrontMaterial mat    = materials.m[instanceDesc.materialId];
 
 //#ifdef IS_SHADOW_RAY
 //	bool noShadows = (instanceDesc.drawFlags & 2) != 0;
@@ -97,7 +92,7 @@ void main()
 
 	const vec3 barycentrics = vec3(1.0 - attributes.x - attributes.y, attributes.x, attributes.y);
 
-	VertexPos vertices = VertexPos(instanceDesc.vertexPosAddressOverride != 0 ? instanceDesc.vertexPosAddressOverride : objResource.vertexPosAddress);
+	VertexPos vertices = VertexPos(instanceDesc.vertexPosAddress);
 
 	VertexPosBinding v0 = vertices.v[ind.x];
 	VertexPosBinding v1 = vertices.v[ind.y];
@@ -116,8 +111,7 @@ void main()
 		return;
 	}
 
-	int texturesIndex = instanceDesc.textureOverride != -1 ? instanceDesc.textureOverride : mat.textures;
-	MaterialTextures textures = texOverride.i[texturesIndex];
+	MaterialTextures textures = texOverride.i[instanceDesc.textures];
 
 	//if (textures.diffuse.id < 0 && textures.decal.id < 0)
 	//{

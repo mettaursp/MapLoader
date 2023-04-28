@@ -1212,43 +1212,7 @@ void NifParser::Parse(std::string_view stream)
 
 			ImportedMeshes.push_back(mesh);
 
-			std::vector<size_t> bones;
-
-			for (size_t i = 0; i < data->Modifiers.size(); ++i)
-			{
-				if (data->Modifiers[i]->BlockType == "NiSkinningMeshModifier")
-				{
-					const BlockData* skinBlock = data->Modifiers[i];
-					NiSkinningMeshModifier* skinData = skinBlock->Data->Cast<NiSkinningMeshModifier>();
-					size_t skinRootIndex = nodeIndices[skinData->SkeletonRoot->BlockIndex];
-
-					if (skinData->SkeletonRoot->BlockIndex >= blockIndex)
-					{
-						std::cout << "linked to uninitialized block index" << std::endl;
-					}
-
-					//MarkBone(skinRootIndex, boneIndices);
-
-					//bones.push_back(boneIndices[skinRootIndex]);
-
-					for (size_t j = 0; j < skinData->Bones.size(); ++j)
-					{
-						const BlockData* boneData = skinData->Bones[j];
-						size_t boneIndex = nodeIndices[boneData->BlockIndex];
-
-						if (boneData->BlockIndex >= blockIndex)
-						{
-							std::cout << "linked to uninitialized block index" << std::endl;
-						}
-
-						MarkBone(boneIndex, boneIndices);
-
-						bones.push_back(boneIndices[boneIndex]);
-					}
-				}
-			}
-
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, false, false, mesh.Format, mesh.Mesh, transform, bones });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, false, false, mesh.Format, mesh.Mesh, transform });
 		}
 		else if (block.BlockType == "NiSequenceData")
 		{
@@ -1497,6 +1461,37 @@ void NifParser::Parse(std::string_view stream)
 				else
 				{
 					std::cout << Name << ": " << "unsupported animation evaluator type '" << evaluator << "'" << std::endl;
+				}
+			}
+		}
+	}
+
+	for (unsigned int blockIndex = 0; blockIndex < numBlocks; ++blockIndex)
+	{
+		BlockData& block = document.Blocks[blockIndex];
+
+		if (block.BlockType == "NiMesh")
+		{
+			NiMesh* data = block.Data->Cast<NiMesh>();
+			ModelPackageNode& node = Package->Nodes[nodeIndices[data->BlockIndex]];
+
+			for (size_t i = 0; i < data->Modifiers.size(); ++i)
+			{
+				if (data->Modifiers[i]->BlockType == "NiSkinningMeshModifier")
+				{
+					const BlockData* skinBlock = data->Modifiers[i];
+					NiSkinningMeshModifier* skinData = skinBlock->Data->Cast<NiSkinningMeshModifier>();
+					size_t skinRootIndex = nodeIndices[skinData->SkeletonRoot->BlockIndex];
+
+					for (size_t j = 0; j < skinData->Bones.size(); ++j)
+					{
+						const BlockData* boneData = skinData->Bones[j];
+						size_t boneIndex = nodeIndices[boneData->BlockIndex];
+
+						MarkBone(boneIndex, boneIndices);
+
+						node.Bones.push_back(boneIndices[boneIndex]);
+					}
 				}
 			}
 		}

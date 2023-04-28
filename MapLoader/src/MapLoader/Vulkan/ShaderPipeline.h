@@ -43,11 +43,20 @@ namespace Graphics
 			Color4 BlendConstants = Color4(0.0f, 0.0f, 0.0f, 0.0f);
 		};
 
+		// Shared
+		struct ShaderEntry
+		{
+			Shader* Shader;
+			std::string EntryPoint;
+			VkSpecializationInfo Specialization = { 0 };
+			std::vector<VkSpecializationMapEntry> SpecializationEntries;
+		};
+
 		ShaderPipeline(const std::shared_ptr<VulkanContext>& vulkanContext, const std::shared_ptr<DescriptorSetLibrary>& descriptorSetLibrary);
 		~ShaderPipeline();
 
 		void SetVertexFormat(const std::shared_ptr<Engine::Graphics::MeshFormat>& format);
-		void AddStage(Shader* shader, const std::string& entryPoint = "");
+		ShaderPipeline::ShaderEntry& AddStage(Shader* shader, const std::string& entryPoint = "");
 		void LoadDescriptors();
 		void CreatePipelineLayout();
 		void CreateRasterPipeline();
@@ -117,13 +126,6 @@ namespace Graphics
 			std::vector<VkDynamicState> DynamicStates = { VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR };
 
 			VkGraphicsPipelineCreateInfo PipelineCreateInfo{ VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO };
-		};
-
-		// Shared
-		struct ShaderEntry
-		{
-			Shader* Shader;
-			std::string EntryPoint;
 		};
 
 		std::shared_ptr<Engine::Graphics::MeshFormat> VertexFormat;

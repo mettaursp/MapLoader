@@ -884,7 +884,7 @@ void AnyKeys<KeyType>::Parse(NifDocument* document, std::string_view& stream)
 	{
 		if (Interpolation == RotationType::QuadraticKey)
 		{
-			std::cout << "found" << std::endl;
+			//std::cout << "found" << std::endl;
 		}
 	}
 

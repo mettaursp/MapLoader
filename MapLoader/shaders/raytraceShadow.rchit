@@ -22,13 +22,12 @@ layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[
 layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexBlend {VertexBlendBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer Indices {ivec3 i[]; }; // Triangle indices
-layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
-layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
 layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { MeshDesc i[]; } objDesc;
 layout(set = 1, binding = eTextures) uniform sampler2D textureSamplers[];
 layout(set = 1, binding = eInstDescs, scalar) buffer InstanceDescription_ { InstDesc i[]; } instDesc;
 layout(set = 1, binding = eTextureTransforms, scalar) buffer TextureTransform_ { TextureTransform i[]; } textureTransform;
 layout(set = 1, binding = eTextureOverrides, scalar) buffer MaterialTextures_ { MaterialTextures i[]; } texOverride;
+layout(set = 1, binding = eMaterials, scalar) buffer Materials_ { WaveFrontMaterial m[]; } materials;
 
 
 layout(push_constant) uniform _PushConstantRay { PushConstantRay pcRay; };
@@ -76,15 +75,11 @@ void main()
 	}
 
 	MeshDesc    objResource = objDesc.i[gl_InstanceCustomIndexEXT];
-	MatIndices matIndices  = MatIndices(objResource.materialIndexAddress);
-	Materials  materials   = Materials(objResource.materialAddress);
 	Indices    indices     = Indices(objResource.indexAddress);
 
 	// Material of the object
-	int               matIdx = matIndices.i[gl_PrimitiveID];
-	WaveFrontMaterial mat    = materials.m[matIdx];
-	int texturesIndex = instanceDesc.textureOverride != -1 ? instanceDesc.textureOverride : mat.textures;
-	MaterialTextures textures = texOverride.i[texturesIndex];
+	WaveFrontMaterial mat    = materials.m[instanceDesc.materialId];
+	MaterialTextures textures = texOverride.i[instanceDesc.textures];
 
 	// Indices of the triangle
 	ivec3 ind = indices.i[gl_PrimitiveID];

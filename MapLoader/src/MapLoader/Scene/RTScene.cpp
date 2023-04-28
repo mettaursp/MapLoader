@@ -142,7 +142,7 @@ namespace MapLoader
 
 		if (regenerateTLAS)
 		{
-			RTBuilder.buildTlas(AccelStructureInstances, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, !rebuildTLAS);
+			RTBuilder.buildTlas(AccelStructureInstances, VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR | VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR, !rebuildTLAS);
 
 			regenerateTLAS = false;
 		}
@@ -215,8 +215,8 @@ namespace MapLoader
 					animationTask.skeletonAddress = skeletonAddress;
 					animationTask.skeletonIndicesAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, mesh.SkeletonSectionIndicesBuffer.buffer);
 
-					animationTask.vertexPosAddressOverride = gpuMeshInstance.vertexPosAddressOverride;
-					animationTask.vertexBinormalAddressOverride = gpuMeshInstance.vertexBinormalAddressOverride;
+					animationTask.vertexPosAddressOverride = gpuMeshInstance.vertexPosAddress;
+					animationTask.vertexBinormalAddressOverride = gpuMeshInstance.vertexBinormalAddress;
 
 					if (animationTask.vertexBinormalAddress == 0 || animationTask.vertexBinormalAddressOverride == 0)
 					{
@@ -363,7 +363,7 @@ namespace MapLoader
 		instance.accelerationStructureReference = RTBuilder.getBlasDeviceAddress(modelIndex);
 		instance.flags = flags;//VK_GEOMETRY_INSTANCE_TRIANGLE_FACING_CULL_DISABLE_BIT_KHR;
 		instance.mask = sceneObject->GetVisibilityFlags();
-		instance.instanceShaderBindingTableRecordOffset = 0;
+		instance.instanceShaderBindingTableRecordOffset = 2 * sceneObject->GetShaderType();
 	}
 
 	void RTScene::UpdateInstance(size_t index, SceneObject* sceneObject)

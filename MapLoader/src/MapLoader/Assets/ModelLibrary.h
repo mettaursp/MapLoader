@@ -92,6 +92,7 @@ namespace MapLoader
 		const auto& GetWireframeDescriptions() const { return WireframeDescriptions; }
 		const auto& GetGpuData() const { return GpuMeshData; }
 		const auto& GetGpuWireframeData() const { return GpuWireframeData; }
+		const auto& GetGpuMaterialData() const { return GpuMaterialData; }
 		const auto& GetTextureTransforms() const { return TextureTransforms; }
 		auto& GetMaterialTextures() { return MaterialTextures; }
 		const auto& GetMaterialTextures() const { return MaterialTextures; }
@@ -110,6 +111,8 @@ namespace MapLoader
 		void SpawnWireframe(RTScene* scene, uint32_t index, const Matrix4F& transform = Matrix4F());
 
 		void FreeResources();
+
+		void PrintLoggedTextures();
 
 		static const std::unordered_map<std::string, int> MaterialTypeMap;
 
@@ -151,6 +154,7 @@ namespace MapLoader
 		std::vector<std::unique_ptr<ModelData>> Models;
 		std::vector<MeshDesc> GpuMeshData;
 		std::vector<WireframeDesc> GpuWireframeData;
+		std::vector<MaterialObj> GpuMaterialData;
 		std::vector<MeshDescription> MeshDescriptions;
 		std::vector<WireframeDescription> WireframeDescriptions;
 		std::vector<MaterialTextures> MaterialTextures;
@@ -162,6 +166,31 @@ namespace MapLoader
 		std::vector<BlasInstance> BlasInstances;
 		int DuplicateFormatUses = 0;
 		Matrix4F CurrentMapTransform;
+
+		struct MaterialTextureLog
+		{
+			bool CanHave = false;
+			bool CanExclude = false;
+			bool AlwaysHas = false;
+			size_t AppearanceCount = 0;
+			size_t NumberMissing = 0;
+		};
+
+		struct MaterialLog
+		{
+			MaterialTextureLog Diffuse;
+			MaterialTextureLog Specular;
+			MaterialTextureLog Normal;
+			MaterialTextureLog ColorOverride;
+			MaterialTextureLog Emissive;
+			MaterialTextureLog Decal;
+			MaterialTextureLog Anisotropic;
+			size_t AppearanceCount = 0;
+		};
+
+		const bool LogMaterialTextures = true;
+
+		std::unordered_map<std::string, MaterialLog> LoggedMaterials;
 
 		static std::unordered_set<std::string> UnmappedMaterials;
 

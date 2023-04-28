@@ -95,7 +95,6 @@ public:
 	MouseRayOut* mouseIOPtr = nullptr;
 
 	std::shared_ptr<Engine::Graphics::MeshFormat> ShaderVertexFormat;
-	std::vector<Graphics::Shader*> Shaders;
 	std::unique_ptr<Graphics::ShaderPipeline> RTPipeline;
 	std::unique_ptr<Graphics::ShaderPipeline> RasterPipeline;
 	std::unique_ptr<Graphics::ShaderPipeline> WireframePipeline;
@@ -120,7 +119,9 @@ public:
 	nvvk::Buffer m_InstDesc;
 	nvvk::Buffer m_textureOverride;
 	nvvk::Buffer m_animationTasks;
+	nvvk::Buffer m_materials;
 	GlobalUniforms hostUBO;
+	uint32_t RTShaderCount = 0;
 
 	std::shared_ptr<MapLoader::GameAssetLibrary> AssetLibrary;
 	std::shared_ptr<MapLoader::RTScene> Scene;

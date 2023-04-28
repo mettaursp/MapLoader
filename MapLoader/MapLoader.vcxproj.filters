@@ -244,6 +244,9 @@
     <None Include="shaders\raytrace-rahit.glsl">
       <Filter>Shader Headers</Filter>
     </None>
+    <None Include="shaders\materialTextureAvailability.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="shaders\vert_shader.vert">

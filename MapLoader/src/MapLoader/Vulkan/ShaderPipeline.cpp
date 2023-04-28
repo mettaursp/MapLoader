@@ -24,9 +24,11 @@ namespace Graphics
 		VertexFormat = format;
 	}
 
-	void ShaderPipeline::AddStage(Shader* shader, const std::string& entryPoint)
+	ShaderPipeline::ShaderEntry& ShaderPipeline::AddStage(Shader* shader, const std::string& entryPoint)
 	{
 		Shaders.push_back({ shader, entryPoint });
+
+		return Shaders.back();
 	}
 
 	void ShaderPipeline::LoadDescriptors()
@@ -276,6 +278,22 @@ namespace Graphics
 			stage.pName = Shaders[i].EntryPoint != "" ? Shaders[i].EntryPoint.c_str() : shader->GetEntryPoint().c_str();
 			stage.module = shader->GetModule();
 			stage.stage = shader->GetShaderStage();
+
+			if (Shaders[i].SpecializationEntries.size() > 0)
+			{
+				auto& specialization = Shaders[i].Specialization;
+				const auto& constants = Shaders[i].SpecializationEntries;
+
+				stage.pSpecializationInfo = &specialization;
+
+				specialization.mapEntryCount = (uint32_t)constants.size();
+				specialization.pMapEntries = constants.data();
+
+				for (size_t i = 0; i < constants.size(); ++i)
+				{
+					specialization.dataSize = std::max(specialization.dataSize, constants[i].offset + constants[i].size);
+				}
+			}
 		}
 
 		std::vector<VkRayTracingShaderGroupCreateInfoKHR> groups;

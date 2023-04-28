@@ -50,7 +50,8 @@ START_BINDING(SceneBindings)
 	eTextureTransforms = 4,
 	eMouseIO = 5,
 	eInstDescs = 6,
-	eTextureOverrides = 7
+	eTextureOverrides = 7,
+	eMaterials = 8
 END_BINDING();
 
 START_BINDING(RtxBindings)
@@ -60,7 +61,9 @@ END_BINDING();
 
 START_BINDING(LightingModels)
 	ePhong  = 0,
-	eMS2Phong = 1
+	eMS2Phong = 1,
+
+	eLightingModelCount = 2
 END_BINDING();
 
 START_BINDING(MaterialTypes)
@@ -71,7 +74,14 @@ START_BINDING(MaterialTypes)
 	eMS2CharacterSkinMaterial = 3,
 	eMS2CharacterMaterial = 4,
 	eMS2CharacterHairMaterial = 5,
-	eMS2GlassMaterial = 6
+	eMS2GlassMaterial = 6,
+	eLightMapMaterial = 7,
+	eEffectDissolve_HO = 8,
+	eEffectUVDistortionMask_HO = 9,
+	eEffectUVDistortionMaskGlow_HO = 10,
+	eEffectUVDistortionMaskWrap_HO = 11,
+	eEffectUVDistortionMaskGlowWrap_HO = 12,
+	eNiStandardMaterial = 13
 END_BINDING();
 
 START_BINDING(VisibilityFlags)
@@ -84,8 +94,27 @@ START_BINDING(VisibilityFlags)
 	eHasShadow = 0x20
 END_BINDING();
 
-START_BINDING(RenderSettingFlags)
-	eHighlightDebugObjects = 0x100
+START_BINDING(SpecializationTypes)
+	eLightingModel = 0,
+	eMaterial = 1,
+	eMaterialTextureFlags = 2
+END_BINDING();
+
+START_BINDING(MaterialTextureBits)
+	eCanHaveDiffuse = 0x1,
+	eAlwaysHasDiffuse = 0x2,
+	eCanHaveSpecular = 0x4,
+	eAlwaysHasSpecular = 0x8,
+	eCanHaveNormal = 0x10,
+	eAlwaysHasNormal = 0x20,
+	eCanHaveColorOverride = 0x40,
+	eAlwaysHasColorOverride = 0x80,
+	eCanHaveEmissive = 0x100,
+	eAlwaysHasEmissive = 0x200,
+	eCanHaveDecal = 0x400,
+	eAlwaysHasDecal = 0x800,
+	eCanHaveAnisotropic = 0x1000,
+	eAlwaysHasAnisotropic = 0x2000
 END_BINDING();
 
 // clang-format on
@@ -98,8 +127,7 @@ struct MeshDesc
 	uint64_t vertexMorphAddress WITH_DEFAULT(0);    // Address of the Vertex buffer
 	uint64_t vertexBlendAddress WITH_DEFAULT(0); // Address of the Vertex buffer
 	uint64_t indexAddress WITH_DEFAULT(0);          // Address of the index buffer
-	uint64_t materialAddress WITH_DEFAULT(0);       // Address of the material buffer
-	uint64_t materialIndexAddress WITH_DEFAULT(0);  // Address of the triangle material index buffer
+	uint32_t materialId WITH_DEFAULT(0);       // Address of the material buffer
 };
 
 struct WireframeDesc
@@ -113,10 +141,12 @@ struct InstDesc
 	vec3 color;
 	uint32_t drawFlags WITH_DEFAULT(eStandardVisibility | eHasShadow);
 	vec3 primaryColor;
-	int textureOverride WITH_DEFAULT(-1);
+	int textures WITH_DEFAULT(-1);
 	vec3 secondaryColor;
-	uint64_t vertexPosAddressOverride WITH_DEFAULT(0);
-	uint64_t vertexBinormalAddressOverride WITH_DEFAULT(0);
+	uint64_t vertexPosAddress WITH_DEFAULT(0);
+	uint64_t vertexBinormalAddress WITH_DEFAULT(0);
+	uint64_t indexAddress WITH_DEFAULT(0);          // Address of the index buffer
+	uint32_t materialId WITH_DEFAULT(0);          // Address of the index buffer
 };
 
 struct LightDesc
@@ -148,6 +178,7 @@ struct GlobalUniforms
 	int lightingModel WITH_DEFAULT(1);
 	int skyLightMode WITH_DEFAULT(0);
 	uint32_t drawMask WITH_DEFAULT(eStandardVisibility);
+	uint32_t lightingModelOffset WITH_DEFAULT(0);
 };
 
 struct AnimationTask
@@ -280,5 +311,111 @@ struct MouseRayOut
 	int objectIndex;
 };
 
+/*
+ (34443):
+        Diffuse       (20273, -14170): Can Have: true ; Can Exclude: true ; Always Has: false
+        Specular      (   41, -34402): Can Have: true ; Can Exclude: true ; Always Has: false
+        Normal        (   43, -34400): Can Have: true ; Can Exclude: true ; Always Has: false
+        ColorOverride (    0, -34443): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      ( 6134, -28309): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         ( 2127, -32316): Can Have: true ; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0, -34443): Can Have: false; Can Exclude: true ; Always Has: false
+MS2StandardMaterial (50325):
+        Diffuse       (48823,  -1502): Can Have: true ; Can Exclude: true ; Always Has: false
+        Specular      (  419, -49906): Can Have: true ; Can Exclude: true ; Always Has: false
+        Normal        (  309, -50016): Can Have: true ; Can Exclude: true ; Always Has: false
+        ColorOverride (    0, -50325): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      (19846, -30479): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         ( 5150, -45175): Can Have: true ; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0, -50325): Can Have: false; Can Exclude: true ; Always Has: false
+MS2CharacterSkinMaterial (3191):
+        Diffuse       ( 3009,   -182): Can Have: true ; Can Exclude: true ; Always Has: false
+        Specular      ( 2773,   -418): Can Have: true ; Can Exclude: true ; Always Has: false
+        Normal        ( 2585,   -606): Can Have: true ; Can Exclude: true ; Always Has: false
+        ColorOverride ( 2549,   -642): Can Have: true ; Can Exclude: true ; Always Has: false
+        Emissive      (   10,  -3181): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         (    0,  -3191): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,  -3191): Can Have: false; Can Exclude: true ; Always Has: false
+MS2CharacterMaterial (15408):
+        Diffuse       (15243,   -165): Can Have: true ; Can Exclude: true ; Always Has: false
+        Specular      (12937,  -2471): Can Have: true ; Can Exclude: true ; Always Has: false
+        Normal        (11307,  -4101): Can Have: true ; Can Exclude: true ; Always Has: false
+        ColorOverride ( 6675,  -8733): Can Have: true ; Can Exclude: true ; Always Has: false
+        Emissive      ( 1032, -14376): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         (   12, -15396): Can Have: true ; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0, -15408): Can Have: false; Can Exclude: true ; Always Has: false
+MS2CharacterHairMaterial (1237):
+        Diffuse       ( 1234,     -3): Can Have: true ; Can Exclude: true ; Always Has: false
+        Specular      ( 1228,     -9): Can Have: true ; Can Exclude: true ; Always Has: false
+        Normal        ( 1233,     -4): Can Have: true ; Can Exclude: true ; Always Has: false
+        ColorOverride (  947,   -290): Can Have: true ; Can Exclude: true ; Always Has: false
+        Emissive      (    5,  -1232): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         (    0,  -1237): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   ( 1197,    -40): Can Have: true ; Can Exclude: true ; Always Has: false
+MS2GlassMaterial (348):
+        Diffuse       (  348,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        Specular      (  300,    -48): Can Have: true ; Can Exclude: true ; Always Has: false
+        Normal        (   42,   -306): Can Have: true ; Can Exclude: true ; Always Has: false
+        ColorOverride (    0,   -348): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      (   16,   -332): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         (    0,   -348): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,   -348): Can Have: false; Can Exclude: true ; Always Has: false
+LightMapMaterial (1):
+        Diffuse       (    1,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        Specular      (    0,     -1): Can Have: false; Can Exclude: true ; Always Has: false
+        Normal        (    0,     -1): Can Have: false; Can Exclude: true ; Always Has: false
+        ColorOverride (    0,     -1): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      (    0,     -1): Can Have: false; Can Exclude: true ; Always Has: false
+        Decal         (    0,     -1): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,     -1): Can Have: false; Can Exclude: true ; Always Has: false
+EffectDissolve_HO (3):
+        Diffuse       (    3,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        Specular      (    0,     -3): Can Have: false; Can Exclude: true ; Always Has: false
+        Normal        (    0,     -3): Can Have: false; Can Exclude: true ; Always Has: false
+        ColorOverride (    0,     -3): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      (    0,     -3): Can Have: false; Can Exclude: true ; Always Has: false
+        Decal         (    2,     -1): Can Have: true ; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,     -3): Can Have: false; Can Exclude: true ; Always Has: false
+EffectUVDistortionMask_HO (400):
+        Diffuse       (  400,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        Specular      (    0,   -400): Can Have: false; Can Exclude: true ; Always Has: false
+        Normal        (  395,     -5): Can Have: true ; Can Exclude: true ; Always Has: false
+        ColorOverride (    0,   -400): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      (    6,   -394): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         (    0,   -400): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,   -400): Can Have: false; Can Exclude: true ; Always Has: false
+EffectUVDistortionMaskGlow_HO (1907):
+        Diffuse       ( 1907,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        Specular      (   50,  -1857): Can Have: true ; Can Exclude: true ; Always Has: false
+        Normal        ( 1907,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        ColorOverride (    0,  -1907): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      ( 1882,    -25): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         (    0,  -1907): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,  -1907): Can Have: false; Can Exclude: true ; Always Has: false
+EffectUVDistortionMaskWrap_HO (1083):
+        Diffuse       ( 1083,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        Specular      (    0,  -1083): Can Have: false; Can Exclude: true ; Always Has: false
+        Normal        ( 1080,     -3): Can Have: true ; Can Exclude: true ; Always Has: false
+        ColorOverride (    0,  -1083): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      (   17,  -1066): Can Have: true ; Can Exclude: true ; Always Has: false
+        Decal         (    0,  -1083): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,  -1083): Can Have: false; Can Exclude: true ; Always Has: false
+EffectUVDistortionMaskGlowWrap_HO (4169):
+        Diffuse       ( 4169,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        Specular      (    1,  -4168): Can Have: true ; Can Exclude: true ; Always Has: false
+        Normal        ( 4169,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        ColorOverride (    0,  -4169): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      ( 4169,     -0): Can Have: true ; Can Exclude: false; Always Has: true
+        Decal         (    0,  -4169): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,  -4169): Can Have: false; Can Exclude: true ; Always Has: false
+NiStandardMaterial (2):
+        Diffuse       (    0,     -2): Can Have: false; Can Exclude: true ; Always Has: false
+        Specular      (    0,     -2): Can Have: false; Can Exclude: true ; Always Has: false
+        Normal        (    0,     -2): Can Have: false; Can Exclude: true ; Always Has: false
+        ColorOverride (    0,     -2): Can Have: false; Can Exclude: true ; Always Has: false
+        Emissive      (    0,     -2): Can Have: false; Can Exclude: true ; Always Has: false
+        Decal         (    0,     -2): Can Have: false; Can Exclude: true ; Always Has: false
+        Anisotropic   (    0,     -2): Can Have: false; Can Exclude: true ; Always Has: false
+*/
 
 #endif

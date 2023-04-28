@@ -93,7 +93,7 @@ void main()
 		traceRayEXT(topLevelAS,     // acceleration structure
 								rayFlags,       // rayFlags
 								uni.drawMask,//0xFF,           // cullMask
-								0,              // sbtRecordOffset
+								uni.lightingModelOffset,              // sbtRecordOffset
 								0,              // sbtRecordStride
 								0,              // missIndex
 								prd.nextOrigin,     // ray origin

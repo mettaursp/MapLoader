@@ -136,9 +136,17 @@ namespace MapLoader
 		SetVisibilityFlags((VisibilityFlags)(ObjectVisibilityType & (0xFFFFFFFF ^ visibilityFlags)));
 	}
 
-	bool SceneObject::HasVisibilityFlags(VisibilityFlags visibilityFlags)
+	bool SceneObject::HasVisibilityFlags(VisibilityFlags visibilityFlags) const
 	{
 		return (ObjectVisibilityType & visibilityFlags) == visibilityFlags;
+	}
+
+	void SceneObject::SetShaderType(uint32_t shaderType)
+	{
+		if (ShaderType != shaderType)
+			Changes |= SceneObjectChanges::ShaderType;
+
+		ShaderType = shaderType;
 	}
 
 	bool SceneObject::HasChanged() const

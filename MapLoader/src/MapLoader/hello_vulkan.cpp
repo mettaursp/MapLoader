@@ -160,31 +160,144 @@ void HelloVulkan::createDescriptorSetLayout()
 
 	WireframePipeline->LoadDescriptors();
 
-	Shaders = {
-		ShaderLibrary->FetchShader("raytrace.rgen", VK_SHADER_STAGE_RAYGEN_BIT_KHR),
-		ShaderLibrary->FetchShader("raytrace.rmiss", VK_SHADER_STAGE_MISS_BIT_KHR),
-		ShaderLibrary->FetchShader("raytraceShadow.rmiss", VK_SHADER_STAGE_MISS_BIT_KHR),
-		ShaderLibrary->FetchShader("raytrace.rchit", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
-		ShaderLibrary->FetchShader("raytrace.rahit", VK_SHADER_STAGE_ANY_HIT_BIT_KHR),
-		ShaderLibrary->FetchShader("raytraceShadow.rchit", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
-		ShaderLibrary->FetchShader("raytraceShadow.rahit", VK_SHADER_STAGE_ANY_HIT_BIT_KHR),
-	};
-
-	RTPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
-	RTPipeline->BindDescriptorSet("common", 1);
-
-	for (size_t i = 0; i < Shaders.size(); ++i)
 	{
-		RTPipeline->AddStage(Shaders[i]);
-	}
+		Graphics::Shader* shaders[] = {
+			ShaderLibrary->FetchShader("raytrace.rgen", VK_SHADER_STAGE_RAYGEN_BIT_KHR),
+			ShaderLibrary->FetchShader("raytrace.rmiss", VK_SHADER_STAGE_MISS_BIT_KHR),
+			ShaderLibrary->FetchShader("raytraceShadow.rmiss", VK_SHADER_STAGE_MISS_BIT_KHR),
+			ShaderLibrary->FetchShader("raytrace.rahit", VK_SHADER_STAGE_ANY_HIT_BIT_KHR),
+			ShaderLibrary->FetchShader("raytraceShadow.rchit", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR),
+			ShaderLibrary->FetchShader("raytraceShadow.rahit", VK_SHADER_STAGE_ANY_HIT_BIT_KHR),
+		};
 
-	RTPipeline->LoadDescriptors();
-	RTPipeline->AddRayGenGroup(0);
-	RTPipeline->AddMissGroup(1);
-	RTPipeline->AddMissGroup(2);
-	RTPipeline->AddHitGroup({ 3, 4 });
-	RTPipeline->AddHitGroup({ 5, 6 });
-	RTPipeline->GetDescriptorSets()[0]->DescriptorSets.resize(3);
+		RTPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
+		RTPipeline->BindDescriptorSet("common", 1);
+
+		for (size_t i = 0; i < sizeof(shaders) / sizeof(shaders[0]); ++i)
+		{
+			RTPipeline->AddStage(shaders[i]);
+		}
+
+		struct RTSpecializationConstants
+		{
+			int lightingModel = 1;
+			int material = -1;
+			int materialTextureFlags = 0;
+		};
+
+		static std::vector<RTSpecializationConstants> specializationConstants;
+
+		if (specializationConstants.size() == 0)
+		{
+			int maxMaterialId = -1;
+
+			for (const auto index : MapLoader::ModelLibrary::MaterialTypeMap)
+			{
+				maxMaterialId = std::max(maxMaterialId, index.second);
+			}
+
+			RTShaderCount = (uint32_t)(maxMaterialId + 2);
+			uint32_t specializationCount = RTShaderCount * eLightingModelCount;
+
+			hostUBO.lightingModelOffset = 2 * RTShaderCount;
+
+			specializationConstants.resize(specializationCount);
+
+			const bool CanHaveDiffuseValues[] = { true, true, false, false, true, true, true, true, true, true, true, true, true, true, false };
+			const bool AlwaysHasDiffuseValues[] = { false, false, false, false, false, true, true, true, true, true, true, true, false };
+
+			const bool CanHaveSpecularValues[] = { true, true, false, false, true, true, true, true, false, false, false, true, false, true, false };
+			const bool AlwaysHasSpecularValues[] = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
+
+			const bool CanHaveNormalValues[] = { true, true, false, false, true, true, true, true, false, false, true, true, true, true, false };
+			const bool AlwaysHasNormalValues[] = { false, false, false, false, false, false, false, false, false, false, false, true, false, true, false };
+
+			const bool CanHaveColorOverrideValues[] = { false, false, false, false, true, true, true, false, false, false, false, false, false, false, false };
+			const bool AlwaysHasColorOverrideValues[] = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
+
+			const bool CanHaveEmissiveValues[] = { false, false, false, false, false, false, true, false, false, false, false, false, false, false, false };
+			const bool AlwaysHasEmissiveValues[] = { false, false, false, false, false, false, false, false, false, false, false, false, false, true, false };
+
+			const bool CanHaveDecalValues[] = { true, true, false, false, false, true, false, false, false, true, false, false, false, false, false };
+			const bool AlwaysHasDecalValues[] = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
+
+			const bool CanHaveAnisotropicValues[] = { false, false, false, false, false, false, true, false, false, false, false, false, false, false, false };
+			const bool AlwaysHasAnisotropicValues[] = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };// look at providing guarantees for hair
+			
+#define MATERIAL_TEXTURE_FLAG(name) (name ## Values[index.second + 1] ? e ## name : 0)
+
+			for (uint32_t i = 0; i < eLightingModelCount; ++i)
+			{
+				for (const auto index : MapLoader::ModelLibrary::MaterialTypeMap)
+				{
+					auto& constants = specializationConstants[0*i * RTShaderCount + index.second + 1];
+					constants.lightingModel = i;
+					constants.material = index.second;
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(CanHaveDiffuse);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(AlwaysHasDiffuse);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(CanHaveSpecular);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(AlwaysHasSpecular);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(CanHaveNormal);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(AlwaysHasNormal);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(CanHaveColorOverride);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(AlwaysHasColorOverride);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(CanHaveEmissive);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(AlwaysHasEmissive);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(CanHaveDecal);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(AlwaysHasDecal);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(CanHaveAnisotropic);
+					constants.materialTextureFlags |= MATERIAL_TEXTURE_FLAG(AlwaysHasAnisotropic);
+				}
+			}
+		}
+
+
+		Graphics::Shader* materialClosestHit = ShaderLibrary->FetchShader("raytrace.rchit", VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR);
+
+		for (size_t i = 0; i < specializationConstants.size(); ++i)
+		{
+			auto& shaderEntry = RTPipeline->AddStage(materialClosestHit);
+
+			const RTSpecializationConstants* null = nullptr;
+
+			shaderEntry.SpecializationEntries.push_back(
+				VkSpecializationMapEntry {
+					.constantID = eLightingModel,
+					.offset = (uint32_t)(std::intptr_t)&null->lightingModel,
+					.size = sizeof(null->lightingModel)
+				}
+			);
+			shaderEntry.SpecializationEntries.push_back(
+				VkSpecializationMapEntry {
+					.constantID = eMaterial,
+					.offset = (uint32_t)(std::intptr_t)&null->material,
+					.size = sizeof(null->material)
+				}
+			);
+			shaderEntry.SpecializationEntries.push_back(
+				VkSpecializationMapEntry {
+					.constantID = eMaterialTextureFlags,
+					.offset = (uint32_t)(std::intptr_t)&null->materialTextureFlags,
+					.size = sizeof(null->materialTextureFlags)
+				}
+			);
+
+			shaderEntry.Specialization.pData = &specializationConstants[i];
+		}
+
+		RTPipeline->LoadDescriptors();
+		RTPipeline->AddRayGenGroup(0);
+		RTPipeline->AddMissGroup(1);
+		RTPipeline->AddMissGroup(2);
+
+		for (size_t i = 0; i < specializationConstants.size(); ++i)
+		{
+			RTPipeline->AddHitGroup({ 6 + (uint32_t)i, 3 });
+			RTPipeline->AddHitGroup({ 4, 5 });
+		}
+
+		RTPipeline->GetDescriptorSets()[0]->DescriptorSets.resize(3);
+	}
 
 	PostPipeline = std::make_unique<Graphics::ShaderPipeline>(VulkanContext, DescriptorSetLibrary);
 
@@ -263,6 +376,9 @@ void HelloVulkan::updateDescriptorSet()
 
 	VkDescriptorBufferInfo dbiTextureTransformDesc{ m_textureTransformDesc.buffer, 0, VK_WHOLE_SIZE };
 	writes.emplace_back(m_descSet->MakeWrite(SceneBindings::eTextureTransforms, &dbiTextureTransformDesc));
+
+	VkDescriptorBufferInfo dbiMaterials{ m_materials.buffer, 0, VK_WHOLE_SIZE };
+	writes.emplace_back(m_descSet->MakeWrite(SceneBindings::eMaterials, &dbiMaterials));
 
 	VkDescriptorBufferInfo dbiMouseIODesc{ m_mouseIO.buffer, 0, VK_WHOLE_SIZE };
 	writes.emplace_back(m_descSet->MakeWrite(SceneBindings::eMouseIO, &dbiMouseIODesc));
@@ -359,6 +475,14 @@ void HelloVulkan::createObjDescriptionBuffer()
 	cmdGen.submitAndWait(cmdBuf3);
 	VulkanContext->Allocator.finalizeAndReleaseStaging();
 	VulkanContext->Debug.setObjectName(m_textureTransformDesc.buffer, "TextureTransformDescs");
+
+	{
+		auto cmdBuf = cmdGen.createCommandBuffer();
+		m_materials = VulkanContext->Allocator.createBuffer(cmdBuf, AssetLibrary->GetModels().GetGpuMaterialData(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
+		cmdGen.submitAndWait(cmdBuf);
+		VulkanContext->Allocator.finalizeAndReleaseStaging();
+		VulkanContext->Debug.setObjectName(m_materials.buffer, "Materials");
+	}
 
 	auto cmdBuf4 = cmdGen.createCommandBuffer();
 	m_InstDesc = VulkanContext->Allocator.createBuffer(cmdBuf4, AssetLibrary->GetModels().GetGpuEntityData(), VK_BUFFER_USAGE_STORAGE_BUFFER_BIT);
@@ -546,6 +670,7 @@ void HelloVulkan::destroyResources()
 	VulkanContext->Allocator.destroy(m_bObjDesc);
 	VulkanContext->Allocator.destroy(m_lightDesc);
 	VulkanContext->Allocator.destroy(m_textureTransformDesc);
+	VulkanContext->Allocator.destroy(m_materials);
 	VulkanContext->Allocator.destroy(m_mouseIO);
 	VulkanContext->Allocator.destroy(m_InstDesc);
 	VulkanContext->Allocator.destroy(m_textureOverride);

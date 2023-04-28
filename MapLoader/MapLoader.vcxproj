@@ -418,6 +418,7 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\shaders\wavefront.glsl;$(ProjectDir)\shaders\host_device.h;%(AdditionalInputs)</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)\shaders\wavefront.glsl;$(ProjectDir)\shaders\host_device.h;%(AdditionalInputs)</AdditionalInputs>
     </CustomBuild>
+    <None Include="shaders\materialTextureAvailability.glsl" />
     <None Include="shaders\raycommon.glsl" />
     <None Include="shaders\raytrace-rahit.glsl" />
     <CustomBuild Include="shaders\raytrace.rahit">
@@ -478,7 +479,7 @@ exit /b %1
 if %errorlevel% neq 0 goto :VCEnd</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Generating $(ProjectName)/spv/raytrace.rchit.spv</Message>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\spv\raytrace.rchit.spv;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\shaders\raycommon.glsl;$(ProjectDir)\shaders\wavefront.glsl;$(ProjectDir)\shaders\host_device.h;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)\shaders\raycommon.glsl;$(ProjectDir)\shaders\wavefront.glsl;$(ProjectDir)\shaders\host_device.h;$(ProjectDir)\shaders\materialTextureAvailability.glsl;%(AdditionalInputs)</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">setlocal
 cd $(ProjectDir)
 if %errorlevel% neq 0 goto :cmEnd

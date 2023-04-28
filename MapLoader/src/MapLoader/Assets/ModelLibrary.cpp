@@ -14,13 +14,21 @@
 namespace MapLoader
 {
 	const std::unordered_map<std::string, int> ModelLibrary::MaterialTypeMap = {
-		{ "MS2StandardMaterial", 0 },
-		//{ "MS2ShimmerMaterial", 1 },
-		//{ "MS2GlowMaterial", 2 },
-		{ "MS2CharacterSkinMaterial", 3 },
-		{ "MS2CharacterMaterial", 4 },
-		{ "MS2CharacterHairMaterial", 5 },
-		{ "MS2GlassMaterial", 6 },
+		//{ "", eDefaultMaterial },
+		{ "MS2StandardMaterial", eMS2StandardMaterial },
+		//{ "MS2ShimmerMaterial", eMS2ShimmerMaterial },
+		//{ "MS2GlowMaterial", eMS2GlowMaterial },
+		{ "MS2CharacterSkinMaterial", eMS2CharacterSkinMaterial },
+		{ "MS2CharacterMaterial", eMS2CharacterMaterial },
+		{ "MS2CharacterHairMaterial", eMS2CharacterHairMaterial },
+		{ "MS2GlassMaterial", eMS2GlassMaterial },
+		//{ "LightMapMaterial", eLightMapMaterial },
+		//{ "EffectDissolve_HO", eEffectDissolve_HO },
+		//{ "EffectUVDistortionMask_HO", eEffectUVDistortionMask_HO },
+		//{ "EffectUVDistortionMaskGlow_HO", eEffectUVDistortionMaskGlow_HO },
+		//{ "EffectUVDistortionMaskWrap_HO", eEffectUVDistortionMaskWrap_HO },
+		//{ "EffectUVDistortionMaskGlowWrap_HO", eEffectUVDistortionMaskGlowWrap_HO },
+		//{ "NiStandardMaterial", eNiStandardMaterial },
 	};
 
 	std::unordered_set<std::string> ModelLibrary::UnmappedMaterials = {};
@@ -323,6 +331,45 @@ namespace MapLoader
 			return id;
 		};
 
+		if (LogMaterialTextures)
+		{
+			MaterialLog& log = LoggedMaterials[packageMaterial.ShaderName];
+
+			const auto logTexture = [](MaterialTextureLog& log, MaterialTexture& texture)
+			{
+				size_t total = log.AppearanceCount + log.NumberMissing;
+				bool hasTexture = texture.id != -1;
+
+				if (hasTexture)
+					++log.AppearanceCount;
+				else
+					++log.NumberMissing;
+
+				if (total == 0)
+				{
+					log.CanHave = hasTexture;
+					log.CanExclude = !hasTexture;
+					log.AlwaysHas = hasTexture;
+
+					return;
+				}
+
+				log.CanHave |= hasTexture;
+				log.CanExclude |= !hasTexture;
+				log.AlwaysHas &= hasTexture;
+			};
+
+			++log.AppearanceCount;
+
+			logTexture(log.Diffuse, textures.diffuse);
+			logTexture(log.Specular, textures.specular);
+			logTexture(log.Normal, textures.normal);
+			logTexture(log.ColorOverride, textures.colorOverride);
+			logTexture(log.Emissive, textures.emissive);
+			logTexture(log.Decal, textures.decal);
+			logTexture(log.Anisotropic, textures.anisotropic);
+		}
+
 		textures.diffuse.transformId = getTransform(packageMaterial.DiffuseTransform);
 		textures.specular.transformId = getTransform(packageMaterial.SpecularTransform);
 		textures.normal.transformId = getTransform(packageMaterial.NormalTransform);
@@ -354,6 +401,29 @@ namespace MapLoader
 		material.textureModes |= ((int)packageMaterial.DestBlendMode << 9); // 4 bits
 		material.textureModes |= ((int)packageMaterial.AlphaTestMode << 13); // 4 bits
 		material.textureModes |= ((int)packageMaterial.TestThreshold << 17); // 4 bits
+	}
+
+	void ModelLibrary::PrintLoggedTextures()
+	{
+		for (const auto index : LoggedMaterials)
+		{
+			const MaterialLog& log = index.second;
+
+			std::cout << index.first << " (" << log.AppearanceCount << "):" << std::endl;
+
+			const auto logTexture = [](const std::string& name, const MaterialTextureLog& log)
+			{
+				std::cout << "\t" << name << " (" << log.AppearanceCount << "; -" << log.NumberMissing << "): Can Have: " << (log.CanHave ? "true" : "false") << "; Can Exclude: " << (log.CanExclude ? "true" : "false") << "; Always Has: " << (log.AlwaysHas ? "true" : "false") << std::endl;
+			};
+
+			logTexture("Diffuse", log.Diffuse);
+			logTexture("Specular", log.Specular);
+			logTexture("Normal", log.Normal);
+			logTexture("ColorOverride", log.ColorOverride);
+			logTexture("Emissive", log.Emissive);
+			logTexture("Decal", log.Decal);
+			logTexture("Anisotropic", log.Anisotropic);
+		}
 	}
 
 	void ModelLibrary::LoadBuffers(MeshBuffers& buffers, Engine::Graphics::ModelPackageNode& node)
@@ -460,10 +530,10 @@ namespace MapLoader
 
 		mesh.IndexBuffer = bindBuffer(vulkanContext, cmdBuf, buffers.IndexBuffer, buffers.IndexBuffer.data(), VK_BUFFER_USAGE_INDEX_BUFFER_BIT | rayTracingFlags);
 
-		std::vector<int32_t> materialIndices(mesh.IndexCount / 3);
+		size_t materialId = GpuMaterialData.size();
 
-		mesh.MatColorBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, std::vector<MaterialObj> { buffers.Material }, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
-		mesh.MatIndexBuffer = vulkanContext->Allocator.createBuffer(cmdBuf, materialIndices, VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | flag);
+		GpuMaterialData.push_back(buffers.Material);
+
 		// Creates all textures found and find the offset for this model
 		auto txtOffset = 0;
 		AssetLibrary.GetTextures().FlushLoadingQueue(cmdBuf);
@@ -490,12 +560,11 @@ namespace MapLoader
 			vulkanContext->Debug.setObjectName(mesh.VertexBlendBuffer.buffer, (std::string("vertexBlend_" + objNb)));
 
 		vulkanContext->Debug.setObjectName(mesh.IndexBuffer.buffer, (std::string("index_" + objNb)));
-		vulkanContext->Debug.setObjectName(mesh.MatColorBuffer.buffer, (std::string("mat_" + objNb)));
-		vulkanContext->Debug.setObjectName(mesh.MatIndexBuffer.buffer, (std::string("matIdx_" + objNb)));
 
 		// Creating information for device access
 		MeshDesc desc;
 		desc.vertexPosAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexPosBuffer.buffer);
+		desc.materialId = (uint32_t)materialId;
 
 		if (invisible)
 		{
@@ -513,8 +582,6 @@ namespace MapLoader
 			desc.vertexBlendAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.VertexBlendBuffer.buffer);
 
 		desc.indexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.IndexBuffer.buffer);
-		desc.materialAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.MatColorBuffer.buffer);
-		desc.materialIndexAddress = nvvk::getBufferDeviceAddress(vulkanContext->Device, mesh.MatIndexBuffer.buffer);
 
 		// Keeping the obj host model and device description
 		GpuMeshData.emplace_back(desc);
@@ -628,6 +695,7 @@ namespace MapLoader
 				const auto& modelNode = model->Nodes[i];
 				const auto& meshDescription = GetMeshDescriptions()[modelNode.MeshId];
 				size_t meshId = GpuEntityData.size();
+				const auto& gpuMeshData = GpuMeshData[modelNode.MeshId];
 
 				instance.drawFlags = meshDescription.drawFlags;
 
@@ -656,18 +724,29 @@ namespace MapLoader
 				Matrix4F modelTransform = model->Nodes[i].Transformation;
 				size_t blasInstanceId = (size_t)-1;
 
-				if (instance.vertexPosAddressOverride != (uint64_t)0)
+				if (instance.vertexPosAddress != (uint64_t)0)
 				{
 					blasInstanceId = BlasInstances.size();
 					BlasInstances.push_back(
 						{
 							.VertexCount = meshDescription.VertexCount,
 							.IndexCount = meshDescription.IndexCount,
-							.VertexBufferAddress = instance.vertexPosAddressOverride,
-							.IndexBufferAddress = nvvk::getBufferDeviceAddress(AssetLibrary.GetVulkanContext()->Device, meshDescription.IndexBuffer.buffer)
+							.VertexBufferAddress = instance.vertexPosAddress,
+							.IndexBufferAddress = gpuMeshData.indexAddress//nvvk::getBufferDeviceAddress(AssetLibrary.GetVulkanContext()->Device, meshDescription.IndexBuffer.buffer)
 						}
 					);
 				}
+				else
+				{
+					instance.vertexPosAddress = gpuMeshData.vertexPosAddress;
+					instance.vertexBinormalAddress = gpuMeshData.vertexBinormalAddress;
+				}
+
+				instance.indexAddress = gpuMeshData.indexAddress;
+				instance.materialId = gpuMeshData.materialId;
+
+				if (instance.textures == -1)
+					instance.textures = GpuMaterialData[instance.materialId].textures;
 
 				LoadModelInstance(model->GetId(i), CurrentMapTransform * transformation * modelTransform, blasInstanceId);
 
@@ -677,6 +756,10 @@ namespace MapLoader
 
 				std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
 
+				uint32_t shaderType = model->Nodes[i].Material.shaderType;
+
+				shaderType = (shaderType & 0xFFFF0000) >> 16;
+
 				transform->SetTransformation(CurrentMapTransform * transformation * modelTransform);
 				sceneObject->SetTransform(transform.get());
 				sceneObject->SetModel(model, i);
@@ -684,6 +767,7 @@ namespace MapLoader
 				sceneObject->SetStatic(true);
 				sceneObject->SetParent(transform);
 				sceneObject->SetVisibilityFlags((VisibilityFlags)(instance.drawFlags & 0xFF));
+				sceneObject->SetShaderType(shaderType + 1);
 				scene->AddObject(sceneObject);
 				spawnedEntity.Meshes.push_back({ transform, sceneObject });
 
@@ -712,8 +796,6 @@ namespace MapLoader
 			vulkanContext->Allocator.destroy(m.VertexMorphBuffer);
 			vulkanContext->Allocator.destroy(m.VertexBlendBuffer);
 			vulkanContext->Allocator.destroy(m.IndexBuffer);
-			vulkanContext->Allocator.destroy(m.MatColorBuffer);
-			vulkanContext->Allocator.destroy(m.MatIndexBuffer);
 		}
 
 		for (auto& m : WireframeDescriptions)

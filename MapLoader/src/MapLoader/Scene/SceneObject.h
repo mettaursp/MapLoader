@@ -13,7 +13,8 @@ struct SceneObjectChangesEnum
 		Visibility = 0x2,
 		Static = 0x4,
 		Model = 0x8,
-		Misc = 0x10
+		ShaderType = 0x10,
+		Misc = 0x20
 	};
 };
 
@@ -65,13 +66,15 @@ namespace MapLoader
 		size_t GetModelIndex() const { return ModelIndex; }
 		size_t GetSceneIndex(RTScene* scene) const;
 		size_t GetSceneId(RTScene* scene) const;
+		uint32_t GetShaderType() const { return ShaderType; }
 
 		virtual void MarkStale(bool isStale);
 		void SetStatic(bool isStatic);
 		void SetVisibilityFlags(VisibilityFlags visibilityFlags);
 		void AddVisibilityFlags(VisibilityFlags visibilityFlags);
 		void RemoveVisibilityFlags(VisibilityFlags visibilityFlags);
-		bool HasVisibilityFlags(VisibilityFlags visibilityFlags);
+		bool HasVisibilityFlags(VisibilityFlags visibilityFlags) const;
+		void SetShaderType(uint32_t shaderType);
 		void SetTransform(Engine::Transform* transform);
 		void SetModel(ModelData* model, size_t index);
 		void SetInstanceId(size_t instanceId);
@@ -93,6 +96,7 @@ namespace MapLoader
 		ModelData* Model = nullptr;
 		size_t ModelIndex = 0;
 		size_t InstanceId = 0;
+		uint32_t ShaderType = 0;
 		Engine::Transform* Transform = nullptr;
 		VisibilityFlags ObjectVisibilityType = VisibilityFlags::eStandardVisibility;
 		SceneEntry Scene;

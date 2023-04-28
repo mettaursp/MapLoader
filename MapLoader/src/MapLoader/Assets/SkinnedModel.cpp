@@ -286,7 +286,7 @@ namespace MapLoader
 			SpawnParameters->CmdGen.submitAndWait(cmdBuf);
 			VulkanContext->Allocator.finalizeAndReleaseStaging();
 
-			spawnParameters.NewInstance.vertexPosAddressOverride = nvvk::getBufferDeviceAddress(VulkanContext->Device, skinnedMesh.VertexPosOverride.buffer);
+			spawnParameters.NewInstance.vertexPosAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, skinnedMesh.VertexPosOverride.buffer);
 		}
 
 		{
@@ -298,7 +298,7 @@ namespace MapLoader
 			SpawnParameters->CmdGen.submitAndWait(cmdBuf);
 			VulkanContext->Allocator.finalizeAndReleaseStaging();
 
-			spawnParameters.NewInstance.vertexBinormalAddressOverride = nvvk::getBufferDeviceAddress(VulkanContext->Device, skinnedMesh.VertexBinormalOverride.buffer);
+			spawnParameters.NewInstance.vertexBinormalAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, skinnedMesh.VertexBinormalOverride.buffer);
 		}
 
 		return true;

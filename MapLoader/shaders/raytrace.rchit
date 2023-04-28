@@ -42,8 +42,6 @@ layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[
 layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexBlend {VertexBlendBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer Indices {ivec3 i[]; }; // Triangle indices
-layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
-layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
 layout(set = 0, binding = eTlas) uniform accelerationStructureEXT topLevelAS;
 layout(set = 1, binding = eGlobals) uniform _GlobalUniforms { GlobalUniforms uni; };
 layout(set = 1, binding = eObjDescs, scalar) buffer ObjDesc_ { MeshDesc i[]; } objDesc;
@@ -52,12 +50,42 @@ layout(set = 1, binding = eLights, scalar) buffer LightDesc_ { LightDesc i[]; } 
 layout(set = 1, binding = eTextureTransforms, scalar) buffer TextureTransform_ { TextureTransform i[]; } textureTransform;
 layout(set = 1, binding = eInstDescs, scalar) buffer InstanceDescription_ { InstDesc i[]; } instDesc;
 layout(set = 1, binding = eTextureOverrides, scalar) buffer MaterialTextures_ { MaterialTextures i[]; } texOverride;
+layout(set = 1, binding = eMaterials, scalar) buffer Materials_ { WaveFrontMaterial m[]; } materials;
 
 layout(push_constant) uniform _PushConstantRay { PushConstantRay pcRay; };
 
 layout(shaderRecordEXT) buffer SBTData {
 	float material_id;
 };
+
+layout(constant_id = eLightingModel) const int LIGHTING_MODEL = 1;
+layout(constant_id = eMaterial) const int SHADER_TYPE = -1;
+layout(constant_id = eMaterialTextureFlags) const int SHADER_FLAGS = 0;
+
+const bool CanHaveDiffuse = (SHADER_FLAGS & eCanHaveDiffuse) != 0;
+const bool AlwaysHasDiffuse = (SHADER_FLAGS & eAlwaysHasDiffuse) != 0;
+
+const bool CanHaveSpecular = (SHADER_FLAGS & eCanHaveSpecular) != 0;
+const bool AlwaysHasSpecular = (SHADER_FLAGS & eAlwaysHasSpecular) != 0;
+
+const bool CanHaveNormal = (SHADER_FLAGS & eCanHaveNormal) != 0;
+const bool AlwaysHasNormal = (SHADER_FLAGS & eAlwaysHasNormal) != 0;
+
+const bool CanHaveColorOverride = (SHADER_FLAGS & eCanHaveColorOverride) != 0;
+const bool AlwaysHasColorOverride = (SHADER_FLAGS & eAlwaysHasColorOverride) != 0;
+
+const bool CanHaveEmissive = (SHADER_FLAGS & eCanHaveEmissive) != 0;
+const bool AlwaysHasEmissive = (SHADER_FLAGS & eAlwaysHasEmissive) != 0;
+
+const bool CanHaveDecal = (SHADER_FLAGS & eCanHaveDecal) != 0;
+const bool AlwaysHasDecal = (SHADER_FLAGS & eAlwaysHasDecal) != 0;
+
+const bool CanHaveAnisotropic = (SHADER_FLAGS & eCanHaveAnisotropic) != 0;
+const bool AlwaysHasAnisotropic = (SHADER_FLAGS & eAlwaysHasAnisotropic) != 0;
+
+const bool CanUseBinormal = CanHaveNormal || CanHaveAnisotropic;
+const bool AlwaysUsesBinormal = AlwaysHasNormal || AlwaysHasAnisotropic;
+
 // clang-format on
 
 vec3 reflectVector(vec3 vector, vec3 normal)
@@ -107,10 +135,7 @@ void main()
 {
 	// Object data
 	InstDesc    instanceDesc = instDesc.i[gl_InstanceID];
-	MeshDesc    objResource = objDesc.i[gl_InstanceCustomIndexEXT];
-	MatIndices matIndices  = MatIndices(objResource.materialIndexAddress);
-	Materials  materials   = Materials(objResource.materialAddress);
-	Indices    indices     = Indices(objResource.indexAddress);
+	Indices    indices     = Indices(instanceDesc.indexAddress);
 
 
 	prd.hitObject = gl_InstanceID;
@@ -118,7 +143,7 @@ void main()
 	// Indices of the triangle
 	ivec3 ind = indices.i[gl_PrimitiveID];
 
-	VertexPos vertices = VertexPos(instanceDesc.vertexPosAddressOverride != 0 ? instanceDesc.vertexPosAddressOverride : objResource.vertexPosAddress);
+	VertexPos vertices = VertexPos(instanceDesc.vertexPosAddress);
 
 	// Vertex of the triangle
 	VertexPosBinding v0 = vertices.v[ind.x];
@@ -142,10 +167,8 @@ void main()
 	vertexColor /= 255;
 
 	// Material of the object
-	int               matIdx = matIndices.i[gl_PrimitiveID];
-	WaveFrontMaterial mat    = materials.m[matIdx];
-	int texturesIndex = instanceDesc.textureOverride != -1 ? instanceDesc.textureOverride : mat.textures;
-	MaterialTextures textures = texOverride.i[texturesIndex];
+	WaveFrontMaterial mat    = materials.m[instanceDesc.materialId];
+	MaterialTextures textures = texOverride.i[instanceDesc.textures];
 
 	int shaderType = mat.shaderType & 0xFFFF0000;
 	shaderType = shaderType < 0 ? -1 : shaderType >> 16;
@@ -163,6 +186,10 @@ void main()
 		 return;
 	}
 
+	prd.nextDirection = gl_WorldRayDirectionEXT;
+	prd.nextOrigin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
+	prd.rayLength -= gl_HitTEXT;
+
 	// Diffuse
 	vec3 diffuseColor = mat.diffuse;
 	vec3 specularColor = mat.specular;
@@ -170,32 +197,52 @@ void main()
 	float alpha = mat.dissolve * vertexColor.w;
 	vec2 anisotropicColor = vec2(0, 0);
 
-	int textureApply = getFlags(mat.textureModes, 3, 0);
-	int sourceColorMode = getFlags(mat.textureModes, 3, 2);
-	int lightingMode = getFlags(mat.textureModes, 1, 4);
+	int textureApply = 0;
+	int sourceColorMode = 0;
+	int lightingMode = 0;
 
-	switch (sourceColorMode)
+	if (LIGHTING_MODEL == eMS2Phong)
 	{
-	case 0: // SOURCE_IGNORE
-		break;
-	case 1: // SOURCE_EMISSIVE
-		emissiveColor = vertexColor.xyz;
-		break;
-	case 2: // SOURCE_AMB_DIFF
-		diffuseColor = vertexColor.xyz;
 		specularColor = vertexColor.xyz;
+	}
+	else
+	{
+		textureApply = getFlags(mat.textureModes, 3, 0);
+		sourceColorMode = getFlags(mat.textureModes, 3, 2);
+		lightingMode = getFlags(mat.textureModes, 1, 4);
+
+		switch (sourceColorMode)
+		{
+		case 0: // SOURCE_IGNORE
+			break;
+		case 1: // SOURCE_EMISSIVE
+			emissiveColor = vertexColor.xyz;
+			break;
+		case 2: // SOURCE_AMB_DIFF
+			diffuseColor = vertexColor.xyz;
+			specularColor = vertexColor.xyz;
+		}
 	}
 
 	diffuseColor = vertexColor.xyz;
 
-	if (textures.emissive.id >= 0)
+	if (CanHaveEmissive && textures.emissive.id >= 0)
 	{
 		vec4 emissiveTextureColor = sampleTexture(textures.emissive, texCoord);
-		emissiveColor = textureApplyColor(textureApply, emissiveTextureColor.xyz, emissiveColor, emissiveTextureColor.w);
+
+		if (LIGHTING_MODEL == eMS2Phong)
+		{
+			emissiveColor *= emissiveTextureColor.xyz;
+		}
+		else
+		{
+			emissiveColor = textureApplyColor(textureApply, emissiveTextureColor.xyz, emissiveColor, emissiveTextureColor.w);
+		}
 	}
 
-	if (lightingMode == 0)
+	if (LIGHTING_MODEL != eMS2Phong && lightingMode == 0)
 	{
+		{ prd.hitValue = vec3(1, 0, 1); prd.rayLength = 0; return; }
 		prd.hitValue = prd.transmission * emissiveColor;
 		prd.transmission *= (1 - alpha);
 		prd.nextDirection = gl_WorldRayDirectionEXT;
@@ -210,18 +257,25 @@ void main()
 		return;
 	}
 
-	float diffuseAlpha = 1;
 	vec3 baseColor = diffuseColor;
 
-	if(textures.diffuse.id >= 0)
+	if(AlwaysHasDiffuse || (CanHaveDiffuse && textures.diffuse.id >= 0))
 	{
 		vec4 diffuseTextureColor = sampleTexture(textures.diffuse, texCoord);
 
-		diffuseColor = textureApplyColor(textureApply, diffuseTextureColor.xyz, diffuseColor, diffuseTextureColor.w);
-		alpha *= textureApplyAlpha(textureApply, diffuseTextureColor.w, alpha);
+		if (LIGHTING_MODEL == eMS2Phong)
+		{
+			diffuseColor *= diffuseTextureColor.xyz;
+			alpha *= diffuseTextureColor.w;
+		}
+		else
+		{
+			diffuseColor = textureApplyColor(textureApply, diffuseTextureColor.xyz, diffuseColor, diffuseTextureColor.w);
+			alpha *= textureApplyAlpha(textureApply, diffuseTextureColor.w, alpha);
+		}
 	}
 
-	if (textures.colorOverride.id >= 0)
+	if (CanHaveColorOverride && textures.colorOverride.id >= 0)
 	{
 		vec4 controlColor = sampleTexture(textures.colorOverride, texCoord);
 
@@ -229,18 +283,34 @@ void main()
 		diffuseColor = (1 - controlColor.w) * diffuseColor + controlColor.w * dyeColor * baseColor;
 	}
 
-	if(textures.decal.id >= 0)
+	if(CanHaveDecal && textures.decal.id >= 0)
 	{
 		vec4 decalTextureColor = sampleTexture(textures.decal, texCoord);
 		
-		diffuseColor = (1 - decalTextureColor.w) * diffuseColor + decalTextureColor.w * decalTextureColor.xyz;
-		alpha *= textureApplyAlpha(textureApply, max(diffuseAlpha, decalTextureColor.w), alpha);
+		diffuseColor = (1 - decalTextureColor.w) * alpha * diffuseColor + decalTextureColor.w * decalTextureColor.xyz;
+
+		if (LIGHTING_MODEL == eMS2Phong)
+		{
+			alpha = max(alpha, decalTextureColor.w);
+		}
+		else
+		{
+			alpha = textureApplyAlpha(textureApply, max(alpha, decalTextureColor.w), alpha);
+		}
 	}
 
-	if (textures.specular.id >= 0)
+	if (CanHaveSpecular && textures.specular.id >= 0)
 	{
 		vec4 specularTextureColor = sampleTexture(textures.specular, texCoord);
-		specularColor = textureApplyColor(textureApply, specularTextureColor.xyz, specularColor, specularTextureColor.w);
+
+		if (LIGHTING_MODEL == eMS2Phong)
+		{
+			specularColor *= specularTextureColor.xyz;
+		}
+		else
+		{
+			specularColor = textureApplyColor(textureApply, specularTextureColor.xyz, specularColor, specularTextureColor.w);
+		}
 	}
 
 	vec3 binormal = vec3(0, 0, 0);
@@ -248,9 +318,9 @@ void main()
 	vec3 worldBinormal = vec3(0, 0, 0);
 	vec3 worldTangent = vec3(0, 0, 0);
 
-	if (objResource.vertexBinormalAddress != 0 && (textures.anisotropic.id >= 0 || textures.normal.id >= 0))
+	if (AlwaysUsesBinormal || ((CanUseBinormal) && instanceDesc.vertexBinormalAddress != 0 && (textures.anisotropic.id >= 0 || textures.normal.id >= 0)))
 	{
-		VertexBinormal tbn = VertexBinormal(instanceDesc.vertexBinormalAddressOverride != 0 ? instanceDesc.vertexBinormalAddressOverride : objResource.vertexBinormalAddress);
+		VertexBinormal tbn = VertexBinormal(instanceDesc.vertexBinormalAddress);
 
 		VertexBinormalBinding v0tbn = tbn.v[ind.x];
 		VertexBinormalBinding v1tbn = tbn.v[ind.y];
@@ -263,12 +333,12 @@ void main()
 		worldTangent = normalize(vec3(tangent * gl_WorldToObjectEXT));
 	}
 
-	if (textures.anisotropic.id >= 0)
+	if (CanHaveAnisotropic && textures.anisotropic.id >= 0)
 	{
 		anisotropicColor = sampleTexture(textures.anisotropic, texCoord).xy * 2 - vec2(1, 1);
 	}
 
-	if (textures.normal.id >= 0)
+	if (AlwaysHasNormal || (CanHaveNormal && textures.normal.id >= 0))
 	{
 		vec4 normalTextureColor = sampleTexture(textures.normal, texCoord);
 
@@ -283,20 +353,18 @@ void main()
 		
 		nrm = normalize(mat3(tangent, binormal, nrm) * normalTextureColor.xyz);
 		worldNrm = normalize(vec3(nrm * gl_WorldToObjectEXT));
-
-		//{ prd.hitValue = worldNrm; prd.rayLength = 0; return; }
 	}
 
 	vec3 minTransmission = vec3(0, 0, 0);
 
-	if (shaderType >= eMS2CharacterSkinMaterial && shaderType <= eMS2CharacterHairMaterial)
+	if (SHADER_TYPE >= eMS2CharacterSkinMaterial && SHADER_TYPE <= eMS2CharacterHairMaterial)
 		minTransmission = vec3(0.5, 0.5, 0.5);
 
 	vec3 diffuse = vec3(0, 0, 0);
 	vec3 specular = vec3(0, 0, 0);
 	vec3 ambient = vec3(0, 0, 0);
 
-	bool hasSpecular = uni.lightingModel != eMS2Phong || textures.specular.id >= 0 || shaderType == eMS2GlassMaterial || shaderType == eMS2CharacterSkinMaterial || shaderType == eMS2CharacterMaterial;
+	bool hasSpecular = LIGHTING_MODEL != eMS2Phong || textures.specular.id >= 0 || SHADER_TYPE == eMS2GlassMaterial || SHADER_TYPE == eMS2CharacterSkinMaterial || SHADER_TYPE == eMS2CharacterMaterial;
 
 	for (int i = 0; i < uni.lightCount; ++i)
 	{
@@ -328,6 +396,24 @@ void main()
 
 		shadowPayload.isShadowed   = false;
 		shadowPayload.transmission = vec3(1, 1, 1);
+
+		vec3 halfVector = normalize(L + -gl_WorldRayDirectionEXT);
+		float lightDot = max(0, dot(halfVector, worldNrm));
+
+		vec3 lightBoost = vec3(1, 1, 1);
+
+		if (LIGHTING_MODEL == eMS2Phong && SHADER_TYPE == eMS2CharacterSkinMaterial)
+		{
+			vec3 sssColor = vec3(1, 0.2, 0.2);
+			float sssPower = 1;
+			float lightDotSaturated = max(0, min(1, lightDot));
+			float subsurfaceScatter = max(0, min(1, (lightDot + sssPower) / (1 + sssPower)));
+			subsurfaceScatter = (3 - 2 * subsurfaceScatter) * subsurfaceScatter * subsurfaceScatter;
+			subsurfaceScatter -= (3 - 2 * lightDotSaturated) * lightDotSaturated * lightDotSaturated;
+			subsurfaceScatter = max(0, subsurfaceScatter);
+
+			lightBoost = subsurfaceScatter * sssColor + (1 - subsurfaceScatter) * vec3(1, 1, 1);
+		}
 
 		// Tracing shadow ray only if the light is visible from the surface
 		if(light.castsShadows && dot(worldNrm, L) > 0)
@@ -381,44 +467,26 @@ void main()
 			shadowPayload.isShadowed = light.castsShadows;
 		}
 
-		vec3 halfVector = normalize(L + -gl_WorldRayDirectionEXT);
-		float lightDot = max(0, dot(halfVector, worldNrm));
-
-		vec3 lightBoost = vec3(1, 1, 1);
-
-		if (uni.lightingModel == eMS2Phong && shaderType == eMS2CharacterSkinMaterial)
-		{
-			vec3 sssColor = vec3(1, 0.2, 0.2);
-			float sssPower = 1;
-			float lightDotSaturated = max(0, min(1, lightDot));
-			float subsurfaceScatter = max(0, min(1, (lightDot + sssPower) / (1 + sssPower)));
-			subsurfaceScatter = (3 - 2 * subsurfaceScatter) * subsurfaceScatter * subsurfaceScatter;
-			subsurfaceScatter -= (3 - 2 * lightDotSaturated) * lightDotSaturated * lightDotSaturated;
-			subsurfaceScatter = max(0, subsurfaceScatter);
-
-			lightBoost = subsurfaceScatter * sssColor + (1 - subsurfaceScatter) * vec3(1, 1, 1);
-		}
-
 		if(shadowPayload.isShadowed)
 		{
 			shadowPayload.transmission = minTransmission;
 
-			if (uni.lightingModel != eMS2Phong)
+			if (LIGHTING_MODEL != eMS2Phong)
 				continue;
 		}
 
-		if (uni.lightingModel != eMS2Phong)
+		if (LIGHTING_MODEL != eMS2Phong)
 		{
 			specular += shadowPayload.transmission * lightIntensity * pow(lightDot, mat.shininess) * light.specular;
 		}
-		else if (uni.lightingModel == eMS2Phong)
+		else if (LIGHTING_MODEL == eMS2Phong)
 		{
-			if (textures.specular.id >= 0 || shaderType == eMS2GlassMaterial)
+			if ((CanHaveSpecular && textures.specular.id >= 0) || SHADER_TYPE == eMS2GlassMaterial)
 			{
 				float specularExponent = lightDot > 0 ? log2(lightDot) : -16.6096401;
 				float specularPower = pow(2, specularExponent * mat.shininess);
 
-				if (textures.anisotropic.id >= 0)
+				if (CanHaveAnisotropic && textures.anisotropic.id >= 0)
 				{
 					vec3 directionBias = normalize(anisotropicColor.x * worldTangent + anisotropicColor.y * worldBinormal);
 
@@ -434,17 +502,17 @@ void main()
 				
 				specular += shadowPayload.transmission * specularPower * lightIntensity * light.specular;
 			}
+
+			if (mat.fresnelBoost > 0)
+			{
+				float fresnelDot = dot(worldNrm, -gl_WorldRayDirectionEXT);
+				float fresnel = fresnelDot * lightDot * lightDot * mat.fresnelBoost * pow(1 - abs(fresnelDot), mat.fresnelExponent);
+				vec3 lightColor = (1 - fresnel) * vec3(0, 0, 0) + fresnel * light.diffuse;
+				
+				diffuse += shadowPayload.transmission * lightBoost * lightIntensity * lightColor;
+			}
 		}
 
-		if (uni.lightingModel == eMS2Phong && mat.fresnelBoost > 0)
-		{
-			float fresnelDot = dot(worldNrm, -gl_WorldRayDirectionEXT);
-			float fresnel = fresnelDot * lightDot * lightDot * mat.fresnelBoost * pow(1 - abs(fresnelDot), mat.fresnelExponent);
-			vec3 lightColor = (1 - fresnel) * vec3(0, 0, 0) + fresnel * light.diffuse;
-			
-			diffuse += shadowPayload.transmission * lightBoost * lightIntensity * lightColor;
-		}
-		
 		diffuse += shadowPayload.transmission * lightBoost * lightIntensity * max(0, dot(L, worldNrm)) * light.diffuse;
 	}
 
@@ -456,25 +524,19 @@ void main()
 
 	vec3 contribution = vec3(0, 0, 0);
 
-	switch (uni.lightingModel)
+	if (LIGHTING_MODEL == ePhong)
 	{
-		case ePhong:
 			ambient *= mat.ambient;
 			contribution = src * diffuseColor * (diffuse + ambient) + emissiveColor + specularColor * specular;
-
-			break;
-		case eMS2Phong:
-			ambient *= mat.ambient;
-			contribution = src * mat.colorBoost * diffuseColor * (diffuse + ambient + emissiveColor) + specularColor * specular;
-
-			break;
+	}
+	else if (LIGHTING_MODEL == eMS2Phong)
+	{
+		ambient *= mat.ambient;
+		contribution = src * mat.colorBoost * diffuseColor * (diffuse + ambient + emissiveColor) + specularColor * specular;
 	}
 
 	prd.hitValue = prd.transmission * contribution;
 	prd.transmission *= dst;
-	prd.nextDirection = gl_WorldRayDirectionEXT;
-	prd.nextOrigin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;
-	prd.rayLength -= gl_HitTEXT;
 
 	if (prd.transmission.x <= 0.01 && prd.transmission.y <= 0.01 && prd.transmission.z <= 0.01)
 	{

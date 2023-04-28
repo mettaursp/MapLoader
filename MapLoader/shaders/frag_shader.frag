@@ -48,11 +48,10 @@ layout(buffer_reference, scalar) buffer VertexBinormal {VertexBinormalBinding v[
 layout(buffer_reference, scalar) buffer VertexMorph {VertexMorphBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer VertexBlend {VertexBlendBinding v[]; }; // Positions of an object
 layout(buffer_reference, scalar) buffer Indices {uint i[]; }; // Triangle indices
-layout(buffer_reference, scalar) buffer Materials {WaveFrontMaterial m[]; }; // Array of all materials on an object
-layout(buffer_reference, scalar) buffer MatIndices {int i[]; }; // Material ID for each triangle
 
 layout(binding = eObjDescs, scalar) buffer ObjDesc_ { MeshDesc i[]; } objDesc;
 layout(binding = eTextures) uniform sampler2D[] textureSamplers;
+layout(set = 1, binding = eMaterials, scalar) buffer Materials_ { WaveFrontMaterial m[]; } materials;
 // clang-format on
 
 
@@ -60,11 +59,8 @@ void main()
 {
 	// Material of the object
 	MeshDesc    objResource = objDesc.i[pcRaster.objIndex];
-	MatIndices matIndices  = MatIndices(objResource.materialIndexAddress);
-	Materials  materials   = Materials(objResource.materialAddress);
-
-	int               matIndex = matIndices.i[gl_PrimitiveID];
-	WaveFrontMaterial mat      = materials.m[matIndex];
+	
+	WaveFrontMaterial mat    = materials.m[objResource.materialId];
 
 	vec3 N = normalize(i_worldNrm);
 

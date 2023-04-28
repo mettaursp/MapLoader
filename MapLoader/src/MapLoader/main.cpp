@@ -952,11 +952,14 @@ int main(int argc, char** argv)
 
 	MapLoader::ModelData* derpPandaBoreA = AssetLibrary->GetAnimations().FetchAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
 
-	size_t kr = Archive::Metadata::Entry::GetTag("kr");
-	size_t cn = Archive::Metadata::Entry::GetTag("cn");
-	size_t jp = Archive::Metadata::Entry::GetTag("jp");
-
-	//for (auto index : Archive::Metadata::Entry::GetTagData("gamebryo-sequence-file")->Ids)
+	//size_t kr = Archive::Metadata::Entry::GetTag("kr");
+	//size_t cn = Archive::Metadata::Entry::GetTag("cn");
+	//size_t jp = Archive::Metadata::Entry::GetTag("jp");
+	//
+	//auto& entries = Archive::Metadata::Entry::GetTagData("gamebryo-scenegraph")->Ids;
+	//size_t loaded = 0;
+	//
+	//for (auto index : entries)
 	//{
 	//	bool skip = false;
 	//	for (size_t i = 0; i < index.second->Tags.size() && !skip; ++i)
@@ -965,9 +968,19 @@ int main(int argc, char** argv)
 	//		skip |= index.second->Tags[i] == cn;
 	//		skip |= index.second->Tags[i] == jp;
 	//	}
+	//	++loaded;
+	//
+	//	size_t percent = (loaded * 100) / entries.size();
+	//	size_t lastPercent = (std::max(0ull, loaded - 1) * 100) / entries.size();
+	//
+	//	if (percent != lastPercent)
+	//		std::cout << percent << "%" << std::endl;
+	//
 	//	if (skip) continue;
 	//	AssetLibrary->GetModels().FetchModel(index.second);
 	//}
+	//
+	//AssetLibrary->GetModels().PrintLoggedTextures();
 
 	//loadMap("02000376"); //sb map
 	//loadMap("02010011"); // ludari promenade
@@ -1332,6 +1345,8 @@ int main(int argc, char** argv)
 					ImGui::Text("Lighting Model:");
 					ImGui::RadioButton("Phong", &helloVk.hostUBO.lightingModel, 0);
 					ImGui::RadioButton("MS2 Phong", &helloVk.hostUBO.lightingModel, 1);
+
+					helloVk.hostUBO.lightingModelOffset = 2 * helloVk.hostUBO.lightingModel * helloVk.RTShaderCount;
 
 					ImGui::Text("Sky Light:");
 					ImGui::RadioButton("Map Lights", &helloVk.hostUBO.skyLightMode, 0);

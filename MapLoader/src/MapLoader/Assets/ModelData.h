@@ -72,8 +72,6 @@ namespace MapLoader
 		nvvk::Buffer VertexMorphBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer VertexBlendBuffer;    // Device buffer of all 'Vertex'
 		nvvk::Buffer IndexBuffer;     // Device buffer of the indices forming triangles
-		nvvk::Buffer MatColorBuffer;  // Device buffer of array of 'Wavefront material'
-		nvvk::Buffer MatIndexBuffer;  // Device buffer of array of 'Wavefront material'
 	};
 
 	struct WireframeDescription

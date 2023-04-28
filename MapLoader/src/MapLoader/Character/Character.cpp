@@ -348,7 +348,7 @@ namespace MapLoader
 		{
 			auto& materialTextures = AssetLibrary->GetModels().GetMaterialTextures();
 
-			spawnParameters.NewInstance.textureOverride = (int)materialTextures.size();
+			spawnParameters.NewInstance.textures = (int)materialTextures.size();
 
 			materialTextures.push_back(materialTextures[modelNode.Material.textures]);
 

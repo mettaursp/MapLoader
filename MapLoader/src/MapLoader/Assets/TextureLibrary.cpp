@@ -390,7 +390,7 @@ namespace MapLoader
 		}
 		else
 		{
-			std::cout << ("unsupported DDS: '" + asset.Entry->RelativePath.string() + "'");
+			std::cout << ("unsupported DDS: '" + asset.Entry->RelativePath.string() + "': ") << formatName << std::endl;
 
 			return false;
 		}

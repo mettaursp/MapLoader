@@ -27,6 +27,7 @@ namespace Engine
 			std::string Name;
 			size_t AttachedTo = (size_t)-1;
 			size_t MaterialIndex = (size_t)-1;
+			size_t DataIndex = (size_t)-1;
 			bool IsBone = false;
 			bool IsInBoneList = false;
 			std::shared_ptr<Engine::Graphics::MeshFormat> Format;

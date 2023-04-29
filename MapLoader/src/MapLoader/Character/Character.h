@@ -22,8 +22,28 @@ namespace MapLoader
 		Either = 2
 	};
 
+	enum class ItemSlotType
+	{
+		Hair = 2,
+		Face = 3,
+		FaceDecor = 4,
+		Earring = 12,
+		Hat = 13,
+		Shirt = 14,
+		Pants = 15,
+		Gloves = 16,
+		Shoes = 17,
+		Cape = 18,
+		Pendant = 19,
+		Ring = 20,
+		Belt = 21,
+		Blade = 54,
+		None
+	};
+
 	struct Item
 	{
+		ItemSlotType Slot = ItemSlotType::None;
 		int Id = 0;
 		DyeColor Color;
 		int Preset = 0;
@@ -31,7 +51,7 @@ namespace MapLoader
 
 	struct HairItem : public Item
 	{
-		//float Scale = 0;
+		float Scale = 0;
 		//int Pony = 0;
 		//Vector3SF HatPosition;
 		//Vector3SF HatRotation;
@@ -40,7 +60,6 @@ namespace MapLoader
 
 	struct FaceDecorItem : public Item
 	{
-
 	};
 
 	struct HatItem : public Item
@@ -52,27 +71,27 @@ namespace MapLoader
 
 	struct InventoryTab
 	{
-		HatItem Hat;
-		Item Shirt;
-		Item Pants;
-		Item Gloves;
-		Item Shoes;
+		HatItem Hat = { ItemSlotType::Hat };
+		Item Shirt = { ItemSlotType::Shirt };
+		Item Pants = { ItemSlotType::Pants };
+		Item Gloves = { ItemSlotType::Gloves };
+		Item Shoes = { ItemSlotType::Shoes };
 		bool ShirtCoversPants = false;
-		Item Earring;
-		Item Pendant;
-		Item Ring;
-		Item Cape;
-		Item Belt;
-		Item Weapon;
+		Item Earring = { ItemSlotType::Earring };
+		Item Pendant = { ItemSlotType::Pendant };
+		Item Ring = { ItemSlotType::Ring };
+		Item Cape = { ItemSlotType::Cape };
+		Item Belt = { ItemSlotType::Belt };
+		Item Weapon = { ItemSlotType::Blade };
 	};
 
 	struct CharacterData
 	{
 		Gender Gender = Gender::Male;
 		DyeColor SkinColor;
-		HairItem Hair;
-		FaceDecorItem FaceDecor;
-		Item Face;
+		HairItem Hair = { ItemSlotType::Hair };
+		FaceDecorItem FaceDecor = { ItemSlotType::FaceDecor };
+		Item Face = { ItemSlotType::Face };
 		InventoryTab Gear;
 		InventoryTab Cosmetics;
 		std::string Emotion = "default";

@@ -888,15 +888,15 @@ int main(int argc, char** argv)
 	MapLoader::CharacterData baadf00d;
 
 	baadf00d.Gender = Gender::Female;
-	baadf00d.Face = { 10300097, dyeColors.GetDyeColor("Light Green", true) };
-	baadf00d.FaceDecor = { 10400010 };
+	baadf00d.Face = { .Id = 10300097, .Color = dyeColors.GetDyeColor("Light Green", true) };
+	baadf00d.FaceDecor = { { .Id = 10400010 } };
 	baadf00d.SkinColor = dyeColors.GetDyeColor(3);
-	baadf00d.Hair = { 10200250, dyeColors.GetDyeColor("Pink") };
-	baadf00d.Cosmetics.Hat = { 11300743, dyeColors.GetDyeColor("Red"), 0, Vector3SF(30, 0, 0), Vector3SF(10, 25, 20), Vector3SF(-5, 0, 0) };
-	baadf00d.Cosmetics.Shirt = { 11401065, dyeColors.GetDyeColor("Light Pink") };
-	baadf00d.Cosmetics.Pants = { 11500163, dyeColors.GetDyeColor("Pink") };
-	baadf00d.Cosmetics.Gloves = { 11620024, dyeColors.GetDyeColor("Red") };
-	baadf00d.Cosmetics.Shoes = { 11700313, dyeColors.GetDyeColor("Light Pink") };
+	baadf00d.Hair = { { .Id = 10200250, .Color = dyeColors.GetDyeColor("Pink") }, 1 };
+	baadf00d.Cosmetics.Hat = { { .Id = 11300743, .Color = dyeColors.GetDyeColor("Red") }, Vector3SF(30, 0, 0), Vector3SF(10, 25, 20), Vector3SF(-5, 0, 0) };
+	baadf00d.Cosmetics.Shirt = { .Id = 11401065, .Color = dyeColors.GetDyeColor("Light Pink") };
+	baadf00d.Cosmetics.Pants = { .Id = 11500163, .Color = dyeColors.GetDyeColor("Pink") };
+	baadf00d.Cosmetics.Gloves = { .Id = 11620024, .Color = dyeColors.GetDyeColor("Red") };
+	baadf00d.Cosmetics.Shoes = { .Id = 11700313, .Color = dyeColors.GetDyeColor("Light Pink") };
 
 	Character f00dCharacter(AssetLibrary, Scene);
 
@@ -905,25 +905,41 @@ int main(int argc, char** argv)
 	MapLoader::CharacterData hornetsp;
 
 	hornetsp.Gender = Gender::Male;
-	hornetsp.Face = { 10300014, dyeColors.GetDyeColor("Blue") };
-	hornetsp.FaceDecor = { 10400006, dyeColors.GetDyeColor("Blue"), 0 };
+	hornetsp.Face = { .Id = 10300014, .Color = dyeColors.GetDyeColor("Blue") };
+	hornetsp.FaceDecor = { { .Id = 10400006, .Color = dyeColors.GetDyeColor("Blue"), .Preset = 0 } };
 	hornetsp.SkinColor = dyeColors.GetDyeColor(12);
-	hornetsp.Hair = { 10200001, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Hat = { 11380431, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Shirt = { 11480386, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Pants = { 11500660, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Gloves = { 11600864, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Shoes = { 11790671, dyeColors.GetDyeColor("Green") };
-	hornetsp.Cosmetics.Cape = { 11890080, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Earring = { 11200064, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Pendant = { 11900122, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Belt = { 12100112, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Ring = { 12060106, dyeColors.GetDyeColor("Green") };
-	hornetsp.Gear.Weapon = { 15460178, dyeColors.GetDyeColor("Green") };
+	hornetsp.Hair = { { .Id = 10200001, .Color = dyeColors.GetDyeColor("Green") } };
+	hornetsp.Cosmetics.Hat = { { .Id = 11380431, .Color = dyeColors.GetDyeColor("Green") } };
+	hornetsp.Cosmetics.Shirt = { .Id = 11480386, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Pants = { .Id = 11500660, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Gloves = { .Id = 11600864, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Shoes = { .Id = 11790671, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Cosmetics.Cape = { .Id = 11890080, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Earring = { .Id = 11200064, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Pendant = { .Id = 11900122, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Belt = { .Id = 12100112, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Ring = { .Id = 12060106, .Color = dyeColors.GetDyeColor("Green") };
+	hornetsp.Gear.Weapon = { .Id = 15460178, .Color = dyeColors.GetDyeColor("Green") };
 
 	Character hornetCharacter(AssetLibrary, Scene);
 
 	hornetCharacter.Load(&hornetsp, Matrix4F(-2250, -1050, 1785) * Matrix4F::RollRotation(-0.5f * PI));
+
+	MapLoader::CharacterData blazemodz;
+
+	blazemodz.Gender = Gender::Female;
+	blazemodz.Face = { .Id = 10300097, .Color = dyeColors.GetDyeColor("Light Green", true) };
+	blazemodz.SkinColor = dyeColors.GetDyeColor(3);
+	blazemodz.Hair = { { .Slot = MapLoader::ItemSlotType::Hair, .Id = 10200056, .Color = dyeColors.GetDyeColor("Orange") }, 1 };
+	blazemodz.Cosmetics.Hat = { { .Id = 11150053, .Color = dyeColors.GetDyeColor("Black") } };
+	blazemodz.Cosmetics.Shirt = { .Id = 11400031, .Color = dyeColors.GetDyeColor("Black") };
+	blazemodz.Cosmetics.Pants = { .Id = 11500541, .Color = dyeColors.GetDyeColor("Black") };
+	blazemodz.Cosmetics.Shoes = { .Id = 11700230, .Color = dyeColors.GetDyeColor("Black") };
+	blazemodz.EmotionFrame = 1;
+
+	Character blazemodzCharacter(AssetLibrary, Scene);
+
+	blazemodzCharacter.Load(&blazemodz, Matrix4F(-2900, -2700, 3000)* Matrix4F::RollRotation(-0.25f * PI));
 
 	const Archive::Metadata::Entry* derpPandaAnimationEntry = Archive::Metadata::Entry::FindFirstEntryByTags("60000053_LesserPanda", "gamebryo-animation");
 
@@ -1133,9 +1149,10 @@ int main(int argc, char** argv)
 						ImGui::Text("Entity Id: %s", entity.Id.c_str());
 						ImGui::Text("Spawned Entity Position: %.3f, %.3f, %.3f", entity.WorldPosition.X, entity.WorldPosition.Y, entity.WorldPosition.Z);
 						ImGui::Text("Entity Coordinates: %.3f, %.3f, %.3f", entity.Position.X, entity.Position.Y, entity.Position.Z);
-						ImGui::Text("NiMesh Index: %d", spawnedModelId);
 
 						MapLoader::ModelNode& node = entity.Model->Nodes[spawnedModelId];
+
+						ImGui::Text("NiMesh Index: %d", node.NifBlockIndex);
 
 						ImGui::Text("Shader: %s", node.Shader.c_str());
 						ImGui::Text("Material: %s", node.MaterialName.c_str());
@@ -1375,7 +1392,7 @@ int main(int argc, char** argv)
 					if (ImGui::Button("Play Animation"))
 					{
 						derpPandaRig->GetAnimationPlayer()->PlayAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
-						f00dModel->GetAnimationPlayer()->PlayAnimation(femaleAnimationData->FetchAnimation("Emotion_Dance_Q"));
+						blazemodzCharacter.GetModel()->GetAnimationPlayer()->PlayAnimation(femaleAnimationData->FetchAnimation("Emotion_Dance_Q"));
 					}
 
 					ImGui::EndTabItem();
@@ -1597,6 +1614,7 @@ int main(int argc, char** argv)
 
 	hornetCharacter.ReleaseResources();
 	f00dCharacter.ReleaseResources();
+	blazemodzCharacter.ReleaseResources();
 	derpPandaRig->ReleaseResources();
 	helloVk.destroyResources();
 	helloVk.destroy();

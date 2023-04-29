@@ -28,6 +28,7 @@ namespace MapLoader
 	{
 		std::string Name;
 		int MeshId = -1;
+		size_t NifBlockIndex = (size_t)-1;
 		bool IsBone = false;
 		bool IsInBoneList = false;
 		size_t AttachedTo = (size_t)-1;

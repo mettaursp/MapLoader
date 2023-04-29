@@ -148,6 +148,7 @@ struct InstDesc
 	uint64_t indexAddress WITH_DEFAULT(0);          // Address of the index buffer
 	uint32_t materialId WITH_DEFAULT(0);          // Address of the index buffer
 	vec3 mapCoords;
+	float morphWeight WITH_DEFAULT(0);
 };
 
 struct LightDesc

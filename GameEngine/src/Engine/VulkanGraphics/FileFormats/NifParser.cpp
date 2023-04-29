@@ -678,7 +678,9 @@ std::unordered_map<std::string, std::string> attributeAliases = {
 	{ "TANGENT", "tangent" },
 	{ "TANGENT_BP", "tangent" },
 	{ "MORPH_POSITION", "morphpos" },
+	{ "MORPH_POSITION1", "morphpos1" },
 	{ "MORPH_POSITION_BP", "morphpos" },
+	{ "MORPH_POSITION_BP1", "morphpos1" },
 	{ "BLENDINDICES", "blendindices" },
 	{ "BLENDWEIGHT", "blendweight" },
 	{ "COLOR", "color" }
@@ -908,7 +910,7 @@ void NifParser::Parse(std::string_view stream)
 			transform->SetInheritsTransformation((data->Flags & 0x4 || true) != 0);// || true);
 			transform->Name = block.BlockName;
 
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, (size_t)-1, false, false, nullptr, nullptr, transform });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, (size_t)-1, blockIndex, false, false, nullptr, nullptr, transform });
 		}
 		else if (block.BlockType == "NiMesh")
 		{
@@ -1212,7 +1214,7 @@ void NifParser::Parse(std::string_view stream)
 
 			ImportedMeshes.push_back(mesh);
 
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, false, false, mesh.Format, mesh.Mesh, transform });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, blockIndex, false, false, mesh.Format, mesh.Mesh, transform });
 		}
 		else if (block.BlockType == "NiSequenceData")
 		{

@@ -219,6 +219,7 @@ namespace MapLoader
 					animationTask.skeletonAddress = skeletonAddress;
 					animationTask.skeletonIndicesAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, mesh.SkeletonSectionIndicesBuffer.buffer);
 
+					animationTask.morphWeight = gpuMeshInstance.morphWeight;
 					animationTask.vertexPosAddressOverride = gpuMeshInstance.vertexPosAddress;
 					animationTask.vertexBinormalAddressOverride = gpuMeshInstance.vertexBinormalAddress;
 

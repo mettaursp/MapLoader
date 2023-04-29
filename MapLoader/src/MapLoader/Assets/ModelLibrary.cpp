@@ -153,6 +153,7 @@ namespace MapLoader
 			modelNode.IsInBoneList = node.IsInBoneList;
 			modelNode.Bones = node.Bones;
 			modelNode.AttachedTo = node.AttachedTo;
+			modelNode.NifBlockIndex = node.DataIndex;
 
 			if (node.Transform != nullptr)
 			{
@@ -234,7 +235,7 @@ namespace MapLoader
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "color", 0 });
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "binormal", 1 });
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "tangent", 1 });
-		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "morphpos", 2 });
+		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 3, "morphpos1", 2 });
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::UInt8, 4, "blendindices", 3 });
 		attributes.push_back(Engine::Graphics::VertexAttributeFormat{ Engine::Graphics::AttributeDataTypeEnum::Float32, 4, "blendweight", 3 });
 

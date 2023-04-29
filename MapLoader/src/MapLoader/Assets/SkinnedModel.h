@@ -16,6 +16,7 @@ namespace MapLoader
 	{
 		bool HasSkeleton = false;
 		bool HasMorphAnimation = false;
+		float MorphWeight = 0;
 		size_t MeshNodeIndex = (size_t)-1;
 		size_t MeshId = (size_t)-1; // Spawned model instance index
 		size_t MeshIndex = (size_t)-1; // Mesh index in model
@@ -53,7 +54,7 @@ namespace MapLoader
 		~SkinnedModel();
 
 		void AddModel(struct ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback);
-		void AddModel(struct ModelData* model, const Matrix4F& transformation, const std::string& selfNode, const std::string& targetNode, const ModelSpawnCallback& callback);
+		void AddModel(struct ModelData* model, const Matrix4F& transformation, const std::string& selfNode, const std::string& targetNode, const ModelSpawnCallback& callback, float morphWeight = 1);
 		void SendSkeletonToGpu();
 		void SetRigAnimations(const Archive::Metadata::Entry* entry);
 		void SetRigAnimations(const std::string& rigName);
@@ -85,6 +86,7 @@ namespace MapLoader
 			const ModelSpawnCallback& Callback;
 			SkinnedModelEntry& CurrentEntry;
 			nvvk::CommandPool CmdGen;
+			float MorphWeight = 0;
 		};
 
 		struct SceneEntry
@@ -102,6 +104,8 @@ namespace MapLoader
 		std::vector<SkinnedModelEntry> Models;
 		std::unordered_map<std::string, size_t> NodeIndices;
 		std::unordered_map<std::string, size_t> MeshNodeIndices;
+		std::unordered_map<std::string, size_t> NodeAppearances;
+		std::unordered_map<size_t, size_t> ModelNodeIndices;
 		SpawningData* SpawnParameters = nullptr;
 		struct RigAnimationData* RigAnimations = nullptr;
 		bool SkeletonDataIsStale = false;
@@ -117,13 +121,13 @@ namespace MapLoader
 		std::unique_ptr<AnimationPlayer> AnimationPlayer;
 
 		void ComputeWireframe();
-		void AddModels(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback, size_t parentIndex = (size_t)-1);
+		void AddModels(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback, size_t parentIndex = (size_t)-1, size_t parentModelIndex = (size_t)-1, float morphWeight = 1);
 		void ComputeRigNodeTransform(RigNode& rigNode);
-		void ComputeBaseRigNodeTransform(MapLoader::ModelData* model, const Matrix4F& transformation, RigNode& rigNode, size_t parentIndex, size_t modelIndex);
+		void ComputeBaseRigNodeTransform(MapLoader::ModelData* model, const Matrix4F& transformation, RigNode& rigNode, size_t parentIndex, size_t modelIndex, size_t parentModelIndex);
 		size_t AddNode(std::vector<RigNode>& nodes, std::unordered_map<std::string, size_t>& nodeIndices, const std::string& name, bool& isNew);
-		bool AddRigNode(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t modelIndex);
-		bool AddMeshNode(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t modelIndex);
-		void AddRigNodes(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex);
+		bool AddRigNode(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t modelIndex, size_t parentModelIndex);
+		bool AddMeshNode(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t modelIndex, size_t parentModelIndex);
+		void AddRigNodes(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t parentModelIndex);
 		bool SpawnModelCallback(ModelSpawnParameters& spawnParameters);
 		void UpdateRig();
 	};

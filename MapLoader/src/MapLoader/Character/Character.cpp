@@ -259,6 +259,15 @@ namespace MapLoader
 
 			parameters.CurrentDyeColor = parameters.CurrentSlot->Customization->Color;
 
+			float morphWeight = 1;
+
+			if (parameters.CurrentSlot->Customization->Slot == ItemSlotType::Hair)
+			{
+				const HairItem* hair = reinterpret_cast<const HairItem*>(parameters.CurrentSlot->Customization);
+
+				morphWeight = hair->Scale;
+			}
+
 			for (const ItemData& asset : slot->Assets)
 			{
 				Matrix4F assetTransform;
@@ -268,7 +277,7 @@ namespace MapLoader
 					assetTransform = hatTransform;
 				}
 
-				Model->AddModel(asset.Model, assetTransform, asset.SelfNode, asset.TargetNode, spawnCallback);
+				Model->AddModel(asset.Model, assetTransform, asset.SelfNode, asset.TargetNode, spawnCallback, morphWeight);
 			}
 		}
 

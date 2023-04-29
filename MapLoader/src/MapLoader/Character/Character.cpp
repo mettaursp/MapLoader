@@ -273,6 +273,7 @@ namespace MapLoader
 		}
 
 		Model->CreateRigDebugMesh();
+		Model->SetRigAnimations(rigName);
 
 		Scene->AddSkinnedModel(Model);
 

@@ -50,63 +50,46 @@ namespace MapLoader
 
 	void SkinnedModel::AddModel(struct ModelData* model, const Matrix4F& transformation, const std::string& selfNode, const std::string& targetNode, const ModelSpawnCallback& callback)
 	{
-		auto parentRigNodeIndex = NodeIndices.find(targetNode);
+		bool selfMatchesTarget = selfNode == targetNode;
 		size_t parentRigNode = (size_t)-1;
 
-		if (parentRigNodeIndex == NodeIndices.end())
+		if (!selfMatchesTarget)
 		{
-			if (selfNode == targetNode)
+			auto parentRigNodeIndex = NodeIndices.find(targetNode);
+
+			if (parentRigNodeIndex == NodeIndices.end())
 			{
-				parentRigNode = 0;
+				std::cout << "rig does not have target node '" << targetNode << "' while adding model '" << model->Entry->Name << "'" << std::endl;
 			}
+			else
+				parentRigNode = parentRigNodeIndex->second;
 		}
 		else
 		{
-			parentRigNode = parentRigNodeIndex->second;
-		}
-
-		if (parentRigNode == (size_t)-1)
-		{
-			std::cout << "rig does not have target node '" << targetNode << "' while adding model '" << model->Entry->Name << "'" << std::endl;
-
-			return;
-		}
-
-		Matrix4F attachmentTransformation = transformation;
-		bool failedToAttachNode = false;
-
-		if (selfNode == targetNode)
-		{
-			failedToAttachNode = true;
-
-			for (size_t i = 0; i < model->Nodes.size(); ++i)
+			for (size_t i = 0; i < MeshNodes.size(); ++i)
 			{
-				if (selfNode == model->Nodes[i].Name.substr(0, selfNode.size()))
+				const auto& meshNode = MeshNodes[i];
+				if (selfNode == meshNode.Name.substr(0, selfNode.size()))
 				{
-					attachmentTransformation = transformation * model->Nodes[i].Transformation.Inverted();
-					failedToAttachNode = false;
-			
-					break;
+					if (meshNode.ParentIndex == (size_t)-1 || (parentRigNode != (size_t)-1 && meshNode.ParentIndex != parentRigNode))
+					{
+						std::cout << "sibling node doesnt match parent: " << selfNode << std::endl;
+					}
+
+					parentRigNode = meshNode.ParentIndex;
 				}
 			}
 		}
 
-		if (failedToAttachNode)
-		{
-			std::cout << "asset '" << model->Entry->Name << "' does not have self node '" << selfNode << "'" << std::endl;
-
-			return;
-		}
-
-		AddModels(model, attachmentTransformation, callback, selfNode, parentRigNode);
+		AddModels(model, transformation, callback, parentRigNode);
 	}
 
-	void SkinnedModel::AddModels(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback, const std::string& selfNode, size_t parentIndex)
+	void SkinnedModel::AddModels(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback, size_t parentIndex)
 	{
 		SkeletonDataIsStale = true;
 		MarkStale(true);
 
-		AddRigNodes(model, transformation, selfNode, parentIndex);
+		AddRigNodes(model, transformation, parentIndex);
 
 		Models.push_back({ model });
 
@@ -148,65 +131,126 @@ namespace MapLoader
 		SpawnParameters = nullptr;
 	}
 
-	void SkinnedModel::AddRigNodes(MapLoader::ModelData* model, const Matrix4F& transformation, const std::string& selfNode, size_t parentIndex)
+	void SkinnedModel::ComputeRigNodeTransform(RigNode& rigNode)
+	{
+		if (rigNode.ParentIndex != (size_t)-1)
+			rigNode.Transformation = RigNodes[rigNode.ParentIndex].Transformation * rigNode.LocalTransformation;
+		else
+			rigNode.Transformation = rigNode.LocalTransformation;
+	}
+
+	void SkinnedModel::ComputeBaseRigNodeTransform(MapLoader::ModelData* model, const Matrix4F& transformation, RigNode& rigNode, size_t parentIndex, size_t modelIndex)
+	{
+		const auto& node = model->Nodes[modelIndex];
+
+		bool isUnneededSceneRoot = parentIndex != (size_t)-1 && node.AttachedTo == 0;
+
+		if (node.AttachedTo != (size_t)-1 && !isUnneededSceneRoot)
+		{
+			const auto& parentNode = model->Nodes[node.AttachedTo];
+			auto parentRigNodeIndex = NodeIndices.find(parentNode.Name);
+		
+			if (parentRigNodeIndex == NodeIndices.end())
+			{
+				std::cout << "model '" << model->Entry->Name << "' node '" << node.Name << "' claims to have parent node '" << parentNode.Name << "' which was not registered in rig" << std::endl;
+			}
+			else
+			{
+				rigNode.ParentIndex = parentRigNodeIndex->second;
+			}
+		}
+		else
+		{
+			rigNode.ParentIndex = parentIndex;
+		}
+
+		if (rigNode.ParentIndex != (size_t)-1 && rigNode.ParentIndex != parentIndex)
+			rigNode.LocalTransformation = node.LocalTransformation;
+		else
+			rigNode.LocalTransformation = transformation * node.LocalTransformation;
+
+		rigNode.BaseTransform = rigNode.LocalTransformation;
+
+		ComputeRigNodeTransform(rigNode);
+
+		rigNode.BaseTransformInverse = rigNode.Transformation.Inverted();
+	}
+
+	size_t SkinnedModel::AddNode(std::vector<RigNode>& nodes, std::unordered_map<std::string, size_t>& nodeIndices, const std::string& name, bool& isNew)
+	{
+		auto nodeIndex = nodeIndices.find(name);
+
+		if (nodeIndex != nodeIndices.end())
+		{
+			isNew = false;
+
+			return nodeIndex->second;
+		}
+
+		size_t index = nodes.size();
+
+		nodeIndices[name] = index;
+		nodes.push_back({ name });
+
+		isNew = true;
+
+		return index;
+	}
+
+	bool SkinnedModel::AddRigNode(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t modelIndex)
+	{
+		const auto& node = model->Nodes[modelIndex];
+
+		bool isNew = false;
+		size_t index = AddNode(RigNodes, NodeIndices, node.Name, isNew);
+
+		if (!isNew) return false;
+
+		auto& rigNode = RigNodes[index];
+
+		rigNode.IsBone = node.IsBone;
+
+		ComputeBaseRigNodeTransform(model, transformation, rigNode, parentIndex, modelIndex);
+
+		if (node.IsInBoneList)
+		{
+			SkeletonDataIsStale = true;
+
+			rigNode.SkeletonIndex = SkeletonData.size();
+			SkeletonData.push_back(rigNode.Transformation * rigNode.BaseTransformInverse);
+		}
+
+		return true;
+	}
+
+	bool SkinnedModel::AddMeshNode(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t modelIndex)
+	{
+		const auto& node = model->Nodes[modelIndex];
+
+		bool isNew = false;
+		size_t index = AddNode(MeshNodes, MeshNodeIndices, node.Name, isNew);
+
+		auto& rigNode = MeshNodes[index];
+
+		ComputeBaseRigNodeTransform(model, transformation, rigNode, parentIndex, modelIndex);
+
+		return true;
+	}
+
+	void SkinnedModel::AddRigNodes(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex)
 	{
 		bool changedMappings = false;
 
 		for (size_t i = 0; i < model->Nodes.size(); ++i)
 		{
+			if (i == 0 && parentIndex != (size_t)-1) continue;
+
 			const auto& node = model->Nodes[i];
 
-			if (NodeIndices.contains(node.Name)) continue;
-
-			changedMappings = true;
-
-			NodeIndices[node.Name] = RigNodes.size();
-			RigNodes.push_back({});
-
-			auto& rigNode = RigNodes.back();
-
-			if (node.AttachedTo != (size_t)-1 && node.Name != selfNode)
-			{
-				const auto& parentNode = model->Nodes[node.AttachedTo];
-				auto parentRigNodeIndex = NodeIndices.find(parentNode.Name);
-
-				if (parentRigNodeIndex == NodeIndices.end())
-				{
-					std::cout << "model '" << model->Entry->Name << "' node '" << node.Name << "' claims to have parent node '" << parentNode.Name << "' which was not registered in rig" << std::endl;
-				}
-				else
-				{
-					rigNode.ParentIndex = parentRigNodeIndex->second;
-				}
-			}
-			else if (parentIndex != (size_t)-1)
-			{
-				rigNode.ParentIndex = parentIndex;
-			}
-
-			rigNode.IsBone = node.IsBone;
-
-			if (rigNode.ParentIndex != (size_t)-1)
-			{
-				rigNode.LocalTransformation = node.LocalTransformation;
-				rigNode.Transformation = RigNodes[rigNode.ParentIndex].Transformation * rigNode.LocalTransformation;
-			}
+			if (node.MeshId != (size_t)-1)
+				changedMappings |= AddMeshNode(model, transformation, parentIndex, i);
 			else
-			{
-				rigNode.LocalTransformation = node.LocalTransformation * transformation;
-				rigNode.Transformation = rigNode.LocalTransformation;
-			}
-
-			rigNode.BaseTransform = rigNode.LocalTransformation;
-			rigNode.BaseTransformInverse = rigNode.Transformation.Inverted();
-
-			if (node.IsInBoneList)
-			{
-				SkeletonDataIsStale = true;
-
-				rigNode.SkeletonIndex = SkeletonData.size();
-				SkeletonData.push_back(rigNode.Transformation * rigNode.BaseTransformInverse);
-			}
+				changedMappings |= AddRigNode(model, transformation, parentIndex, i);
 		}
 
 		if (changedMappings)
@@ -229,6 +273,7 @@ namespace MapLoader
 
 		skinnedMesh.HasSkeleton = modelNode.Bones.size() > 0;
 		skinnedMesh.HasMorphAnimation = modelNode.Mesh != nullptr && modelNode.Mesh->GetFormat()->GetAttribute("morphpos") != nullptr;
+		skinnedMesh.MeshNodeIndex = MeshNodeIndices[modelNode.Name];
 
 		if (!skinnedMesh.HasSkeleton && !skinnedMesh.HasMorphAnimation) return true;
 
@@ -490,14 +535,7 @@ namespace MapLoader
 
 			if (!node.IsStale) continue;
 
-			if (node.ParentIndex != (size_t)-1)
-			{
-				RigNode& parent = RigNodes[node.ParentIndex];
-
-				node.Transformation = parent.Transformation * node.LocalTransformation;
-			}
-			else
-				node.Transformation = node.LocalTransformation;
+			ComputeRigNodeTransform(node);
 
 			if (node.SkeletonIndex != (size_t)-1)
 			{
@@ -506,9 +544,26 @@ namespace MapLoader
 			}
 		}
 
+		for (size_t i = 0; i < MeshNodes.size(); ++i)
+		{
+			RigNode& node = MeshNodes[i];
+
+			if (node.ParentIndex != (size_t)-1 && RigNodes[node.ParentIndex].IsStale)
+				node.IsStale = true;
+
+			if (!node.IsStale) continue;
+
+			ComputeRigNodeTransform(node);
+		}
+
 		for (size_t i = 0; i < RigNodes.size(); ++i)
 		{
 			RigNodes[i].IsStale = false;
+		}
+
+		for (size_t i = 0; i < MeshNodes.size(); ++i)
+		{
+			MeshNodes[i].IsStale = false;
 		}
 	}
 

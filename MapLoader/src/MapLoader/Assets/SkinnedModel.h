@@ -16,6 +16,7 @@ namespace MapLoader
 	{
 		bool HasSkeleton = false;
 		bool HasMorphAnimation = false;
+		size_t MeshNodeIndex = (size_t)-1;
 		size_t MeshId = (size_t)-1; // Spawned model instance index
 		size_t MeshIndex = (size_t)-1; // Mesh index in model
 		size_t BlasInstanceId = (size_t)-1;
@@ -32,6 +33,7 @@ namespace MapLoader
 
 	struct RigNode
 	{
+		std::string Name;
 		bool IsBone = false;
 		size_t ParentIndex = (size_t)-1;
 		size_t SkeletonIndex = (size_t)-1;
@@ -69,6 +71,7 @@ namespace MapLoader
 
 		size_t GetRigVersion() const { return RigVersion; }
 		const auto& GetRigNodes() const { return RigNodes; }
+		const auto& GetMeshNodes() const { return MeshNodes; }
 		const auto& GetNodeIndices() const { return NodeIndices; }
 		const auto& GetSkeletonBuffer() const { return SkeletonBuffer; }
 		const auto& GetModels() const { return Models; }
@@ -95,8 +98,10 @@ namespace MapLoader
 		std::shared_ptr<RTScene> Scene;
 		std::vector<Matrix4F> SkeletonData;
 		std::vector<RigNode> RigNodes;
+		std::vector<RigNode> MeshNodes;
 		std::vector<SkinnedModelEntry> Models;
 		std::unordered_map<std::string, size_t> NodeIndices;
+		std::unordered_map<std::string, size_t> MeshNodeIndices;
 		SpawningData* SpawnParameters = nullptr;
 		struct RigAnimationData* RigAnimations = nullptr;
 		bool SkeletonDataIsStale = false;
@@ -112,8 +117,13 @@ namespace MapLoader
 		std::unique_ptr<AnimationPlayer> AnimationPlayer;
 
 		void ComputeWireframe();
-		void AddModels(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback, const std::string& selfNode = "", size_t parentIndex = (size_t)-1);
-		void AddRigNodes(MapLoader::ModelData* model, const Matrix4F& transformation, const std::string& selfNode = "", size_t parentIndex = (size_t)-1);
+		void AddModels(MapLoader::ModelData* model, const Matrix4F& transformation, const ModelSpawnCallback& callback, size_t parentIndex = (size_t)-1);
+		void ComputeRigNodeTransform(RigNode& rigNode);
+		void ComputeBaseRigNodeTransform(MapLoader::ModelData* model, const Matrix4F& transformation, RigNode& rigNode, size_t parentIndex, size_t modelIndex);
+		size_t AddNode(std::vector<RigNode>& nodes, std::unordered_map<std::string, size_t>& nodeIndices, const std::string& name, bool& isNew);
+		bool AddRigNode(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t modelIndex);
+		bool AddMeshNode(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex, size_t modelIndex);
+		void AddRigNodes(MapLoader::ModelData* model, const Matrix4F& transformation, size_t parentIndex);
 		bool SpawnModelCallback(ModelSpawnParameters& spawnParameters);
 		void UpdateRig();
 	};

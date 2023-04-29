@@ -171,8 +171,8 @@ namespace MapLoader
 			entry.SkinnedModelReference->UpdateRigDebugMesh();
 			model->MarkStale(false);
 
+			const auto& meshNodes = model->GetMeshNodes();
 			const auto& models = model->GetModels();
-
 			const auto& modelLibrary = model->GetAssetLibrary()->GetModels();
 			VkDeviceAddress skeletonAddress = nvvk::getBufferDeviceAddress(VulkanContext->Device, model->GetSkeletonBuffer().buffer);
 
@@ -184,22 +184,26 @@ namespace MapLoader
 				{
 					const auto& mesh = modelEntry.Meshes[k];
 
-					if (!mesh.HasSkeleton && !mesh.HasMorphAnimation) continue;
 					if (mesh.MeshId == (size_t)-1 || mesh.MeshIndex == (size_t)-1) continue;
 
-					uint32_t meshId = modelEntry.Model->GetId(mesh.MeshIndex);
-
-					const auto& gpuMeshInstance = modelLibrary.GetGpuEntityData()[mesh.MeshId];
-					const auto& gpuMeshData = modelLibrary.GetGpuData()[meshId];
-
 					SceneObject* sceneObject = modelLibrary.GetSpawnedModels()[mesh.MeshId].SceneObject.get();
+
+					Matrix4F transformation = modelLibrary.GetCurrentMapTransform() * model->GetTransform()->GetWorldTransformation() * meshNodes[mesh.MeshNodeIndex].Transformation;
+					
+					sceneObject->GetTransform()->SetTransformation(transformation);
+					sceneObject->MarkStale(true);
 
 					size_t entryIndex = sceneObject->GetSceneId(this);
 					SceneObjectEntry& entry = Entries[entryIndex];
 
 					ChangedStructureObjects.push_back(entry.StructureIndex);
 
-					sceneObject->MarkStale(true);
+					if (!mesh.HasSkeleton && !mesh.HasMorphAnimation) continue;
+
+					uint32_t meshId = modelEntry.Model->GetId(mesh.MeshIndex);
+
+					const auto& gpuMeshInstance = modelLibrary.GetGpuEntityData()[mesh.MeshId];
+					const auto& gpuMeshData = modelLibrary.GetGpuData()[meshId];
 
 					AnimationTasks.push_back({});
 

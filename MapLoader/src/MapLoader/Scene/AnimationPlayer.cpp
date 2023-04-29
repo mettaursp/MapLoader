@@ -99,7 +99,7 @@ namespace MapLoader
 
 			if (animation.PlaybackSpeed == 0) continue;
 
-			SetAnimationTime(animation, animation.Time += animation.PlaybackSpeed * delta);
+			SetAnimationTime(animation, animation.Time + animation.PlaybackSpeed * delta);
 
 			if (animation.Time == 0 && animation.PlaybackSpeed < 0 && !animation.Looping)
 				Stop(i);

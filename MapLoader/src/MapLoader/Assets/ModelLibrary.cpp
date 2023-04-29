@@ -162,6 +162,11 @@ namespace MapLoader
 
 			if (node.Mesh != nullptr)
 			{
+				if (node.IsBone || node.IsInBoneList)
+				{
+					std::cout << "found mesh that is also a bone" << std::endl;
+				}
+
 				if (keepRawData)
 					modelNode.Mesh = node.Mesh;
 

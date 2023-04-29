@@ -952,6 +952,12 @@ int main(int argc, char** argv)
 
 	MapLoader::ModelData* derpPandaBoreA = AssetLibrary->GetAnimations().FetchAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
 
+	const auto& f00dModel = f00dCharacter.GetModel();
+
+	MapLoader::RigAnimationData* femaleAnimationData = f00dModel->GetRigAnimations();
+
+	MapLoader::ModelData* emotionDanceQ = AssetLibrary->GetAnimations().FetchAnimation(femaleAnimationData->FetchAnimation("Emotion_Dance_Q"));
+	
 	//size_t kr = Archive::Metadata::Entry::GetTag("kr");
 	//size_t cn = Archive::Metadata::Entry::GetTag("cn");
 	//size_t jp = Archive::Metadata::Entry::GetTag("jp");
@@ -1369,6 +1375,7 @@ int main(int argc, char** argv)
 					if (ImGui::Button("Play Animation"))
 					{
 						derpPandaRig->GetAnimationPlayer()->PlayAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
+						f00dModel->GetAnimationPlayer()->PlayAnimation(femaleAnimationData->FetchAnimation("Emotion_Dance_Q"));
 					}
 
 					ImGui::EndTabItem();
@@ -1376,6 +1383,7 @@ int main(int argc, char** argv)
 
 				if (ImGui::BeginTabItem("Debug Settings"))
 				{
+					ImGui::Checkbox("Draw Rig Skeletons", &debugDisplaySkeletons);
 					ImGui::Text("Show World Slice:");
 
 					int sliceIndex = helloVk.hostUBO.sliceAxisIndex;

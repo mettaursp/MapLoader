@@ -103,6 +103,8 @@ namespace MapLoader
 		void LoadTab(InventoryTab& equips);
 		void Load(CharacterData* customization, const Matrix4F transform = Matrix4F());
 
+		const auto& GetModel() const { return Model; }
+
 	private:
 		struct SpawningData
 		{

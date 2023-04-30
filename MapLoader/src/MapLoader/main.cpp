@@ -971,8 +971,33 @@ int main(int argc, char** argv)
 	const auto& f00dModel = f00dCharacter.GetModel();
 
 	MapLoader::RigAnimationData* femaleAnimationData = f00dModel->GetRigAnimations();
+	MapLoader::RigAnimationData* maleAnimationData = hornetCharacter.GetModel()->GetRigAnimations();
 
 	MapLoader::ModelData* emotionDanceQ = AssetLibrary->GetAnimations().FetchAnimation(femaleAnimationData->FetchAnimation("Emotion_Dance_Q"));
+
+	struct RigReference
+	{
+		std::string Name;
+		std::string RigName;
+		MapLoader::RigAnimationData* AnimationData = nullptr;
+		MapLoader::AnimationPlayer* AnimationPlayer = nullptr;
+		MapLoader::RigAnimation* CurrentlyPlaying = nullptr;
+		size_t AnimationIndex = (size_t)-1;
+		bool Looping = false;
+		float PlaybackSpeed = 1;
+	};
+
+	std::vector<RigReference> rigs = {
+		{ "HornetSp", "Male", maleAnimationData, hornetCharacter.GetModel()->GetAnimationPlayer()},
+		{ "BAADF00D", "Female", femaleAnimationData, f00dModel->GetAnimationPlayer()},
+		{ "BlazeModz", "Female", femaleAnimationData, blazemodzCharacter.GetModel()->GetAnimationPlayer() },
+		{ "Derp Panda", "60000053_LesserPanda", derpPandaAnimData, derpPandaRig->GetAnimationPlayer()}
+	};
+
+	int currentRig = 3;
+
+	const size_t searchSize = 20;
+	char searchText[searchSize + 1] = { 0 };
 	
 	//size_t kr = Archive::Metadata::Entry::GetTag("kr");
 	//size_t cn = Archive::Metadata::Entry::GetTag("cn");
@@ -1389,10 +1414,97 @@ int main(int argc, char** argv)
 						ImGui::Checkbox("Combine Large Screenshot", &helloVk.combineScreenshot);
 					}
 
-					if (ImGui::Button("Play Animation"))
+					if (ImGui::CollapsingHeader("Animations"))
 					{
-						derpPandaRig->GetAnimationPlayer()->PlayAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
-						blazemodzCharacter.GetModel()->GetAnimationPlayer()->PlayAnimation(femaleAnimationData->FetchAnimation("Emotion_Dance_Q"));
+						ImGui::Text("Selected Rig:");
+
+						for (size_t i = 0; i < rigs.size(); ++i)
+						{
+							ImGui::RadioButton(rigs[i].Name.c_str(), &currentRig, (int)i);
+						}
+
+						auto& rig = rigs[currentRig];
+
+						if (rig.AnimationIndex == (size_t)-1)
+							rig.CurrentlyPlaying = nullptr;
+						else if (!rig.AnimationPlayer->IsPlaying(rig.AnimationIndex))
+						{
+							rig.AnimationIndex = (size_t)-1;
+							rig.CurrentlyPlaying = nullptr;
+						}
+
+						if (rig.CurrentlyPlaying != nullptr)
+						{
+							std::string currentlyPlaying = "Currently Playing: " + rig.CurrentlyPlaying->Name;
+
+							ImGui::Text(currentlyPlaying.c_str());
+						}
+						else
+							ImGui::Text("Currently Playing: [None]");
+
+						MapLoader::RigAnimation* playingNext = rig.CurrentlyPlaying;
+
+						if (ImGui::CollapsingHeader("Rig Animations:"))
+						{
+							ImGui::InputText("##AnimationSearch", searchText, searchSize);
+							ImGui::BeginChild("AnimationsPanel", ImVec2(0, 300), true);
+
+							for (size_t i = 0; i < rig.AnimationData->Animations.size(); ++i)
+							{
+								const std::string& name = rig.AnimationData->Animations[i].Name;
+								if (searchText[0] != 0)
+								{
+									if (!containsCaseInsensitive(name, searchText))
+										continue;
+								}
+								std::stringstream buttonText;
+								buttonText << name << "##" << rig.RigName << ";" << i;
+								std::string text = buttonText.str();
+
+								if (ImGui::Button(text.c_str()))
+								{
+									playingNext = &rig.AnimationData->Animations[i];
+								}
+							}
+
+							ImGui::EndChild();
+						}
+						
+						if (playingNext != rig.CurrentlyPlaying)
+						{
+							if (rig.CurrentlyPlaying != nullptr)
+								rig.AnimationPlayer->Stop(rig.AnimationIndex);
+
+							AssetLibrary->GetAnimations().FetchAnimation(playingNext);
+
+							rig.CurrentlyPlaying = playingNext;
+							rig.AnimationIndex = rig.AnimationPlayer->PlayAnimation(playingNext);
+						}
+
+						ImGui::Checkbox("Looping", &rig.Looping);
+						ImGui::InputFloat("Playback Speed", &rig.PlaybackSpeed);
+
+						float time = 0;
+						float playbackSpeed = rig.PlaybackSpeed;
+						float duration = 0;
+
+						if (rig.CurrentlyPlaying != nullptr)
+						{
+							time = rig.AnimationPlayer->GetTime(rig.AnimationIndex);
+							duration = rig.CurrentlyPlaying->Duration;
+						}
+
+						if (ImGui::SliderFloat("Time", &time, 0, duration) && rig.CurrentlyPlaying != nullptr)
+						{
+							playbackSpeed = 0;
+							rig.AnimationPlayer->SetTime(rig.AnimationIndex, time);
+						}
+
+						if (rig.CurrentlyPlaying != nullptr)
+						{
+							rig.AnimationPlayer->SetLooping(rig.AnimationIndex, rig.Looping);
+							rig.AnimationPlayer->SetPlaybackSpeed(rig.AnimationIndex, rig.PlaybackSpeed);
+						}
 					}
 
 					ImGui::EndTabItem();

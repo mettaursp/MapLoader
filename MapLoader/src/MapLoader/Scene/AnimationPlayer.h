@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <unordered_set>
 
 #include <Engine/IdentifierHeap.h>
 #include <ArchiveParser/MetadataMapper.h>
@@ -75,6 +76,7 @@ namespace MapLoader
 		SkinnedModel* Rig = nullptr;
 		RigAnimationData* RigAnimations = nullptr;
 		std::vector<PlayingAnimation> PlayingAnimations;
+		std::unordered_set<size_t> NodesNeedReset;
 		IDHeap PlayingAnimationIds;
 		bool PoseIsStale = false;
 		size_t LastRigVersion = (size_t)-1;

@@ -103,6 +103,16 @@ namespace MapLoader
 
 			if (animation.Time == 0 && animation.PlaybackSpeed < 0 && !animation.Looping)
 				Stop(i);
+
+			if (animation.Animation != nullptr)
+			{
+				const auto& nodeMappings = animation.NodeMappings;
+
+				for (size_t i = 0; i < nodeMappings.size(); ++i)
+				{
+					NodesNeedReset.erase(nodeMappings[i].NodeIndex);
+				}
+			}
 		}
 
 		if (!PoseIsStale) return;
@@ -158,6 +168,14 @@ namespace MapLoader
 
 		PlayingAnimationIds.Release(animationId);
 		PlayingAnimations[animationId].Animation = nullptr;
+
+		const auto& nodeMappings = PlayingAnimations[animationId].NodeMappings;
+
+		for (size_t i = 0; i < nodeMappings.size(); ++i)
+		{
+			NodesNeedReset.insert(nodeMappings[i].NodeIndex);
+		}
+
 		PoseIsStale = true;
 	}
 
@@ -251,6 +269,13 @@ namespace MapLoader
 				Rig->SetRigNodeTransform(mapping.NodeIndex, transform);
 			}
 		}
+
+		for (size_t resetNode : NodesNeedReset)
+		{
+			Rig->SetRigNodeTransform(resetNode, Rig->GetRigNodes()[resetNode].BaseTransform);
+		}
+
+		NodesNeedReset.clear();
 	}
 
 	void AnimationPlayer::SetAnimationTime(PlayingAnimation& animation, float time)

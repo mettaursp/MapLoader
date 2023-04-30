@@ -33,6 +33,25 @@ bool matchesCaseInsensitive(const std::string& text1, const std::string& text2)
 	return true;
 }
 
+bool containsCaseInsensitive(const std::string& text, const std::string& inner)
+{
+	if (text.size() < inner.size()) return false;
+
+	size_t rangeEnd = text.size() - inner.size() + 1;
+
+	for (size_t i = 0; i < rangeEnd; ++i)
+	{
+		bool found = true;
+
+		for (size_t j = 0; j < inner.size() && found; ++j)
+			found = lower(text[i + j]) == lower(inner[j]);
+
+		if (found) return true;
+	}
+
+	return false;
+}
+
 std::string padId(std::string id)
 {
 	while (id.size() > 0 && id.size() < 8)

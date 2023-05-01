@@ -2,12 +2,13 @@
 
 #include <fstream>
 #include <map>
-#include <cryptopp/modes.h>
-#include <cryptopp/aes.h>
-#include <cryptopp/files.h>
-#include <cryptopp/base64.h>
-#include <cryptopp/zlib.h>
 #include <cassert>
+
+#define OPENSSL_NO_SOCK
+
+#include <openssl/evp.h>
+#include <openssl/aes.h>
+#include <zlib.h>
 
 #include "PackTraits.h"
 #include "ParserUtils.h"
@@ -16,39 +17,58 @@
 * Using keys & parsing strategy from https://github.com/Wunkolo/Maple2Tools & http://forum.xentax.com/viewtopic.php?f=10&t=18090
 */
 
-void DecryptStream(const unsigned char* encoded, uint64_t encodedSize, const uint8_t* iv, const uint8_t* key, void* decoded, uint64_t decodedSize, bool isCompressed)
+size_t decompressionBufferSize(size_t expectedSize)
 {
-	CryptoPP::CTR_Mode<CryptoPP::AES>::Decryption decryptor;
+	return (size_t)((float)(expectedSize) * 1.1f) + 16;
+}
 
-	decryptor.SetKeyWithIV(key, 32, iv);
+void DecryptStream(const unsigned char* encoded, uint64_t encodedSize, const uint8_t* iv, const uint8_t* key, void* decoded, uint64_t decodedSize, bool isCompressed, Archive::DecryptionContext& context)
+{
+	std::vector<unsigned char>& decrypted = context.Decrypted;
+	std::vector<unsigned char>& decodedBlockData = context.DecodedBlockData;
 
-	if (isCompressed)
+	decrypted.resize(encodedSize);
+	decodedBlockData.resize(encodedSize);
+
+	int written = (int)decodedSize;
+	int written2 = 0;
+
+	EVP_DecodeBlock(decodedBlockData.data(), encoded, (int)encodedSize);
+
+	EVP_CIPHER_CTX*& decryptor = context.Decryptor;
+	
+	if (decryptor == nullptr)
 	{
-		CryptoPP::ArraySource(
-			static_cast<const CryptoPP::byte*>(encoded),
-			encodedSize, true,
-			new CryptoPP::Base64Decoder(
-				new CryptoPP::StreamTransformationFilter(
-					decryptor,
-					new CryptoPP::ZlibDecompressor(
-						new CryptoPP::ArraySink(static_cast<CryptoPP::byte*>(decoded), decodedSize)
-					)
-				)
-			)
-		);
+		decryptor = EVP_CIPHER_CTX_new();
 	}
-	else
+
+	unsigned char* decryptedData = isCompressed ? decrypted.data() : reinterpret_cast<unsigned char*>(decoded);
+
+	EVP_CIPHER_CTX_init(decryptor);
+	int res1 = EVP_DecryptInit_ex2(decryptor, EVP_aes_256_ctr(), key, iv, NULL);
+	int res2 = EVP_DecryptUpdate(decryptor, decryptedData, &written, decodedBlockData.data(), (int)encodedSize);
+	int res3 = EVP_DecryptFinal_ex(decryptor, decryptedData, &written2);
+
+	if (!isCompressed) return;
+
+	uLongf sizeUncompressed = (uLongf)decompressionBufferSize(decodedSize);
+	int result = uncompress(reinterpret_cast<Bytef*>(decoded), &sizeUncompressed, reinterpret_cast<Bytef*>(decrypted.data()), written);
+	switch (result)
 	{
-		CryptoPP::ArraySource(
-			static_cast<const CryptoPP::byte*>(encoded),
-			encodedSize, true,
-			new CryptoPP::Base64Decoder(
-				new CryptoPP::StreamTransformationFilter(
-					decryptor,
-					new CryptoPP::ArraySink(static_cast<CryptoPP::byte*>(decoded), decodedSize)
-				)
-			)
-		);
+	case Z_OK:
+		
+		break;
+	case Z_MEM_ERROR:
+		throw "unhandled zlib memory error";
+		
+		break;
+	case Z_BUF_ERROR:
+		throw "unhandled zlib buffer error";
+		
+		break;
+		
+	default:
+		throw "unhandled zlib error";
 	}
 }
 
@@ -253,7 +273,7 @@ namespace Archive
 		buffer += sizeof(Traits::StreamType);
 
 		FileListBuffer.clear();
-		FileListBuffer.resize(header.FileListSize);
+		FileListBuffer.resize(decompressionBufferSize(header.FileListSize));
 
 		DecryptStream(
 			buffer,
@@ -262,8 +282,11 @@ namespace Archive
 			Traits::Key_LUT[header.FileListCompressedSize % std::extent<std::remove_cvref_t<decltype(Traits::Key_LUT)>, 0u>::value],
 			FileListBuffer.data(),
 			header.FileListSize,
-			header.FileListSize != header.FileListCompressedSize
+			header.FileListSize != header.FileListCompressedSize,
+			Context
 		);
+
+		FileListBuffer.resize(header.FileListSize);
 
 		buffer += header.FileListEncodedSize;
 
@@ -275,7 +298,7 @@ namespace Archive
 		ParseFileList();
 
 		std::vector<typename Traits::FileHeaderType> FATable;
-		FATable.resize(header.TotalFiles, typename Traits::FileHeaderType{});
+		FATable.resize(decompressionBufferSize(header.TotalFiles), typename Traits::FileHeaderType{});
 
 		DecryptStream(
 			buffer,
@@ -284,8 +307,11 @@ namespace Archive
 			Traits::Key_LUT[header.FATCompressedSize % std::extent<std::remove_cvref_t<decltype(Traits::Key_LUT)>, 0u>::value],
 			FATable.data(),
 			header.TotalFiles * sizeof(Traits::FileHeaderType),
-			header.FATSize != header.FATCompressedSize
+			header.FATSize != header.FATCompressedSize,
+			Context
 		);
+
+		FATable.resize(header.TotalFiles);
 
 		for (size_t i = 0; i < FATable.size(); ++i)
 		{
@@ -316,7 +342,7 @@ namespace Archive
 
 		ArchiveFile.read(ArchiveBuffer.data(), file.EncodedSize);
 
-		contents.resize(file.Size);
+		contents.resize(decompressionBufferSize(file.Size));
 
 		DecryptStream(
 			streamOf<unsigned char>(ArchiveBuffer.data()),
@@ -325,8 +351,11 @@ namespace Archive
 			Traits::Key_LUT[file.CompressedSize % std::extent<std::remove_cvref_t<decltype(Traits::Key_LUT)>, 0u>::value],
 			contents.data(),
 			contents.size(),
-			file.Compression != CompressionType::None || file.CompressedSize != file.Size
+			file.Compression != CompressionType::None || file.CompressedSize != file.Size,
+			Context
 		);
+
+		contents.resize(file.Size);
 
 		return true;
 	}
@@ -421,9 +450,21 @@ namespace Archive
 		return true;
 	}
 
+	ArchiveParser::ArchiveParser()
+	{
+	}
+
 	ArchiveParser::ArchiveParser(const fs::path& path) : FileIndexMap(), DirectoryMap(), FileMap()
 	{
 		Load(path);
+	}
+
+	ArchiveParser::~ArchiveParser()
+	{
+		if (Context.Decryptor != nullptr)
+			EVP_CIPHER_CTX_free(Context.Decryptor);
+
+		Context.Decryptor = nullptr;
 	}
 
 	void ArchiveParser::Load(const fs::path& path, bool cacheHeaderBuffer)

@@ -103,8 +103,9 @@
     <Import Project="..\tinyxml2\tinyxml2Include.props" />
     <Import Project="..\GLFW\GLFWInclude.props" />
     <Import Project="..\tinygltf\tinygltfInclude.props" />
-    <Import Project="..\DebugLibraries.props" />
     <Import Project="..\VulkanShadersDebug.props" />
+    <Import Project="..\ZlibDebug.props" />
+    <Import Project="..\OpenSSLInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -120,8 +121,9 @@
     <Import Project="..\tinyxml2\tinyxml2Include.props" />
     <Import Project="..\GLFW\GLFWInclude.props" />
     <Import Project="..\tinygltf\tinygltfInclude.props" />
-    <Import Project="..\Libraries.props" />
     <Import Project="..\VulkanShaders.props" />
+    <Import Project="..\ZlibRelease.props" />
+    <Import Project="..\OpenSSLInclude.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -251,9 +253,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">
       <Project>{01d10ca8-8e23-4880-b235-786919567bc4}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\CryptoPP\CryptoPP.vcxproj">
-      <Project>{9a0fd646-a5fa-407e-bf35-541cfad331d8}</Project>
     </ProjectReference>
     <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
       <Project>{47e24c64-85dd-4f64-8761-a13fd4d198ec}</Project>

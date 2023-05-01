@@ -77,16 +77,19 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\CppGlobalConfig.props" />
     <Import Project="ParserInclude.props" />
-    <Import Project="..\CryptoPP\CryptoPPInclude.props" />
     <Import Project="..\tinyxml2\tinyxml2Include.props" />
+    <Import Project="..\ZlibDebug.props" />
+    <Import Project="..\OpenSSLInclude.props" />
+    <Import Project="..\DebugOptimization.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\CppGlobalConfig.props" />
     <Import Project="ParserInclude.props" />
-    <Import Project="..\CryptoPP\CryptoPPInclude.props" />
     <Import Project="..\tinyxml2\tinyxml2Include.props" />
     <Import Project="..\Optimization.props" />
+    <Import Project="..\ZlibRelease.props" />
+    <Import Project="..\OpenSSLInclude.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -146,9 +149,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CryptoPP\CryptoPP.vcxproj">
-      <Project>{9a0fd646-a5fa-407e-bf35-541cfad331d8}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\tinyxml2\tinyxml2.vcxproj">
       <Project>{53acfb6b-d0e7-48da-8135-ca878d404819}</Project>
     </ProjectReference>

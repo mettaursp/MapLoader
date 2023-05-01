@@ -8,13 +8,23 @@
 
 namespace fs = std::filesystem;
 
+struct evp_cipher_ctx_st;
+
 namespace Archive
 {
+	struct DecryptionContext
+	{
+		evp_cipher_ctx_st* Decryptor = nullptr;
+		std::vector<unsigned char> Decrypted;
+		std::vector<unsigned char> DecodedBlockData;
+	};
+
 	class ArchiveParser
 	{
 	public:
-		ArchiveParser() {}
+		ArchiveParser();
 		ArchiveParser(const fs::path& path);
+		~ArchiveParser();
 
 		void Load(const fs::path& path, bool cacheHeaderBuffer = false);
 		void Load(bool cacheHeaderBuffer = false);
@@ -82,7 +92,8 @@ namespace Archive
 		std::unordered_map<size_t, FileEntry*> FileIndexMap;
 		std::unordered_map<fs::path, DirectoryEntry*> DirectoryMap;
 		std::unordered_map<fs::path, FileEntry*> FileMap;
-
+		DecryptionContext Context;
+		
 		bool ProcessHeader();
 		void ParseFileList();
 

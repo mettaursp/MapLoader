@@ -6,6 +6,8 @@
 
 #include <cmath>
 
+struct evp_cipher_ctx_st;
+
 namespace Archive
 {
 	extern const std::uint8_t MS2F_Key_LUT[128][32];

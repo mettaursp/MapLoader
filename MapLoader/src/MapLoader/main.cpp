@@ -70,6 +70,7 @@
 #include <ArchiveParser/ArchiveReader.h>
 #include <ArchiveParser/ArchiveParser.h>
 #include <ArchiveParser/MetadataMapper.h>
+#include <ArchiveParser/XmlReader.h>
 #include "Assets/ModelLibrary.h"
 #include "Assets/TextureLibrary.h"
 #include "Assets/GameAssetLibrary.h"
@@ -274,25 +275,28 @@ void loadMap(const std::string& mapId)
 		}
 
 		{
-			tinyxml2::XMLDocument document;
-
 			mapFile.Read(documentBuffer);
-			document.Parse(documentBuffer.data(), documentBuffer.size());
-
-			tinyxml2::XMLElement* rootElement = document.RootElement();
 
 			SupportSettings feature;
 			SupportSettings locale;
 
-			for (tinyxml2::XMLElement* envElement = rootElement->FirstChildElement(); envElement; envElement = envElement->NextSiblingElement())
+			XmlLite::XmlReader document;
+
+			document.OpenDocument(documentBuffer);
+
+			document.GetFirstChild();
+
+			for (const XmlLite::XmlNode* envNode = document.GetFirstChild(); envNode; envNode = document.GetNextSibling())
 			{
-				if (!isNodeEnabled(envElement, &feature, &locale))
-					continue;
+				if (!isNodeEnabled(document, &feature, &locale)) continue;
 
-				tinyxml2::XMLElement* xblock = envElement->FirstChildElement("xblock");
+				const XmlLite::XmlNode* xblock = document.GetFirstChild("xblock");
 
-				if (xblock != nullptr)
-					xblockName = readAttribute<std::string>(xblock, "name", "");
+				if (xblock == nullptr) continue;
+
+				xblockName = document.ReadAttributeValue<std::string_view>("name", "");
+
+				document.PopNode();
 			}
 		}
 	}
@@ -314,35 +318,40 @@ void loadMap(const std::string& mapId)
 		return;
 	}
 
-	tinyxml2::XMLDocument document;
-
 	xblockFile.Read(flatDocumentBuffer);
-	document.Parse(flatDocumentBuffer.data(), flatDocumentBuffer.size());
 
-	tinyxml2::XMLElement* rootElement = document.RootElement();
-	tinyxml2::XMLElement* entitySet = rootElement->FirstChildElement("entitySet");
+	XmlLite::XmlReader document;
 
-	if (entitySet == nullptr) return;
+	document.OpenDocument(flatDocumentBuffer);
+
+	document.GetFirstChild();
+
+	if (document.GetFirstChild("entitySet") == nullptr) return;
 
 	mapIndices[mapId] = (int)loadedMaps.size();
-	loadedMaps.push_back(LoadedMap{ mapId, mapNames[mapId], {}, ms2ToWorld, xblockFile.GetPath().string()});
+	loadedMaps.push_back(LoadedMap{ mapId, mapNames[mapId], {}, ms2ToWorld, xblockFile.GetPath().string() });
 
 	size_t directionalLight = -1;
 
 	MapLoader::FlatLight ambient;
 	bool hasAmbient = false;
 
-	for (tinyxml2::XMLElement* entityElement = entitySet->FirstChildElement(); entityElement; entityElement = entityElement->NextSiblingElement())
+	for (const XmlLite::XmlNode* entityNode = document.GetFirstChild(); entityNode; entityNode = document.GetNextSibling())
 	{
-		std::string entityName = readAttribute<const char*>(entityElement, "name", "");
-		std::string modelName = readAttribute<std::string>(entityElement, "modelName", "");
+		size_t lineNumber = document.GetLineNumber();
+
+		std::string_view id = document.ReadAttributeValue<std::string_view>("id", "");
+		std::string_view modelName = document.ReadAttributeValue<std::string_view>("modelName", "");
+		std::string_view entityName = document.ReadAttributeValue<std::string_view>("name", "");
 
 		MapLoader::FlatEntry flatentry = AssetLibrary->GetFlats().FetchFlat(modelName);
 
 		if (flatentry.Entity == nullptr)
 			continue;
 
-		MapLoader::FlatEntry entityEntry = AssetLibrary->GetMapData().LoadEntityFromFlat(flatentry, entityElement);
+		MapLoader::FlatEntry entityEntry = AssetLibrary->GetMapData().LoadEntityFromFlat(flatentry, document);
+
+		entityEntry.Entity->Id = id;
 
 		if (entityEntry.Light != nullptr && loadLights)
 		{
@@ -377,7 +386,7 @@ void loadMap(const std::string& mapId)
 
 		bool spawningProxy = false;
 		
-		const auto spawnNewModel = [&entityEntry, &entityName, &flatentry, &entityElement, &spawningProxy](MapLoader::ModelData* model)
+		const auto spawnNewModel = [&entityEntry, &entityName, &flatentry, lineNumber, &spawningProxy](MapLoader::ModelData* model)
 		{
 			SpawnedEntity* newModel = AssetLibrary->GetModels().SpawnModel(Scene.get(), model, entityEntry.Placeable->Transformation, entityEntry.Placeable->Position,
 				[&entityEntry, &spawningProxy](ModelSpawnParameters& spawnParameters)
@@ -405,7 +414,7 @@ void loadMap(const std::string& mapId)
 			newModel->Position = entityEntry.Placeable->Position;
 			newModel->WorldPosition = ms2ToWorld * Vector3F(entityEntry.Placeable->Position, 1);
 			newModel->MapIndex = (int)loadedMaps.size() - 1;
-			newModel->LineNumber = entityElement->GetLineNum();
+			newModel->LineNumber = (int)lineNumber;
 
 			if (entityEntry.Portal != nullptr)
 			{
@@ -455,16 +464,19 @@ void loadMapNames(const Archive::ArchivePath& file)
 		return;
 	}
 
-	tinyxml2::XMLDocument document;
-
 	file.Read(documentBuffer);
-	document.Parse(documentBuffer.data(), documentBuffer.size());
 
-	tinyxml2::XMLElement* rootElement = document.RootElement();
+	XmlLite::XmlReader document;
 
-	for (tinyxml2::XMLElement* keyElement = rootElement->FirstChildElement(); keyElement; keyElement = keyElement->NextSiblingElement())
+	document.OpenDocument(documentBuffer);
+
+	document.GetFirstChild();
+
+	for (const XmlLite::XmlNode* keyNode = document.GetFirstChild(); keyNode; keyNode = document.GetNextSibling())
 	{
-		mapNames[readAttribute<std::string>(keyElement, "id", "")] = readAttribute<std::string>(keyElement, "name", "");
+		std::string id = document.ReadAttributeValue<std::string>("id", "");
+
+		mapNames[id] = document.ReadAttributeValue<std::string_view>("name", "");
 	}
 }
 
@@ -476,32 +488,37 @@ void loadMapFileNames(const Archive::ArchivePath& file)
 		return;
 	}
 
-	tinyxml2::XMLDocument document;
-
 	file.Read(documentBuffer);
-	document.Parse(documentBuffer.data(), documentBuffer.size());
 
-	tinyxml2::XMLElement* rootElement = document.RootElement();
+	XmlLite::XmlReader document;
 
-	for (tinyxml2::XMLElement* fieldDataElement = rootElement->FirstChildElement(); fieldDataElement; fieldDataElement = fieldDataElement->NextSiblingElement())
+	document.OpenDocument(documentBuffer);
+
+	document.GetFirstChild();
+
+	for (const XmlLite::XmlNode* fieldDataNode = document.GetFirstChild(); fieldDataNode; fieldDataNode = document.GetNextSibling())
 	{
-		int id = readAttribute<int>(fieldDataElement, "id", 0);
+		int id = document.ReadAttributeValue("id", 0);
 
-		tinyxml2::XMLElement* envElement = fieldDataElement->FirstChildElement();
+		const XmlLite::XmlNode* envElement = document.GetFirstChild();
 
-		if (envElement == nullptr || strcmp(envElement->Name(), "environment") != 0) continue;
+		if (envElement == nullptr) continue;
 
-		for (tinyxml2::XMLElement* componentElement = envElement->FirstChildElement(); componentElement; componentElement = componentElement->NextSiblingElement())
+		if (envElement->Name != "environment")
 		{
-			const char* name = componentElement->Name();
+			document.PopNode();
 
-			if (strcmp(name, "xblock") == 0)
-			{
-				mapFileNames[id] = readAttribute<std::string>(componentElement, "name", "");
-
-				continue;
-			}
+			continue;
 		}
+
+		for (const XmlLite::XmlNode* componentElement = document.GetFirstChild(); componentElement; componentElement = document.GetNextSibling())
+		{
+			if (componentElement->Name != "xblock") continue;
+
+			mapFileNames[id] = document.ReadAttributeValue<std::string_view>("name", "");
+		}
+
+		document.PopNode(2);
 	}
 }
 
@@ -1037,6 +1054,17 @@ int main(int argc, char** argv)
 	//loadMap("02000496"); // storms eye
 	//loadMap("02020130"); // 
 	//loadMap("02000083"); 
+	// 
+	//loadMap("02020110"); // floating worlds
+	//loadMap("02020112"); // winding halls
+	//loadMap("02020145"); // azure flux
+	// 
+	//loadMap("02020100"); // forest of sorrow
+	//loadMap("02020101"); // emerald prison
+	// 
+	//loadMap("02020120"); // terminus of time
+	// 
+	//loadMap("02020130"); // blackshard nexus
 
 	// Creation of the example
 	//helloVk.loadModel(nvh::findFile("media/scenes/Medieval_building.obj", defaultSearchPaths, true));
@@ -1067,7 +1095,6 @@ int main(int argc, char** argv)
 	helloVk.updateStaleBlas();
 	Scene->Update(0);
 
-
 	vec4 clearColor   = vec4(1, 1, 1, 1.00f);
 	bool          useRaytracer = true;
 
@@ -1078,6 +1105,9 @@ int main(int argc, char** argv)
 	bool takingLargeScreenshot = false;
 	bool debugDisplaySkeletons = false;
 
+	size_t totalBytesRead = AssetLibrary->GetReader()->GetTotalBytesRead();
+	size_t totalDiskBytesRead = AssetLibrary->GetReader()->GetTotalDiskBytesRead();
+	return 0;
 	// Main loop
 	while(!glfwWindowShouldClose(window))
 	{

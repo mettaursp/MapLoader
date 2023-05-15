@@ -46,6 +46,8 @@ namespace Archive
 		size_t GetChildDirectories(size_t index) const;
 		size_t GetChildFile(size_t directoryIndex, size_t index) const;
 		size_t GetChildDirectory(size_t directoryIndex, size_t index) const;
+		size_t GetTotalBytesRead() const { return TotalBytesRead; }
+		size_t GetTotalDiskBytesRead() const { return TotalDiskBytesRead; }
 		const fs::path& GetFilePath(size_t index) const;
 		const fs::path& GetDirectoryPath(size_t index) const;
 
@@ -93,6 +95,9 @@ namespace Archive
 		std::unordered_map<fs::path, DirectoryEntry*> DirectoryMap;
 		std::unordered_map<fs::path, FileEntry*> FileMap;
 		DecryptionContext Context;
+
+		size_t TotalBytesRead = 0;
+		size_t TotalDiskBytesRead = 0;
 		
 		bool ProcessHeader();
 		void ParseFileList();

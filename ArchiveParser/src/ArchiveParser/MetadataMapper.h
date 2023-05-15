@@ -73,7 +73,7 @@ struct std::hash<Archive::UUID>
 namespace Archive
 {
 	UUID ParseUUID(const std::string& value, int offset);
-	unsigned int ParseHexInt(const std::string& value, int offset);
+	unsigned int ParseHexInt(const std::string_view& value, int offset);
 
 	namespace FNV1A32
 	{
@@ -123,8 +123,8 @@ namespace Archive
 			fs::path CanonicalPath;
 			std::vector<size_t> Tags;
 
-			static size_t GetTag(const std::string& name);
-			static const Tag* GetTagData(const std::string& name);
+			static size_t GetTag(const std::string_view& name);
+			static const Tag* GetTagData(const std::string_view& name);
 			static Entry& Add();
 			static void IndexEntries();
 			static void LoadEntries(ArchiveReader& reader, const fs::path& path, std::string& buffer);
@@ -132,48 +132,48 @@ namespace Archive
 			static bool LoadCached(const fs::path& path);
 			static void Cache(const fs::path& path);
 
-			static bool FoundMatch(const Entry* entry, const Tag& tag, const std::string** secondaryTags, size_t tagCount);
-			static void FindMatches(const std::function<void(const Entry&)>& callback, const Tag& tag, const std::vector<Entry*> matches, const std::string** secondaryTags, size_t tagCount);
-			static const Entry* FindFirstMatch(const Tag& tag, const std::vector<Entry*> matches, const std::string** secondaryTags, size_t tagCount);
+			static bool FoundMatch(const Entry* entry, const Tag& tag, const std::string_view** secondaryTags, size_t tagCount);
+			static void FindMatches(const std::function<void(const Entry&)>& callback, const Tag& tag, const std::vector<Entry*> matches, const std::string_view** secondaryTags, size_t tagCount);
+			static const Entry* FindFirstMatch(const Tag& tag, const std::vector<Entry*> matches, const std::string_view** secondaryTags, size_t tagCount);
 
-			static const Entry* FindFirstEntryByTagWithRelPath(const std::string& path, const std::string& primaryTag);
-			static const Entry* FindFirstEntryByTags(const std::string& name, const std::string& primaryTag, const std::string** secondaryTags = nullptr, size_t tagCount = 0);
-			static void FindEntriesByTags(const std::string& name, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string** secondaryTags = nullptr, size_t tagCount = 0);
+			static const Entry* FindFirstEntryByTagWithRelPath(const std::string_view& path, const std::string_view& primaryTag);
+			static const Entry* FindFirstEntryByTags(const std::string_view& name, const std::string_view& primaryTag, const std::string_view** secondaryTags = nullptr, size_t tagCount = 0);
+			static void FindEntriesByTags(const std::string_view& name, const std::string_view& primaryTag, const std::function<void(const Entry&)>& callback, const std::string_view** secondaryTags = nullptr, size_t tagCount = 0);
 
 			template <typename... T>
-			static void FindEntriesByTags(const std::string& name, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string& secondaryTag0, const T&... secondaryTags)
+			static void FindEntriesByTags(const std::string_view& name, const std::string_view& primaryTag, const std::function<void(const Entry&)>& callback, const std::string_view& secondaryTag0, const T&... secondaryTags)
 			{
-				const std::string* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
+				const std::string_view* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
 				size_t count = sizeof...(T);
 
 				FindEntriesByTags(name, primaryTag, callback, tags, count);
 			}
 
 			template <typename... T>
-			static const Entry* FindFirstEntryByTags(const std::string& name, const std::string& primaryTag, const std::string& secondaryTag0, const T&... secondaryTags)
+			static const Entry* FindFirstEntryByTags(const std::string_view& name, const std::string_view& primaryTag, const std::string_view& secondaryTag0, const T&... secondaryTags)
 			{
-				const std::string* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
+				const std::string_view* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
 				size_t count = sizeof...(T);
 
 				return FindFirstEntryByTags(name, primaryTag, tags, count);
 			}
 
-			static const Entry* FindFirstEntryByTagsWithLink(int linkId, const std::string& primaryTag, const std::string** secondaryTags = nullptr, size_t tagCount = 0);
-			static void FindEntriesByTagsWithLink(int linkId, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string** secondaryTags = nullptr, size_t tagCount = 0);
+			static const Entry* FindFirstEntryByTagsWithLink(int linkId, const std::string_view& primaryTag, const std::string_view** secondaryTags = nullptr, size_t tagCount = 0);
+			static void FindEntriesByTagsWithLink(int linkId, const std::string_view& primaryTag, const std::function<void(const Entry&)>& callback, const std::string_view** secondaryTags = nullptr, size_t tagCount = 0);
 
 			template <typename... T>
-			static void FindEntriesByTagsWithLink(int linkId, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string& secondaryTag0, const T&... secondaryTags)
+			static void FindEntriesByTagsWithLink(int linkId, const std::string_view& primaryTag, const std::function<void(const Entry&)>& callback, const std::string_view& secondaryTag0, const T&... secondaryTags)
 			{
-				const std::string* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
+				const std::string_view* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
 				size_t count = sizeof...(T);
 
 				FindEntriesByTagsWithLink(linkId, primaryTag, callback, tags, count);
 			}
 
 			template <typename... T>
-			static const Entry* FindFirstEntryByTagsWithLink(int linkId, const std::string& primaryTag, const std::string& secondaryTag0, const T&... secondaryTags)
+			static const Entry* FindFirstEntryByTagsWithLink(int linkId, const std::string_view& primaryTag, const std::string_view& secondaryTag0, const T&... secondaryTags)
 			{
-				const std::string* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
+				const std::string_view* tags[] = { &secondaryTag0, (&secondaryTags, ...) };
 				size_t count = sizeof...(T);
 
 				return FindFirstEntryByTagsWithLink(linkId, primaryTag, tags, count);

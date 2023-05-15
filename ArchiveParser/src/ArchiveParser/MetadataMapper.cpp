@@ -40,7 +40,7 @@ namespace Archive
 		return uuid;
 	}
 
-	unsigned int ParseHexInt(const std::string& value, int offset)
+	unsigned int ParseHexInt(const std::string_view& value, int offset)
 	{
 		unsigned int uuid = 0;
 
@@ -233,7 +233,7 @@ namespace Archive
 			}
 		}
 
-		size_t Entry::GetTag(const std::string& name)
+		size_t Entry::GetTag(const std::string_view& name)
 		{
 			for (size_t i = 0; i < TagTypes.size(); ++i)
 				if (TagTypes[i].Name == name)
@@ -242,7 +242,7 @@ namespace Archive
 			return (size_t)-1;
 		}
 
-		const Tag* Entry::GetTagData(const std::string& name)
+		const Tag* Entry::GetTagData(const std::string_view& name)
 		{
 			for (size_t i = 0; i < TagTypes.size(); ++i)
 				if (TagTypes[i].Name == name)
@@ -322,7 +322,7 @@ namespace Archive
 			IndexEntries();
 		}
 
-		bool Entry::FoundMatch(const Entry* entry, const Tag& tag, const std::string** secondaryTags, size_t tagCount)
+		bool Entry::FoundMatch(const Entry* entry, const Tag& tag, const std::string_view** secondaryTags, size_t tagCount)
 		{
 			bool found = true;
 
@@ -343,7 +343,7 @@ namespace Archive
 			return found;
 		}
 
-		void Entry::FindMatches(const std::function<void(const Entry&)>& callback, const Tag& tag, const std::vector<Entry*> matches, const std::string** secondaryTags, size_t tagCount)
+		void Entry::FindMatches(const std::function<void(const Entry&)>& callback, const Tag& tag, const std::vector<Entry*> matches, const std::string_view** secondaryTags, size_t tagCount)
 		{
 			for (const Entry* entry : matches)
 			{
@@ -354,7 +354,7 @@ namespace Archive
 			}
 		}
 
-		const Entry* Entry::FindFirstMatch(const Tag& tag, const std::vector<Entry*> matches, const std::string** secondaryTags, size_t tagCount)
+		const Entry* Entry::FindFirstMatch(const Tag& tag, const std::vector<Entry*> matches, const std::string_view** secondaryTags, size_t tagCount)
 		{
 			for (const Entry* entry : matches)
 			{
@@ -367,13 +367,13 @@ namespace Archive
 			return nullptr;
 		}
 
-		const Entry* Entry::FindFirstEntryByTagWithRelPath(const std::string& path, const std::string& primaryTag)
+		const Entry* Entry::FindFirstEntryByTagWithRelPath(const std::string_view& path, const std::string_view& primaryTag)
 		{
 			const Tag* tag = GetTagData(primaryTag);
 
 			if (tag == nullptr) return nullptr;
 
-			std::string pathLower = lower(path);
+			std::string pathLower = lower(std::string(path));
 
 			const auto& pathIndex = tag->RelativePaths.find(pathLower);
 
@@ -382,13 +382,13 @@ namespace Archive
 			return pathIndex->second;
 		}
 
-		const Entry* Entry::FindFirstEntryByTags(const std::string& name, const std::string& primaryTag, const std::string** secondaryTags, size_t tagCount)
+		const Entry* Entry::FindFirstEntryByTags(const std::string_view& name, const std::string_view& primaryTag, const std::string_view** secondaryTags, size_t tagCount)
 		{
 			const Tag* tag = GetTagData(primaryTag);
 
 			if (tag == nullptr) return nullptr;
 
-			std::string nameLower = lower(name);
+			std::string nameLower = lower(std::string(name));
 
 			const auto& nameIndex = tag->Names.find(nameLower);
 
@@ -397,13 +397,13 @@ namespace Archive
 			return FindFirstMatch(*tag, nameIndex->second, secondaryTags, tagCount);
 		}
 
-		void Entry::FindEntriesByTags(const std::string& name, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string** secondaryTags, size_t tagCount)
+		void Entry::FindEntriesByTags(const std::string_view& name, const std::string_view& primaryTag, const std::function<void(const Entry&)>& callback, const std::string_view** secondaryTags, size_t tagCount)
 		{
 			const Tag* tag = GetTagData(primaryTag);
 
 			if (tag == nullptr) return;
 
-			std::string nameLower = lower(name);
+			std::string nameLower = lower(std::string(name));
 
 			const auto& nameIndex = tag->Names.find(nameLower);
 
@@ -412,7 +412,7 @@ namespace Archive
 			FindMatches(callback, *tag, nameIndex->second, secondaryTags, tagCount);
 		}
 
-		const Entry* Entry::FindFirstEntryByTagsWithLink(int linkId, const std::string& primaryTag, const std::string** secondaryTags, size_t tagCount)
+		const Entry* Entry::FindFirstEntryByTagsWithLink(int linkId, const std::string_view& primaryTag, const std::string_view** secondaryTags, size_t tagCount)
 		{
 			const Tag* tag = GetTagData(primaryTag);
 
@@ -425,7 +425,7 @@ namespace Archive
 			return FindFirstMatch(*tag, linkIndex->second, secondaryTags, tagCount);
 		}
 
-		void Entry::FindEntriesByTagsWithLink(int linkId, const std::string& primaryTag, const std::function<void(const Entry&)>& callback, const std::string** secondaryTags, size_t tagCount)
+		void Entry::FindEntriesByTagsWithLink(int linkId, const std::string_view& primaryTag, const std::function<void(const Entry&)>& callback, const std::string_view** secondaryTags, size_t tagCount)
 		{
 			const Tag* tag = GetTagData(primaryTag);
 

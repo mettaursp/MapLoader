@@ -1,7 +1,56 @@
 #include "FlatLibrary.h"
 
 #include <ArchiveParser/ParserUtils.h>
+#include <ArchiveParser/XmlReader.h>
 #include <MapLoader/Assets/GameAssetLibrary.h>
+
+template <>
+void XmlLite::XmlAttribute::Read<Vector3SF>(const std::string_view& string, Vector3SF& value)
+{
+	const char* valueData = string.data();
+
+	Read<float>(string, value.X);
+
+	while (valueData[0] && (valueData[0] != ' ' && valueData[0] != ','))
+		++valueData;
+
+	while (valueData[0] && (valueData[0] == ' ' || valueData[0] == ','))
+		++valueData;
+
+	Read<float>({ valueData, string.size() - (valueData - string.data()) }, value.Y);
+
+	while (valueData[0] && (valueData[0] != ' ' && valueData[0] != ','))
+		++valueData;
+
+	while (valueData[0] && (valueData[0] == ' ' || valueData[0] == ','))
+		++valueData;
+
+	Read<float>({ valueData, string.size() - (valueData - string.data()) }, value.Z);
+}
+
+template <>
+void XmlLite::XmlAttribute::Read<Color3>(const std::string_view& string, Color3& value)
+{
+	const char* valueData = string.data();
+
+	Read<float>(string, value.R);
+
+	while (valueData[0] && (valueData[0] != ' ' && valueData[0] != ','))
+		++valueData;
+
+	while (valueData[0] && (valueData[0] == ' ' || valueData[0] == ','))
+		++valueData;
+
+	Read<float>({ valueData, string.size() - (valueData - string.data()) }, value.G);
+
+	while (valueData[0] && (valueData[0] != ' ' && valueData[0] != ','))
+		++valueData;
+
+	while (valueData[0] && (valueData[0] == ' ' || valueData[0] == ','))
+		++valueData;
+
+	Read<float>({ valueData, string.size() - (valueData - string.data()) }, value.B);
+}
 
 namespace MapLoader
 {
@@ -66,24 +115,25 @@ namespace MapLoader
 
 		FlatEntry flatEntry = { &Entities.back() };
 
-		tinyxml2::XMLDocument document;
-
 		flatFile.Read(DocumentBuffer);
-		document.Parse(DocumentBuffer.data(), DocumentBuffer.size());
 
-		tinyxml2::XMLElement* rootElement = document.RootElement();
+		XmlLite::XmlReader document;
 
-		LoadEntity(flatEntry, rootElement);
+		document.OpenDocument(DocumentBuffer);
+
+		document.GetFirstChild();
+
+		LoadEntity(flatEntry, document);
 
 		return flatEntry;
 	}
 
-	FlatEntry FlatLibrary::FetchFlat(const std::string& name)
+	FlatEntry FlatLibrary::FetchFlat(const std::string_view& name)
 	{
 		if (name.empty())
 			return {};
 
-		std::string lowerName = lower(name);
+		std::string lowerName = lower(std::string(name));
 
 		const Archive::Metadata::Entry* entry = Archive::Metadata::Entry::FindFirstEntryByTags(name, "emergent-flat-model");
 
@@ -106,7 +156,7 @@ namespace MapLoader
 		pointerIndex = pointer->Index;
 	}
 
-	FlatEntry FlatLibrary::LoadEntityFromFlat(const FlatEntry& flat, tinyxml2::XMLElement* entityElement)
+	FlatEntry FlatLibrary::LoadEntityFromFlat(const FlatEntry& flat, XmlLite::XmlReader& document)
 	{
 		Entities.push_back({ Entities.size(), flat.Entity->Entry });
 
@@ -117,7 +167,7 @@ namespace MapLoader
 		AddFlatMixInFrom(flat.Light, entityEntry, entityEntry.Light, entityEntry.Entity->LightIndex, Lights);
 		AddFlatMixInFrom(flat.Portal, entityEntry, entityEntry.Portal, entityEntry.Entity->PortalIndex, Portals);
 
-		LoadEntity(entityEntry, entityElement);
+		LoadEntity(entityEntry, document);
 
 		return entityEntry;
 	}
@@ -149,22 +199,25 @@ namespace MapLoader
 		pointerIndex = pointer->Index;
 	}
 
-	void FlatLibrary::LoadEntity(FlatEntry& entry, tinyxml2::XMLElement* entityElement)
+	void FlatLibrary::LoadEntity(FlatEntry& entry, XmlLite::XmlReader& document)
 	{
-		entry.Entity->Id = readAttribute<const char*>(entityElement, "id", "");
+		entry.Entity->Id = document.ReadAttributeValue<std::string_view>("id", "");
 
 		const Archive::Metadata::Entry* modelEntry = nullptr;
+		bool popNode = false;
 
-		for (tinyxml2::XMLElement* traitElement = entityElement->FirstChildElement(); traitElement; traitElement = traitElement->NextSiblingElement())
+		for (const XmlLite::XmlNode* traitNode = document.GetFirstChild(); traitNode; traitNode = document.GetNextSibling())
 		{
-			const char* type = traitElement->Name();
+			popNode = true;
+
+			std::string_view type = traitNode->Name;
 
 			if (strcmp(type, "trait") == 0)
 			{
 				continue;
 			}
 
-			const char* name = readAttribute<const char*>(traitElement, "name", "");
+			std::string_view name = document.ReadAttributeValue<std::string_view>("name", "");
 
 			if (strcmp(type, "mixin") == 0)
 			{
@@ -228,27 +281,36 @@ namespace MapLoader
 
 			if (strcmp(type, "property") == 0)
 			{
-				tinyxml2::XMLElement* setElement = traitElement->FirstChildElement("set");
+				const XmlLite::XmlNode* setNode = document.GetFirstChild("set");
 
-				LoadEntityProperties(entry.Entity, setElement, name);
-				LoadPlaceableProperties(entry.Placeable, setElement, name);
-				LoadMeshProperties(entry.Mesh, setElement, name);
-				LoadLightProperties(entry.Light, setElement, name);
-				LoadPortalProperties(entry.Portal, setElement, name);
+				if (setNode == nullptr) continue;
+
+				LoadEntityProperties(entry.Entity, document, name) ||
+				LoadPlaceableProperties(entry.Placeable, document, name) ||
+				LoadMeshProperties(entry.Mesh, document, name) ||
+				LoadLightProperties(entry.Light, document, name) ||
+				LoadPortalProperties(entry.Portal, document, name);
+
+				document.PopNode();
 
 				continue;
 			}
 		}
 
+		if (popNode)
+			document.PopNode();
+
 		if (entry.Placeable != nullptr)
 			entry.Placeable->Transformation = getMatrix(entry.Placeable->Position, entry.Placeable->Rotation, entry.Placeable->Scale);
 	}
 
-	void FlatLibrary::LoadEntityProperties(FlatEntity* entity, tinyxml2::XMLElement* setElement, const char* name)
+	bool FlatLibrary::LoadEntityProperties(FlatEntity* entity, XmlLite::XmlReader& document, const std::string_view& name)
 	{
 		if (/*strcmp(name, "NifAsset") == 0 ||*/ strcmp(name, "ProxyNifAsset") == 0)
 		{
-			const char* uuid = readAttribute<const char*>(setElement, "value", "urn:llid:null") + 9;
+			std::string_view uuid = document.ReadAttributeValue<std::string_view>("value", "urn:llid:null");
+
+			uuid = { uuid.data() + 9, uuid.size() - 9 };
 		
 			const Archive::Metadata::Entry* entry = Archive::Metadata::Entry::FindFirstEntryByTagsWithLink(Archive::ParseHexInt(uuid, 0), "gamebryo-scenegraph");
 		
@@ -257,50 +319,56 @@ namespace MapLoader
 				entity->ProxyModel = AssetLibrary.GetModels().FetchModel(entry);
 			}
 		
-			return;
+			return true;
 		}
+
+		return false;
 	}
 
-	void FlatLibrary::LoadPlaceableProperties(FlatPlaceable* placeable, tinyxml2::XMLElement* setElement, const char* name)
+	bool FlatLibrary::LoadPlaceableProperties(FlatPlaceable* placeable, XmlLite::XmlReader& document, const std::string_view& name)
 	{
-		if (placeable == nullptr) return;
+		if (placeable == nullptr) return false;
 
 		if (strcmp(name, "IsVisible") == 0 && false)
 		{
-			placeable->IsVisible = lower(readAttribute<const char*>(setElement, "value", "true")) == "true";
+			placeable->IsVisible = lower(document.ReadAttributeValue<std::string>("value", "true")) == "true";
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "Position") == 0)
 		{
-			placeable->Position = readAttribute<Vector3SF>(setElement, "value", Vector3SF());
+			placeable->Position = document.ReadAttributeValue<Vector3SF>("value", Vector3SF());
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "Rotation") == 0)
 		{
-			placeable->Rotation = readAttribute<Vector3SF>(setElement, "value", Vector3SF());
+			placeable->Rotation = document.ReadAttributeValue<Vector3SF>("value", Vector3SF());
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "Scale") == 0)
 		{
-			placeable->Scale = readAttribute<float>(setElement, "value", 1);
+			placeable->Scale = document.ReadAttributeValue<float>("value", 1);
 
-			return;
+			return true;
 		}
+
+		return false;
 	}
 
-	void FlatLibrary::LoadMeshProperties(FlatMesh* mesh, tinyxml2::XMLElement* setElement, const char* name)
+	bool FlatLibrary::LoadMeshProperties(FlatMesh* mesh, XmlLite::XmlReader& document, const std::string_view& name)
 	{
-		if (mesh == nullptr) return;
+		if (mesh == nullptr) return false;
 
 		if (strcmp(name, "NifAsset") == 0/* || strcmp(name, "ProxyNifAsset") == 0*/)
 		{
-			const char* uuid = readAttribute<const char*>(setElement, "value", "urn:llid:null") + 9;
+			std::string_view uuid = document.ReadAttributeValue<std::string_view>("value", "urn:llid:null");
+
+			uuid = { uuid.data() + 9, uuid.size() - 9 };
 
 			const Archive::Metadata::Entry* entry = Archive::Metadata::Entry::FindFirstEntryByTagsWithLink(Archive::ParseHexInt(uuid, 0), "gamebryo-scenegraph");
 
@@ -312,87 +380,93 @@ namespace MapLoader
 					mesh->Model = AssetLibrary.GetModels().FetchModel(entry);
 			}
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "MaterialColor") == 0)
 		{
-			mesh->MaterialColor = readAttribute<Color3>(setElement, "value", Color3(1.f, 1, 1));
+			mesh->MaterialColor = document.ReadAttributeValue<Color3>("value", Color3(1.f, 1, 1));
 
-			return;
+			return true;
 		}
+
+		return false;
 	}
 
-	void FlatLibrary::LoadLightProperties(FlatLight* light, tinyxml2::XMLElement* setElement, const char* name)
+	bool FlatLibrary::LoadLightProperties(FlatLight* light, XmlLite::XmlReader& document, const std::string_view& name)
 	{
-		if (light == nullptr) return;
+		if (light == nullptr) return false;
 
 		if (strcmp(name, "Dimmer") == 0)
 		{
-			light->Dimmer = readAttribute<float>(setElement, "value", 0);
+			light->Dimmer = document.ReadAttributeValue<float>("value", 0);
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "DiffuseColor") == 0)
 		{
-			light->DiffuseColor = readAttribute<Color3>(setElement, "value", Color3(0.f, 0, 0));
+			light->DiffuseColor = document.ReadAttributeValue<Color3>("value", Color3(0.f, 0, 0));
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "SpecularColor") == 0)
 		{
-			light->SpecularColor = readAttribute<Color3>(setElement, "value", Color3(0.f, 0, 0));
+			light->SpecularColor = document.ReadAttributeValue<Color3>("value", Color3(0.f, 0, 0));
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "AmbientColor") == 0)
 		{
-			light->AmbientColor = readAttribute<Color3>(setElement, "value", Color3(0.f, 0, 0));
+			light->AmbientColor = document.ReadAttributeValue<Color3>("value", Color3(0.f, 0, 0));
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "CastShadows") == 0)
 		{
-			light->CastsShadows = lower(readAttribute<const char*>(setElement, "value", "false")) == "true";
+			light->CastsShadows = lower(document.ReadAttributeValue<std::string>("value", "false")) == "true";
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "Range") == 0)
 		{
-			light->Range = readAttribute<float>(setElement, "value", 0);
+			light->Range = document.ReadAttributeValue<float>("value", 0);
 
-			return;
+			return true;
 		}
+
+		return false;
 	}
 
-	void FlatLibrary::LoadPortalProperties(FlatPortal* portal, tinyxml2::XMLElement* setElement, const char* name)
+	bool FlatLibrary::LoadPortalProperties(FlatPortal* portal, XmlLite::XmlReader& document, const std::string_view& name)
 	{
-		if (portal == nullptr) return;
+		if (portal == nullptr) return false;
 
 		if (strcmp(name, "TargetFieldSN") == 0)
 		{
-			portal->TargetField = padId(readAttribute<std::string>(setElement, "value", ""));
+			portal->TargetField = padId(document.ReadAttributeValue<std::string>("value", ""));
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "TargetPortalID") == 0)
 		{
-			portal->TargetPortal = readAttribute<int>(setElement, "value", -1);
+			portal->TargetPortal = document.ReadAttributeValue<int>("value", -1);
 
-			return;
+			return true;
 		}
 
 		if (strcmp(name, "PortalID") == 0)
 		{
-			portal->PortalId = readAttribute<int>(setElement, "value", -1);
+			portal->PortalId = document.ReadAttributeValue<int>("value", -1);
 
-			return;
+			return true;
 		}
+
+		return false;
 	}
 }

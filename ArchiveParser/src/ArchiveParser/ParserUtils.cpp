@@ -2,8 +2,15 @@
 
 #include <iostream>
 
+#include "XmlReader.h"
+
 std::unordered_map<std::string, int> features;
 std::string locale;
+
+int strcmp(const std::string_view& first, const char* second)
+{
+	return strncmp(first.data(), second, first.size());
+}
 
 char lower(char character)
 {
@@ -21,13 +28,27 @@ std::string lower(const std::string& text)
 	return lower;
 }
 
-bool matchesCaseInsensitive(const std::string& text1, const std::string& text2)
+bool matchesCaseInsensitive(const std::string_view& text1, const std::string_view& text2)
 {
 	if (text1.size() != text2.size()) return false;
 
 	for (size_t i = 0; i < text1.size(); ++i)
 	{
 		if (lower(text1[i]) != lower(text2[i])) return false;
+	}
+
+	return true;
+}
+
+bool matches(const std::string_view& text1, const std::string_view& text2, bool isCaseInsensitive)
+{
+	if (text1.size() != text2.size()) return false;
+
+	if (isCaseInsensitive) return matchesCaseInsensitive(text1, text2);
+
+	for (size_t i = 0; i < text1.size(); ++i)
+	{
+		if (text1[i] != text2[i]) return false;
 	}
 
 	return true;
@@ -172,9 +193,27 @@ int featureIsActive(const char* feature)
 	return support != features.end() ? support->second : -1;
 }
 
+int featureIsActive(const std::string_view& feature)
+{
+	if (feature.size() == 0)
+		return 1;
+
+	const auto& support = features.find(std::string(feature));
+
+	return support != features.end() ? support->second : -1;
+}
+
 SupportLevel matchesLocale(const char* nodeLocale)
 {
 	if (strcmp(nodeLocale, "") == 0)
+		return SupportLevel::Default;
+
+	return locale == nodeLocale ? SupportLevel::Override : SupportLevel::None;
+}
+
+SupportLevel matchesLocale(const std::string_view& nodeLocale)
+{
+	if (nodeLocale.size() == 0)
 		return SupportLevel::Default;
 
 	return locale == nodeLocale ? SupportLevel::Override : SupportLevel::None;
@@ -199,6 +238,25 @@ SupportSettings featureIsActive(tinyxml2::XMLElement* node, SupportSettings& set
 	return SupportSettings{ "", SupportLevel::None };
 }
 
+SupportSettings featureIsActive(XmlLite::XmlReader& document, SupportSettings& settings)
+{
+	std::string_view feature;
+
+	bool hasFeature = document.ReadAttribute<std::string_view>("feature", feature);
+
+	int support = 0;
+
+	if (hasFeature)
+	{
+		support = featureIsActive(feature);
+	}
+
+	if (settings.OverriddenBy(support))
+		return SupportSettings{ std::string(feature), SupportLevel::Default, support };
+
+	return SupportSettings{ "", SupportLevel::None };
+}
+
 SupportSettings matchesLocale(tinyxml2::XMLElement* node, SupportSettings& settings)
 {
 	const tinyxml2::XMLAttribute* attribute = node->FindAttribute("locale");
@@ -218,6 +276,25 @@ SupportSettings matchesLocale(tinyxml2::XMLElement* node, SupportSettings& setti
 	return SupportSettings{ "", SupportLevel::None };
 }
 
+SupportSettings matchesLocale(XmlLite::XmlReader& document, SupportSettings& settings)
+{
+	std::string_view locale;
+
+	bool hasLocale = document.ReadAttribute<std::string_view>("locale", locale);
+
+	SupportLevel support = SupportLevel::Default;
+
+	if (hasLocale)
+	{
+		support = matchesLocale(locale);
+	}
+
+	if (settings.OverriddenBy(support))
+		return SupportSettings{ std::string(locale), support };
+
+	return SupportSettings{ "", SupportLevel::None };
+}
+
 bool isNodeEnabled(tinyxml2::XMLElement* node, SupportSettings* feature, SupportSettings* locale)
 {
 	SupportSettings featureFound;
@@ -228,6 +305,29 @@ bool isNodeEnabled(tinyxml2::XMLElement* node, SupportSettings* feature, Support
 
 	if (locale != nullptr)
 		localeFound = matchesLocale(node, *locale);
+
+	if (featureFound.Version == -1 || featureFound.Version == 99 || featureFound.Version < feature->Version || localeFound.Level == SupportLevel::None || featureFound.Level == SupportLevel::None)
+		return false;
+
+	if (feature != nullptr)
+		*feature = featureFound;
+
+	if (locale != nullptr)
+		*locale = localeFound;
+
+	return true;
+}
+
+bool isNodeEnabled(XmlLite::XmlReader& document, SupportSettings* feature, SupportSettings* locale)
+{
+	SupportSettings featureFound;
+	SupportSettings localeFound;
+
+	if (feature != nullptr)
+		featureFound = featureIsActive(document, *feature);
+
+	if (locale != nullptr)
+		localeFound = matchesLocale(document, *locale);
 
 	if (featureFound.Version == -1 || featureFound.Version == 99 || featureFound.Version < feature->Version || localeFound.Level == SupportLevel::None || featureFound.Level == SupportLevel::None)
 		return false;

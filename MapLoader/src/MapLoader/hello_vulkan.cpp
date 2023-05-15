@@ -218,7 +218,7 @@ void HelloVulkan::createDescriptorSetLayout()
 			const bool CanHaveEmissiveValues[] = { false, false, false, false, false, false, true, false, false, false, false, false, false, false, false };
 			const bool AlwaysHasEmissiveValues[] = { false, false, false, false, false, false, false, false, false, false, false, false, false, true, false };
 
-			const bool CanHaveDecalValues[] = { true, true, false, false, false, true, false, false, false, true, false, false, false, false, false };
+			const bool CanHaveDecalValues[] = { true, true, false, false, true, true, false, false, false, true, false, false, false, false, false };
 			const bool AlwaysHasDecalValues[] = { false, false, false, false, false, false, false, false, false, false, false, false, false, false, false };
 
 			const bool CanHaveAnisotropicValues[] = { false, false, false, false, false, false, true, false, false, false, false, false, false, false, false };

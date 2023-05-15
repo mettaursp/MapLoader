@@ -10,10 +10,17 @@
 #include <tinyxml2/tinyxml2.h>
 #include "ArchiveReader.h"
 
+int strcmp(const std::string_view& first, const char* second);
 std::string lower(const std::string& text);
-bool matchesCaseInsensitive(const std::string& text1, const std::string& text2);
+bool matchesCaseInsensitive(const std::string_view& text1, const std::string_view& text2);
+bool matches(const std::string_view& text1, const std::string_view& text2, bool isCaseInsensitive);
 bool containsCaseInsensitive(const std::string& text, const std::string& inner);
 std::string padId(std::string id);
+
+namespace XmlLite
+{
+	class XmlReader;
+}
 
 template <typename T>
 const T* streamOf(const void* stream)
@@ -80,10 +87,13 @@ int featureIsActive(const char* feature);
 SupportLevel matchesLocale(const char* nodeLocale);
 
 SupportSettings featureIsActive(tinyxml2::XMLElement* node, SupportSettings& settings);
+SupportSettings featureIsActive(XmlLite::XmlReader& document, SupportSettings& settings);
 
 SupportSettings matchesLocale(tinyxml2::XMLElement* node, SupportSettings& settings);
+SupportSettings matchesLocale(XmlLite::XmlReader& document, SupportSettings& settings);
 
 bool isNodeEnabled(tinyxml2::XMLElement* node, SupportSettings* feature, SupportSettings* locale);
+bool isNodeEnabled(XmlLite::XmlReader& document, SupportSettings* feature, SupportSettings* locale);
 
 template <typename Type>
 Type readValue(const tinyxml2::XMLAttribute* attribute);

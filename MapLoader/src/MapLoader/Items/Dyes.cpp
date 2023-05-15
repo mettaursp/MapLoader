@@ -1,7 +1,7 @@
 #include "Dyes.h"
 
-#include <tinyxml2/tinyxml2.h>
 #include <ArchiveParser/ParserUtils.h>
+#include <ArchiveParser/XmlReader.h>
 
 namespace MapLoader
 {
@@ -44,47 +44,47 @@ namespace MapLoader
 			return;
 		}
 
-		tinyxml2::XMLDocument document;
-
 		file.Read(DocumentBuffer);
 
-		document.Parse(DocumentBuffer.data(), DocumentBuffer.size());
+		XmlLite::XmlReader document;
 
-		tinyxml2::XMLElement* rootElement = document.RootElement();
+		document.OpenDocument(DocumentBuffer);
 
-		for (tinyxml2::XMLElement* paletteElement = rootElement->FirstChildElement(); paletteElement; paletteElement = paletteElement->NextSiblingElement())
+		document.GetFirstChild();
+
+		for (const XmlLite::XmlNode* paletteElement = document.GetFirstChild(); paletteElement; paletteElement = document.GetNextSibling())
 		{
-			int paletteId = readAttribute<int>(paletteElement, "id", 0);
+			int paletteId = document.ReadAttributeValue<int>("id", 0);
 
-			for (tinyxml2::XMLElement* colorElement = paletteElement->FirstChildElement(); colorElement; colorElement = colorElement->NextSiblingElement())
+			for (const XmlLite::XmlNode* colorElement = document.GetFirstChild(); colorElement; colorElement = document.GetNextSibling())
 			{
 				DyeColorInfo dyeColor;
 
-				dyeColor.Palette = paletteId;
-				dyeColor.Index = readAttribute<int>(colorElement, "colorSN", 0);
-				dyeColor.Id = readAttribute<int>(colorElement, "stringKey", 0);
-				char* pointer;
-
-				unsigned long ch0 = strtoul(readAttribute<const char*>(colorElement, "ch0", "0xFFFFFFFF") + 2, &pointer, 16);
-				unsigned long ch1 = strtoul(readAttribute<const char*>(colorElement, "ch1", "0xFFFFFFFF") + 2, &pointer, 16);
-				unsigned long ch2 = strtoul(readAttribute<const char*>(colorElement, "ch2", "0xFFFFFFFF") + 2, &pointer, 16);
-				unsigned long display = strtoul(readAttribute<const char*>(colorElement, "palette", "0xFFFFFFFF") + 2, &pointer, 16);
-
-				dyeColor.DisplayBoth = readAttribute<int>(colorElement, "show2color", 0) == 1;
-
+				unsigned long ch0 = 0xFFFFFFFF;
+				unsigned long ch1 = 0xFFFFFFFF;
+				unsigned long ch2 = 0xFFFFFFFF;
 				unsigned long ch0_eye = 0xFFFFFFFF;
 				unsigned long ch2_eye = 0xFFFFFFFF;
+				unsigned long display = 0xFFFFFFFF;
 
-				const char* ch0_eyeStr = readAttribute<const char*>(colorElement, "ch0_eye", nullptr);
-				const char* ch2_eyeStr = readAttribute<const char*>(colorElement, "ch2_eye", nullptr);
+				const auto results = document.ReadAttributes(
+					XmlLite::Attribute<int>("colorSN", dyeColor.Index, 0),
+					XmlLite::AttributeHex<unsigned long>("ch0", ch0, 0xFFFFFFFFul, 2),
+					XmlLite::AttributeHex<unsigned long>("ch1", ch1, 0xFFFFFFFFul, 2),
+					XmlLite::AttributeHex<unsigned long>("ch2", ch2, 0xFFFFFFFFul, 2),
+					XmlLite::AttributeHex<unsigned long>("ch0_eye", ch0_eye, 0xFFFFFFFFul, 2),
+					XmlLite::AttributeHex<unsigned long>("ch2_eye", ch2_eye, 0xFFFFFFFFul, 2),
+					XmlLite::AttributeHex<unsigned long>("palette", display, 0xFFFFFFFFul, 2),
+					XmlLite::Attribute<bool>("show2color", dyeColor.DisplayBoth, false),
+					XmlLite::Attribute<int>("stringKey", dyeColor.Id, 0)
+				);
 
-				dyeColor.HasEyeOverride = ch0_eyeStr != nullptr && ch2_eyeStr != nullptr;
+				dyeColor.Palette = paletteId;
 
-				if (dyeColor.HasEyeOverride)
-				{
-					ch0_eye = strtoul(ch0_eyeStr + 2, &pointer, 16);
-					ch2_eye = strtoul(ch2_eyeStr + 2, &pointer, 16);
-				}
+				bool has_ch0_eye = results.FoundAttribute[4];
+				bool has_ch2_eye = results.FoundAttribute[5];
+
+				dyeColor.HasEyeOverride = has_ch0_eye && has_ch2_eye;
 
 				const auto loadColor = [](unsigned int color) -> Color4
 				{
@@ -102,7 +102,32 @@ namespace MapLoader
 
 				container.push_back(dyeColor);
 			}
+
+			document.PopNode();
 		}
+	}
+
+	int str2int(const char* string, size_t length)
+	{
+		if (length == 0) return 0;
+
+		int number = 0;
+		bool isNegative = string[0] == '-';
+
+		if (length == 1) return 0;
+
+		for (size_t i = isNegative ? 1 : 0; i < length && string[i] >= '0' && string[i] <= '9'; ++i)
+			number = number * 10 + string[i] - '0';
+
+		if (isNegative)
+			number *= -1;
+
+		return number;
+	}
+
+	int str2int(const std::string_view& string)
+	{
+		return str2int(string.data(), string.size());
 	}
 
 	void DyeColors::LoadDyeNames(const Archive::ArchivePath& file, std::vector<DyeColorInfo>& container)
@@ -113,22 +138,22 @@ namespace MapLoader
 			return;
 		}
 
-		tinyxml2::XMLDocument document;
-
 		file.Read(DocumentBuffer);
-		document.Parse(DocumentBuffer.data(), DocumentBuffer.size());
 
-		tinyxml2::XMLElement* rootElement = document.RootElement();
+		XmlLite::XmlReader document;
+		document.OpenDocument(DocumentBuffer);
 
-		for (tinyxml2::XMLElement* keyElement = rootElement->FirstChildElement(); keyElement; keyElement = keyElement->NextSiblingElement())
+		const XmlLite::XmlNode* node2 = document.GetFirstChild();
+
+		for (const XmlLite::XmlNode* node = document.GetFirstChild(); node != nullptr; node = document.GetNextSibling())
 		{
-			int id = readAttribute<int>(keyElement, "id", 0);
+			int id = document.ReadAttributeValue<int>("id", 0);
 
 			for (DyeColorInfo& dyeColor : container)
 			{
 				if (dyeColor.Id == id)
 				{
-					dyeColor.Name = readAttribute<std::string>(keyElement, "name", "");
+					document.ReadAttribute<std::string>("name", dyeColor.Name, "");
 
 					if (dyeColor.Name != "")
 						DyeColorMap[lower(dyeColor.Name)] = &dyeColor;
@@ -136,5 +161,4 @@ namespace MapLoader
 			}
 		}
 	}
-
 }

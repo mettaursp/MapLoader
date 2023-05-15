@@ -1,8 +1,11 @@
 #pragma once
 
-#include <tinyxml2/tinyxml2.h>
-
 #include "FlatModel.h"
+
+namespace XmlLite
+{
+	class XmlReader;
+}
 
 namespace MapLoader
 {
@@ -29,8 +32,8 @@ namespace MapLoader
 			FlatLibrary* parentLibrary = nullptr);
 
 		FlatEntry FetchFlat(const Archive::Metadata::Entry* entry);
-		FlatEntry FetchFlat(const std::string& name);
-		FlatEntry LoadEntityFromFlat(const FlatEntry& flat, tinyxml2::XMLElement* entityElement);
+		FlatEntry FetchFlat(const std::string_view& name);
+		FlatEntry LoadEntityFromFlat(const FlatEntry& flat, XmlLite::XmlReader& document);
 
 	private:
 		GameAssetLibrary& AssetLibrary;
@@ -45,11 +48,11 @@ namespace MapLoader
 
 		FlatEntry FetchEntry(size_t index);
 
-		void LoadEntity(FlatEntry& entry, tinyxml2::XMLElement* entityElement);
-		void LoadEntityProperties(FlatEntity* entity, tinyxml2::XMLElement* setElement, const char* name);
-		void LoadPlaceableProperties(FlatPlaceable* entity, tinyxml2::XMLElement* setElement, const char* name);
-		void LoadMeshProperties(FlatMesh* mesh, tinyxml2::XMLElement* setElement, const char* name);
-		void LoadLightProperties(FlatLight* light, tinyxml2::XMLElement* setElement, const char* name);
-		void LoadPortalProperties(FlatPortal* portal, tinyxml2::XMLElement* setElement, const char* name);
+		void LoadEntity(FlatEntry& entry, XmlLite::XmlReader& document);
+		bool LoadEntityProperties(FlatEntity* entity, XmlLite::XmlReader& document, const std::string_view& name);
+		bool LoadPlaceableProperties(FlatPlaceable* entity, XmlLite::XmlReader& document, const std::string_view& name);
+		bool LoadMeshProperties(FlatMesh* mesh, XmlLite::XmlReader& document, const std::string_view& name);
+		bool LoadLightProperties(FlatLight* light, XmlLite::XmlReader& document, const std::string_view& name);
+		bool LoadPortalProperties(FlatPortal* portal, XmlLite::XmlReader& document, const std::string_view& name);
 	};
 }

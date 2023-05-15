@@ -123,6 +123,30 @@ namespace Archive
 		return GetArchivePath(path, indexIfNotLoaded);
 	}
 
+	size_t ArchiveReader::GetTotalBytesRead() const
+	{
+		size_t totalBytesRead = 0;
+
+		for (size_t i = 0; i < Archives.size(); ++i)
+		{
+			totalBytesRead += Archives[i].Parser->GetTotalBytesRead();
+		}
+
+		return totalBytesRead;
+	}
+
+	size_t ArchiveReader::GetTotalDiskBytesRead() const
+	{
+		size_t totalBytesRead = 0;
+
+		for (size_t i = 0; i < Archives.size(); ++i)
+		{
+			totalBytesRead += Archives[i].Parser->GetTotalDiskBytesRead();
+		}
+
+		return totalBytesRead;
+	}
+
 	ArchiveReader::Archive* ArchiveReader::FindArchive(const fs::path& path)
 	{
 		const fs::path::value_type* pathString = path.c_str();

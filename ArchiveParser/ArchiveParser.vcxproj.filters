@@ -30,6 +30,9 @@
     <ClCompile Include="src\ArchiveParser\ParserUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ArchiveParser\XmlReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ArchiveParser\ArchiveReader.h">
@@ -48,6 +51,9 @@
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ArchiveParser\ParserUtils.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ArchiveParser\XmlReader.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

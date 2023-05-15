@@ -20,6 +20,8 @@ namespace Archive
 		Path GetRootPath();
 		Path GetPath(const fs::path& path, bool indexIfNotLoaded = true);
 		bool IsValid() const { return !ArchivePath.empty(); }
+		size_t GetTotalBytesRead() const;
+		size_t GetTotalDiskBytesRead() const;
 
 		struct Path
 		{

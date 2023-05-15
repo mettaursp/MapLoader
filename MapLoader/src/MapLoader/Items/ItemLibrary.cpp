@@ -57,9 +57,10 @@ namespace MapLoader
 			return nullptr;
 		}
 
+		file.Read(DocumentBuffer);
+
 		tinyxml2::XMLDocument document;
 
-		file.Read(DocumentBuffer);
 		document.Parse(DocumentBuffer.data(), DocumentBuffer.size());
 
 		tinyxml2::XMLElement* rootElement = document.RootElement();

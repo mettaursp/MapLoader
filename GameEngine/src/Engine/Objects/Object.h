@@ -133,6 +133,12 @@ namespace Engine
 	private:
 		typedef std::vector<std::shared_ptr<Object>> ObjectVector;
 
+		struct MessageListener
+		{
+			size_t MessageId = 0;
+			Object* ObjectReference = nullptr;
+		};
+
 		static unsigned long long ObjectsCreated;
 
 		size_t ObjectID = -1;
@@ -145,6 +151,8 @@ namespace Engine
 		const Meta::ReflectedType* ObjectMetaData = nullptr;
 		Object* Parent = nullptr;
 		ObjectVector Children;
+		std::vector<MessageListener> Listeners;
+		std::vector<MessageListener> ListeningTo;
 
 		std::shared_ptr<Object> GetComponent(const Meta::ReflectedType* data, bool inherited) const;
 		void UpdateTickingState();

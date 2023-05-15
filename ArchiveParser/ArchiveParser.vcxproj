@@ -159,6 +159,7 @@
     <ClCompile Include="src\ArchiveParser\ArchiveReader.cpp" />
     <ClCompile Include="src\ArchiveParser\MetadataMapper.cpp" />
     <ClCompile Include="src\ArchiveParser\ParserUtils.cpp" />
+    <ClCompile Include="src\ArchiveParser\XmlReader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ArchiveParser\ArchiveKeys.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="src\ArchiveParser\MetadataMapper.h" />
     <ClInclude Include="src\ArchiveParser\PackTraits.h" />
     <ClInclude Include="src\ArchiveParser\ParserUtils.h" />
+    <ClInclude Include="src\ArchiveParser\XmlReader.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

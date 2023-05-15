@@ -105,7 +105,6 @@ namespace Engine
 			size_t GetIndices() const { return Indices.size(); }
 			size_t GetTriangles() const { return Indices.size() / 3; }
 			size_t GetLines() const { return Indices.size() / 2; }
-			size_t GetPrimitives() const;
 			MeshType GetType() const { return Type; }
 			const void* const* GetData() const { return DataPointers.data(); }
 			void** GetData() { return DataPointers.data(); }

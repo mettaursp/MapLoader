@@ -188,7 +188,7 @@ namespace MapLoader
 			size_t AppearanceCount = 0;
 		};
 
-		const bool LogMaterialTextures = true;
+		const bool LogMaterialTextures = false;
 
 		std::unordered_map<std::string, MaterialLog> LoggedMaterials;
 

@@ -344,6 +344,9 @@ namespace Archive
 
 		contents.resize(decompressionBufferSize(file.Size));
 
+		TotalBytesRead += file.Size;
+		TotalDiskBytesRead += file.CompressedSize;
+
 		DecryptStream(
 			streamOf<unsigned char>(ArchiveBuffer.data()),
 			file.EncodedSize,
@@ -420,6 +423,9 @@ namespace Archive
 		ArchiveBuffer.clear();
 		ArchiveBuffer.resize(fileSize);
 		headerFile.read(ArchiveBuffer.data(), fileSize);
+
+		TotalBytesRead += fileSize;
+		TotalDiskBytesRead += fileSize;
 
 		if (strncmp(ArchiveBuffer.data() + 1, "S2F", 3) != 0) return false;
 

@@ -3,6 +3,7 @@
 #include <fstream>
 #include <map>
 #include <cassert>
+#include <iostream>
 
 #define OPENSSL_NO_SOCK
 
@@ -411,12 +412,21 @@ namespace Archive
 
 	bool ArchiveParser::ProcessHeader()
 	{
-		if (!fs::exists(HeaderPath)) return false;
+		if (!fs::exists(HeaderPath))
+		{
+			std::cout << "archive header doesn't exist: '" << HeaderPath.string() << "'" << std::endl;
+
+			return false;
+		}
 
 		std::ifstream headerFile(HeaderPath, std::ios::binary);
 
 		if (!headerFile.is_open())
+		{
+			std::cout << "failed to open archive header: '" << HeaderPath.string() << "'" << std::endl;
+
 			return false;
+		}
 
 		uintmax_t fileSize = fs::file_size(HeaderPath);
 
@@ -427,7 +437,12 @@ namespace Archive
 		TotalBytesRead += fileSize;
 		TotalDiskBytesRead += fileSize;
 
-		if (strncmp(ArchiveBuffer.data() + 1, "S2F", 3) != 0) return false;
+		if (strncmp(ArchiveBuffer.data() + 1, "S2F", 3) != 0)
+		{
+			std::cout << "unknown pack version in archive: " << std::string_view(ArchiveBuffer.data(), 4) << std::endl;
+
+			return false;
+		}
 
 		char type = ArchiveBuffer[0];
 
@@ -450,6 +465,8 @@ namespace Archive
 
 			break;
 		default:
+			std::cout << "unknown pack version in archive: " << std::string_view(ArchiveBuffer.data(), 4) << std::endl;
+
 			return false;
 		}
 
@@ -480,11 +497,21 @@ namespace Archive
 			Unload();
 		}
 
-		if (!fs::exists(path)) return;
+		if (!fs::exists(path))
+		{
+			std::cout << "failed to load file: '" << path.string() << "'" << std::endl;
+
+			return;
+		}
 
 		std::string extension = lower(path.extension().string());
 
-		if (extension != ".m2d" && extension != ".m2h") return;
+		if (extension != ".m2d" && extension != ".m2h")
+		{
+			std::cout << "file isn't an archive: '" << path.string() << "'" << std::endl;
+
+			return;
+		}
 
 		if (extension == ".m2d")
 		{
@@ -500,9 +527,19 @@ namespace Archive
 			ArchivePath.replace_extension(".m2d");
 		}
 
-		if (!IsValidPath()) return;
+		if (!IsValidPath())
+		{
+			std::cout << "archive path isn't a valid file: '" << path.string() << "'" << std::endl;
 
-		if (!ProcessHeader()) return;
+			return;
+		}
+
+		if (!ProcessHeader())
+		{
+			std::cout << "failed to parse archive header: '" << path.string() << "'" << std::endl;
+
+			return;
+		}
 
 		ArchiveFile.open(ArchivePath, std::ios::binary);
 

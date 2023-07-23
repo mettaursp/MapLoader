@@ -1,5 +1,7 @@
 #include "ArchiveReader.h"
 
+#include <iostream>
+
 template <typename T>
 void forEachFile(const fs::path& path, bool recursiveSearch, const T& callback)
 {
@@ -29,7 +31,11 @@ namespace Archive
 		fs::path path = SanitizePath(rawPath);
 
 		if (!fs::is_directory(path))
+		{
+			std::cout << "archive root path wasn't found: '" << rawPath << "'" << std::endl;
+
 			return;
+		}
 
 		ArchivePath = path;
 
@@ -40,6 +46,8 @@ namespace Archive
 			{
 				if (path.extension() == ".m2h")
 				{
+					std::cout << "indexing archive file: ' " << path << "'" << std::endl;
+
 					fs::path sanitized = SanitizePath(path);
 					size_t archiveSize = ArchivePath.native().size() + 1;
 					size_t sanitizedSize = sanitized.native().size();
@@ -170,6 +178,8 @@ namespace Archive
 
 		if (archive == nullptr)
 		{
+			std::cout << "archive not loaded yet: '" << path.string() << "'" << std::endl;
+
 			if (fs::is_regular_file(ArchivePath / path))
 			{
 				fs::path subPath = path;
@@ -223,6 +233,8 @@ namespace Archive
 
 		if (archive == nullptr)
 		{
+			std::cout << "could not load archive: '" << path.string() << "'" << std::endl;
+
 			return GetDefaultPath(path, archive);
 		}
 
@@ -237,7 +249,11 @@ namespace Archive
 
 			parserPath += ".m2h";
 
-			archive->Parser->Load(ArchivePath / parserPath);
+			fs::path archivePath = ArchivePath / parserPath;
+
+			std::cout << "loading archive: '" << archivePath.string() << "'" << std::endl;
+
+			archive->Parser->Load(archivePath);
 		}
 
 		const fs::path::value_type* pathString = path.c_str() + archive->Path.native().size();
@@ -249,6 +265,17 @@ namespace Archive
 
 		if (archive->Parser == nullptr || !archive->Parser->HasPath(internalPath))
 		{
+			fs::path archivePath = ArchivePath / archive->Path;
+
+			if (archive->Parser == nullptr)
+			{
+				std::cout << "archive wasn't loaded: '" << archivePath.string() << "'" << std::endl;
+			}
+			else
+			{
+				std::cout << "archive '" << archivePath.string() << "' doesn't contain file: '" << internalPath.string() << "'" << std::endl;
+			}
+
 			return { this, nullptr, path, std::move(internalPath) };
 		}
 

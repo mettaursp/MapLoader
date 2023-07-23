@@ -575,6 +575,9 @@ int main(int argc, char** argv)
 	std::cout << "path found: " << fs::exists(ms2Root) << std::endl;
 	std::cout << "locale: " << localeName << "; env: " << environmentName << std::endl;
 
+	if (mapId != nullptr)
+		std::cout << "opening map: " << mapId << std::endl;
+
 	Reader->Load(ms2Root / "Data", true);
 
 	std::cout << "archives loaded, indexing asset-web-metadata" << std::endl;
@@ -1107,7 +1110,7 @@ int main(int argc, char** argv)
 
 	size_t totalBytesRead = AssetLibrary->GetReader()->GetTotalBytesRead();
 	size_t totalDiskBytesRead = AssetLibrary->GetReader()->GetTotalDiskBytesRead();
-	return 0;
+	
 	// Main loop
 	while(!glfwWindowShouldClose(window))
 	{

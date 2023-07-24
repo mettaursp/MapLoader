@@ -1,0 +1,68 @@
+<ms2Schema>
+	<directory path="Xml/item" recursive="true">
+		<file name="([0-9]+)" nameArguments="id" nameArgumentTypes="int"/>
+	</directory>
+	<layout root="ms2">
+		<node name="environment" allowMultiple="true" >
+			<property name="feature" types="string" />
+			<property name="locale" types="string" />
+			<node name="gem" />
+			<node name="ucc" />
+			<node name="drop" />
+			<node name="life" />
+			<node name="pet" />
+			<node name="ride" />
+			<node name="basic" />
+			<node name="slots" >
+				<node name="slot" allowMultiple="true">
+					<node name="decal" optional="true">
+						<node name="custom" optional="true" allowMultiple="true" />
+					</node>
+					<node name="asset" optional="true" allowMultiple="true">
+						<node name="physx" />
+						<node name="custom" optional="true" allowMultiple="true" />
+						<node name="jointangle" optional="true" allowMultiple="true" />
+						<node name="userrotation" optional="true" allowMultiple="true" />
+						<node name="dummy" optional="true" allowMultiple="true" />
+					</node>
+					<node name="scale" optional="true" allowMultiple="true" />
+				</node>
+			</node>
+			<node name="limit" />
+			<node name="skill">
+				<property name="skillID" types="int" default="0" />
+				<property name="skillLevel" types="int" default="0" />
+			</node>
+			<node name="objectWeaponSkill" />
+			<node name="title" />
+			<node name="effect" />
+			<node name="fusion" />
+			<node name="cutting">
+				<node name="mesh" optional="true" allowMultiple="true" />
+			</node>
+			<node name="install" />
+			<node name="material" />
+			<node name="property">
+				<node name="sell" />
+				<node name="exp" />
+			</node>
+			<node name="mutation" />
+			<node name="customize">
+				<node name="HR" />
+				<node name="FD" />
+				<node name="CP">
+					<node name="transform" optional="true" />
+				</node>
+			</node>
+			<node name="function" />
+			<node name="AdditionalEffect" />
+			<node name="tool" />
+			<node name="option" />
+			<node name="maid" />
+			<node name="PCBang" />
+			<node name="MusicScore" />
+			<node name="housing" />
+			<node name="Shop" optional="true"/>
+		</node>
+	</layout>
+</ms2Schema>

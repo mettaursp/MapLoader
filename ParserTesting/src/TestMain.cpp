@@ -39,20 +39,6 @@ void traverse(const Archive::ArchivePath& path)
 		traverse(path.ChildDirectory(i));
 }
 
-template <typename T>
-void forEachFile(const Archive::ArchivePath& path, bool recursiveSearch, const T& callback)
-{
-	size_t childFiles = path.ChildFiles();
-	size_t childDirectories = path.ChildDirectories();
-
-	for (size_t i = 0; i < childFiles; ++i)
-		callback(path.ChildFile(i));
-
-	if (recursiveSearch)
-		for (size_t i = 0; i < childDirectories; ++i)
-			forEachFile(path.ChildDirectory(i), recursiveSearch, callback);
-}
-
 struct XmlAttribute
 {
 	std::string Name;
@@ -477,7 +463,7 @@ int main()
 			VisitElement(rootElement, schema);
 		};
 
-		forEachFile(path, true, visit);
+		Archive::ForEachFile(path, true, visit);
 		//
 		//size_t childFiles = path.ChildFiles();
 		//size_t childDirectories = path.ChildDirectories();

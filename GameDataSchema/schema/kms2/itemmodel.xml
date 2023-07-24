@@ -1,0 +1,30 @@
+<ms2Schema>
+	<directory path="Xml/itemmodel" recursive="true">
+		<file name="([0-9]+)" nameArguments="idGroup" nameArgumentTypes="int"/>
+	</directory>
+	<layout root="ms2">
+		<node name="ItemModel" allowMultiple="true">
+			<node name="customize" optional="true">
+				<node name="capTransform" optional="true" />
+			</node>
+			<node name="slots" optional="true">
+				<node name="slot" allowMultiple="true">
+					<node name="asset" optional="true" allowMultiple="true">
+						<node name="custom" optional="true" allowMultiple="true" />
+						<node name="jointangle" optional="true" allowMultiple="true" />
+						<node name="userrotation" optional="true" allowMultiple="true" />
+						<node name="dummy" optional="true" allowMultiple="true" />
+						<node name="physx" optional="true" />
+					</node>
+					<node name="scale" optional="true" allowMultiple="true" />
+					<node name="decal" optional="true">
+						<node name="custom" optional="true" allowMultiple="true" />
+					</node>
+				</node>
+			</node>
+			<node name="cutting" optional="true">
+				<node name="mesh" allowMultiple="true" />
+			</node>
+		</node>
+	</layout>
+</ms2Schema>

@@ -1,0 +1,28 @@
+<ms2Schema>
+	<directory path="Xml/itemdata" recursive="true">
+		<file name="([0-9]+)" nameArguments="idGroup" nameArgumentTypes="int"/>
+	</directory>
+	<layout root="ms2">
+		<node name="item" allowMultiple="true">
+			<node name="environment" allowMultiple="true">
+				<node name="property">
+					<node name="sell" optional="true" />
+				</node>
+				<node name="limit" optional="true" />
+				<node name="tool" optional="true" />
+				<node name="effect" optional="true" />
+				<node name="basic" optional="true" />
+				<node name="material" optional="true" />
+				<node name="option" optional="true" />
+				<node name="ucc" optional="true" />
+				<node name="life" optional="true" />
+				<node name="PCBang" optional="true" />
+				<node name="AdditionalEffect" optional="true" />
+				<node name="fusion" optional="true" />
+				<node name="skill" optional="true" />
+				<node name="function" optional="true" />
+				<node name="install" optional="true" />
+			</node>
+		</node>
+	</layout>
+</ms2Schema>

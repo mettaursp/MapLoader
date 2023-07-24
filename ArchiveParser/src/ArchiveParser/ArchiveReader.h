@@ -83,4 +83,18 @@ namespace Archive
 	};
 
 	typedef ArchiveReader::Path ArchivePath;
+
+	template <typename T>
+	void ForEachFile(const ArchivePath& path, bool recursiveSearch, const T& callback)
+	{
+		size_t childFiles = path.ChildFiles();
+		size_t childDirectories = path.ChildDirectories();
+
+		for (size_t i = 0; i < childFiles; ++i)
+			callback(path.ChildFile(i));
+
+		if (recursiveSearch)
+			for (size_t i = 0; i < childDirectories; ++i)
+				ForEachFile(path.ChildDirectory(i), recursiveSearch, callback);
+	}
 }

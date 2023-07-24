@@ -1,0 +1,11 @@
+<outputSchema>
+	<namespace name="GameData">
+		<namespace name="Types">
+			<class name="Item">
+			</class>
+		</namespace>
+		<namespace name="Collections">
+			<collection name="Items" keyName="id" keyType="int" class="Types.item" />
+		</namespace>
+	</namespace>
+</outputSchema>

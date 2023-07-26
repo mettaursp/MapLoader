@@ -4,7 +4,8 @@
 	</directory>
 	<layout root="ms2">
 		<node name="item" allowMultiple="true">
-			<node name="environment" allowMultiple="true">
+			<requiredNode name="environment" />
+			<node name="environment" hasFeature="true">
 				<node name="property">
 					<node name="sell" optional="true" />
 				</node>

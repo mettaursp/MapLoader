@@ -1,0 +1,49 @@
+<ms2Schema>
+	<directory path="Xml/skilldata" recursive="false">
+		<file name="([0-9]+)" nameArguments="idGroup" nameArgumentTypes="int"/>
+	</directory>
+	<layout root="ms2">
+		<node name="skill" optional="true" allowMultiple="true">
+			<requiredNode name="basic" />
+			<node name="basic" hasFeature="true">
+				<node name="ui" optional="true" />
+				<node name="kinds" optional="true" />
+				<node name="stateAttr" optional="true" />
+				<node name="autoTargeting" optional="true" />
+				<node name="push" optional="true" />
+				<node name="combo" optional="true" />
+				<node name="condition" optional="true">
+					<node name="weapon" optional="true" allowMultiple="true" />
+					<node name="requireEffect" optional="true" />
+					<node name="requireMapCodes" optional="true" allowMultiple="true" />
+					<node name="hasNotAdditionalEffectGroup" optional="true" />
+				</node>
+				<node name="changeSkill" optional="true" />
+				<node name="sensor" optional="true" />
+				<node name="magicControl" optional="true" />
+			</node>
+			<node name="level" allowMultiple="true">
+				<node name="motion" optional="true" allowMultiple="true">
+					<node name="attack" optional="true" allowMultiple="true">
+						<node name="range" optional="true" />
+						<node name="arrow" optional="true" />
+						<node name="damage" optional="true" />
+						<node name="pause" optional="true" />
+						<node name="actionSkill" optional="true" allowMultiple="true" />
+						<node name="actionAdditional" optional="true" allowMultiple="true">
+							<node name="beginCondition" optional="true">
+								<node name="caster" optional="true" />
+								<node name="target" optional="true" />
+							</node>
+						</node>
+						<node name="chain" optional="true" />
+					</node>
+				</node>
+				<node name="actionAdditional" optional="true" allowMultiple="true">
+					<node name="beginCondition" optional="true" />
+				</node>
+				<node name="detectProperty" optional="true" />
+			</node>
+		</node>
+	</layout>
+</ms2Schema>

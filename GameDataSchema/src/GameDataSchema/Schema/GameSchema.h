@@ -50,6 +50,7 @@ namespace GameSchema
 	{
 		std::string Name;
 		std::string Default;
+		bool Varies = false;
 
 		std::vector<const SchemaType*> Types;
 	};
@@ -60,20 +61,28 @@ namespace GameSchema
 		bool Optional = false;
 		bool AllowMultiple = false;
 		bool AllowUnknownChildren = false;
+		bool HasFeature = false;
+		bool HasLocale = false;
+		bool NoVariance = false;
+		bool IsVariancePivot = false;
+		int PivotNodeHeight = -1;
 
 		std::vector<SchemaNode> ChildNodes;
 		std::vector<SchemaProperty> Properties;
+		std::vector<std::string> RequiredNodes;
 	};
 
 	struct Schema
 	{
 		std::string Name;
-		std::string Root;
-		bool AllowMultipleRoots = false;
-		bool AllowUnknownChildren = false;
+		//std::string Root;
+		//bool AllowMultipleRoots = false;
+		//bool AllowUnknownChildren = false;
+		SchemaNode RootNode;
 
 		std::vector<SchemaDirectory> Directories;
-		std::vector<SchemaNode> Nodes;
+		//std::vector<SchemaNode> Nodes;
+		//std::vector<std::string> RequiredNodes;
 	};
 
 	extern std::unordered_map<std::string, Schema> Gms2Schemas;
@@ -85,7 +94,7 @@ namespace GameSchema
 
 	void readProperty(Schema& schema, SchemaProperty& property, tinyxml2::XMLElement* propertyElement);
 
-	void readNode(Schema& schema, SchemaNode& node, tinyxml2::XMLElement* nodeElement);
+	void readNode(Schema& schema, SchemaNode& node, tinyxml2::XMLElement* nodeElement, size_t pivotHeight = (size_t)-1);
 
 	void readLayout(Schema& schema, tinyxml2::XMLElement* layoutElement);
 
@@ -93,9 +102,7 @@ namespace GameSchema
 
 	void readSchemas(const fs::path& directory, bool isGms2);
 
-	bool validateNodeSchema(const Schema& schema, const SchemaNode& node, tinyxml2::XMLElement* element, const std::string& path, bool printSuccesses);
-
 	bool validateFileSchema(const Schema& schema, const Archive::ArchivePath& path, bool printSuccesses);
 
-	void validateSchemas(Archive::ArchiveReader& reader, bool isGms2, bool printSuccesses = false);
+	void validateSchemas(Archive::ArchiveReader& reader, bool isGms2, const std::vector<std::string>& schemaNames, bool printSuccesses = false);
 }

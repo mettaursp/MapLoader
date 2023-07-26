@@ -3,9 +3,8 @@
 		<file name="([0-9]+)" nameArguments="id" nameArgumentTypes="int"/>
 	</directory>
 	<layout root="ms2">
-		<node name="environment" allowMultiple="true" >
-			<property name="feature" types="string" />
-			<property name="locale" types="string" />
+		<requiredNode name="environment" />
+		<node name="environment" hasFeature="true" hasLocale="true" >
 			<node name="gem" />
 			<node name="ucc" />
 			<node name="drop" />

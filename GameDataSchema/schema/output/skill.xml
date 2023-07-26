@@ -1,0 +1,22 @@
+<outputSchema>
+	<namespace name="GameData">
+		<namespace name="Types">
+			<namespace name="SkillTypes">
+			</namespace>
+			<class name="Skill" childTypeSuffix="Node">
+				<class name="Basic">
+					<class name="Ui" />
+					<class name="Kinds" />
+					<class name="StateAttr" />
+				</class>
+				<class name="Level">
+				</class>
+
+
+			</class>
+		</namespace>
+		<namespace name="Collections">
+			<collection name="Skills" keyName="id" keyType="int" class="Types.Skill" />
+		</namespace>
+	</namespace>
+</outputSchema>

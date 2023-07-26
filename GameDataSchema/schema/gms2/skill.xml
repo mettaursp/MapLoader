@@ -1,0 +1,87 @@
+<ms2Schema>
+	<directory path="Xml/skill" recursive="true">
+		<file name="([0-9]+)" nameArguments="id" nameArgumentTypes="int"/>
+	</directory>
+	<layout root="ms2">
+		<requiredNode name="basic" />
+		<requiredNode name="level" />
+		<node name="basic" hasFeature="true">
+			<node name="ui" />
+			<node name="kinds" />
+			<node name="stateAttr" />
+			<node name="feature" optional="true" />
+		</node>
+		<node name="level" hasFeature="true" allowMultiple="true" hasVariants="true">
+			<node name="beginCondition" noVariance="true">
+				<property name="cooldownTime" varies="true" />
+				<property name="allowBattleRidingState" varies="true" />
+				<node name="stat" />
+				<node name="weapon" optional="true" allowMultiple="true" />
+				<node name="requireEffect" optional="true" />
+				<node name="item" optional="true" />
+				<node name="requireMapCodes" optional="true" allowMultiple="true" />
+				<node name="hasNotAdditionalEffectGroup" optional="true" />
+				<node name="requireAchieveCodes" optional="true" />
+				<node name="requireAchieveGrades" optional="true" />
+				<node name="job" optional="true" />
+			</node>
+			<node name="changeSkill" optional="true" noVariance="true">
+				<property name="changeSkillLevel" varies="true" />
+				<property name="originSkillLevel" varies="true" />
+				<property name="changeSkillCheckEffectLevel" varies="true" />
+				<property name="originSkillID" varies="true" />
+			</node>
+			<node name="autoTargeting" optional="true" noVariance="true">
+				<property name="autoTargetUseMove" varies="true" />
+				<property name="autoTargetingMaxDegree" varies="true" />
+			</node>
+			<node name="push" noVariance="true">
+				<property name="back" varies="true" />
+				<property name="up" varies="true" />
+			</node>
+			<node name="consume" noVariance="true">
+				<node name="stat">
+					<property name="sp" varies="true" />
+				</node>
+			</node>
+			<node name="targetItem">
+				<node name="item" optional="true" />
+			</node>
+			<node name="upgrade" />
+			<node name="detectProperty" optional="true" />
+			<node name="sensorProperty" />
+			<node name="glideProperty" />
+			<node name="combo" noVariance="true">
+				<property name="inputSkill" varies="true" />
+				<property name="outputSkill" varies="true" />
+				<property name="npcComboSkillLevel" varies="true" />
+			</node>
+			<node name="recoveryProperty" noVariance="true" />
+			<node name="motion" allowMultiple="true">
+				<node name="motionProperty" />
+				<node name="attack" optional="true" allowMultiple="true">
+					<node name="pauseProperty" />
+					<node name="rangeProperty" />
+					<node name="arrowProperty" />
+					<node name="damageProperty" />
+					<node name="conditionSkill" optional="true" allowMultiple="true">
+						<node name="beginCondition">
+							<node name="stat" />
+							<node name="caster" optional="true" />
+							<node name="target" optional="true" />
+						</node>
+					</node>
+					<node name="chainProperty" optional="true" />
+					<node name="petTamingProperty" optional="true" />
+				</node>
+			</node>
+			<node name="conditionSkill" optional="true" allowMultiple="true">
+				<node name="beginCondition">
+					<node name="stat" />
+				</node>
+			</node>
+			<node name="splashManualActiveProperty" optional="true" noVariance="true" />
+			<node name="magicControl" optional="true" noVariance="true" />
+		</node>
+	</layout>
+</ms2Schema>

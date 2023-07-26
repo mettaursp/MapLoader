@@ -1,0 +1,82 @@
+<ms2Schema>
+	<directory path="Xml/additionaleffect" recursive="false">
+		<file name="([0-9]+)" nameArguments="id" nameArgumentTypes="int"/>
+	</directory>
+	<layout root="ms2">
+		<requiredNode name="level" />
+		<node name="level" hasFeature="true" allowMultiple="true">
+			<node name="BasicProperty" />
+			<node name="MotionProperty" optional="true">
+				<node name="OverlapKeepEffectProperty" optional="true">
+					<node name="start">
+						<node name="overlap" allowMultiple="true" />
+					</node>
+					<node name="keep">
+						<node name="overlap" allowMultiple="true" />
+					</node>
+					<node name="end">
+						<node name="overlap" allowMultiple="true" />
+					</node>
+				</node>
+			</node>
+			<node name="RecoveryProperty" optional="true" />
+			<node name="UIProperty" optional="true" />
+			<node name="beginCondition" optional="true">
+				<node name="weapon" optional="true" />
+				<node name="owner" optional="true">
+					<node name="compareStat" allowMultiple="true" optional="true" />
+				</node>
+				<node name="requireSkillCodes" optional="true" allowMultiple="true" />
+				<node name="target" optional="true">
+					<node name="compareStat" optional="true" />
+				</node>
+				<node name="requireMapCodes" optional="true" allowMultiple="true" />
+				<node name="caster" optional="true">
+					<node name="compareStat" optional="true" />
+				</node>
+				<node name="requireMapCategoryCodes" optional="true" />
+				<node name="requireDungeonRoomGroupTypes" optional="true" />
+				<node name="job" optional="true" />
+				<node name="requireMapContinentCodes" optional="true" />
+			</node>
+			<node name="StatusProperty" optional="true">
+				<node name="SpecialAbility" optional="true" />
+				<node name="Stat" optional="true" />
+			</node>
+			<node name="ImmuneEffectProperty" optional="true" />
+			<node name="splashSkill" optional="true" allowMultiple="true" />
+			<node name="DefensiveProperty" optional="true" />
+			<node name="CancelEffectProperty" optional="true" />
+			<node name="conditionSkill" optional="true">
+				<node name="beginCondition" optional="true">
+					<node name="owner" optional="true">
+						<node name="compareStat" optional="true" />
+					</node>
+					<node name="target" optional="true">
+						<node name="compareStat" optional="true" />
+					</node>
+					<node name="caster" optional="true" />
+				</node>
+			</node>
+			<node name="OffensiveProperty" optional="true" />
+			<node name="InvokeEffectProperty" optional="true" />
+			<node name="DotBuffProperty" optional="true" />
+			<node name="ModifyOverlapCountProperty" optional="true" />
+			<node name="DotDamageProperty" optional="true" />
+			<node name="ResetSkillCoolDownTimeProperty" optional="true" />
+			<node name="ShieldProperty" optional="true" />
+			<node name="ConsumeProperty" optional="true" />
+			<node name="SpreadProperty" optional="true">
+				<node name="rangeProperty" />
+			</node>
+			<node name="SpecialEffectProperty" optional="true" />
+			<node name="FinalStatusProperty" optional="true">
+				<node name="Stat" />
+			</node>
+			<node name="ReflectProperty" optional="true" />
+			<node name="ModifyEffectDurationProperty" optional="true" />
+			<node name="RideeProperty" optional="true" />
+			<node name="ExpProperty" optional="true" />
+		</node>
+	</layout>
+</ms2Schema>

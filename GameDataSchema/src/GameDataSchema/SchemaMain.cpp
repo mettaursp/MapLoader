@@ -7,7 +7,7 @@ namespace fs = std::filesystem;
 
 fs::path ms2Root = "B:/Files/Maplstory 2 Client/appdata";
 fs::path ms2RootExtracted = "B:/Files/ms2export/export/";
-fs::path kms2Root = "B:/Files/Maplestars2/MapleStars2";
+fs::path kms2Root = "B:/Files/ms2export/kms2export";
 const fs::path schemaDir = "./schema";
 const fs::path gameDataProjDir = "./../GameData";
 Archive::ArchiveReader gms2Reader;
@@ -15,11 +15,23 @@ Archive::ArchiveReader kms2Reader;
 
 namespace OutputSchema
 {
+	struct SchemaMember
+	{
+		std::string Type;
+		std::string Name;
+		size_t ChildClassIndex = (size_t)-1;
+	};
+
 	struct SchemaClass
 	{
+		bool IsMember = true;
 		std::string Name;
+		std::string TypeName;
+		std::string MemberName;
+		std::string ChildTypeSuffix;
 
 		std::vector<SchemaClass> ChildClasses;
+		std::vector<SchemaMember> Members;
 	};
 
 	struct SchemaCollection
@@ -73,7 +85,7 @@ namespace OutputSchema
 		}
 	}
 	
-	void readClass(SchemaClass& schemaClass, tinyxml2::XMLElement* element)
+	void readClass(SchemaClass& schemaClass, tinyxml2::XMLElement* element, const std::string& typeSuffix = "")
 	{
 		for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute; attribute = attribute->Next())
 		{
@@ -83,6 +95,22 @@ namespace OutputSchema
 			if (strcmp(name, "name") == 0)
 			{
 				schemaClass.Name = value;
+				schemaClass.MemberName = value;
+				schemaClass.TypeName = value + typeSuffix;
+
+				continue;
+			}
+
+			if (strcmp(name, "childTypeSuffix") == 0)
+			{
+				schemaClass.ChildTypeSuffix = value;
+
+				continue;
+			}
+
+			if (strcmp(name, "isMember") == 0)
+			{
+				schemaClass.IsMember = strcmp(value, "true") == 0;
 
 				continue;
 			}
@@ -98,7 +126,14 @@ namespace OutputSchema
 			{
 				schemaClass.ChildClasses.push_back({});
 
-				readClass(schemaClass.ChildClasses.back(), child);
+				SchemaClass& childSchema = schemaClass.ChildClasses.back();
+
+				readClass(childSchema, child, schemaClass.ChildTypeSuffix + typeSuffix);
+
+				if (childSchema.IsMember)
+				{
+					schemaClass.Members.push_back({ childSchema.TypeName, childSchema.MemberName, schemaClass.ChildClasses.size() - 1 });
+				}
 
 				continue;
 			}
@@ -239,6 +274,276 @@ namespace OutputSchema
 		filter->SetText(filterContents);
 	}
 
+	class ModuleWriter
+	{
+	public:
+		struct StackContext
+		{
+			bool IsNamespace = false;
+			bool CurrentlyPrivate = false;
+		};
+
+		struct StackHandle
+		{
+			~StackHandle();
+
+			void Bind(ModuleWriter& writer);
+
+		private:
+			size_t StackDepth = (size_t)-1;
+			ModuleWriter* Writer = nullptr;
+		};
+
+		std::ofstream& Out;
+
+		ModuleWriter(std::ofstream& out) : Out(out) {}
+		~ModuleWriter();
+
+		void PushNamespace(const std::string_view& name);
+		void PushNamespace(StackHandle& handle, const std::string_view& name);
+		void PushStruct(const std::string_view& name);
+		void PushStruct(StackHandle& handle, const std::string_view& name);
+		void PushCollection(const std::string_view& name);
+		void PushCollection(StackHandle& handle, const std::string_view& name);
+		void PushLine();
+		void PushMember(const SchemaClass& type);
+		void PushMember(const std::string& type, const std::string_view& name);
+		void PopStack();
+
+		size_t GetStackDepth() const { return Stack.size(); }
+		const auto& GetStack() const { return Stack; }
+
+		std::string_view Indent() const { return { Indentation.data(), Indentation.size() }; }
+
+	private:
+		std::vector<StackContext> Stack;
+		std::vector<char> Indentation;
+	};
+
+	ModuleWriter::StackHandle::~StackHandle()
+	{
+		if (!Writer)
+		{
+			return;
+		}
+
+		size_t currentDepth = Writer->GetStackDepth();
+
+		if (currentDepth != StackDepth)
+		{
+			std::cout << "mismatching stack depth on StackHandle cleanup! expected '" << StackDepth << "', got '" << currentDepth << "'" << std::endl;
+
+			return;
+		}
+
+		Writer->PopStack();
+
+		Writer = nullptr;
+		StackDepth = (size_t)-1;
+	}
+
+	ModuleWriter::~ModuleWriter()
+	{
+		while (Stack.size())
+		{
+			PopStack();
+		}
+	}
+
+	void ModuleWriter::StackHandle::Bind(ModuleWriter& writer)
+	{
+		if (Writer)
+		{
+			std::cout << "StackHandle already bound to ModuleWriter" << std::endl;
+
+			return;
+		}
+
+		Writer = &writer;
+		StackDepth = writer.GetStackDepth();
+	}
+
+	void ModuleWriter::PushNamespace(const std::string_view& name)
+	{
+		Out << Indent() << "namespace " << name << "\n";
+		Out << Indent() << "{\n";
+
+		Indentation.push_back('\t');
+		Stack.push_back({});
+
+		StackContext& context = Stack.back();
+
+		context.IsNamespace = true;
+	}
+
+	void ModuleWriter::PushNamespace(StackHandle& handle, const std::string_view& name)
+	{
+		PushNamespace(name);
+
+		handle.Bind(*this);
+	}
+
+	void ModuleWriter::PushStruct(const std::string_view& name)
+	{
+		Out << Indent() << "struct " << name << "\n";
+		Out << Indent() << "{\n";
+
+		Indentation.push_back('\t');
+		Stack.push_back({});
+	}
+
+	void ModuleWriter::PushLine()
+	{
+		Out << Indent() << "\n";
+	}
+
+	void ModuleWriter::PushMember(const SchemaClass& type)
+	{
+		Out << Indent() << type.TypeName << " " << type.MemberName << ";\n";
+	}
+
+	void ModuleWriter::PushMember(const std::string& type, const std::string_view& name)
+	{
+
+	}
+
+	void ModuleWriter::PushStruct(StackHandle& handle, const std::string_view& name)
+	{
+		PushStruct(name);
+
+		handle.Bind(*this);
+	}
+
+	void ModuleWriter::PushCollection(const std::string_view& name)
+	{
+		Out << Indent() << "class " << name << "\n";
+		Out << Indent() << "{\n";
+
+		Indentation.push_back('\t');
+		Stack.push_back({});
+
+		StackContext& context = Stack.back();
+
+		context.CurrentlyPrivate = true;
+	}
+
+	void ModuleWriter::PushCollection(StackHandle& handle, const std::string_view& name)
+	{
+		PushCollection(name);
+
+		handle.Bind(*this);
+	}
+
+	void ModuleWriter::PopStack()
+	{
+		bool isNamespace = Stack.back().IsNamespace;
+
+		Stack.pop_back();
+		Indentation.pop_back();
+
+		Out << Indent() << (isNamespace ? "}\n" : "};\n");
+	}
+
+	void generateModuleNamespace(ModuleWriter& module, const std::string& currentNamespace)
+	{
+		size_t depth = 0;
+		size_t i = 0;
+		size_t length = 0;
+
+		for (depth; currentNamespace[i + length]; ++depth)
+		{
+			while (currentNamespace[i + length] && currentNamespace[i + length] != '.')
+			{
+				++length;
+			}
+
+			if (depth > module.GetStackDepth())
+			{
+				module.PushNamespace({ currentNamespace.data() + i, length });
+			}
+
+			i += length;
+			length = 0;
+			++depth;
+
+			if (currentNamespace[i])
+			{
+				++i;
+			}
+		}
+
+		while (module.GetStackDepth() > depth)
+		{
+			module.PopStack();
+		}
+	}
+
+	void generateClassDefinitions(const SchemaClass& schemaClass, ModuleWriter& module, const std::string& currentNamespace)
+	{
+		bool isFirst = true;
+
+		for (const SchemaClass& childClass : schemaClass.ChildClasses)
+		{
+			if (!isFirst)
+			{
+				module.PushLine();
+			}
+
+			isFirst = false;
+
+			generateClassDefinitions(schemaClass, module, currentNamespace);
+		}
+
+		if (schemaClass.Members.size())
+		{
+			if (schemaClass.ChildClasses.size() > 0)
+			{
+				module.PushLine();
+			}
+
+			size_t memberClasses = 0;
+
+			for (const SchemaClass& childClass : schemaClass.ChildClasses)
+			{
+				if (childClass.IsMember)
+				{
+					module.PushMember(childClass);
+
+					++memberClasses;
+				}
+			}
+
+			if (memberClasses > 0 && memberClasses < schemaClass.Members.size())
+			{
+				module.PushLine();
+			}
+
+			if (memberClasses < schemaClass.Members.size())
+			{
+
+			}
+		}
+	}
+
+	void generateClassDeclarations(const SchemaClass& schemaClass, ModuleWriter& module, const std::string& currentNamespace, const std::string& classPath)
+	{
+
+		for (const SchemaClass& childClass : schemaClass.ChildClasses)
+		{
+			generateClassDeclarations(childClass, module, currentNamespace, classPath + "::" + childClass.TypeName);
+		}
+	}
+
+	void generateCollectionDefinitions(const SchemaCollection& schemaCollection, ModuleWriter& module, const std::string& currentNamespace)
+	{
+
+	}
+
+	void generateCollectionDeclarations(const SchemaCollection& schemaCollection, ModuleWriter& module, const std::string& currentNamespace, const std::string& classPath)
+	{
+
+	}
+
 	void generateClasses(const SchemaClass& schemaClass, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
 	{
 		fs::path outputDir = gameDataProjDir / "src/GameData/Data";
@@ -251,12 +556,26 @@ namespace OutputSchema
 		addProjectNode(filtersRoot, "ClInclude", outputHeader.string(), "Source Files\\Data");
 		addProjectNode(filtersRoot, "ClCompile", outputCpp.string(), "Source Files\\Data");
 
-		{ std::ofstream(outputHeader).flush(); }
-		{ std::ofstream(outputCpp).flush(); }
-
-		for (const SchemaClass& childClass : schemaClass.ChildClasses)
 		{
-			generateClasses(childClass, vcxprojRoot, filtersRoot, currentNamespace + "." + childClass.Name);
+			std::ofstream outFile(outputHeader);
+
+			ModuleWriter module(outFile);
+
+			generateModuleNamespace(module, currentNamespace);
+
+			module.PushStruct(schemaClass.Name);
+
+			generateClassDefinitions(schemaClass, module, currentNamespace);
+		}
+
+		{
+			std::ofstream outFile(outputCpp);
+
+			ModuleWriter module(outFile);
+
+			generateModuleNamespace(module, currentNamespace);
+
+			generateClassDeclarations(schemaClass, module, currentNamespace, schemaClass.Name);
 		}
 	}
 
@@ -271,9 +590,28 @@ namespace OutputSchema
 
 		addProjectNode(filtersRoot, "ClInclude", outputHeader.string(), "Source Files\\Collection");
 		addProjectNode(filtersRoot, "ClCompile", outputCpp.string(), "Source Files\\Collection");
-		
-		{ std::ofstream(outputHeader).flush(); }
-		{ std::ofstream(outputCpp).flush(); }
+
+		{
+			std::ofstream outFile(outputHeader);
+
+			ModuleWriter module(outFile);
+
+			generateModuleNamespace(module, currentNamespace);
+
+			module.PushCollection(schemaCollection.Name);
+
+			generateCollectionDefinitions(schemaCollection, module, currentNamespace);
+		}
+
+		{
+			std::ofstream outFile(outputCpp);
+
+			ModuleWriter module(outFile);
+
+			generateModuleNamespace(module, currentNamespace);
+
+			generateCollectionDeclarations(schemaCollection, module, currentNamespace, schemaCollection.Name);
+		}
 	}
 
 	/*
@@ -408,6 +746,9 @@ namespace OutputSchema
 
 int main(int argc, char** argv)
 {
+	std::vector<std::string> validateGms2Dirs;
+	std::vector<std::string> validateKms2Dirs;
+
 	for (int i = 0; i < argc; ++i)
 	{
 		if (strcmp(argv[i], "--root") == 0 && ++i < argc)
@@ -433,6 +774,18 @@ int main(int argc, char** argv)
 
 			ms2RootExtracted = argv[i];
 		}
+
+		if (strcmp(argv[i], "--validate") == 0 && ++i + 1 < argc)
+		{
+			if (strcmp(argv[i], "gms2") == 0)
+			{
+				validateGms2Dirs.push_back(argv[++i]);
+			}
+			else if (strcmp(argv[i], "kms2") == 0)
+			{
+				validateKms2Dirs.push_back(argv[++i]);
+			}
+		}
 	}
 
 	if (!fs::exists(ms2Root)) return -1;
@@ -443,12 +796,12 @@ int main(int argc, char** argv)
 
 	GameSchema::readSchemas(schemaDir / "gms2", true);
 	GameSchema::readSchemas(schemaDir / "kms2", false);
-	//GameSchema::validateSchemas(gms2Reader, true);
-	//GameSchema::validateSchemas(kms2Reader, false);
+	GameSchema::validateSchemas(gms2Reader, true, validateGms2Dirs);
+	GameSchema::validateSchemas(kms2Reader, false, validateKms2Dirs);
 
 	OutputSchema::readSchemas(schemaDir / "output");
 
-	OutputSchema::generateGameData();
+	//OutputSchema::generateGameData();
 
 
 	return 0;

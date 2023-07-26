@@ -1,0 +1,6 @@
+namespace GameData
+{
+	namespace Collections
+	{
+	}
+}

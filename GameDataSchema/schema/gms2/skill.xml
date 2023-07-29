@@ -12,9 +12,10 @@
 			<node name="feature" optional="true" />
 		</node>
 		<node name="level" hasFeature="true" allowMultiple="true" hasVariants="true">
+			<attribute name="value" varianceParameterId="level" />
 			<node name="beginCondition" noVariance="true">
-				<property name="cooldownTime" varies="true" />
-				<property name="allowBattleRidingState" varies="true" />
+				<attribute name="cooldownTime" varies="true" />
+				<attribute name="allowBattleRidingState" ignoreVariance="true" />
 				<node name="stat" />
 				<node name="weapon" optional="true" allowMultiple="true" />
 				<node name="requireEffect" optional="true" />
@@ -26,22 +27,30 @@
 				<node name="job" optional="true" />
 			</node>
 			<node name="changeSkill" optional="true" noVariance="true">
-				<property name="changeSkillLevel" varies="true" />
-				<property name="originSkillLevel" varies="true" />
-				<property name="changeSkillCheckEffectLevel" varies="true" />
-				<property name="originSkillID" varies="true" />
+				<attribute name="changeSkillLevel" isArray="true">
+					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo=",1" />
+				</attribute>
+				<attribute name="originSkillLevel" isArray="true">
+					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo="1" />
+				</attribute>
+				<attribute name="changeSkillCheckEffectLevel" isArray="true">
+					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo=",0,1" />
+				</attribute>
+				<attribute name="originSkillID">
+					<settings ignoreVarianceIfEqualTo="0,11000261" />
+				</attribute>
 			</node>
 			<node name="autoTargeting" optional="true" noVariance="true">
-				<property name="autoTargetUseMove" varies="true" />
-				<property name="autoTargetingMaxDegree" varies="true" />
+				<attribute name="autoTargetUseMove" />
+				<attribute name="autoTargetingMaxDegree" varies="true" />
 			</node>
 			<node name="push" noVariance="true">
-				<property name="back" varies="true" />
-				<property name="up" varies="true" />
+				<attribute name="back" varies="true" />
+				<attribute name="up" varies="true" />
 			</node>
 			<node name="consume" noVariance="true">
 				<node name="stat">
-					<property name="sp" varies="true" />
+					<attribute name="sp" varies="true" />
 				</node>
 			</node>
 			<node name="targetItem">
@@ -52,9 +61,9 @@
 			<node name="sensorProperty" />
 			<node name="glideProperty" />
 			<node name="combo" noVariance="true">
-				<property name="inputSkill" varies="true" />
-				<property name="outputSkill" varies="true" />
-				<property name="npcComboSkillLevel" varies="true" />
+				<attribute name="inputSkill" varies="true" />
+				<attribute name="outputSkill" varies="true" />
+				<attribute name="npcComboSkillLevel" varies="true" />
 			</node>
 			<node name="recoveryProperty" noVariance="true" />
 			<node name="motion" allowMultiple="true">

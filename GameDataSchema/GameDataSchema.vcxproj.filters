@@ -27,12 +27,18 @@
     <ClCompile Include="src\GameDataSchema\Schema\SchemaTypes.cpp">
       <Filter>Source Files\Schema</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameDataSchema\Schema\FileValidator.cpp">
+      <Filter>Source Files\Schema</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GameDataSchema\Schema\GameSchema.h">
       <Filter>Source Files\Schema</Filter>
     </ClInclude>
     <ClInclude Include="src\GameDataSchema\Schema\SchemaTypes.h">
+      <Filter>Source Files\Schema</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameDataSchema\Schema\FileValidator.h">
       <Filter>Source Files\Schema</Filter>
     </ClInclude>
   </ItemGroup>

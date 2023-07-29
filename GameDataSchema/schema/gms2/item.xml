@@ -29,8 +29,8 @@
 			</node>
 			<node name="limit" />
 			<node name="skill">
-				<property name="skillID" types="int" default="0" />
-				<property name="skillLevel" types="int" default="0" />
+				<attribute name="skillID" types="int" default="0" />
+				<attribute name="skillLevel" types="int" default="0" />
 			</node>
 			<node name="objectWeaponSkill" />
 			<node name="title" />

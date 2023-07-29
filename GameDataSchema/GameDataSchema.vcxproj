@@ -145,6 +145,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\GameDataSchema\SchemaMain.cpp" />
+    <ClCompile Include="src\GameDataSchema\Schema\FileValidator.cpp" />
     <ClCompile Include="src\GameDataSchema\Schema\GameSchema.cpp" />
     <ClCompile Include="src\GameDataSchema\Schema\SchemaTypes.cpp" />
   </ItemGroup>
@@ -157,6 +158,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\GameDataSchema\Schema\FileValidator.h" />
     <ClInclude Include="src\GameDataSchema\Schema\GameSchema.h" />
     <ClInclude Include="src\GameDataSchema\Schema\SchemaTypes.h" />
   </ItemGroup>

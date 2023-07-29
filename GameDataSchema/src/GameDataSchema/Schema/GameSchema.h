@@ -46,11 +46,17 @@ namespace GameSchema
 		std::vector<SchemaFile> Files;
 	};
 
-	struct SchemaProperty
+	struct SchemaAttribute
 	{
 		std::string Name;
 		std::string Default;
 		bool Varies = false;
+		bool IgnoreVariance = false;
+		std::string VarianceParameterId;
+		std::string IgnoreVarianceIfEqualToParam;
+		std::vector<std::string> IgnoreVarianceIfEqualToValues;
+		bool IgnoreVarianceIfEqual = false;
+		bool IsArray = false;
 
 		std::vector<const SchemaType*> Types;
 	};
@@ -65,10 +71,11 @@ namespace GameSchema
 		bool HasLocale = false;
 		bool NoVariance = false;
 		bool IsVariancePivot = false;
+		bool AttributesDependOnVarianceParam = false;
 		int PivotNodeHeight = -1;
 
 		std::vector<SchemaNode> ChildNodes;
-		std::vector<SchemaProperty> Properties;
+		std::vector<SchemaAttribute> Attributes;
 		std::vector<std::string> RequiredNodes;
 	};
 
@@ -85,6 +92,15 @@ namespace GameSchema
 		//std::vector<std::string> RequiredNodes;
 	};
 
+	struct NodeStats
+	{
+		bool HasFeature = false;
+		bool HasLocale = false;
+		std::unordered_map<std::string, int> Counts;
+	};
+
+	bool validateNodeStats(const SchemaNode* node, const SchemaNode& childNode, const NodeStats& stats, const std::string& currentPath);
+
 	extern std::unordered_map<std::string, Schema> Gms2Schemas;
 	extern std::unordered_map<std::string, Schema> Kms2Schemas;
 
@@ -92,7 +108,7 @@ namespace GameSchema
 
 	void readDirectory(Schema& schema, SchemaDirectory& directory, tinyxml2::XMLElement* directoryElement);
 
-	void readProperty(Schema& schema, SchemaProperty& property, tinyxml2::XMLElement* propertyElement);
+	void readAttribute(SchemaNode& node, SchemaAttribute& attrib, tinyxml2::XMLElement* attributeElement, size_t pivotHeight);
 
 	void readNode(Schema& schema, SchemaNode& node, tinyxml2::XMLElement* nodeElement, size_t pivotHeight = (size_t)-1);
 

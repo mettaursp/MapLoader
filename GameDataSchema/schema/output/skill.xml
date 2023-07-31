@@ -11,8 +11,11 @@
 					<class name="Condition" />
 				</class>
 				<class name="Level">
+					<class name="Consume">
 				</class>
-
+				<!--class name="changeSkill"-->
+				<!--class name="autoTargeting"-->
+				<!--class name="autoTargeting"-->
 
 			</class>
 		</namespace>

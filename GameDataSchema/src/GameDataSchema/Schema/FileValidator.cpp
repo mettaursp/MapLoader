@@ -616,8 +616,12 @@ namespace GameSchema
 			VarianceParameters.clear();
 		}
 
-		for (const SchemaAttribute& attrib : node.Attributes)
+		for (size_t attribIndex = 0; attribIndex < node.Attributes.size(); ++attribIndex)
 		{
+			const SchemaAttribute& attrib = node.Attributes[attribIndex];
+
+			bool attributeAppears = false;
+
 			for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute; attribute = attribute->Next())
 			{
 				const char* name = attribute->Name();
@@ -626,6 +630,8 @@ namespace GameSchema
 				{
 					continue;
 				}
+
+				attributeAppears = true;
 
 				std::string_view value = attribute->Value();
 				bool isDefaultValue = attrib.Default == value;
@@ -673,6 +679,21 @@ namespace GameSchema
 
 					std::cout << std::endl;
 
+					if (!valueMatches && !attrib.IsArray)
+					{
+						bool foundSeperator = false;
+
+						for (size_t i = 0; !foundSeperator && i < value.size(); ++i)
+						{
+							foundSeperator = value[i] == ',';
+						}
+
+						if (foundSeperator)
+						{
+							std::cout << currentPath << "." << attrib.Name << " value '" << value << "' has array separator, but isn't marked as an array. did you forget to set it?" << std::endl;
+						}
+					}
+
 					meetsSchema = false;
 				}
 				else if (attrib.VarianceParameterId.size())
@@ -680,7 +701,28 @@ namespace GameSchema
 					VarianceParameters[attrib.VarianceParameterId] = value;
 				}
 
+				if (attrib.IsAlwaysDefault && value != attrib.Default)
+				{
+					std::cout << currentPath << "." << attrib.Name << "marked as always being default value '" << attrib.Default << "', but doesn't match: '" << value << "'" << std::endl;
+
+					meetsSchema = false;
+				}
+
+				if (attrib.IsAlwaysNotDefault && value == attrib.Default)
+				{
+					std::cout << currentPath << "." << attrib.Name << "marked as always not being default value '" << attrib.Default << "', but matches" << std::endl;
+
+					meetsSchema = false;
+				}
+
 				break;
+			}
+
+			if (!attributeAppears && !attrib.Optional)
+			{
+				std::cout << currentPath << "." << attrib.Name << " missing, but not marked as optional" << std::endl;
+
+				meetsSchema = false;
 			}
 		}
 

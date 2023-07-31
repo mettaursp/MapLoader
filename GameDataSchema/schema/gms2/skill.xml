@@ -1,96 +1,1072 @@
 <ms2Schema>
 	<directory path="Xml/skill" recursive="true">
-		<file name="([0-9]+)" nameArguments="id" nameArgumentTypes="int"/>
+		<file name="([0-9]+)" nameArguments="id" nameArgumentTypes="int" />
 	</directory>
-	<layout root="ms2">
-		<requiredNode name="basic" />
+	<layout root="ms2">	
+		<requiredNode name="basic" />	
 		<requiredNode name="level" />
 		<node name="basic" hasFeature="true">
-			<node name="ui" />
-			<node name="kinds" />
-			<node name="stateAttr" />
-			<node name="feature" optional="true" />
+			<node name="ui">
+				<attribute name="icon" />
+				<attribute name="movie" default="">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="exceptUI" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="attackType" type="enum">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="tooltip" type="int">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="disableChangeSkillIconEffect" type="bool" default="0">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="showCastingBar" type="bool" default="0">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="paramCastingBar">
+					<settings optional="true" />
+				</attribute>
+			</node>
+			<node name="kinds">
+				<attribute name="type" type="enum" />
+				<attribute name="subType" type="enum">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="rangeType" type="enum">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="jump" type="int">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="continue" type="bool" />
+				<attribute name="spRecoverySkill" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="element" type="enum" />
+				<attribute name="offsetNameTag" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="immediateActive" type="bool" />
+				<attribute name="weaponDependency" type="bool" />
+				<attribute name="unrideOnUse" type="bool" />
+				<attribute name="releaseObjectWeapon" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="releaseStunState" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="groupIDs" type="int">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="disableWater" type="bool" default="0">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="holdAttack" type="bool" default="0">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="groupType" type="enum" default="2">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="state">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="unrideOnHit" type="enum">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="changeSkillCheckEffectID" type="int">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="changeSkillCheckEffectLevel" type="short" default="">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="changeSkillID" type="int" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="emotionNameTagOffset" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="offsetHPBar" type="int">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="emotionType" type="enum">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="emotion">
+					<settings optional="true" />
+				</attribute>
+			</node>
+			<node name="stateAttr">
+				<attribute name="battle" type="bool" />
+				<attribute name="speedRank" type="bool" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="superArmor" type="enum" />
+				<attribute name="autoTargeting" type="enum" />
+				<attribute name="autoTargetingType" type="enum" />
+				<attribute name="moveType" type="enum" />
+				<attribute name="notKeepEffect" type="bool" />
+				<attribute name="keyIsDown" type="bool" />
+				<attribute name="useDefaultSkill" type="bool" />
+				<attribute name="useInGameTime" type="bool" />
+				<attribute name="cooldownGroupID" type="int" />
+				<attribute name="clearCooldownFromPVPZone" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="ignoreReduceCooldown" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="superArmorApplyFieldType" type="enum">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="movingInMovekey" type="bool" default="0">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="splashMaxCount" type="int">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="rechargeMaxCount" type="int">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="useDefaultSkillID" type="int" default="10600071">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="rechargeOriginSkillID" type="int" default="10700271">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="invokeEffectDisable" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="autoTargetingMaxDegree" type="float" default="210">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="autoTargetingMaxDistance" type="float" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="autoTargetingMaxHeight" type="float" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="autoTargetUseMove" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+			</node>
+			<node name="feature" optional="true">
+				<attribute name="name" type="string" default="">
+					<settings alwaysDefault="true" />
+				</attribute>
+			</node>
 		</node>
 		<node name="level" hasFeature="true" allowMultiple="true" hasVariants="true">
-			<attribute name="value" varianceParameterId="level" />
+			<attribute name="value" type="short" varianceParameterId="level" />
 			<node name="beginCondition" noVariance="true">
-				<attribute name="cooldownTime" varies="true" />
-				<attribute name="allowBattleRidingState" ignoreVariance="true" />
-				<node name="stat" />
-				<node name="weapon" optional="true" allowMultiple="true" />
-				<node name="requireEffect" optional="true" />
-				<node name="item" optional="true" />
-				<node name="requireMapCodes" optional="true" allowMultiple="true" />
-				<node name="hasNotAdditionalEffectGroup" optional="true" />
-				<node name="requireAchieveCodes" optional="true" />
-				<node name="requireAchieveGrades" optional="true" />
-				<node name="job" optional="true" />
+				<attribute name="level" type="short" default="1">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="gender" type="enum" />
+				<attribute name="target" type="bool" />
+				<attribute name="probability" type="float" default="1">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="invokeEffectFactor" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="cooldownTime" type="float">
+					<settings varies="true" />
+				</attribute>
+				<attribute name="useCoolDownShowUI" type="bool" />
+				<attribute name="allowDeadState" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="requireDurationWithoutDamage" type="bool" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="requireDurationWithoutMove" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="useTargetCountFactor" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="onlyShadowWorld" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="onlyFlyableMap" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="applyPvPZoneType" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="allowBattleRidingState" type="bool">
+					<settings optional="true" ignoreVariance="true" />
+				</attribute>
+				<attribute name="onlyBattleRidingState" type="bool">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="allowMapleSurvival" type="bool" default="0">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="defaultRechargingCooldownTime" type="float">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="isShadowWorld" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<attribute name="glideOnGroundDisable" type="bool" default="1">
+					<settings alwaysNotDefault="true" optional="true" />
+				</attribute>
+				<node name="stat">
+					<attribute name="hp" type="long" default="1">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="sp" type="short">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="ep" type="short" default="10">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+				</node>
+				<node name="weapon" optional="true" allowMultiple="true">
+					<attribute name="lh" type="enum" />
+					<attribute name="rh" type="enum" />
+				</node>
+				<node name="requireEffect" optional="true">
+					<attribute name="code" type="int" />
+				</node>
+				<node name="item" optional="true">
+					<attribute name="id" type="int" />
+					<attribute name="count" type="int" default="1">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="rank" type="int" />
+				</node>
+				<node name="requireMapCodes" optional="true" allowMultiple="true">
+					<attribute name="code" type="int" />
+				</node>
+				<node name="hasNotAdditionalEffectGroup" optional="true">
+					<attribute name="id" type="int" />
+				</node>
+				<node name="requireAchieveCodes" optional="true">
+					<attribute name="id" type="int" />
+				</node>
+				<node name="requireAchieveGrades" optional="true">
+					<attribute name="grade" type="int" />
+				</node>
+				<node name="job" optional="true">
+					<attribute name="code" type="enum" default="330">
+						<settings alwaysDefault="true" />
+					</attribute>
+				</node>
 			</node>
 			<node name="changeSkill" optional="true" noVariance="true">
-				<attribute name="changeSkillLevel" isArray="true">
-					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo=",1" />
+				<attribute name="changeSkillCheckEffectID" type="int" />
+				<attribute name="changeSkillCheckEffectLevel" type="short" isArray="true">	
+					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo=",0,1" />	
 				</attribute>
-				<attribute name="originSkillLevel" isArray="true">
-					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo="1" />
+				<attribute name="changeSkillCheckEffectOverlapCount" type="int">
+					<settings optional="true" />
 				</attribute>
-				<attribute name="changeSkillCheckEffectLevel" isArray="true">
-					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo=",0,1" />
+				<attribute name="changeSkillID" type="int" />
+				<attribute name="changeSkillLevel" type="short" isArray="true">	
+					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo=",1" />	
 				</attribute>
-				<attribute name="originSkillID">
-					<settings ignoreVarianceIfEqualTo="0,11000261" />
+				<attribute name="originSkillID" type="int">	
+					<settings ignoreVarianceIfEqualTo="0,11000261" />	
+				</attribute>
+				<attribute name="originSkillLevel" type="short" isArray="true">	
+					<settings ignoreVarianceIfEqualToParam="level" ignoreVarianceIfEqualTo="1" />	
+				</attribute>
+				<attribute name="autoChange" type="enum">
+					<settings optional="true" />
 				</attribute>
 			</node>
 			<node name="autoTargeting" optional="true" noVariance="true">
-				<attribute name="autoTargetUseMove" />
-				<attribute name="autoTargetingMaxDegree" varies="true" />
+				<attribute name="autoTargetingMaxDegree" type="float">
+					<settings varies="true" />
+				</attribute>
+				<attribute name="autoTargetingMaxDistance" type="float" />
+				<attribute name="autoTargetingMaxHeight" type="float" />
+				<attribute name="autoTargetUseMove" type="bool" />
 			</node>
 			<node name="push" noVariance="true">
-				<attribute name="back" varies="true" />
-				<attribute name="up" varies="true" />
+				<attribute name="up" type="float">
+					<settings varies="true" />
+				</attribute>
+				<attribute name="back" type="float">
+					<settings varies="true" />
+				</attribute>
 			</node>
-			<node name="consume" noVariance="true">
+			<node name="consume">
+				<attribute name="money" type="long" />
+				<attribute name="hpRate" type="float" default="-0.01">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="useItem" type="bool" default="1">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
 				<node name="stat">
-					<attribute name="sp" varies="true" />
+					<attribute name="sp" type="short">
+						<settings optional="true" />
+						<settings varies="true" />
+					</attribute>
+					<attribute name="ep" type="short">
+						<settings optional="true" />
+					</attribute>
 				</node>
 			</node>
 			<node name="targetItem">
-				<node name="item" optional="true" />
+				<attribute name="consumeByPetTrap" type="bool" default="1">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<node name="item" optional="true">
+					<attribute name="id" type="int" />
+					<attribute name="count" type="int" />
+				</node>
 			</node>
-			<node name="upgrade" />
-			<node name="detectProperty" optional="true" />
-			<node name="sensorProperty" />
-			<node name="glideProperty" />
+			<node name="upgrade">
+				<attribute name="level" type="short">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="skillIDs" type="int">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="skillLevels" type="short">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="questIDs" type="int" default="40002795">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="money" type="long" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+			</node>
+			<node name="detectProperty" optional="true">
+				<attribute name="includeCaster" type="bool" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="rangeType" type="enum" />
+				<attribute name="distance" type="float" />
+				<attribute name="rangeAdd" type="Vector3" />
+				<attribute name="rangeOffset" type="Vector3" />
+				<attribute name="rangeZRotateDegree" type="float" />
+				<attribute name="height" type="float" />
+				<attribute name="width" type="float" />
+				<attribute name="endWidth" type="float" />
+				<attribute name="applyTarget" type="enum" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="castTarget" type="enum" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="sensorStartDelay" type="int" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="sensorSplashStartDelay" type="int" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="targetHasBuffID" type="int" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="targetHasBuffOwner" type="bool" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="targetSelectHasBuffType" type="bool" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="targetStatCompare" type="enum" type="" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="targetStatCompareFunction" type="enum" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="onlyTargetSelectHasBuff" type="bool" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+			</node>
+			<node name="sensorProperty">
+				<attribute name="includeCaster" />
+				<attribute name="rangeType" />
+				<attribute name="distance" />
+				<attribute name="rangeAdd" />
+				<attribute name="rangeOffset" default="0.000000,0.000000,0.000000">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="rangeZRotateDegree" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="height" />
+				<attribute name="width" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="endWidth" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="applyTarget" />
+				<attribute name="castTarget" />
+				<attribute name="sensorStartDelay">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="sensorSplashStartDelay">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="targetSelectType" default="2">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="targetHasBuffID">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="targetHasBuffOwner">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="targetHasNotBuffID">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="targetSelectHasBuffType" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="targetStatCompare" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="targetStatCompareFunction" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="sensorForceInvokeByInterval" default="1">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="onlyTargetSelectHasBuff" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+			</node>
+			<node name="glideProperty">
+				<attribute name="gravity" />
+				<attribute name="heightLimit" />
+				<attribute name="horizontalAccelerate" />
+				<attribute name="horizontalVelocity" />
+				<attribute name="verticalAccelerate" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="verticalVelocity" />
+				<attribute name="verticalVibrateAmplitude" />
+				<attribute name="verticalVibrateFrequency" />
+				<attribute name="bEffect" />
+				<attribute name="effectRun" />
+				<attribute name="effectIdle" />
+				<attribute name="aniIdle" />
+				<attribute name="aniLeft" />
+				<attribute name="aniRight" default="">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="aniRun" />
+				<attribute name="onGroundDisable">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="glideHorizontalAccelerateLimit">
+					<settings optional="true" />
+				</attribute>
+			</node>
 			<node name="combo" noVariance="true">
-				<attribute name="inputSkill" varies="true" />
-				<attribute name="outputSkill" varies="true" />
-				<attribute name="npcComboSkillLevel" varies="true" />
+				<attribute name="comboSkill">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="chargingSkill">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="comboOriginSkill">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="inputSkill">
+					<settings varies="true" />
+				</attribute>
+				<attribute name="outputSkill">
+					<settings varies="true" />
+				</attribute>
+				<attribute name="disableChargingAttackSkipFrame" default="1">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="npcComboSkillID">
+					<settings optional="true" />
+				</attribute>
+				<attribute name="npcComboSkillLevel">
+					<settings optional="true" />
+					<settings varies="true" />
+				</attribute>
 			</node>
-			<node name="recoveryProperty" noVariance="true" />
+			<node name="recoveryProperty" noVariance="true">
+				<attribute name="spValue" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="spRate" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+			</node>
 			<node name="motion" allowMultiple="true">
-				<node name="motionProperty" />
+				<node name="motionProperty">
+					<attribute name="sequenceName" />
+					<attribute name="selfInputCombo" />
+					<attribute name="sequenceSpeed" />
+					<attribute name="motionEffect" />
+					<attribute name="loopEffect" />
+					<attribute name="endEffect">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="splashInvokeEffect" />
+					<attribute name="splashEndEffect" />
+					<attribute name="strTagEffects" />
+					<attribute name="IgnoreOptimalHideCastEffect">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="IgnoreOptimalHideEndEffect">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="IgnoreOptimalHideSplashInvokeEffect">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="IgnoreOptimalHideSplashEndEffect">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="weaponSequenceName">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="keyMove" />
+					<attribute name="movetype" />
+					<attribute name="moveangle" />
+					<attribute name="movevangle" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="movedistance" />
+					<attribute name="moveEaseType" />
+					<attribute name="moveMid" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="moveHeight" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="hide" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="ignoreCollisionGroups" />
+					<attribute name="holdWeapon" />
+					<attribute name="loopCount" />
+					<attribute name="pushCylinderVelH" />
+					<attribute name="pushCylinderVelV" />
+					<attribute name="pushCylinderOuter" />
+					<attribute name="pushCylinderInner" />
+					<attribute name="pushCylinderHeight" />
+					<attribute name="faceTarget" />
+					<attribute name="doesPlayIdleOnSkillEnd" />
+					<attribute name="startNoneBlendDelay">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="loopKeepEffect">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="loopEndEffect">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="splashCastEffectStartDelay" default="true">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="splashLifeTick">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="splashInvokeCoolTick" default="100">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="ignoreASP" default="1">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="splashDurationCastEffect">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="aniSkipTime">
+						<settings optional="true" />
+					</attribute>
+				</node>
 				<node name="attack" optional="true" allowMultiple="true">
-					<node name="pauseProperty" />
-					<node name="rangeProperty" />
-					<node name="arrowProperty" />
-					<node name="damageProperty" />
+					<attribute name="point" />
+					<attribute name="pointGroupID">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="targetCount" />
+					<attribute name="magicPathID" />
+					<attribute name="cubeMagicPathID" />
+					<attribute name="direction" />
+					<attribute name="sequence" />
+					<attribute name="attacktype" />
+					<attribute name="hitImmuneBreak" />
+					<attribute name="brokenOffence" />
+					<attribute name="brokenForce" />
+					<attribute name="unrideOnHit">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="releaseObjectWeaponOnHit">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="compulsionType">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="grabTargetType">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="grabNodeCategory">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="attackMethodType" default="1">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="compulsionHit" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<node name="pauseProperty">
+						<attribute name="pauseDuration" />
+						<attribute name="pauseShakeDuration" />
+						<attribute name="pauseAmp" />
+					</node>
+					<node name="rangeProperty">
+						<attribute name="includeCaster" />
+						<attribute name="rangeType" />
+						<attribute name="distance" />
+						<attribute name="rangeAdd" />
+						<attribute name="rangeOffset" />
+						<attribute name="rangeZRotateDegree" />
+						<attribute name="height" />
+						<attribute name="width" />
+						<attribute name="endWidth" />
+						<attribute name="applyTarget" />
+						<attribute name="castTarget" />
+						<attribute name="sensorStartDelay" default="0">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="sensorSplashStartDelay" default="0">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="targetSelectType">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="targetHasBuffID">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="targetHasBuffOwner">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="targetStatCompare">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="targetStatCompareFunction">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="targetSelectHasBuffType" default="0">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="targetSelectParty" default="1">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="onlyTargetSelectHasBuff" default="0">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="applyTargetIgnoreNpcRanks">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="targetSelectGuild" default="1">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+					</node>
+					<node name="arrowProperty">
+						<attribute name="overlap" />
+						<attribute name="explosion" />
+						<attribute name="rayPhysxTest" />
+						<attribute name="nonTarget" />
+						<attribute name="bounceType" />
+						<attribute name="bounceCount" />
+						<attribute name="bounceRadius" />
+						<attribute name="bounceOverlap">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="collision" />
+						<attribute name="collisionAdd" />
+						<attribute name="effect" />
+						<attribute name="effectRemain" />
+						<attribute name="effectRay" />
+						<attribute name="effectDestroy" />
+						<attribute name="targetKeepEffect">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="rayType" />
+					</node>
+					<node name="damageProperty">
+						<attribute name="count" />
+						<attribute name="hand" />
+						<attribute name="rate" />
+						<attribute name="hitSpeedRate" />
+						<attribute name="hitPauseTime" />
+						<attribute name="damagedVibrateRatio" default="1">
+							<settings alwaysDefault="true" />
+						</attribute>
+						<attribute name="value" />
+						<attribute name="effectRemain" />
+						<attribute name="effectHit" />
+						<attribute name="IgnoreOptimalHideDamageHitEffect">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="IgnoreOptimalHideDamageRemainEffect">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="damageByTargetMaxHP" />
+						<attribute name="isConstDamageValue">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="push" />
+						<attribute name="pushdistance" />
+						<attribute name="pushduration" />
+						<attribute name="pushprob" />
+						<attribute name="pushEaseType" />
+						<attribute name="pushApplyField">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="pushUpDistance" />
+						<attribute name="pushDown" />
+						<attribute name="pushFall" />
+						<attribute name="pushPriority">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="pushPriorityHitImmune">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="attackMaterial" />
+						<attribute name="jumpHitIgnore">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="superArmorBreak">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="invokeEffectDisable">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="damageEventDisable" default="1">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="pushAnimation">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="constDamageByTargetHP" default="1">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="constDamageByTargetSP" default="1">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+					</node>
 					<node name="conditionSkill" optional="true" allowMultiple="true">
+						<attribute name="splash" />
+						<attribute name="level" />
+						<attribute name="skillID" />
+						<attribute name="skillTarget" />
+						<attribute name="skillOwner">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="delay" />
+						<attribute name="interval" />
+						<attribute name="immediateActive" />
+						<attribute name="fireCount" />
+						<attribute name="nonTargetActive">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="useDirection">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="onlySensingActive">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="dependOnCasterState">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="activeByIntervalTick" default="0">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="dependOnDamageCount">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="linkSkillID">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="overlapCount" default="2">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+						<attribute name="removeDelay">
+							<settings optional="true" />
+						</attribute>
+						<attribute name="independent" default="1">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
 						<node name="beginCondition">
+							<attribute name="level" default="1">
+								<settings alwaysDefault="true" />
+							</attribute>
+							<attribute name="gender" default="2">
+								<settings alwaysDefault="true" />
+							</attribute>
+							<attribute name="target" default="0">
+								<settings alwaysDefault="true" />
+							</attribute>
+							<attribute name="probability">
+								<settings optional="true" />
+							</attribute>
+							<attribute name="invokeEffectFactor" default="1">
+								<settings alwaysDefault="true" optional="true" />
+							</attribute>
+							<attribute name="cooldownTime" default="0">
+								<settings alwaysDefault="true" />
+							</attribute>
+							<attribute name="useCoolDownShowUI" default="0">
+								<settings alwaysDefault="true" />
+							</attribute>
+							<attribute name="allowDeadState" default="0">
+								<settings alwaysDefault="true" optional="true" />
+							</attribute>
+							<attribute name="requireDurationWithoutDamage" default="0">
+								<settings alwaysDefault="true" />
+							</attribute>
+							<attribute name="requireDurationWithoutMove" default="0">
+								<settings alwaysDefault="true" optional="true" />
+							</attribute>
+							<attribute name="useTargetCountFactor">
+								<settings optional="true" />
+							</attribute>
+							<attribute name="onlyShadowWorld" default="0">
+								<settings alwaysDefault="true" optional="true" />
+							</attribute>
+							<attribute name="onlyFlyableMap" default="0">
+								<settings alwaysDefault="true" optional="true" />
+							</attribute>
+							<attribute name="applyPvPZoneType" default="0">
+								<settings alwaysDefault="true" optional="true" />
+							</attribute>
+							<attribute name="allowBattleRidingState">
+								<settings optional="true" />
+							</attribute>
+							<attribute name="onlyBattleRidingState">
+								<settings optional="true" />
+							</attribute>
+							<attribute name="allowMapleSurvival" default="1">
+								<settings alwaysDefault="true" optional="true" />
+							</attribute>
+							<attribute name="isShadowWorld" default="0">
+								<settings alwaysDefault="true" optional="true" />
+							</attribute>
 							<node name="stat" />
-							<node name="caster" optional="true" />
-							<node name="target" optional="true" />
+							<node name="caster" optional="true">
+								<attribute name="hasBuffID" />
+								<attribute name="hasBuffLevel" default="0">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="hasBuffOwner" />
+								<attribute name="hasBuffCount" />
+								<attribute name="hasBuffCountCompare" default="Equals">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="eventCondition" default="0">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="NpcRaceString" default="">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="hasSkillID" default="0">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="hasSkillLevel" default="1">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="ignoreOwnerEvent" default="0">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="eventSkillID" default="">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="eventEffectID" default="">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="hasNotBuffID">
+									<settings optional="true" />
+								</attribute>
+							</node>
+							<node name="target" optional="true">
+								<attribute name="hasBuffID" />
+								<attribute name="hasBuffLevel" default="0">
+									<settings alwaysDefault="true" optional="true" />
+								</attribute>
+								<attribute name="hasBuffOwner">
+									<settings optional="true" />
+								</attribute>
+								<attribute name="hasBuffCount" />
+								<attribute name="hasBuffCountCompare" default="Equals">
+									<settings alwaysDefault="true" optional="true" />
+								</attribute>
+								<attribute name="eventCondition" default="0">
+									<settings alwaysDefault="true" />
+								</attribute>
+								<attribute name="NpcRaceString" default="">
+									<settings alwaysDefault="true" optional="true" />
+								</attribute>
+								<attribute name="hasSkillID" default="0">
+									<settings alwaysDefault="true" optional="true" />
+								</attribute>
+								<attribute name="hasSkillLevel" default="1">
+									<settings alwaysDefault="true" optional="true" />
+								</attribute>
+								<attribute name="ignoreOwnerEvent" default="0">
+									<settings alwaysDefault="true" optional="true" />
+								</attribute>
+								<attribute name="eventSkillID" default="">
+									<settings alwaysDefault="true" optional="true" />
+								</attribute>
+								<attribute name="eventEffectID" default="">
+									<settings alwaysDefault="true" optional="true" />
+								</attribute>
+								<attribute name="hasNotBuffID">
+									<settings optional="true" />
+								</attribute>
+							</node>
 						</node>
 					</node>
-					<node name="chainProperty" optional="true" />
-					<node name="petTamingProperty" optional="true" />
+					<node name="chainProperty" optional="true">
+						<attribute name="effect" />
+					</node>
+					<node name="petTamingProperty" optional="true">
+						<attribute name="tamingGroup" />
+						<attribute name="trapLevel" />
+						<attribute name="tamingPoint" />
+						<attribute name="forcedTaming" default="1">
+							<settings alwaysDefault="true" optional="true" />
+						</attribute>
+					</node>
 				</node>
 			</node>
 			<node name="conditionSkill" optional="true" allowMultiple="true">
+				<attribute name="splash" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="level" />
+				<attribute name="skillID" />
+				<attribute name="skillTarget" />
+				<attribute name="skillOwner" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="delay" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="interval" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="immediateActive" default="0">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="fireCount" default="1">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="nonTargetActive" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="useDirection" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="onlySensingActive" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="dependOnCasterState" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="activeByIntervalTick" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="dependOnDamageCount" default="0">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="overlapCount" default="10">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="linkSkillID" default="10700191">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
 				<node name="beginCondition">
+					<attribute name="level" default="1">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="gender" default="2">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="target" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="probability" />
+					<attribute name="invokeEffectFactor" default="1">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="cooldownTime" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="useCoolDownShowUI" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="allowDeadState" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="requireDurationWithoutDamage" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="requireDurationWithoutMove" default="0">
+						<settings alwaysDefault="true" />
+					</attribute>
+					<attribute name="useTargetCountFactor" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="onlyShadowWorld" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="onlyFlyableMap" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="applyPvPZoneType" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="allowBattleRidingState">
+						<settings optional="true" />
+					</attribute>
+					<attribute name="onlyBattleRidingState" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="isShadowWorld" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="glideOnGroundDisable" default="0">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
+					<attribute name="allowMapleSurvival" default="1">
+						<settings alwaysDefault="true" optional="true" />
+					</attribute>
 					<node name="stat" />
 				</node>
 			</node>
-			<node name="splashManualActiveProperty" optional="true" noVariance="true" />
-			<node name="magicControl" optional="true" noVariance="true" />
+			<node name="splashManualActiveProperty" optional="true" noVariance="true">
+				<attribute name="splashSkillIDs" default="10400292">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+				<attribute name="onlyManualActiveSplash" default="1">
+					<settings alwaysDefault="true" optional="true" />
+				</attribute>
+			</node>
+			<node name="magicControl" optional="true" noVariance="true">
+				<attribute name="enable" default="1">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="moveSpeed" default="450">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="duration" default="10">
+					<settings alwaysDefault="true" />
+				</attribute>
+				<attribute name="maxDistance" default="1200">
+					<settings alwaysDefault="true" />
+				</attribute>
+			</node>
 		</node>
 	</layout>
 </ms2Schema>

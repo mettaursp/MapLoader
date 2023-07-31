@@ -559,6 +559,8 @@ namespace OutputSchema
 		{
 			std::ofstream outFile(outputHeader);
 
+			outFile << "#pragma once\n\n";
+
 			ModuleWriter module(outFile);
 
 			generateModuleNamespace(module, currentNamespace);
@@ -593,6 +595,8 @@ namespace OutputSchema
 
 		{
 			std::ofstream outFile(outputHeader);
+
+			outFile << "#pragma once\n\n";
 
 			ModuleWriter module(outFile);
 

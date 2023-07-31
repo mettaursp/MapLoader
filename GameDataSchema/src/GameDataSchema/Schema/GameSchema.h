@@ -57,6 +57,9 @@ namespace GameSchema
 		std::vector<std::string> IgnoreVarianceIfEqualToValues;
 		bool IgnoreVarianceIfEqual = false;
 		bool IsArray = false;
+		bool Optional = false;
+		bool IsAlwaysDefault = false;
+		bool IsAlwaysNotDefault = false;
 
 		std::vector<const SchemaType*> Types;
 	};

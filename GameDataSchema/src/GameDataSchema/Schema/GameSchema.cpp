@@ -7,7 +7,13 @@ namespace GameSchema
 {
 	const std::unordered_map<std::string, SchemaType> Types = {
 		{ "int", { "int", SchemaTypes::Int{} }},
-		{ "string", { "string", SchemaTypes::String{} }}
+		{ "short", { "short", SchemaTypes::Short{} }},
+		{ "long", { "long", SchemaTypes::Long{} }},
+		{ "enum", { "enum", SchemaTypes::Enum{} }},
+		{ "string", { "string", SchemaTypes::String{} }},
+		{ "float", { "float", SchemaTypes::Float{} }},
+		{ "bool", { "bool", SchemaTypes::Bool{} }},
+		{ "Vector3", { "Vector3", SchemaTypes::Vector3{} }}
 	};
 
 	std::unordered_map<std::string, Schema> Gms2Schemas = {};
@@ -152,6 +158,26 @@ namespace GameSchema
 
 			if (strcmp(name, "default") == 0)
 			{
+				if (attrib.Types.size() > 0)
+				{
+					bool foundMatch = false;
+
+					for (const SchemaType* type : attrib.Types)
+					{
+						if (type->ValidateValue(value))
+						{
+							foundMatch = true;
+
+							break;
+						}
+					}
+
+					if (!foundMatch)
+					{
+						std::cout << "warning: attribute '" << attrib.Name << "' default value '" << value << "' failed type validation" << std::endl;
+					}
+				}
+
 				attrib.Default = value;
 
 				continue;
@@ -160,6 +186,32 @@ namespace GameSchema
 			if (strcmp(name, "isArray") == 0)
 			{
 				attrib.IsArray = strcmp(value, "true") == 0;
+
+				continue;
+			}
+
+			if (strcmp(name, "optional") == 0)
+			{
+				attrib.Optional = strcmp(value, "true") == 0;
+
+				continue;
+			}
+
+			if (strcmp(name, "alwaysDefault") == 0)
+			{
+				if (attrib.Types.size() == 1 && attrib.Types[0] == &Types.find("bool")->second && attrib.Optional)
+				{
+					std::cout << "attribute '" << attrib.Name << "' has default value set & is set to 'alwaysDefault' while type is 'bool' and is optional. did you mean 'alwaysNotDefault' with an inverted value?" << std::endl;
+				}
+
+				attrib.IsAlwaysDefault = strcmp(value, "true") == 0;
+
+				continue;
+			}
+
+			if (strcmp(name, "alwaysNotDefault") == 0)
+			{
+				attrib.IsAlwaysNotDefault = strcmp(value, "true") == 0;
 
 				continue;
 			}

@@ -9,12 +9,28 @@
 					<class name="Kinds" />
 					<class name="StateAttr" />
 					<class name="Condition" />
+					<class name="AutoTargeting" />
+					<class name="PetTaming" />
 				</class>
-				<class name="Level">
-					<class name="Consume">
+				<class name="Level" isMap="true" keyTypeName="short">
+					<class name="Consume" />
+					<class name="Motion" isVector="true">
+						<class name="Attack" isVector="true">
+							<class name="Pause" />
+							<class name="Range" />
+							<class name="Arrow" />
+							<class name="Damage" />
+							<class name="Chain" />
+							<class name="SplashSkill" isVector="true">
+								<class name="Condition" />
+							</class>
+							<class name="AdditionalEffect" isVector="true">
+								<class name="Condition" />
+							</class>
+						</class>
+					</class>
 				</class>
 				<!--class name="changeSkill"-->
-				<!--class name="autoTargeting"-->
 				<!--class name="autoTargeting"-->
 
 			</class>

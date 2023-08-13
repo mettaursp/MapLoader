@@ -10,11 +10,50 @@ namespace GameSchema
 		{ "short", { "short", SchemaTypes::Short{} }},
 		{ "long", { "long", SchemaTypes::Long{} }},
 		{ "enum", { "enum", SchemaTypes::Enum{} }},
+		{ "stringEnum", { "enum", SchemaTypes::StringEnum{} }},
+		{ "mixedEnum", { "enum", SchemaTypes::MixedEnum{} }},
 		{ "string", { "string", SchemaTypes::String{} }},
 		{ "float", { "float", SchemaTypes::Float{} }},
 		{ "bool", { "bool", SchemaTypes::Bool{} }},
+		{ "stringBool", { "bool", SchemaTypes::StringBool{} }},
 		{ "Vector3", { "Vector3", SchemaTypes::Vector3{} }}
 	};
+
+	const SchemaType* FindValidType(const std::string_view& value, const std::vector<const SchemaType*>& types, bool isArray)
+	{
+		for (const SchemaType* type : types)
+		{
+			if (isArray && SchemaTypes::ValidateArray(value, type->ValidateValue))
+			{
+				return type;
+			}
+
+			if (!isArray && type->ValidateValue(value))
+			{
+				return type;
+			}
+		}
+
+		return nullptr;
+	}
+
+	const SchemaType* FindValidType(const std::string_view& value, const std::vector<const SchemaType*>& types, const SchemaType* mapKeyType)
+	{
+		if (mapKeyType == nullptr)
+		{
+			return nullptr;
+		}
+
+		for (const SchemaType* type : types)
+		{
+			if (SchemaTypes::ValidateMap(value, mapKeyType->ValidateValue, type->ValidateValue))
+			{
+				return type;
+			}
+		}
+
+		return nullptr;
+	}
 
 	std::unordered_map<std::string, Schema> Gms2Schemas = {};
 	std::unordered_map<std::string, Schema> Kms2Schemas = {};
@@ -156,25 +195,24 @@ namespace GameSchema
 				continue;
 			}
 
+			if (strcmp(name, "remapTo") == 0)
+			{
+				attrib.RemapTo = value;
+
+				continue;
+			}
+
 			if (strcmp(name, "default") == 0)
 			{
 				if (attrib.Types.size() > 0)
 				{
-					bool foundMatch = false;
-
-					for (const SchemaType* type : attrib.Types)
-					{
-						if (type->ValidateValue(value))
-						{
-							foundMatch = true;
-
-							break;
-						}
-					}
+					bool foundMatch = FindValidType(value, attrib.Types, attrib.IsArray) != nullptr;
 
 					if (!foundMatch)
 					{
 						std::cout << "warning: attribute '" << attrib.Name << "' default value '" << value << "' failed type validation" << std::endl;
+
+						continue;
 					}
 				}
 
@@ -197,14 +235,29 @@ namespace GameSchema
 				continue;
 			}
 
-			if (strcmp(name, "alwaysDefault") == 0)
+			if (strcmp(name, "unmapped") == 0)
 			{
-				if (attrib.Types.size() == 1 && attrib.Types[0] == &Types.find("bool")->second && attrib.Optional)
+				attrib.Unmapped = strcmp(value, "true") == 0;
+
+				continue;
+			}
+
+			if (strcmp(name, "alwaysValue") == 0)
+			{
+				if (attrib.Types.size() > 0)
 				{
-					std::cout << "attribute '" << attrib.Name << "' has default value set & is set to 'alwaysDefault' while type is 'bool' and is optional. did you mean 'alwaysNotDefault' with an inverted value?" << std::endl;
+					bool foundMatch = FindValidType(value, attrib.Types, attrib.IsArray) != nullptr;
+
+					if (!foundMatch)
+					{
+						std::cout << "warning: attribute '" << attrib.Name << "' is set to be always value '" << value << "' which failed type validation" << std::endl;
+
+						continue;
+					}
 				}
 
-				attrib.IsAlwaysDefault = strcmp(value, "true") == 0;
+				attrib.IsAlwaysValue = true;
+				attrib.AlwaysValue = value;
 
 				continue;
 			}
@@ -212,6 +265,20 @@ namespace GameSchema
 			if (strcmp(name, "alwaysNotDefault") == 0)
 			{
 				attrib.IsAlwaysNotDefault = strcmp(value, "true") == 0;
+
+				continue;
+			}
+
+			if (strcmp(name, "valueOptional") == 0)
+			{
+				attrib.IsValueOptional = strcmp(value, "true") == 0;
+
+				continue;
+			}
+
+			if (strcmp(name, "filePath") == 0)
+			{
+				attrib.IsFilePath = strcmp(value, "true") == 0;
 
 				continue;
 			}
@@ -235,12 +302,52 @@ namespace GameSchema
 				if (pivotHeight == (size_t)-1)
 				{
 					std::cout << "attribute '" << attrib.Name << "' marked to ignore variance in non varying region" << std::endl;
+
+					continue;
 				}
-				else
+
+				attrib.Varies = true;
+				attrib.IgnoreVariance = strcmp(value, "true") == 0;
+
+				continue;
+			}
+
+			if (strcmp(name, "preferValue") == 0)
+			{
+				if (pivotHeight == (size_t)-1)
 				{
-					attrib.Varies = true;
-					attrib.IgnoreVariance = strcmp(value, "true") == 0;
+					std::cout << "attribute '" << attrib.Name << "' marked to ignore variance in non varying region" << std::endl;
+
+					continue;
 				}
+
+				if (attrib.Varies)
+				{
+					std::cout << "warning: attribute '" << attrib.Name << "' is set to not vary and prefer specific value, but was already specified to vary" << std::endl;
+
+					continue;
+				}
+
+				if (!attrib.IgnoreVarianceIfEqual)
+				{
+					std::cout << "warning: attribute '" << attrib.Name << "' is set to not vary and prefer specific value, but ignore variance values weren't set" << std::endl;
+
+					continue;
+				}
+
+				if (attrib.Types.size() > 0)
+				{
+					bool foundMatch = FindValidType(value, attrib.Types, attrib.IsArray) != nullptr;
+
+					if (!foundMatch)
+					{
+						std::cout << "warning: attribute '" << attrib.Name << "' is set to be always value '" << value << "' which failed type validation" << std::endl;
+
+						continue;
+					}
+				}
+
+				attrib.PreferValue = value;
 
 				continue;
 			}
@@ -282,6 +389,21 @@ namespace GameSchema
 					}
 
 					attrib.IgnoreVarianceIfEqualToValues.push_back(std::string(value + start, i - start));
+
+					if (attrib.Types.size() > 0)
+					{
+						for (const std::string& value : attrib.IgnoreVarianceIfEqualToValues)
+						{
+							bool foundMatch = FindValidType(value, attrib.Types, attrib.IsArray) != nullptr;
+
+							if (!foundMatch)
+							{
+								std::cout << "warning: attribute '" << attrib.Name << "' is set to be always value '" << value << "' which failed type validation" << std::endl;
+
+								continue;
+							}
+						}
+					}
 
 					attrib.IgnoreVarianceIfEqual = true;
 					node.AttributesDependOnVarianceParam = true;
@@ -338,7 +460,24 @@ namespace GameSchema
 				continue;
 			}
 
-			std::cout << "unknown 'directory' attribute: '" << name << "'" << std::endl;
+			if (strcmp(name, "mapKeyType") == 0)
+			{
+				const auto& typeEntry = Types.find(value);
+
+				if (typeEntry == Types.end())
+				{
+					std::cout << "unknown map key type '" << value << "' referenced" << std::endl;
+
+					continue;
+				}
+
+				attrib.IsMap = true;
+				attrib.MapKeyType = &typeEntry->second;
+
+				continue;
+			}
+
+			std::cout << "unknown 'node' attribute: '" << name << "'" << std::endl;
 		}
 
 		for (tinyxml2::XMLElement* child = attributeElement->FirstChildElement(); child; child = child->NextSiblingElement())

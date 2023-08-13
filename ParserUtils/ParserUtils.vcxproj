@@ -21,32 +21,32 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{62cb7be3-105f-47fc-86e5-0c258f4d58fa}</ProjectGuid>
-    <RootNamespace>GameDataSchema</RootNamespace>
+    <ProjectGuid>{d3fc3444-ffb5-48e5-97ed-f169efff7d6d}</ProjectGuid>
+    <RootNamespace>ParserUtils</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -59,40 +59,28 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\tinyxml2\tinyxml2Include.props" />
-    <Import Project="..\ArchiveParser\ParserInclude.props" />
-    <Import Project="..\OpenSSLInclude.props" />
-    <Import Project="..\PacketProcessing\PacketProcessingInclude.props" />
-    <Import Project="..\ParserUtils\ParserUtilsInclude.props" />
+    <Import Project="ParserUtilsInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\tinyxml2\tinyxml2Include.props" />
-    <Import Project="..\ArchiveParser\ParserInclude.props" />
-    <Import Project="..\OpenSSLInclude.props" />
-    <Import Project="..\PacketProcessing\PacketProcessingInclude.props" />
-    <Import Project="..\ParserUtils\ParserUtilsInclude.props" />
+    <Import Project="ParserUtilsInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\tinyxml2\tinyxml2Include.props" />
     <Import Project="..\CppGlobalConfig.props" />
-    <Import Project="..\ArchiveParser\ParserInclude.props" />
     <Import Project="..\OpenSSLInclude.props" />
+    <Import Project="..\tinyxml2\tinyxml2Include.props" />
     <Import Project="..\ZlibDebug.props" />
-    <Import Project="..\PacketProcessing\PacketProcessingInclude.props" />
-    <Import Project="..\ParserUtils\ParserUtilsInclude.props" />
+    <Import Project="ParserUtilsInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\tinyxml2\tinyxml2Include.props" />
     <Import Project="..\CppGlobalConfig.props" />
     <Import Project="..\Optimization.props" />
-    <Import Project="..\ArchiveParser\ParserInclude.props" />
     <Import Project="..\OpenSSLInclude.props" />
+    <Import Project="..\tinyxml2\tinyxml2Include.props" />
     <Import Project="..\ZlibRelease.props" />
-    <Import Project="..\PacketProcessing\PacketProcessingInclude.props" />
-    <Import Project="..\ParserUtils\ParserUtilsInclude.props" />
+    <Import Project="ParserUtilsInclude.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -152,35 +140,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\GameDataSchema\SchemaMain.cpp" />
-    <ClCompile Include="src\GameDataSchema\Schema\FileValidator.cpp" />
-    <ClCompile Include="src\GameDataSchema\Schema\GameSchema.cpp" />
-    <ClCompile Include="src\GameDataSchema\Schema\ModuleWriter.cpp" />
-    <ClCompile Include="src\GameDataSchema\Schema\OutputSchema.cpp" />
-    <ClCompile Include="src\GameDataSchema\Schema\PacketSchema.cpp" />
-    <ClCompile Include="src\GameDataSchema\Schema\SchemaTypes.cpp" />
+    <ClInclude Include="src\ParserUtils\DataStream.h" />
+    <ClInclude Include="src\ParserUtils\PacketParsing.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">
-      <Project>{01d10ca8-8e23-4880-b235-786919567bc4}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\PacketProcessing\PacketProcessing.vcxproj">
-      <Project>{b2bd6ad0-602e-46e5-aa20-9426af655145}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\ParserUtils\ParserUtils.vcxproj">
-      <Project>{d3fc3444-ffb5-48e5-97ed-f169efff7d6d}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\tinyxml2\tinyxml2.vcxproj">
-      <Project>{53acfb6b-d0e7-48da-8135-ca878d404819}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\GameDataSchema\Schema\FileValidator.h" />
-    <ClInclude Include="src\GameDataSchema\Schema\GameSchema.h" />
-    <ClInclude Include="src\GameDataSchema\Schema\ModuleWriter.h" />
-    <ClInclude Include="src\GameDataSchema\Schema\OutputSchema.h" />
-    <ClInclude Include="src\GameDataSchema\Schema\PacketScheam.h" />
-    <ClInclude Include="src\GameDataSchema\Schema\SchemaTypes.h" />
+    <ClCompile Include="src\ParserUtils\DataStream.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

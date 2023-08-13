@@ -30,6 +30,15 @@
     <ClCompile Include="src\GameDataSchema\Schema\FileValidator.cpp">
       <Filter>Source Files\Schema</Filter>
     </ClCompile>
+    <ClCompile Include="src\GameDataSchema\Schema\OutputSchema.cpp">
+      <Filter>Source Files\Schema</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameDataSchema\Schema\ModuleWriter.cpp">
+      <Filter>Source Files\Schema</Filter>
+    </ClCompile>
+    <ClCompile Include="src\GameDataSchema\Schema\PacketSchema.cpp">
+      <Filter>Source Files\Schema</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\GameDataSchema\Schema\GameSchema.h">
@@ -39,6 +48,15 @@
       <Filter>Source Files\Schema</Filter>
     </ClInclude>
     <ClInclude Include="src\GameDataSchema\Schema\FileValidator.h">
+      <Filter>Source Files\Schema</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameDataSchema\Schema\OutputSchema.h">
+      <Filter>Source Files\Schema</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameDataSchema\Schema\ModuleWriter.h">
+      <Filter>Source Files\Schema</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GameDataSchema\Schema\PacketScheam.h">
       <Filter>Source Files\Schema</Filter>
     </ClInclude>
   </ItemGroup>

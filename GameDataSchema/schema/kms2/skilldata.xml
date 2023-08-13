@@ -32,11 +32,11 @@
 					<attribute name="tooltip">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="disableChangeSkillIconEffect" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="disableChangeSkillIconEffect">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="showCastingBar" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="showCastingBar">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="paramCastingBar">
 						<settings optional="true" />
@@ -49,8 +49,8 @@
 					<attribute name="jump">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="unrideOnUse" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="unrideOnUse">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="element">
 						<settings optional="true" />
@@ -58,23 +58,23 @@
 					<attribute name="immediateActive">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="releaseObjectWeapon" default="0">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="releaseObjectWeapon">
+						<settings alwaysValue="0" optional="true" />
 					</attribute>
-					<attribute name="continue" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="continue">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="groupIDs">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="disableWater" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="disableWater">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="holdAttack" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="holdAttack">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="groupType" default="11">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="groupType">
+						<settings alwaysValue="11" optional="true" />
 					</attribute>
 					<attribute name="offsetNameTag">
 						<settings optional="true" />
@@ -84,23 +84,23 @@
 					<attribute name="autoTargetingType">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="keyIsDown" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="keyIsDown">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="clearCooldownFromPVPZone" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="clearCooldownFromPVPZone">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="ignoreReduceCooldown" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="ignoreReduceCooldown">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="moveType">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="useDefaultSkill" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="useDefaultSkill">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="battle" default="0">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="battle">
+						<settings alwaysValue="0" optional="true" />
 					</attribute>
 					<attribute name="cooldownGroupID">
 						<settings optional="true" />
@@ -108,32 +108,32 @@
 					<attribute name="superArmor">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="autoTargeting" default="0">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="autoTargeting">
+						<settings alwaysValue="0" optional="true" />
 					</attribute>
-					<attribute name="notKeepEffect" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="notKeepEffect">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="superArmorApplyFieldType">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="movingInMovekey" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="movingInMovekey">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="splashMaxCount">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="useInGameTime" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="useInGameTime">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="rechargeMaxCount">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="useDefaultSkillID" default="10600071">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="useDefaultSkillID">
+						<settings alwaysValue="10600071" optional="true" />
 					</attribute>
-					<attribute name="rechargeShareOrigin" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="rechargeShareOrigin">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 				</node>
 				<node name="autoTargeting" optional="true">
@@ -143,11 +143,11 @@
 					<attribute name="autoTargetingMaxDistance">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="autoTargetingMaxHeight" default="400">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="autoTargetingMaxHeight">
+						<settings alwaysValue="400" optional="true" />
 					</attribute>
-					<attribute name="autoTargetUseMove" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="autoTargetUseMove">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 				</node>
 				<node name="push" optional="true">
@@ -165,40 +165,40 @@
 					<attribute name="outputSkill">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="comboSkill" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="comboSkill">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="chargingSkill" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="chargingSkill">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="disableChargingAttackSkipFrame" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="disableChargingAttackSkipFrame">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 				</node>
 				<node name="condition" optional="true">
-					<attribute name="useCoolDownShowUI" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="useCoolDownShowUI">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="onlyShadowWorld" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="onlyShadowWorld">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="sp">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="invokeEffectFactor" default="0">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="invokeEffectFactor">
+						<settings alwaysValue="0" optional="true" />
 					</attribute>
 					<attribute name="defaultRechargingCooldownTime">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="allowBattleRidingState" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="allowBattleRidingState">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="onlyBattleRidingState" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="onlyBattleRidingState">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="onlyFlyableMap" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="onlyFlyableMap">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<node name="weapon" optional="true" allowMultiple="true">
 						<attribute name="lh" />
@@ -222,21 +222,21 @@
 					<attribute name="autoChange">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="changeSkillCheckEffectCompareFunc" default="5,5,1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="changeSkillCheckEffectCompareFunc">
+						<settings alwaysValue="5,5,1" optional="true" />
 					</attribute>
 				</node>
 				<node name="sensor" optional="true">
-					<attribute name="rangeType" default="cylinder">
-						<settings alwaysDefault="true" />
+					<attribute name="rangeType">
+						<settings alwaysValue="cylinder" />
 					</attribute>
 					<attribute name="distance" />
 					<attribute name="height" />
 					<attribute name="targetHasBuffID">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="targetHasBuffOwner" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="targetHasBuffOwner">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="targetHasNotBuffID">
 						<settings optional="true" />
@@ -244,29 +244,29 @@
 					<attribute name="sensorStartDelay">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="rangeAdd" default="0,0,600">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="rangeAdd">
+						<settings alwaysValue="0,0,600" optional="true" />
 					</attribute>
 					<attribute name="sensorSplashStartDelay">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="sensorForceInvokeByInterval" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="sensorForceInvokeByInterval">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 				</node>
 				<node name="magicControl" optional="true">
-					<attribute name="enable" default="2">
-						<settings alwaysDefault="true" />
+					<attribute name="enable">
+						<settings alwaysValue="2" />
 					</attribute>
-					<attribute name="moveSpeed" default="450">
-						<settings alwaysDefault="true" />
+					<attribute name="moveSpeed">
+						<settings alwaysValue="450" />
 					</attribute>
-					<attribute name="duration" default="5">
-						<settings alwaysDefault="true" />
+					<attribute name="duration">
+						<settings alwaysValue="5" />
 					</attribute>
 				</node>
 			</node>
-			<node name="level" allowMultiple="true">
+			<node name="level" allowMultiple="true" hasVariants="true">
 				<attribute name="value" varianceParameterId="level" />
 				<attribute name="cooldown">
 					<settings optional="true" />
@@ -280,11 +280,11 @@
 				<attribute name="ep">
 					<settings optional="true" />
 				</attribute>
-				<attribute name="hpRate" default="-0.01">
-					<settings alwaysDefault="true" optional="true" />
+				<attribute name="hpRate">
+					<settings alwaysValue="-0.01" optional="true" />
 				</attribute>
-				<attribute name="meso" default="777">
-					<settings alwaysDefault="true" optional="true" />
+				<attribute name="meso">
+					<settings alwaysValue="777" optional="true" />
 				</attribute>
 				<attribute name="stanceDamageRate">
 					<settings optional="true" />
@@ -293,8 +293,8 @@
 					<attribute name="sequenceName">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="selfInputCombo" default="selfinputcombo">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="selfInputCombo">
+						<settings alwaysValue="selfinputcombo" optional="true" />
 					</attribute>
 					<attribute name="strTagEffects">
 						<settings optional="true" />
@@ -308,8 +308,8 @@
 					<attribute name="splashInvokeEffect">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="holdWeapon" default="0">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="holdWeapon">
+						<settings alwaysValue="0" optional="true" />
 					</attribute>
 					<attribute name="motionEffect">
 						<settings optional="true" />
@@ -320,14 +320,14 @@
 					<attribute name="ignoreCollisionGroups">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="IgnoreOptimalHideCastEffect" default="true">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="IgnoreOptimalHideCastEffect">
+						<settings alwaysValue="true" optional="true" />
 					</attribute>
 					<attribute name="splashEndEffect">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="startNoneBlendDelay" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="startNoneBlendDelay">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
 					<attribute name="loopKeepEffect">
 						<settings optional="true" />
@@ -335,8 +335,8 @@
 					<attribute name="loopEndEffect">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="splashCastEffectStartDelay" default="true">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="splashCastEffectStartDelay">
+						<settings alwaysValue="true" optional="true" />
 					</attribute>
 					<attribute name="loopEffect">
 						<settings optional="true" />
@@ -350,14 +350,14 @@
 					<attribute name="splashLifeTick">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="splashInvokeCoolTick" default="100">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="splashInvokeCoolTick">
+						<settings alwaysValue="100" optional="true" />
 					</attribute>
-					<attribute name="movetype" default="3">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="movetype">
+						<settings alwaysValue="3" optional="true" />
 					</attribute>
-					<attribute name="weaponSequenceName" default="Attack_01_A">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="weaponSequenceName">
+						<settings alwaysValue="Attack_01_A" optional="true" />
 					</attribute>
 					<attribute name="endEffect">
 						<settings optional="true" />
@@ -365,11 +365,11 @@
 					<attribute name="splashDurationCastEffect">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="faceTarget" default="0">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="faceTarget">
+						<settings alwaysValue="0" optional="true" />
 					</attribute>
-					<attribute name="doesPlayIdleOnSkillEnd" default="false">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="doesPlayIdleOnSkillEnd">
+						<settings alwaysValue="false" optional="true" />
 					</attribute>
 					<attribute name="moveangle">
 						<settings optional="true" />
@@ -389,8 +389,8 @@
 					<attribute name="aniSkipTime">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="pushCylinderVelV" default="-280">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="pushCylinderVelV">
+						<settings alwaysValue="-280" optional="true" />
 					</attribute>
 					<node name="attack" optional="true" allowMultiple="true">
 						<attribute name="point" />
@@ -433,8 +433,8 @@
 						<attribute name="compulsionType">
 							<settings optional="true" />
 						</attribute>
-						<attribute name="splashActiveSkillID" default="10400292">
-							<settings alwaysDefault="true" optional="true" />
+						<attribute name="splashActiveSkillID">
+							<settings alwaysValue="10400292" optional="true" />
 						</attribute>
 						<attribute name="grabTargetType">
 							<settings optional="true" />
@@ -476,17 +476,17 @@
 							<attribute name="targetHasBuffID">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="targetHasBuffOwner" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="targetHasBuffOwner">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
-							<attribute name="targetStatCompare" default="4">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="targetStatCompare">
+								<settings alwaysValue="4" optional="true" />
 							</attribute>
 							<attribute name="targetStatCompareFunction">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="targetSelectParty" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="targetSelectParty">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 							<attribute name="rangeZRotateDegree">
 								<settings optional="true" />
@@ -500,16 +500,16 @@
 							<attribute name="targetHasNotBuffID">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="targetSelectGuild" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="targetSelectGuild">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 						</node>
 						<node name="arrow" optional="true">
 							<attribute name="nonTarget">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="rayPhysxTest" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="rayPhysxTest">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 							<attribute name="bounceType">
 								<settings optional="true" />
@@ -535,17 +535,17 @@
 							<attribute name="effectDestroy">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="overlap" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="overlap">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 							<attribute name="rayType">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="bounceOverlap" default="0">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="bounceOverlap">
+								<settings alwaysValue="0" optional="true" />
 							</attribute>
-							<attribute name="explosion" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="explosion">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 							<attribute name="targetKeepEffect">
 								<settings optional="true" />
@@ -588,8 +588,8 @@
 							<attribute name="count">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="invokeEffectDisable" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="invokeEffectDisable">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 							<attribute name="pushUpDistance">
 								<settings optional="true" />
@@ -615,35 +615,35 @@
 							<attribute name="pushDown">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="pushFall" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="pushFall">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
-							<attribute name="IgnoreOptimalHideDamageHitEffect" default="true">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="IgnoreOptimalHideDamageHitEffect">
+								<settings alwaysValue="true" optional="true" />
 							</attribute>
-							<attribute name="IgnoreOptimalHideDamageRemainEffect" default="true">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="IgnoreOptimalHideDamageRemainEffect">
+								<settings alwaysValue="true" optional="true" />
 							</attribute>
-							<attribute name="isConstDamageValue" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="isConstDamageValue">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
-							<attribute name="stateHitIgnore" default="6">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="stateHitIgnore">
+								<settings alwaysValue="6" optional="true" />
 							</attribute>
 							<attribute name="pushAnimation">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="stateHitOnly" default="11,15">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="stateHitOnly">
+								<settings alwaysValue="11,15" optional="true" />
 							</attribute>
-							<attribute name="superArmorBreak" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="superArmorBreak">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
-							<attribute name="constDamageByTargetHP" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="constDamageByTargetHP">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
-							<attribute name="constDamageByTargetSP" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="constDamageByTargetSP">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 						</node>
 						<node name="pause" optional="true">
@@ -663,35 +663,35 @@
 							<attribute name="interval">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="immediateActive" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="immediateActive">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 							<attribute name="fireCount">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="useDirection" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="useDirection">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
-							<attribute name="dependOnCasterState" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="dependOnCasterState">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 							<attribute name="delay">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="nonTargetActive" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="nonTargetActive">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
-							<attribute name="onlySensingActive" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="onlySensingActive">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
-							<attribute name="linkSkillID" default="10400281">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="linkSkillID">
+								<settings alwaysValue="10400281" optional="true" />
 							</attribute>
 							<attribute name="removeDelay">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="independent" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="independent">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 						</node>
 						<node name="actionAdditional" optional="true" allowMultiple="true">
@@ -701,8 +701,8 @@
 							<attribute name="skillOwner">
 								<settings optional="true" />
 							</attribute>
-							<attribute name="dependOnDamageCount" default="1">
-								<settings alwaysDefault="true" optional="true" />
+							<attribute name="dependOnDamageCount">
+								<settings alwaysValue="1" optional="true" />
 							</attribute>
 							<attribute name="linkSkillID">
 								<settings optional="true" />
@@ -714,21 +714,21 @@
 								<attribute name="probability">
 									<settings optional="true" />
 								</attribute>
-								<attribute name="useTargetCountFactor" default="1">
-									<settings alwaysDefault="true" optional="true" />
+								<attribute name="useTargetCountFactor">
+									<settings alwaysValue="1" optional="true" />
 								</attribute>
-								<attribute name="allowBattleRidingState" default="1">
-									<settings alwaysDefault="true" optional="true" />
+								<attribute name="allowBattleRidingState">
+									<settings alwaysValue="1" optional="true" />
 								</attribute>
-								<attribute name="onlyBattleRidingState" default="1">
-									<settings alwaysDefault="true" optional="true" />
+								<attribute name="onlyBattleRidingState">
+									<settings alwaysValue="1" optional="true" />
 								</attribute>
 								<node name="caster" optional="true">
 									<attribute name="hasBuffID">
 										<settings optional="true" />
 									</attribute>
-									<attribute name="hasBuffOwner" default="1">
-										<settings alwaysDefault="true" optional="true" />
+									<attribute name="hasBuffOwner">
+										<settings alwaysValue="1" optional="true" />
 									</attribute>
 									<attribute name="hasBuffCount">
 										<settings optional="true" />
@@ -744,14 +744,14 @@
 									<attribute name="hasBuffCount">
 										<settings optional="true" />
 									</attribute>
-									<attribute name="hasBuffOwner" default="1">
-										<settings alwaysDefault="true" optional="true" />
+									<attribute name="hasBuffOwner">
+										<settings alwaysValue="1" optional="true" />
 									</attribute>
 									<attribute name="hasNotBuffID">
 										<settings optional="true" />
 									</attribute>
-									<attribute name="hasNotBuffOwner" default="1">
-										<settings alwaysDefault="true" optional="true" />
+									<attribute name="hasNotBuffOwner">
+										<settings alwaysValue="1" optional="true" />
 									</attribute>
 								</node>
 							</node>
@@ -767,18 +767,18 @@
 					<attribute name="skillTarget">
 						<settings optional="true" />
 					</attribute>
-					<attribute name="overlapCount" default="10">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="overlapCount">
+						<settings alwaysValue="10" optional="true" />
 					</attribute>
-					<attribute name="skillOwner" default="1">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="skillOwner">
+						<settings alwaysValue="1" optional="true" />
 					</attribute>
-					<attribute name="linkSkillID" default="10700191">
-						<settings alwaysDefault="true" optional="true" />
+					<attribute name="linkSkillID">
+						<settings alwaysValue="10700191" optional="true" />
 					</attribute>
 					<node name="beginCondition" optional="true">
-						<attribute name="allowBattleRidingState" default="1">
-							<settings alwaysDefault="true" />
+						<attribute name="allowBattleRidingState">
+							<settings alwaysValue="1" />
 						</attribute>
 					</node>
 				</node>

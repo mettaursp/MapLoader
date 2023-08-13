@@ -636,27 +636,14 @@ namespace GameSchema
 				std::string_view value = attribute->Value();
 				bool isDefaultValue = attrib.Default == value;
 				bool valueMatches = false;
-
-				for (size_t i = 0; i < attrib.Types.size() && !valueMatches; ++i)
+				
+				if (attrib.IsMap)
 				{
-					const SchemaType* type = attrib.Types[i];
-
-					if (type->ValidateValue != nullptr)
-					{
-						valueMatches = type->ValidateValue(value);
-					}
-
-					if (valueMatches)
-					{
-						if (printSuccesses)
-						{
-							const char* validMessage = isDefaultValue ? "' [default] valid for type '" : "' valid for type '";
-
-							std::cout << currentPath << "." << attrib.Name << " value '" << value << isDefaultValue << type->Name << "'" << std::endl;
-						}
-
-						break;
-					}
+					valueMatches = FindValidType(value, attrib.Types, attrib.MapKeyType);
+				}
+				else
+				{
+					valueMatches = FindValidType(value, attrib.Types, attrib.IsArray) != nullptr || (attrib.IsValueOptional && value.size() == 0);
 				}
 
 				if (!valueMatches && attrib.Types.size())
@@ -673,6 +660,11 @@ namespace GameSchema
 						}
 
 						std::cout << type->Name;
+
+						if (attrib.IsArray)
+						{
+							std::cout << "[]";
+						}
 
 						first = false;
 					}
@@ -701,16 +693,16 @@ namespace GameSchema
 					VarianceParameters[attrib.VarianceParameterId] = value;
 				}
 
-				if (attrib.IsAlwaysDefault && value != attrib.Default)
+				if (attrib.IsAlwaysValue && value != attrib.AlwaysValue)
 				{
-					std::cout << currentPath << "." << attrib.Name << "marked as always being default value '" << attrib.Default << "', but doesn't match: '" << value << "'" << std::endl;
+					std::cout << currentPath << "." << attrib.Name << " marked as always being value '" << attrib.AlwaysValue << "', but doesn't match: '" << value << "'" << std::endl;
 
 					meetsSchema = false;
 				}
 
 				if (attrib.IsAlwaysNotDefault && value == attrib.Default)
 				{
-					std::cout << currentPath << "." << attrib.Name << "marked as always not being default value '" << attrib.Default << "', but matches" << std::endl;
+					std::cout << currentPath << "." << attrib.Name << " marked as always not being default value '" << attrib.Default << "', but matches" << std::endl;
 
 					meetsSchema = false;
 				}

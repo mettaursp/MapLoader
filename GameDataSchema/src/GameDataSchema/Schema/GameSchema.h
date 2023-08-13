@@ -27,6 +27,9 @@ namespace GameSchema
 		}
 	};
 
+	const SchemaType* FindValidType(const std::string_view& value, const std::vector<const SchemaType*>& types, bool isArray);
+	const SchemaType* FindValidType(const std::string_view& value, const std::vector<const SchemaType*>& types, const SchemaType* mapKeyType);
+
 	extern const std::unordered_map<std::string, SchemaType> Types;
 
 	struct SchemaFile
@@ -50,6 +53,8 @@ namespace GameSchema
 	{
 		std::string Name;
 		std::string Default;
+		std::string RemapTo;
+		bool Unmapped = false;
 		bool Varies = false;
 		bool IgnoreVariance = false;
 		std::string VarianceParameterId;
@@ -57,9 +62,16 @@ namespace GameSchema
 		std::vector<std::string> IgnoreVarianceIfEqualToValues;
 		bool IgnoreVarianceIfEqual = false;
 		bool IsArray = false;
+		bool IsMap = false;
 		bool Optional = false;
-		bool IsAlwaysDefault = false;
+		bool IsAlwaysValue = false;
+		bool IsValueOptional = false;
+		bool IsFilePath = false;
+		std::string AlwaysValue;
 		bool IsAlwaysNotDefault = false;
+		std::string PreferValue;
+
+		const SchemaType* MapKeyType = nullptr;
 
 		std::vector<const SchemaType*> Types;
 	};

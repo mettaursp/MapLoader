@@ -1,6 +1,0 @@
-namespace GameData
-{
-	namespace Types
-	{
-	}
-}

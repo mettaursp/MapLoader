@@ -37,11 +37,14 @@ namespace OutputSchema
 		void PushNamespace(StackHandle& handle, const std::string_view& name);
 		void PushStruct(const std::string_view& name);
 		void PushStruct(StackHandle& handle, const std::string_view& name);
+		void PushEnum(const std::string_view& name);
+		void PushEnum(StackHandle& handle, const std::string_view& name);
 		void PushCollection(const std::string_view& name);
 		void PushCollection(StackHandle& handle, const std::string_view& name);
 		void PushLine();
 		void PushMember(const SchemaClass& type);
-		void PushMember(const std::string& type, const std::string_view& name);
+		void PushMember(const std::string& type, const std::string_view& name, const std::string_view& value);
+		void PushEnumValue(const std::string& name, const std::string_view& value, bool isLast);
 		void PopStack();
 
 		size_t GetStackDepth() const { return Stack.size(); }

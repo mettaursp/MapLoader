@@ -61,22 +61,30 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="PacketProcessingInclude.props" />
+    <Import Project="..\GameData\GameDataInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="PacketProcessingInclude.props" />
+    <Import Project="..\GameData\GameDataInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\ParserUtils\ParserUtilsInclude.props" />
     <Import Project="..\CppGlobalConfig.props" />
     <Import Project="PacketProcessingInclude.props" />
+    <Import Project="..\GameData\GameDataInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="..\ParserUtils\ParserUtilsInclude.props" />
     <Import Project="..\CppGlobalConfig.props" />
     <Import Project="PacketProcessingInclude.props" />
+    <Import Project="..\GameData\GameDataInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -136,10 +144,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\PacketProcessing\PacketOutput.h" />
     <ClInclude Include="src\PacketProcessing\PacketParser.h" />
+    <ClInclude Include="src\PacketProcessing\PacketParserBase.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\PacketProcessing\PacketOutput.cpp" />
     <ClCompile Include="src\PacketProcessing\PacketParser.cpp" />
+    <ClCompile Include="src\PacketProcessing\PacketParserBase.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ParserUtils\ParserUtils.vcxproj">
+      <Project>{d3fc3444-ffb5-48e5-97ed-f169efff7d6d}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

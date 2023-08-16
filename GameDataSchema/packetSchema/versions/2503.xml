@@ -1,0 +1,135 @@
+<packetSchema version="2503">
+	<source name="server">
+	</source>
+	<source name="client">
+		<opcode name="Skill" value="0x20">
+			<data type="byte" name="mode">
+				<enum name="Cast" value="0" />
+				<enum name="Damage" value="1" />
+				<enum name="Sync" value="2" />
+				<enum name="SyncTick" value="3" />
+				<enum name="Cancel" value="4" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Client.SkillCastPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="int" name="serverTick" output="ServerTick" />
+				<data type="int" name="skillId" output="SkillId" />
+				<data type="short" name="skillLevel" output="SkillLevel" />
+				<data type="byte" name="attackPoint" output="AttackPoint" />
+				<data type="Vector3S" name="position" output="Position" />
+				<data type="Vector3S" name="direction" output="Direction" />
+				<data type="Vector3S" name="rotation" output="Rotation" />
+				<data type="float" name="unknown">
+					<enum name="default" value="0" />
+				</data>
+				<data type="int" name="clientTick" output="ClientTick" />
+				<data type="bool" name="unknown">
+					<enum name="default" value="0" />
+				</data>
+				<data type="long" name="unknown">
+					<enum name="default" value="0" />
+				</data>
+				<data type="long" name="unknown" />
+				<data type="bool" name="flag" output="Flag" />
+				<condition data="flag" value="1" comparison="equal">
+					<data type="int" name="unknown">
+						<enum name="default" value="0" />
+					</data>
+					<data type="string" name="unknown" />
+				</condition>
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<data type="byte" name="damageMode">
+					<enum name="SyncDamage" value="0" />
+					<enum name="Damage" value="1" />
+					<enum name="RegionSkill" value="2" />
+				</data>
+				<condition data="damageMode" value="0" comparison="equal">
+					<output type="Networking.Packets.Client.SkillSyncDamagePacket" schemaName="packetData" />
+					<data type="long" name="skillSn" output="SkillSn" />
+					<data type="byte" name="attackPoint" output="AttackPoint" />
+					<data type="Vector3S" name="position" output="Position" />
+					<data type="Vector3S" name="rotation" output="Rotation" />
+					<data type="byte" name="count" />
+					<data type="int" name="unknown">
+						<enum name="default" value="0" />
+					</data>
+					<array data="count" name="projectile" output="Projectiles">
+						<data type="int" name="attackCount" output="AttackCount" />
+						<data type="int" name="sourceId" output="SourceId" />
+						<data type="int" name="targetId" output="TargetId" />
+						<data type="byte" name="index" output="Index" />
+						<data type="bool" name="moreTargets" />
+						<array data="moreTargets" type="while" name="nextTarget" output="ChainTargets">
+							<data type="int" name="attackCount" output="AttackCount" />
+							<data type="int" name="sourceId" output="SourceId" />
+							<data type="int" name="targetId" output="TargetId" />
+							<data type="byte" name="index" output="Index" />
+							<data type="byte" name="unknown" />
+							<read name="moreTargets" />
+						</array>
+					</array>
+				</condition>
+				<condition data="damageMode" value="1" comparison="equal">
+					<output type="Networking.Packets.Client.SkillDamagePacket" schemaName="packetData" />
+					<data type="long" name="skillSn" output="SkillSn" />
+					<data type="int" name="attackCounter" output="AttackCounter" />
+					<data type="int" name="sourceId" output="SourceId" />
+					<data type="Vector3S" name="position" output="Position" />
+					<data type="Vector3S" name="hitPoint" output="HitPoint" />
+					<data type="Vector3S" name="rotation" output="Rotation" />
+					<data type="byte" name="attackPoint" output="AttackPoint" />
+					<data type="byte" name="count" />
+					<data type="int" name="unknown">
+						<enum name="default" value="0" />
+					</data>
+					<array data="count" name="hitActor" output="Hits">
+						<data type="int" name="entityId" output="EntityId" />
+						<data type="byte" name="unknown">
+							<enum name="default" value="0" />
+						</data>
+					</array>
+				</condition>
+				<condition data="damageMode" value="2" comparison="equal">
+					<output type="Networking.Packets.Client.SkillRegionSkillPacket" schemaName="packetData" />
+					<data type="long" name="skillSn" output="SkillSn" />
+					<data type="byte" name="attackPoint" output="AttackPoint" />
+					<data type="int" name="unknown" />
+					<data type="int" name="attackCounter" output="AttackCounter" />
+					<data type="Vector3S" name="position" output="Position" />
+					<data type="Vector3S" name="rotation" output="Rotation" />
+				</condition>
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<output type="Networking.Packets.Client.SkillSyncPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="int" name="skillId" output="SkillId" />
+				<data type="short" name="skillLevel" output="SkillLevel" />
+				<data type="byte" name="motionPoint" output="MotionPoint" />
+				<data type="Vector3S" name="position" output="Position" />
+				<data type="Vector3S" name="unknown" />
+				<data type="Vector3S" name="rotation" output="Rotation" />
+				<data type="Vector3S" name="unknown" />
+				<data type="bool" name="unknown">
+					<enum name="default" value="0" />
+				</data>
+				<data type="int" name="unknown">
+					<enum name="default" value="0" />
+				</data>
+				<data type="byte" name="unknown">
+					<enum name="default" value="0" />
+				</data>
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<output type="Networking.Packets.Client.SkillSyncTickPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="int" name="serverTick" output="ServerTick" />
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<output type="Networking.Packets.Client.SkillCancelPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+			</condition>
+		</opcode>
+	</source>
+</packetSchema>

@@ -2,6 +2,8 @@
 
 #include <string_view>
 
+#include <Engine/Math/Vector3S-decl.h>
+
 namespace ParserUtils
 {
 	template <typename T>
@@ -15,6 +17,9 @@ namespace ParserUtils
 		std::string_view Data;
 		size_t Index = 0;
 		bool HasRecentlyFailed = false;
+		bool FoundUnknownValue = false;
+		bool IgnoreUnknownValues = false;
+		bool SuppressErrors = false;
 
 		template <typename T>
 		bool Read(T& value);
@@ -54,4 +59,16 @@ namespace ParserUtils
 
 		return true;
 	}
+
+	template <>
+	bool DataStream::Read<bool>(bool& value);
+
+	template <>
+	bool DataStream::Read<std::string>(std::string& value);
+
+	template <>
+	bool DataStream::Read<std::wstring>(std::wstring& value);
+
+	template <>
+	bool DataStream::Read<Vector3S>(Vector3S& value);
 }

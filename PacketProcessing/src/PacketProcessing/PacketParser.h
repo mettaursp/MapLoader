@@ -1,28 +1,40 @@
 #pragma once
 
-#include <ParserUtils/DataStream.h>
+#include "PacketParserBase.h"
 
 namespace Networking
 {
 	namespace Packets
 	{
-		void ParsePacket(ParserUtils::DataStream& stream, unsigned short version, bool isServer, unsigned short opcode);
-
-		const bool Server = true;
-		const bool Client = false;
-
-		template <short Version, bool IsServer, short Opcode>
-		void ParsePacket(ParserUtils::DataStream& stream)
-		{
-		}
+		template <>
+		void ParsePacket<12, ClientPacket, 0x1>(ParserUtils::DataStream& stream);
 
 		template <>
-		void ParsePacket<0, false, 0>(ParserUtils::DataStream& stream);
-
-		typedef void (*PacketParserCallback)(ParserUtils::DataStream& stream);
+		void ParsePacket<12, ClientPacket, 0x4>(ParserUtils::DataStream& stream);
 
 		template <>
-		void ParsePacket<2546, Server, 0x47>(ParserUtils::DataStream& stream);
+		void ParsePacket<12, ClientPacket, 0xa>(ParserUtils::DataStream& stream);
+
+		template <>
+		void ParsePacket<12, ClientPacket, 0xd>(ParserUtils::DataStream& stream);
+
+		template <>
+		void ParsePacket<12, ClientPacket, 0x20>(ParserUtils::DataStream& stream);
+
+		template <>
+		void ParsePacket<12, ClientPacket, 0xb7>(ParserUtils::DataStream& stream);
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0x1d>(ParserUtils::DataStream& stream);
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0x48>(ParserUtils::DataStream& stream);
+
+		template <>
+		void ParsePacket<13, ServerPacket, 0x47>(ParserUtils::DataStream& stream);
+
+		template <>
+		void ParsePacket<2503, ClientPacket, 0x20>(ParserUtils::DataStream& stream);
 
 	}
 }

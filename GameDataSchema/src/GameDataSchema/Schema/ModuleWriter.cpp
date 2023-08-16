@@ -95,19 +95,78 @@ namespace OutputSchema
 		Stack.push_back({});
 	}
 
+	void ModuleWriter::PushEnum(const std::string_view& name)
+	{
+		Out << Indent() << "enum class " << name << "\n";
+		Out << Indent() << "{\n";
+
+		Indentation.push_back('\t');
+		Stack.push_back({});
+	}
+
+	void ModuleWriter::PushEnum(StackHandle& handle, const std::string_view& name)
+	{
+		PushEnum(name);
+
+		handle.Bind(*this);
+	}
+
 	void ModuleWriter::PushLine()
 	{
 		Out << Indent() << "\n";
 	}
 
+	const std::unordered_map<std::string, std::string> TypeDefaultValues = {
+		{ "char", "0" },
+		{ "unsigned char", "0" },
+		{ "signed char", "0" },
+		{ "short", "0" },
+		{ "unsigned short", "0" },
+		{ "int", "0" },
+		{ "unsigned int", "0" },
+		{ "long long", "0" },
+		{ "unsigned long long", "0" },
+		{ "float", "0" },
+		{ "double", "0" },
+		{ "bool", "false" },
+	};
+
 	void ModuleWriter::PushMember(const SchemaClass& type)
 	{
-		Out << Indent() << type.TypeName << " " << type.MemberName << ";\n";
+		Out << Indent() << stripCommonNamespaces(type.TypeName, type.Scope, ':') << " " << type.MemberName << ";\n";
 	}
 
-	void ModuleWriter::PushMember(const std::string& type, const std::string_view& name)
+	void ModuleWriter::PushMember(const std::string& type, const std::string_view& name, const std::string_view& value)
 	{
+		Out << Indent() << type << " " << name;
 
+		if (value.size())
+		{
+			Out << " = " << value;
+		}
+		else
+		{
+			auto valueEntry = TypeDefaultValues.find(std::string(type));
+
+			if (valueEntry != TypeDefaultValues.end())
+			{
+				Out << " = " << valueEntry->second;
+			}
+		}
+
+		Out << ";\n";
+	}
+
+	void ModuleWriter::PushEnumValue(const std::string& name, const std::string_view& value, bool isLast)
+	{
+		Out << Indent() << name;
+
+		if (value.size())
+		{
+			Out << " = " << value;
+		}
+
+		Out << (isLast ? "\n" : ",\n");
 	}
 
 	void ModuleWriter::PushStruct(StackHandle& handle, const std::string_view& name)
@@ -181,9 +240,37 @@ namespace OutputSchema
 		}
 	}
 
+	void generateEnumDefinitions(const SchemaEnum& schemaEnum, ModuleWriter& module, const std::string& currentNamespace)
+	{
+		module.PushEnum(schemaEnum.Name);
+
+		for (size_t i = 0; i < schemaEnum.Values.size(); ++i)
+		{
+			const SchemaEnumValue& enumValue = schemaEnum.Values[i];
+
+			module.PushEnumValue(enumValue.Name, enumValue.Value, i + 1 == schemaEnum.Values.size());
+		}
+
+		module.PopStack();
+	}
+
 	void generateClassDefinitions(const SchemaClass& schemaClass, ModuleWriter& module, const std::string& currentNamespace)
 	{
+		module.PushStruct(schemaClass.Name);
+
 		bool isFirst = true;
+
+		for (const SchemaEnum& childEnum : schemaClass.Enums)
+		{
+			if (!isFirst)
+			{
+				module.PushLine();
+			}
+
+			isFirst = false;
+
+			generateEnumDefinitions(childEnum, module, currentNamespace);
+		}
 
 		for (const SchemaClass& childClass : schemaClass.ChildClasses)
 		{
@@ -194,12 +281,12 @@ namespace OutputSchema
 
 			isFirst = false;
 
-			generateClassDefinitions(schemaClass, module, currentNamespace);
+			generateClassDefinitions(childClass, module, currentNamespace);
 		}
 
 		if (schemaClass.Members.size())
 		{
-			if (schemaClass.ChildClasses.size() > 0)
+			if (!isFirst)
 			{
 				module.PushLine();
 			}
@@ -223,9 +310,28 @@ namespace OutputSchema
 
 			if (memberClasses < schemaClass.Members.size())
 			{
+				for (const SchemaMember& member : schemaClass.Members)
+				{
+					if (member.ChildClassIndex != (size_t)-1)
+					{
+						continue;
+					}
+					
+					std::string typeName = stripCommonNamespaces(member.Type, schemaClass.Scope, ':');
 
+					if (member.ContainsType.size())
+					{
+						std::string innerTypeName = stripCommonNamespaces(member.ContainsType, schemaClass.Scope, ':');
+
+						typeName += "<" + innerTypeName + ">";
+					}
+
+					module.PushMember(typeName, member.Name, member.DefaultValue);
+				}
 			}
 		}
+
+		module.PopStack();
 	}
 
 	void generateClassDeclarations(const SchemaClass& schemaClass, ModuleWriter& module, const std::string& currentNamespace, const std::string& classPath)
@@ -249,26 +355,38 @@ namespace OutputSchema
 
 	void generateClasses(const SchemaClass& schemaClass, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
 	{
-		fs::path outputDir = gameDataProjDir / "src/GameData/Data";
+		fs::path outputDir = gameDataProjDir / "src/GameData" / schemaClass.Directory;
 		fs::path outputHeader = outputDir / (schemaClass.Name + ".h");
 		fs::path outputCpp = outputDir / (schemaClass.Name + ".cpp");
+
+		fs::create_directories(outputDir);
 
 		addProjectNode(vcxprojRoot, "ClInclude", outputHeader.string(), nullptr);
 		addProjectNode(vcxprojRoot, "ClCompile", outputCpp.string(), nullptr);
 
-		addProjectNode(filtersRoot, "ClInclude", outputHeader.string(), "Source Files\\Data");
-		addProjectNode(filtersRoot, "ClCompile", outputCpp.string(), "Source Files\\Data");
+		std::string filter = "Source Files\\" + schemaClass.Directory;
+
+		addProjectNode(filtersRoot, "ClInclude", outputHeader.string(), filter.c_str());
+		addProjectNode(filtersRoot, "ClCompile", outputCpp.string(), filter.c_str());
 
 		{
 			std::ofstream outFile(outputHeader);
 
 			outFile << "#pragma once\n\n";
 
+			for (const std::string& requiredHeader : schemaClass.RequiredHeaders)
+			{
+				outFile << "#include " << requiredHeader << "\n";
+			}
+
+			if (schemaClass.RequiredHeaders.size())
+			{
+				outFile << "\n";
+			}
+
 			ModuleWriter module(outFile);
 
 			generateModuleNamespace(module, currentNamespace);
-
-			module.PushStruct(schemaClass.Name);
 
 			generateClassDefinitions(schemaClass, module, currentNamespace);
 		}
@@ -281,6 +399,32 @@ namespace OutputSchema
 			generateModuleNamespace(module, currentNamespace);
 
 			generateClassDeclarations(schemaClass, module, currentNamespace, schemaClass.Name);
+		}
+	}
+
+	void generateEnum(const SchemaEnum& schemaEnum, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
+	{
+		fs::path outputDir = gameDataProjDir / "src/GameData" / schemaEnum.Directory;
+		fs::path outputHeader = outputDir / (schemaEnum.Name + ".h");
+
+		fs::create_directories(outputDir);
+
+		addProjectNode(vcxprojRoot, "ClInclude", outputHeader.string(), nullptr);
+
+		std::string filter = "Source Files\\" + schemaEnum.Directory;
+
+		addProjectNode(filtersRoot, "ClInclude", outputHeader.string(), filter.c_str());
+
+		{
+			std::ofstream outFile(outputHeader);
+
+			outFile << "#pragma once\n\n";
+
+			ModuleWriter module(outFile);
+
+			generateModuleNamespace(module, currentNamespace);
+
+			generateEnumDefinitions(schemaEnum, module, currentNamespace);
 		}
 	}
 

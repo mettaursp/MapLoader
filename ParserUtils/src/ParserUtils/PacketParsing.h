@@ -9,8 +9,9 @@ namespace ParserUtils
 {
 	namespace Packets
 	{
-		const bool PrintOutput = true;
+		const bool PrintOutput = false;
 		const bool PrintErrors = true;
+		const bool PrintUnknownValues = true;
 
 		template <typename T>
 		void Read(const char* name, DataStream& stream, T& value, const char* tabs, const std::source_location location = std::source_location::current())
@@ -26,7 +27,10 @@ namespace ParserUtils
 			{
 				if constexpr (PrintErrors)
 				{
-					std::cout << location.file_name() << "[" << location.line() << "," << location.column() << "] " << location.function_name() << ": failed to load packet value '" << name << "'" << std::endl;
+					if (!stream.SuppressErrors)
+					{
+						std::cout << location.file_name() << "[" << location.line() << "," << location.column() << "] " << location.function_name() << ": failed to load packet value '" << name << "'" << std::endl;
+					}
 				}
 
 				return;
@@ -46,6 +50,50 @@ namespace ParserUtils
 				}
 
 				std::cout << std::endl;
+			}
+		}
+
+		template <typename T>
+		concept IntegerType = requires(T param)
+		{
+			{ std::is_integral_v<T> };
+		};
+
+		template <IntegerType T>
+		bool GetBit(T value, unsigned char bitIndex)
+		{
+			return ((value >> bitIndex) & 1) != 0;
+		}
+
+		template <typename T, typename... Types>
+		void ValidateValues(ParserUtils::DataStream& stream, const char* name, const char* tabs, const T& value, Types... expected)
+		{
+			if constexpr (PrintUnknownValues)
+			{
+				bool found = stream.SuppressErrors || stream.IgnoreUnknownValues || ((value == expected) || ...);
+
+				if (!found)
+				{
+					std::cout << tabs << "'" << name << "' unknown value: ";
+
+					if constexpr (std::is_integral_v<T> && !std::is_floating_point_v<T>)
+					{
+						if constexpr(std::is_signed_v<T>)
+						{
+							std::cout << (long long)value << std::endl;
+						}
+						else
+						{
+							std::cout << (unsigned long long)value << std::endl;
+						}
+					}
+					else
+					{
+						std::cout << value << std::endl;
+					}
+
+					stream.FoundUnknownValue = true;
+				}
 			}
 		}
 	}

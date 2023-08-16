@@ -1,0 +1,53 @@
+<packetSchema version="13" inheritPrevious="false">
+	<source name="server">
+		<opcodeReference value="0x1D" version="12" opcode="0x1D" />
+		<opcode name="Buff" value="0x47">
+			<output type="Networking.Packets.Server.BuffPacket" schemaName="packetData" />
+			<data type="byte" name="mode" output="Mode">
+				<enum name="add" value="0" />
+				<enum name="remove" value="1" />
+				<enum name="update" value="2" />
+			</data>
+			<data type="int" name="targetActor" output="TargetActor" />
+			<data type="int" name="instanceId" output="InstanceId" />
+			<data type="int" name="sourceActor" output="SourceActor" />
+			<condition data="mode" value="0" comparison="equal">
+				<data type="int" name="startTime" output="StartTime" />
+				<data type="int" name="endTime" output="EndTime" />
+				<data type="int" name="effectId" output="EffectId" />
+				<data type="short" name="effectLevel" output="EffectLevel" />
+				<data type="int" name="stacks" output="Stacks" />
+				<data type="bool" name="hasShield" output="UpdateShield" />
+				<data type="long" name="shieldHealth" output="ShieldHealth" />
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<data type="int" name="flags">
+					<bit name="buffStats" bitIndex="0" output="UpdateEffect" />
+					<bit name="shieldStats" bitIndex="1" output="UpdateShield" />
+				</data>
+				<condition data="flags" bitIndex="0" value="1" comparison="equal">
+					<data type="int" name="startTime" output="StartTime" />
+					<data type="int" name="endTime" output="EndTime" />
+					<data type="int" name="effectId" output="EffectId" />
+					<data type="short" name="effectLevel" output="EffectLevel" />
+					<data type="int" name="stacks" output="Stacks" />
+					<data type="bool" name="enabled" output="Enabled" />
+				</condition>
+				<condition data="flags" bitIndex="1" value="1" comparison="equal">
+					<data type="long" name="shieldHealth" output="ShieldHealth" />
+				</condition>
+			</condition>
+			<condition data="instanceId" value="0" comparison="equal">
+				<data type="int" name="unknown" />
+			</condition>
+		</opcode>
+	</source>
+	<source name="client">
+		<opcodeReference value="0x01" version="12" opcode="0x01" />
+		<opcodeReference value="0x04" version="12" opcode="0x04" />
+		<opcodeReference value="0x0A" version="12" opcode="0x0A" />
+		<opcodeReference value="0x0D" version="12" opcode="0x0D" />
+		<opcodeReference value="0x20" version="12" opcode="0x20" />
+		<opcodeReference value="0xB5" version="12" opcode="0xB7" />
+	</source>
+</packetSchema>

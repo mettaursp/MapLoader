@@ -1,0 +1,160 @@
+<outputSchema>
+	<namespace name="Networking">
+		<namespace name="Packets">
+			<namespace name="Server">
+				<class name="UserChatPacket" directory="Packets\Server">
+					<enum name="TypeEnum">
+						<value name="All" value="0" />
+						<value name="WhisperFrom" value="3" />
+						<value name="WhisperTo" value="4" />
+						<value name="WhisperFail" value="5" />
+						<value name="WhisperReject" value="6" />
+						<value name="Party" value="7" />
+						<value name="Guild" value="8" />
+						<value name="Notice" value="9" />
+						<value name="World" value="11" />
+						<value name="Channel" value="12" />
+						<value name="NoticeAlert" value="13" />
+						<value name="NoticeAlert2" value="14" />
+						<value name="ItemEnchant" value="15" />
+						<value name="Super" value="16" />
+						<value name="GuildAlert" value="18" />
+						<value name="Unknown" value="19" />
+						<value name="Club" value="20" />
+						<value name="ChatBubble" value="23" />
+					</enum>
+					<member name="AccountId" type="long long" />
+					<member name="CharacterId" type="long long" />
+					<member name="CharacterName" type="std::wstring" />
+					<member name="Message" type="std::wstring" />
+					<member name="Type" type="Networking::Packets::Server::UserChatPacket::TypeEnum" />
+					<member name="ChannelId" type="int" />
+					<member name="SuperChatId" type="int" />
+					<member name="ClubId" type="long long" />
+				</class>
+				<class name="BuffPacket" directory="Packets\Server">
+					<enum name="ModeEnum">
+						<value name="Add" value="0" />
+						<value name="Remove" value="1" />
+						<value name="Update" value="2" />
+					</enum>
+					<member name="Mode" type="Networking::Packets::Server::BuffPacket::ModeEnum" default="ModeEnum::Add" />
+					<member name="TargetActor" type="int" />
+					<member name="InstanceId" type="int" />
+					<member name="UpdateEffect" type="bool" />
+					<member name="StartTime" type="int" />
+					<member name="EndTime" type="int" />
+					<member name="EffectId" type="int" />
+					<member name="EffectLevel" type="short" />
+					<member name="Stacks" type="int" />
+					<member name="Enabled" type="bool" />
+					<member name="UpdateShield" type="bool" />
+					<member name="ShieldHealth" type="long long" />
+				</class>
+			</namespace>
+			<namespace name="Client">
+				<class name="ResponseVersionPacket" directory="Packets\Client">
+					<enum name="LocaleEnum">
+						<value name="KR" value="0" />
+						<value name="Unknown1" value="1" />
+						<value name="NA" value="2" />
+						<value name="Unknown2" value="3" />
+						<value name="Unknown3" value="4" />
+						<value name="Unknown3" value="5" />
+					</enum>
+					<member name="Version" type="unsigned int" />
+					<member name="Feature" type="unsigned short" />
+					<member name="Locale" type="Networking::Packets::Client::ResponseVersionPacket::LocaleEnum" />
+				</class>
+				<class name="ResponseKeyPacket" directory="Packets\Client">
+					<member name="AccountId" type="long long" />
+					<member name="TokenA" type="int" />
+					<member name="TokenB" type="int" />
+					<member name="MachineHigh" type="unsigned long long" />
+					<member name="MachineLow" type="unsigned long long" />
+				</class>
+				<class name="ResponseHeartbeatPacket" directory="Packets\Client">
+					<member name="ServerTick" type="int" />
+					<member name="ClientTick" type="int" />
+				</class>
+				<class name="RequestQuitPacket" directory="Packets\Client">
+					<enum name="ModeEnum">
+						<value name="ChangeCharacter" value="0" />
+						<value name="Quit" value="1" />
+					</enum>
+					<member name="Mode" type="Networking::Packets::Client::RequestQuitPacket::ModeEnum" default="ModeEnum::Quit" />
+				</class>
+				<class name="SkillCastPacket" directory="Packets\Client">
+					<member name="SkillSn" type="long long" />
+					<member name="ServerTick" type="int" />
+					<member name="SkillId" type="int" />
+					<member name="SkillLevel" type="short" />
+					<member name="AttackPoint" type="unsigned char" />
+					<member name="Position" type="Vector3S" />
+					<member name="Direction" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+					<member name="ClientTick" type="int" />
+					<member name="Flag" type="bool" />
+				</class>
+				<class name="SkillSyncDamagePacket" directory="Packets\Client">
+					<class name="Projectile" isMember="false">
+						<class name="ChainTarget" isMember="false">
+							<member name="AttackCount" type="int" />
+							<member name="SourceId" type="int" />
+							<member name="TargetId" type="int" />
+							<member name="Index" type="unsigned char" />
+						</class>
+						<member name="AttackCount" type="int" />
+						<member name="SourceId" type="int" />
+						<member name="TargetId" type="int" />
+						<member name="Index" type="unsigned char" />
+						<member name="ChainTargets" type="std::vector" contains="Networking::Packets::Client::SkillSyncDamagePacket::Projectile::ChainTarget" />
+					</class>
+					<member name="SkillSn" type="long long" />
+					<member name="AttackPoint" type="unsigned char" />
+					<member name="Position" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+					<member name="Projectiles" type="std::vector" contains="Networking::Packets::Client::SkillSyncDamagePacket::Projectile" />
+				</class>
+				<class name="SkillDamagePacket" directory="Packets\Client">
+					<class name="HitEntity" isMember="false">
+						<member name="EntityId" type="int" />
+					</class>
+					<member name="SkillSn" type="long long" />
+					<member name="AttackCounter" type="int" />
+					<member name="SourceId" type="int" />
+					<member name="Position" type="Vector3S" />
+					<member name="HitPoint" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+					<member name="AttackPoint" type="unsigned char" />
+					<member name="Hits" type="std::vector" contains="Networking::Packets::Client::SkillDamagePacket::HitEntity" />
+				</class>
+				<class name="SkillRegionSkillPacket" directory="Packets\Client">
+					<member name="SkillSn" type="long long" />
+					<member name="AttackPoint" type="unsigned char" />
+					<member name="AttackCounter" type="int" />
+					<member name="Position" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+				</class>
+				<class name="SkillSyncPacket" directory="Packets\Client">
+					<member name="SkillSn" type="long long" />
+					<member name="SkillId" type="int" />
+					<member name="SkillLevel" type="short" />
+					<member name="MotionPoint" type="unsigned char" />
+					<member name="Position" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+				</class>
+				<class name="SkillSyncTickPacket" directory="Packets\Client">
+					<member name="SkillSn" type="long long" />
+					<member name="ServerTick" type="int" />
+				</class>
+				<class name="SkillCancelPacket" directory="Packets\Client">
+					<member name="SkillSn" type="long long" />
+				</class>
+				<class name="SystemInfoPacket" directory="Packets\Client">
+					<member name="Info" type="std::wstring" />
+				</class>
+			</namespace>
+		</namespace>
+	</namespace>
+</outputSchema>

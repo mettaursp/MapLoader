@@ -18,9 +18,21 @@
     <ClInclude Include="src\PacketProcessing\PacketParser.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\PacketProcessing\PacketParserBase.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\PacketProcessing\PacketOutput.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\PacketProcessing\PacketParser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PacketProcessing\PacketParserBase.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\PacketProcessing\PacketOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

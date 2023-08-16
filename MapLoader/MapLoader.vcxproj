@@ -257,6 +257,12 @@
     <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
       <Project>{47e24c64-85dd-4f64-8761-a13fd4d198ec}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\PacketProcessing\PacketProcessing.vcxproj">
+      <Project>{b2bd6ad0-602e-46e5-aa20-9426af655145}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ParserUtils\ParserUtils.vcxproj">
+      <Project>{d3fc3444-ffb5-48e5-97ed-f169efff7d6d}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\RTCore\RTCore.vcxproj">
       <Project>{7a79a25a-bff9-4d7a-8c67-ba520116ca14}</Project>
     </ProjectReference>

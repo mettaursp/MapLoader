@@ -19,25 +19,157 @@
         <Filter Include="Source Files\Data">
             <UniqueIdentifier>{9ff62e04-615f-4e70-9449-f2091ce9dc7a}</UniqueIdentifier>
         </Filter>
+        <Filter Include="Source Files\Packets">
+            <UniqueIdentifier>{31337e88-5da3-4960-9953-4ace913e6e8b}</UniqueIdentifier>
+        </Filter>
+        <Filter Include="Source Files\Enums">
+            <UniqueIdentifier>{ab4cbd16-f8ec-4959-b6fe-49df2acd6f8f}</UniqueIdentifier>
+        </Filter>
+        <Filter Include="Source Files\Packets\Server">
+            <UniqueIdentifier>{db44b9b3-ff8f-40fa-9ad5-86de01223465}</UniqueIdentifier>
+        </Filter>
+        <Filter Include="Source Files\Packets\Client">
+            <UniqueIdentifier>{ede7145e-0f6a-4688-bc2a-24f17620cc03}</UniqueIdentifier>
+        </Filter>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData/Data\Item.h">
-            <Filter>Source Files\Data</Filter>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData/Data\Item.cpp">
-            <Filter>Source Files\Data</Filter>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\UserChatPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
         </ClCompile>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData/Collection\Items.h">
-            <Filter>Source Files\Collection</Filter>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BuffPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData/Collection\Items.cpp">
-            <Filter>Source Files\Collection</Filter>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BuffPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseVersionPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\ResponseVersionPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseKeyPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\ResponseKeyPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseHeartbeatPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\ResponseHeartbeatPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\RequestQuitPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\RequestQuitPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillCastPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillCastPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncDamagePacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillSyncDamagePacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillDamagePacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillDamagePacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillRegionSkillPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillRegionSkillPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillSyncPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncTickPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillSyncTickPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillCancelPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillCancelPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SystemInfoPacket.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SystemInfoPacket.cpp">
+            <Filter>Source Files\Packets\Client</Filter>
         </ClCompile>
     </ItemGroup>
 </Project>

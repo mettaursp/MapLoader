@@ -1,4 +1,68 @@
 <outputSchema>
+	<namespace name="Enum">
+		<enum name="HitType" directory="Enums">
+			<value name="Normal" value="0" />
+			<value name="Critical" value="1" />
+			<value name="Miss" value="2" />
+			<value name="Block" value="3" />
+			<value name="Unknown4" value="4" />
+			<value name="Unknown8" value="8" />
+		</enum>
+		<enum name="SkillId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="SkillLevel" parent="unsigned short" directory="Enums">
+			<value name="Zero" value="0" />
+		</enum>
+		<enum name="EffectId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="EffectLevel" parent="unsigned short" directory="Enums">
+			<value name="Zero" value="0" />
+		</enum>
+		<enum name="SkillSn" parent="unsigned long long" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ActorId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="NpcId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="QuestId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="TrophyId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ScriptId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ChannelId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="SuperChatId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="EffectInstanceId" parent="unsigned int" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="CharacterId" parent="unsigned long long" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="AccountId" parent="unsigned long long" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ClubId" parent="unsigned long long" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="SkillAttackId" parent="unsigned long long" directory="Enums">
+			<value name="Null" value="0" />
+		</enum>
+	</namespace>
 	<namespace name="Networking">
 		<namespace name="Packets">
 			<namespace name="Server">
@@ -23,14 +87,101 @@
 						<value name="Club" value="20" />
 						<value name="ChatBubble" value="23" />
 					</enum>
-					<member name="AccountId" type="long long" />
-					<member name="CharacterId" type="long long" />
+					<member name="AccountId" type="Enum.AccountId" />
+					<member name="CharacterId" type="Enum.CharacterId" />
 					<member name="CharacterName" type="std::wstring" />
 					<member name="Message" type="std::wstring" />
-					<member name="Type" type="Networking::Packets::Server::UserChatPacket::TypeEnum" />
-					<member name="ChannelId" type="int" />
-					<member name="SuperChatId" type="int" />
-					<member name="ClubId" type="long long" />
+					<member name="Type" type="TypeEnum" default="TypeEnum.All" />
+					<member name="ChannelId" type="Enum.ChannelId" />
+					<member name="SuperChatId" type="Enum.SuperChatId" />
+					<member name="ClubId" type="Enum.ClubId" />
+				</class>
+				<class name="SkillDamageSyncPacket" directory="Packets\Server">
+					<class name="HitEntity" isMember="false">
+						<member name="SkillAttack" type="Enum.SkillAttackId" />
+						<member name="TargetId" type="Enum.ActorId" />
+						<member name="Animation" type="short" />
+					</class>
+					<member name="SkillSn" type="Enum.SkillSn" />
+					<member name="CasterId" type="Enum.ActorId" />
+					<member name="SkillId" type="Enum.SkillId" />
+					<member name="SkillLevel" type="Enum.SkillLevel" />
+					<member name="MotionPoint" type="unsigned char" />
+					<member name="AttackPoint" type="unsigned char" />
+					<member name="Position" type="Vector3S" />
+					<member name="Direction" type="Vector3S" />
+					<member name="IsChaining" type="bool" />
+					<member name="Hits" type="std::vector" contains="HitEntity" />
+				</class>
+				<class name="SkillDamagePacket" directory="Packets\Server">
+					<class name="DamagedTarget" isMember="false">
+						<class name="DamageInstance" isMember="false">
+							<member name="HitType" type="Enum.HitType" default="Enum.HitType.Normal" schemaName="packetData" />
+							<member name="Damage" type="long long" />
+						</class>
+						<member name="TargetId" type="Enum.ActorId" />
+						<member name="Damages" type="std::vector" contains="DamageInstance" />
+					</class>
+					<member name="SkillSn" type="Enum.SkillSn" />
+					<member name="SkillAttack" type="Enum.SkillAttackId" />
+					<member name="CasterId" type="Enum.ActorId" />
+					<member name="SkillId" type="Enum.SkillId" />
+					<member name="SkillLevel" type="Enum.SkillLevel" />
+					<member name="MotionPoint" type="unsigned char" />
+					<member name="AttackPoint" type="unsigned char" />
+					<member name="Position" type="Vector3S" />
+					<member name="Direction" type="Vector3S" />
+					<member name="ServerTick" type="int" />
+					<member name="DamagedTargets" type="std::vector" contains="DamagedTarget" />
+				</class>
+				<class name="SkillDamageDotPacket" directory="Packets\Server">
+					<member name="CasterId" type="Enum.ActorId" />
+					<member name="TargetId" type="Enum.ActorId" />
+					<member name="ServerTick" type="int" />
+					<member name="HitType" type="Enum.HitType" default="Enum.HitType.Normal" schemaName="packetData" />
+					<member name="Damage" type="long long" />
+				</class>
+				<class name="SkillDamageHealPacket" directory="Packets\Server">
+					<member name="CasterId" type="Enum.ActorId" />
+					<member name="TargetId" type="Enum.ActorId" />
+					<member name="ServerTick" type="int" />
+					<member name="HpAmount" type="int" />
+					<member name="SpAmount" type="int" />
+					<member name="EpAmount" type="int" />
+					<member name="IsVisible" type="bool" />
+				</class>
+				<class name="SkillDamageRegionPacket" directory="Packets\Server">
+					<class name="DamagedTarget" isMember="false">
+						<class name="DamageInstance" isMember="false">
+							<member name="HitType" type="Enum.HitType" default="Enum.HitType.Normal" schemaName="packetData" />
+							<member name="Damage" type="long long" />
+						</class>
+						<member name="TargetId" type="Enum.ActorId" />
+						<member name="Position" type="Vector3S" />
+						<member name="Direction" type="Vector3S" />
+						<member name="Damages" type="std::vector" contains="DamageInstance" />
+					</class>
+					<member name="SkillSn" type="Enum.SkillSn" />
+					<member name="CasterId" type="Enum.ActorId" />
+					<member name="RegionSkillObjectId" type="Enum.ActorId" />
+					<member name="AttackPoint" type="unsigned char" />
+					<member name="DamagedTargets" type="std::vector" contains="DamagedTarget" />
+				</class>
+				<class name="SkillDamageTilePacket" directory="Packets\Server">
+					<class name="DamagedTarget" isMember="false">
+						<class name="DamageInstance" isMember="false">
+							<member name="HitType" type="Enum.HitType" default="Enum.HitType.Normal" schemaName="packetData" />
+							<member name="Damage" type="long long" />
+						</class>
+						<member name="TargetId" type="Enum.ActorId" />
+						<member name="Position" type="Vector3S" />
+						<member name="Direction" type="Vector3S" />
+						<member name="Damages" type="std::vector" contains="DamageInstance" />
+					</class>
+					<member name="SkillSn" type="Enum.SkillSn" />
+					<member name="SkillId" type="Enum.SkillId" />
+					<member name="SkillLevel" type="Enum.SkillLevel" />
+					<member name="DamagedTargets" type="std::vector" contains="DamagedTarget" />
 				</class>
 				<class name="BuffPacket" directory="Packets\Server">
 					<enum name="ModeEnum">
@@ -38,18 +189,60 @@
 						<value name="Remove" value="1" />
 						<value name="Update" value="2" />
 					</enum>
-					<member name="Mode" type="Networking::Packets::Server::BuffPacket::ModeEnum" default="ModeEnum::Add" />
-					<member name="TargetActor" type="int" />
-					<member name="InstanceId" type="int" />
+					<member name="Mode" type="ModeEnum" default="ModeEnum.Add" />
+					<member name="TargetId" type="Enum.ActorId" />
+					<member name="InstanceId" type="Enum.EffectInstanceId" />
+					<member name="SourceId" type="Enum.ActorId" />
 					<member name="UpdateEffect" type="bool" />
 					<member name="StartTime" type="int" />
 					<member name="EndTime" type="int" />
-					<member name="EffectId" type="int" />
-					<member name="EffectLevel" type="short" />
+					<member name="EffectId" type="Enum.EffectId" />
+					<member name="EffectLevel" type="Enum.EffectLevel" />
 					<member name="Stacks" type="int" />
 					<member name="Enabled" type="bool" />
 					<member name="UpdateShield" type="bool" />
 					<member name="ShieldHealth" type="long long" />
+				</class>
+				<class name="TrophyStartPacket" directory="Packets\Server">
+				</class>
+				<class name="TrophyContentPacket" directory="Packets\Server">
+					<enum name="StatusEnum">
+						<value name="InProgress" value="2" />
+						<value name="Finished" value="3" />
+					</enum>
+					<class name="Trophy" isMember="false">
+						<class name="Timestamp" isMember="false">
+							<member name="Index" type="int" />
+							<member name="Time" type="long long" />
+						</class>
+						<member name="TrophyId" type="Enum.TrophyId" />
+						<member name="Status" type="StatusEnum" default="StatusEnum.InProgress" />
+						<member name="IsDone" type="bool" />
+						<member name="NextGrade" type="int" />
+						<member name="LastReward" type="int" />
+						<member name="IsFavorited" type="bool" />
+						<member name="Counter" type="int" />
+						<member name="Timestamps" type="std::vector" contains="Timestamp" />
+					</class>
+					<member name="Trophies" type="std::vector" contains="Trophy" />
+				</class>
+				<class name="TrophyUpdatePacket" directory="Packets\Server">
+					<enum name="StatusEnum">
+						<value name="InProgress" value="2" />
+						<value name="Finished" value="3" />
+					</enum>
+					<class name="Timestamp" isMember="false">
+						<member name="Index" type="int" />
+						<member name="Time" type="long long" />
+					</class>
+					<member name="TrophyId" type="Enum.TrophyId" />
+					<member name="Status" type="StatusEnum" default="StatusEnum.InProgress" />
+					<member name="IsDone" type="bool" />
+					<member name="NextGrade" type="int" />
+					<member name="LastReward" type="int" />
+					<member name="IsFavorited" type="bool" />
+					<member name="Counter" type="int" />
+					<member name="Timestamps" type="std::vector" contains="Timestamp" />
 				</class>
 			</namespace>
 			<namespace name="Client">
@@ -58,16 +251,40 @@
 						<value name="KR" value="0" />
 						<value name="Unknown1" value="1" />
 						<value name="NA" value="2" />
-						<value name="Unknown2" value="3" />
-						<value name="Unknown3" value="4" />
-						<value name="Unknown3" value="5" />
+						<value name="Unknown3" value="3" />
+						<value name="Unknown4" value="4" />
+						<value name="Unknown5" value="5" />
 					</enum>
 					<member name="Version" type="unsigned int" />
 					<member name="Feature" type="unsigned short" />
-					<member name="Locale" type="Networking::Packets::Client::ResponseVersionPacket::LocaleEnum" />
+					<member name="Locale" type="LocaleEnum" default="LocaleEnum.KR" />
+				</class>
+				<class name="HandshakePacket" directory="Packets\Client">
+					<class name="DataEntry" isMember="false">
+						<member name="String" type="std::wstring" />
+					</class>
+					<member name="Function" type="unsigned char" />
+					<member name="Data" type="std::vector" contains="DataEntry" />
+				</class>
+				<class name="LogInPacket" directory="Packets\Client">
+					<member name="Mode" type="unsigned char" />
+					<member name="Username" type="std::wstring" />
+					<member name="Password" type="std::wstring" />
+					<member name="AuthToken" type="std::string" />
+					<member name="MachineLow" type="unsigned long long" />
+					<member name="MachineHigh" type="unsigned long long" />
+					<member name="SessionKey" type="int" />
+					<member name="Locale" type="std::string" />
+				</class>
+				<class name="LogInAuthTokenPacket" directory="Packets\Client">
+					<member name="Mode" type="unsigned char" />
+					<member name="AuthToken" type="std::string" />
+					<member name="MachineLow" type="unsigned long long" />
+					<member name="MachineHigh" type="unsigned long long" />
+					<member name="Locale" type="std::string" />
 				</class>
 				<class name="ResponseKeyPacket" directory="Packets\Client">
-					<member name="AccountId" type="long long" />
+					<member name="AccountId" type="Enum.AccountId" />
 					<member name="TokenA" type="int" />
 					<member name="TokenB" type="int" />
 					<member name="MachineHigh" type="unsigned long long" />
@@ -82,13 +299,13 @@
 						<value name="ChangeCharacter" value="0" />
 						<value name="Quit" value="1" />
 					</enum>
-					<member name="Mode" type="Networking::Packets::Client::RequestQuitPacket::ModeEnum" default="ModeEnum::Quit" />
+					<member name="Mode" type="ModeEnum" default="ModeEnum.Quit" />
 				</class>
 				<class name="SkillCastPacket" directory="Packets\Client">
-					<member name="SkillSn" type="long long" />
+					<member name="SkillSn" type="Enum.SkillSn" />
 					<member name="ServerTick" type="int" />
-					<member name="SkillId" type="int" />
-					<member name="SkillLevel" type="short" />
+					<member name="SkillId" type="Enum.SkillId" />
+					<member name="SkillLevel" type="Enum.SkillLevel" />
 					<member name="AttackPoint" type="unsigned char" />
 					<member name="Position" type="Vector3S" />
 					<member name="Direction" type="Vector3S" />
@@ -99,57 +316,105 @@
 				<class name="SkillSyncDamagePacket" directory="Packets\Client">
 					<class name="Projectile" isMember="false">
 						<class name="ChainTarget" isMember="false">
-							<member name="AttackCount" type="int" />
-							<member name="SourceId" type="int" />
-							<member name="TargetId" type="int" />
+							<member name="SkillAttack" type="Enum.SkillAttackId" />
+							<member name="TargetId" type="Enum.ActorId" />
 							<member name="Index" type="unsigned char" />
 						</class>
-						<member name="AttackCount" type="int" />
-						<member name="SourceId" type="int" />
-						<member name="TargetId" type="int" />
+						<member name="SkillAttack" type="Enum.SkillAttackId" />
+						<member name="TargetId" type="Enum.ActorId" />
 						<member name="Index" type="unsigned char" />
-						<member name="ChainTargets" type="std::vector" contains="Networking::Packets::Client::SkillSyncDamagePacket::Projectile::ChainTarget" />
+						<member name="ChainTargets" type="std::vector" contains="ChainTarget" />
 					</class>
-					<member name="SkillSn" type="long long" />
+					<member name="SkillSn" type="Enum.SkillSn" />
 					<member name="AttackPoint" type="unsigned char" />
 					<member name="Position" type="Vector3S" />
 					<member name="Rotation" type="Vector3S" />
-					<member name="Projectiles" type="std::vector" contains="Networking::Packets::Client::SkillSyncDamagePacket::Projectile" />
+					<member name="Projectiles" type="std::vector" contains="Projectile" />
 				</class>
 				<class name="SkillDamagePacket" directory="Packets\Client">
 					<class name="HitEntity" isMember="false">
-						<member name="EntityId" type="int" />
+						<member name="EntityId" type="Enum.ActorId" />
 					</class>
-					<member name="SkillSn" type="long long" />
-					<member name="AttackCounter" type="int" />
-					<member name="SourceId" type="int" />
+					<member name="SkillSn" type="Enum.SkillSn" />
+					<member name="SkillAttack" type="Enum.SkillAttackId" />
 					<member name="Position" type="Vector3S" />
 					<member name="HitPoint" type="Vector3S" />
 					<member name="Rotation" type="Vector3S" />
 					<member name="AttackPoint" type="unsigned char" />
-					<member name="Hits" type="std::vector" contains="Networking::Packets::Client::SkillDamagePacket::HitEntity" />
+					<member name="Hits" type="std::vector" contains="HitEntity" />
 				</class>
 				<class name="SkillRegionSkillPacket" directory="Packets\Client">
-					<member name="SkillSn" type="long long" />
+					<member name="SkillSn" type="Enum.SkillSn" />
 					<member name="AttackPoint" type="unsigned char" />
 					<member name="AttackCounter" type="int" />
 					<member name="Position" type="Vector3S" />
 					<member name="Rotation" type="Vector3S" />
 				</class>
 				<class name="SkillSyncPacket" directory="Packets\Client">
-					<member name="SkillSn" type="long long" />
-					<member name="SkillId" type="int" />
-					<member name="SkillLevel" type="short" />
+					<member name="SkillSn" type="Enum.SkillSn" />
+					<member name="SkillId" type="Enum.SkillId" />
+					<member name="SkillLevel" type="Enum.SkillLevel" />
 					<member name="MotionPoint" type="unsigned char" />
 					<member name="Position" type="Vector3S" />
 					<member name="Rotation" type="Vector3S" />
 				</class>
 				<class name="SkillSyncTickPacket" directory="Packets\Client">
-					<member name="SkillSn" type="long long" />
+					<member name="SkillSn" type="Enum.SkillSn" />
 					<member name="ServerTick" type="int" />
 				</class>
 				<class name="SkillCancelPacket" directory="Packets\Client">
-					<member name="SkillSn" type="long long" />
+					<member name="SkillSn" type="Enum.SkillSn" />
+				</class>
+				<class name="StateSkillPacket" directory="Packets\Client">
+					<member name="SkillSn" type="Enum.SkillSn" />
+					<member name="ServerTick" type="unsigned int" />
+					<member name="SkillId" type="Enum.SkillId" />
+					<member name="SkillLevel" type="Enum.SkillLevel" />
+					<member name="Animation" type="int" />
+					<member name="ClientTick" type="int" />
+				</class>
+				<class name="NpcTalkClosePacket" directory="Packets\Client">
+				</class>
+				<class name="NpcTalkBeginPacket" directory="Packets\Client">
+					<member name="ObjectId" type="Enum.ActorId" />
+				</class>
+				<class name="NpcTalkContinuePacket" directory="Packets\Client">
+					<member name="Index" type="int" />
+				</class>
+				<class name="NpcTalkEnchantUnknownPacket" directory="Packets\Client">
+				</class>
+				<class name="NpcTalkEnchantPacket" directory="Packets\Client">
+					<enum name="EventTypeEnum">
+						<value name="Begin" value="1" />
+						<value name="InProgress" value="2" />
+						<value name="Result" value="3" />
+					</enum>
+					<member name="NpcId" type="Enum.NpcId" />
+					<member name="ScriptId" type="Enum.ScriptId" />
+					<member name="EventType" type="EventTypeEnum" default="EventTypeEnum.Begin" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="NpcTalkNextQuestPacket" directory="Packets\Client">
+					<enum name="EventTypeEnum">
+						<value name="Complete" value="0" />
+						<value name="Start" value="2" />
+					</enum>
+					<member name="QuestId" type="Enum.QuestId" />
+					<member name="EventType" type="EventTypeEnum" default="EventTypeEnum.Start" />
+				</class>
+				<class name="NpcTalkAllianceQuestAcceptPacket" directory="Packets\Client">
+					<enum name="EventTypeEnum">
+						<value name="Complete" value="0" />
+						<value name="Start" value="2" />
+					</enum>
+					<member name="Index" type="int" />
+					<member name="EventType" type="EventTypeEnum" default="EventTypeEnum.Start" />
+				</class>
+				<class name="NpcTalkAllianceQuestTalkPacket" directory="Packets\Client">
+				</class>
+				<class name="NpcTalkCinematicPacket" directory="Packets\Client">
+					<member name="ObjectId" type="Enum.ActorId" />
+					<member name="Index" type="int" />
 				</class>
 				<class name="SystemInfoPacket" directory="Packets\Client">
 					<member name="Info" type="std::wstring" />

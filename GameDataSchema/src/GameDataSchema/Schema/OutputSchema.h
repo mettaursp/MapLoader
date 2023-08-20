@@ -18,6 +18,9 @@ namespace OutputSchema
 		std::string Name;
 		std::string DefaultValue;
 		std::string ContainsType;
+		std::string SchemaName;
+		std::string Scope;
+		std::string ParentSchemaName;
 		size_t ChildClassIndex = (size_t)-1;
 	};
 
@@ -32,6 +35,8 @@ namespace OutputSchema
 		std::string Name;
 		std::string Scope;
 		std::string Directory = "Enums";
+		std::string SchemaName;
+		std::string ParentType;
 
 		std::vector<SchemaEnumValue> Values;
 	};
@@ -49,6 +54,7 @@ namespace OutputSchema
 		std::string Scope;
 		std::string ChildTypeSuffix;
 		std::string Directory = "Data";
+		std::string SchemaName;
 
 		std::vector<SchemaClass> ChildClasses;
 		std::vector<SchemaMember> Members;
@@ -64,12 +70,14 @@ namespace OutputSchema
 		std::string KeyType;
 		std::string StoredClass;
 		std::string Scope;
+		std::string SchemaName;
 	};
 
 	struct SchemaNamespace
 	{
 		std::string Name;
 		std::string Scope;
+		std::string SchemaName;
 
 		std::vector<SchemaNamespace> Namespaces;
 		std::vector<SchemaCollection> Collections;
@@ -118,7 +126,12 @@ namespace OutputSchema
 	void readSchemas(const fs::path& directory);
 
 	SchemaEntry findSchemaEntry(const std::string_view& path, const std::string& schemaName, char separator = '.');
+	std::string findIncludeDirectory(const std::string_view& path, const std::string& schemaName, char separator = '.');
 	const SchemaMember* findSchemaMember(const SchemaClass* schemaClass, const std::string path, char separator = '.');
+	std::string pickSchema(const std::string & override, const std::string& base);
 
 	std::string stripCommonNamespaces(const std::string& primaryNamespace, const std::string& secondaryNamespace, char separator = '.');
+	std::string findFullPath(const std::string& currentPath, const std::string& subPath, const std::string& schemaName, char separator = '.');
+	std::string stripLastPath(const std::string& path, char separator = '.');
+	std::string swapSeparator(const std::string& path, std::string newSeparator, char separator = '.');
 }

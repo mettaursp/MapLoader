@@ -1,0 +1,172 @@
+<packetSchema version="2486">
+	<source name="server">
+		<opcode name="SkillDamage" value="0x3D">
+			<data type="byte" name="mode" output="Mode">
+				<enum name="SyncDamage" value="0" />
+				<enum name="Damage" value="1" />
+				<enum name="DotDamage" value="3" />
+				<enum name="Heal" value="4" />
+				<enum name="RegionDamage" value="5" />
+				<enum name="TileSkill" value="6" />
+				<enum name="Unknown7" value="7" />
+				<enum name="Unknown8" value="8" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageSyncPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<condition data="skillId" value="0" comparison="equal">
+					<data type="byte" name="unknown" />
+				</condition>
+				<condition data="skillId" value="0" comparison="notEqual">
+					<data type="ushort" name="skillLevel" output="SkillLevel" />
+					<data type="byte" name="motionPoint" output="MotionPoint" />
+					<data type="byte" name="attackPoint" output="AttackPoint" />
+					<data type="short" name="posX" />
+					<data type="short" name="posY" />
+					<data type="short" name="posZ" />
+					<data type="Vector3S" name="direction" output="Direction" />
+					<data type="bool" name="isChaining" output="IsChaining" />
+					<data type="byte" name="count" />
+					<array data="count" output="Hits">
+						<data type="long" name="hitId" output="HitId" />
+						<data type="int" name="attackCount" output="AttackCount" />
+						<data type="int" name="casterId" output="CasterId" />
+						<data type="int" name="targetId" output="TargetId" />
+						<data type="short" name="animation" output="Animation" />
+					</array>
+				</condition>
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamagePacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="long" name="hitId" output="HitId" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<data type="ushort" name="skillLevel" output="SkillLevel" />
+				<data type="byte" name="motionPoint" output="MotionPoint" />
+				<data type="byte" name="attackPoint" output="AttackPoint" />
+				<data type="short" name="posX" />
+				<data type="short" name="posY" />
+				<data type="short" name="posZ" />
+				<data type="short" name="dirX" />
+				<data type="short" name="dirY" />
+				<data type="short" name="dirZ" />
+				<data type="byte" name="count" />
+				<array data="count" output="DamagedTargets">
+					<data type="int" name="targetId" output="TargetId" />
+					<data type="byte" name="damageCount" />
+					<array data="damageCount" output="Damages">
+						<data type="byte" name="hitType" output="HitType">
+							<enum name="Normal" value="0" />
+							<enum name="Critical" value="1" />
+							<enum name="Miss" value="2" />
+							<enum name="Block" value="3" />
+							<enum name="Unknown4" value="4" />
+							<enum name="Unknown8" value="8" />
+						</data>
+						<data type="long" name="damage" output="Damage" />
+					</array>
+				</array>
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageDotPacket" schemaName="packetData" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="int" name="targetId" output="TargetId" />
+				<data type="int" name="serverTick" output="ServerTick" />
+				<data type="byte" name="hitType" output="HitType">
+					<enum name="Normal" value="0" />
+					<enum name="Critical" value="1" />
+					<enum name="Miss" value="2" />
+					<enum name="Block" value="3" />
+					<enum name="Unknown4" value="4" />
+					<enum name="Unknown8" value="8" />
+				</data>
+				<data type="int" name="damage" output="Damage" />
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageHealPacket" schemaName="packetData" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="int" name="targetId" output="TargetId" />
+				<data type="int" name="serverTick" output="ServerTick" />
+				<data type="int" name="hpAmount" output="HpAmount" />
+				<data type="int" name="spAmount" output="SpAmount" />
+				<data type="int" name="epAmount" output="EpAmount" />
+				<data type="bool" name="isVisible" output="IsVisible" />
+			</condition>
+			<condition data="mode" value="5" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageRegionPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="int" name="regionSkillObjectId" output="RegionSkillObjectId" />
+				<data type="byte" name="attackPoint" output="AttackPoint" />
+				<data type="byte" name="count" />
+				<array data="count" output="DamagedTargets">
+					<data type="int" name="targetId" output="TargetId" />
+					<data type="byte" name="damageCount" />
+					<data type="short" name="posX" />
+					<data type="short" name="posY" />
+					<data type="short" name="posZ" />
+					<data type="Vector3S" name="direction" output="Direction" />
+					<array data="damageCount" output="Damages">
+						<data type="byte" name="hitType" output="HitType">
+							<enum name="Normal" value="0" />
+							<enum name="Critical" value="1" />
+							<enum name="Miss" value="2" />
+							<enum name="Block" value="3" />
+							<enum name="Unknown4" value="4" />
+							<enum name="Unknown8" value="8" />
+						</data>
+						<data type="long" name="damage" output="Damage" />
+					</array>
+				</array>
+			</condition>
+			<condition data="mode" value="6" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageTilePacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<data type="ushort" name="skillLevel" output="SkillLevel" />
+				<data type="byte" name="count" />
+				<array data="count" output="DamagedTargets">
+					<data type="int" name="targetId" output="TargetId" />
+					<data type="byte" name="damageCount" />
+					<data type="short" name="posX" />
+					<data type="short" name="posY" />
+					<data type="short" name="posZ" />
+					<data type="Vector3S" name="direction" output="Direction" />
+					<array data="damageCount" output="Damages">
+						<data type="byte" name="hitType" output="HitType">
+							<enum name="Normal" value="0" />
+							<enum name="Critical" value="1" />
+							<enum name="Miss" value="2" />
+							<enum name="Block" value="3" />
+							<enum name="Unknown4" value="4" />
+							<enum name="Unknown8" value="8" />
+						</data>
+						<data type="long" name="damage" output="Damage" />
+					</array>
+				</array>
+			</condition>
+			<condition data="mode" value="7" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="int" name="count" />
+				<array data="count">
+					<data type="int" name="unknown" />
+				</array>
+			</condition>
+			<condition data="mode" value="8" comparison="equal">
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="bool" name="hasTarget" />
+				<condition data="hasTarget" value="1" comparison="equal">
+					<data type="uint" name="skillId" output="SkillId" />
+					<data type="ushort" name="skillLevel" output="SkillLevel" />
+					<data type="int" name="unknown" />
+					<data type="int" name="npcId" />
+				</condition>
+			</condition>
+		</opcode>
+	</source>
+	<source name="client">
+	</source>
+</packetSchema>

@@ -206,16 +206,38 @@ namespace ParserUtils
 						std::cout << "found unknown value in packet" << std::endl;
 					}
 
-					std::cout << "Version: " << build << "; Packet length: " << stream.Data.size() << "; Opcode: 0x" << std::hex << opcode;
+					std::cout << "Version: " << build << "; Packet length: " << stream.Data.size() << "; Opcode: 0x" << std::hex << opcode << '\n';
 					
-					for (size_t i = 0; i < stream.Data.size(); ++i)
+					size_t size = stream.Data.size();
+					size_t printCount = 16 * ((size / 16) + (size % 16 ? 1 : 0));
+
+					for (size_t i = 0; i <= printCount; ++i)
 					{
-						if ((i % 16) == 0)
+						if (i && (i % 16) == 0)
 						{
-							std::cout << "\n";
+							std::cout << " |  " << std::dec;
+
+							for (size_t j = 0; j < 16 && i - 16 + j < size; ++j)
+								std::cout << (buffer[i - 16 + j] >= 32 && buffer[i - 16 + j] <= 126 ? (char)buffer[i - 16 + j] : '.');
+
+							std::cout << "\n" << std::hex;
 						}
 
-						std::cout << std::setw(2) << std::setfill('0') << (int)buffer[i] << " ";
+						if (i < size)
+						{
+							std::cout << std::setw(2) << std::setfill('0') << (int)buffer[i] << " ";
+						}
+						else if (i < printCount)
+						{
+							std::cout << "   ";
+						}
+					}
+
+					std::string values = stream.FoundValues.str();
+
+					if (values.size())
+					{
+						std::cout << values << std::endl;
 					}
 
 					std::cout << std::dec << std::endl;

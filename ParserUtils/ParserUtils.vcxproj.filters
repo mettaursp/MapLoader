@@ -26,5 +26,8 @@
     <ClCompile Include="src\ParserUtils\DataStream.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ParserUtils\PacketParsing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

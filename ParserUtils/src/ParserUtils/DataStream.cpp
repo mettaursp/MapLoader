@@ -47,6 +47,8 @@ namespace ParserUtils
 
 		if (HasRecentlyFailed || length == 0 || Index + length > Data.size())
 		{
+			HasRecentlyFailed |= length != 0;
+
 			return !HasRecentlyFailed;
 		}
 
@@ -81,6 +83,8 @@ namespace ParserUtils
 
 		if (HasRecentlyFailed || length == 0 || Index + length * 2 > Data.size())
 		{
+			HasRecentlyFailed |= length != 0;
+
 			return !HasRecentlyFailed;
 		}
 
@@ -119,4 +123,31 @@ namespace ParserUtils
 
 		return true;
 	}
+
+	template <>
+	bool DataStream::Read<Vector3Short>(Vector3Short& value)
+	{
+		if (HasRecentlyFailed)
+		{
+			return false;
+		}
+
+		if (Index + sizeof(Vector3Short) > Data.size())
+		{
+			HasRecentlyFailed = true;
+
+			return false;
+		}
+
+		Read<short>(value.X);
+		Read<short>(value.Y);
+		Read<short>(value.Z);
+
+		return true;
+	}
+}
+
+std::ostream& operator<<(std::ostream& out, const Vector3Short& vector)
+{
+	return out << "< " << vector.X << ", " << vector.Y << ", " << vector.Z << " >";
 }

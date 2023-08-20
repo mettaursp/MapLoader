@@ -2,8 +2,13 @@
 
 #include <iostream>
 #include <source_location>
+#include <vector>
 
 #include "DataStream.h"
+
+std::string toString(const std::wstring& wstr);
+
+std::ostream& operator<<(std::ostream& out, const std::wstring& string);
 
 namespace ParserUtils
 {
@@ -36,20 +41,25 @@ namespace ParserUtils
 				return;
 			}
 
-			if constexpr (PrintOutput)
+			if constexpr (PrintOutput || PrintErrors)
 			{
-				std::cout << tabs << name << ": ";
-
-				if constexpr (std::is_same_v<T, char> || std::is_same_v<T, unsigned char> || std::is_same_v<T, signed char>)
+				if (!(!PrintOutput && stream.SuppressErrors))
 				{
-					std::cout << (int)value;
-				}
-				else
-				{
-					std::cout << value;
-				}
+					std::ostream& out = PrintOutput ? std::cout : stream.FoundValues;
 
-				std::cout << std::endl;
+					out << tabs << name << ": ";
+
+					if constexpr (std::is_same_v<T, char> || std::is_same_v<T, unsigned char> || std::is_same_v<T, signed char>)
+					{
+						out << (int)value;
+					}
+					else
+					{
+						out << value;
+					}
+
+					out << std::endl;
+				}
 			}
 		}
 

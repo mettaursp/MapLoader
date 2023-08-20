@@ -1,8 +1,32 @@
 #pragma once
 
 #include <string_view>
+#include <sstream>
 
 #include <Engine/Math/Vector3S-decl.h>
+
+struct Vector3Short
+{
+	short X = 0;
+	short Y = 0;
+	short Z = 0;
+
+	Vector3Short() {}
+
+	Vector3Short(const Vector3S& vector)
+	{
+		X = (short)vector.X;
+		Y = (short)vector.Y;
+		Z = (short)vector.Z;
+	}
+
+	operator Vector3S()
+	{
+		return { (Float)X, (Float)Y, (Float)Z };
+	}
+};
+
+std::ostream& operator<<(std::ostream& out, const Vector3Short& vector);
 
 namespace ParserUtils
 {
@@ -20,6 +44,7 @@ namespace ParserUtils
 		bool FoundUnknownValue = false;
 		bool IgnoreUnknownValues = false;
 		bool SuppressErrors = false;
+		std::stringstream FoundValues;
 
 		template <typename T>
 		bool Read(T& value);
@@ -71,4 +96,7 @@ namespace ParserUtils
 
 	template <>
 	bool DataStream::Read<Vector3S>(Vector3S& value);
+
+	template <>
+	bool DataStream::Read<Vector3Short>(Vector3Short& value);
 }

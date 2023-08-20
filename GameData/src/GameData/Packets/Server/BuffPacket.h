@@ -1,5 +1,11 @@
 #pragma once
 
+#include <GameData/Enums/EffectLevel.h>
+#include <GameData/Enums/EffectInstanceId.h>
+#include <GameData/Packets\Server/BuffPacket.h>
+#include <GameData/Enums/ActorId.h>
+#include <GameData/Enums/EffectId.h>
+
 namespace Networking
 {
 	namespace Packets
@@ -16,13 +22,14 @@ namespace Networking
 				};
 				
 				ModeEnum Mode = ModeEnum::Add;
-				int TargetActor = 0;
-				int InstanceId = 0;
+				Enum::ActorId TargetId;
+				Enum::EffectInstanceId InstanceId;
+				Enum::ActorId SourceId;
 				bool UpdateEffect = false;
 				int StartTime = 0;
 				int EndTime = 0;
-				int EffectId = 0;
-				short EffectLevel = 0;
+				Enum::EffectId EffectId;
+				Enum::EffectLevel EffectLevel;
 				int Stacks = 0;
 				bool Enabled = false;
 				bool UpdateShield = false;

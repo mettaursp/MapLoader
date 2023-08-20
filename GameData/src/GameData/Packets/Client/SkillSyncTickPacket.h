@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameData/Enums/SkillSn.h>
+
 namespace Networking
 {
 	namespace Packets
@@ -8,7 +10,7 @@ namespace Networking
 		{
 			struct SkillSyncTickPacket
 			{
-				long long SkillSn = 0;
+				Enum::SkillSn SkillSn;
 				int ServerTick = 0;
 			};
 		}

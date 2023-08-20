@@ -1,6 +1,12 @@
 #pragma once
 
+#include <GameData/Enums/ClubId.h>
 #include <string>
+#include <GameData/Enums/ChannelId.h>
+#include <GameData/Enums/AccountId.h>
+#include <GameData/Enums/CharacterId.h>
+#include <GameData/Packets\Server/UserChatPacket.h>
+#include <GameData/Enums/SuperChatId.h>
 
 namespace Networking
 {
@@ -32,14 +38,14 @@ namespace Networking
 					ChatBubble = 23
 				};
 				
-				long long AccountId = 0;
-				long long CharacterId = 0;
+				Enum::AccountId AccountId;
+				Enum::CharacterId CharacterId;
 				std::wstring CharacterName;
 				std::wstring Message;
-				TypeEnum Type;
-				int ChannelId = 0;
-				int SuperChatId = 0;
-				long long ClubId = 0;
+				TypeEnum Type = TypeEnum::All;
+				Enum::ChannelId ChannelId;
+				Enum::SuperChatId SuperChatId;
+				Enum::ClubId ClubId;
 			};
 		}
 	}

@@ -2,6 +2,10 @@
 
 #include <Engine/Math/Vector3S.h>
 #include <vector>
+#include <GameData/Enums/SkillSn.h>
+#include <GameData/Enums/ActorId.h>
+#include <GameData/Enums/SkillAttackId.h>
+#include <GameData/Packets\Client/SkillDamagePacket.h>
 
 namespace Networking
 {
@@ -13,12 +17,11 @@ namespace Networking
 			{
 				struct HitEntity
 				{
-					int EntityId = 0;
+					Enum::ActorId EntityId;
 				};
 				
-				long long SkillSn = 0;
-				int AttackCounter = 0;
-				int SourceId = 0;
+				Enum::SkillSn SkillSn;
+				Enum::SkillAttackId SkillAttack;
 				Vector3S Position;
 				Vector3S HitPoint;
 				Vector3S Rotation;

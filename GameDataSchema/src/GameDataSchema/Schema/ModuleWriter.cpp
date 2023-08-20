@@ -95,18 +95,25 @@ namespace OutputSchema
 		Stack.push_back({});
 	}
 
-	void ModuleWriter::PushEnum(const std::string_view& name)
+	void ModuleWriter::PushEnum(const std::string_view& name, const std::string_view& parent)
 	{
-		Out << Indent() << "enum class " << name << "\n";
+		Out << Indent() << "enum class " << name;
+
+		if (parent.size())
+		{
+			Out << " : " << parent;
+		}
+
+		Out << "\n";
 		Out << Indent() << "{\n";
 
 		Indentation.push_back('\t');
 		Stack.push_back({});
 	}
 
-	void ModuleWriter::PushEnum(StackHandle& handle, const std::string_view& name)
+	void ModuleWriter::PushEnum(StackHandle& handle, const std::string_view& name, const std::string_view& parent)
 	{
-		PushEnum(name);
+		PushEnum(name, parent);
 
 		handle.Bind(*this);
 	}
@@ -133,7 +140,7 @@ namespace OutputSchema
 
 	void ModuleWriter::PushMember(const SchemaClass& type)
 	{
-		Out << Indent() << stripCommonNamespaces(type.TypeName, type.Scope, ':') << " " << type.MemberName << ";\n";
+		Out << Indent() << swapSeparator(stripCommonNamespaces(type.TypeName, type.Scope), "::") << " " << type.MemberName << ";\n";
 	}
 
 	void ModuleWriter::PushMember(const std::string& type, const std::string_view& name, const std::string_view& value)
@@ -242,7 +249,7 @@ namespace OutputSchema
 
 	void generateEnumDefinitions(const SchemaEnum& schemaEnum, ModuleWriter& module, const std::string& currentNamespace)
 	{
-		module.PushEnum(schemaEnum.Name);
+		module.PushEnum(schemaEnum.Name, schemaEnum.ParentType);
 
 		for (size_t i = 0; i < schemaEnum.Values.size(); ++i)
 		{
@@ -317,16 +324,28 @@ namespace OutputSchema
 						continue;
 					}
 					
-					std::string typeName = stripCommonNamespaces(member.Type, schemaClass.Scope, ':');
+					std::string typeName = swapSeparator(stripCommonNamespaces(member.Type, schemaClass.Scope), "::");
 
 					if (member.ContainsType.size())
 					{
-						std::string innerTypeName = stripCommonNamespaces(member.ContainsType, schemaClass.Scope, ':');
+						std::string innerTypeName = swapSeparator(stripCommonNamespaces(member.ContainsType, schemaClass.Scope), "::");
 
 						typeName += "<" + innerTypeName + ">";
 					}
 
-					module.PushMember(typeName, member.Name, member.DefaultValue);
+					std::string defaultValue = member.DefaultValue;
+
+					if (member.DefaultValue.size())
+					{
+						SchemaEntry entry = findSchemaEntry(member.Type, pickSchema(member.SchemaName, member.ParentSchemaName));
+
+						if (entry.Type != SchemaEntryType::None)
+						{
+							defaultValue = swapSeparator(member.DefaultValue, "::");
+						}
+					}
+
+					module.PushMember(typeName, member.Name, defaultValue);
 				}
 			}
 		}
@@ -495,6 +514,56 @@ namespace OutputSchema
 		{
 			generateClasses(schemaClass, vcxprojRoot, filtersRoot, currentNamespace);
 		}
+
+		for (const SchemaEnum& schemaEnum : schemaNamespace.Enums)
+		{
+			generateEnum(schemaEnum, vcxprojRoot, filtersRoot, currentNamespace);
+		}
+	}
+
+	void updateRequiredHeaders(SchemaClass& parentClass, const SchemaClass& schemaClass)
+	{
+		for (const SchemaMember& schemaMember : schemaClass.Members)
+		{
+			std::string includePath;
+
+			if (schemaMember.ContainsType.size())
+			{
+				includePath = findIncludeDirectory(schemaMember.ContainsType, pickSchema(schemaMember.SchemaName, parentClass.SchemaName));
+			}
+			else
+			{
+				includePath = findIncludeDirectory(schemaMember.Type, pickSchema(schemaMember.SchemaName, parentClass.SchemaName));
+			}
+
+			if (includePath.size() && !parentClass.RequiredHeaders.contains(includePath))
+			{
+				parentClass.RequiredHeaders.insert(includePath);
+			}
+		}
+
+		for (const SchemaClass& childClass : schemaClass.ChildClasses)
+		{
+			updateRequiredHeaders(parentClass, childClass);
+		}
+	}
+
+	void updateRequiredHeaders(SchemaNamespace& schemaNamespace)
+	{
+		for (SchemaNamespace& childNamespace : schemaNamespace.Namespaces)
+		{
+			updateRequiredHeaders(childNamespace);
+		}
+
+		for (SchemaCollection& schemaCollection : schemaNamespace.Collections)
+		{
+			//generateCollection(schemaCollection, vcxprojRoot, filtersRoot, currentNamespace);
+		}
+
+		for (SchemaClass& schemaClass : schemaNamespace.Classes)
+		{
+			updateRequiredHeaders(schemaClass, schemaClass);
+		}
 	}
 
 	void generateGameData()
@@ -584,8 +653,10 @@ namespace OutputSchema
 		fs::create_directories(gameDataProjDir / "src/GameData/Collection");
 		fs::create_directories(gameDataProjDir / "src/GameData/Data");
 
-		for (const auto& schema : CollectionSchemas)
+		for (auto& schema : CollectionSchemas)
 		{
+			updateRequiredHeaders(schema.second.Global);
+
 			generateItemsInNamespace(schema.second.Global, vcxprojRoot, filtersRoot);
 		}
 

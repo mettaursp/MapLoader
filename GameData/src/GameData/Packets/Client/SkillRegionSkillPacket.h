@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Engine/Math/Vector3S.h>
+#include <GameData/Enums/SkillSn.h>
 
 namespace Networking
 {
@@ -10,7 +11,7 @@ namespace Networking
 		{
 			struct SkillRegionSkillPacket
 			{
-				long long SkillSn = 0;
+				Enum::SkillSn SkillSn;
 				unsigned char AttackPoint = 0;
 				int AttackCounter = 0;
 				Vector3S Position;

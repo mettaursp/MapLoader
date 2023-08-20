@@ -27,6 +27,7 @@ namespace PacketSchema
 		{ "string", { "string", "std::string", "", 0 }},
 		{ "wstring", { "wstring", "std::wstring", "", 0 }},
 		{ "Vector3S", { "Vector3S", "Vector3S", "", 0 }},
+		{ "Vector3Short", { "Vector3Short", "Vector3Short", "", 0 }},
 		{ "vector", { "vector", "std::vector", "", 0 }}
 	};
 
@@ -915,7 +916,7 @@ namespace PacketSchema
 
 	DataOutput findOutput(DataOutput output, const std::string& path)
 	{
-		const OutputSchema::SchemaClass* outputClass = output.Class == nullptr ? output.Output->Class : output.Class;
+		const OutputSchema::SchemaClass* outputClass = output.Class == nullptr && output.Output != nullptr ? output.Output->Class : output.Class;
 
 		if (!output.Output)
 		{
@@ -946,7 +947,7 @@ namespace PacketSchema
 
 		if (output.Member->ContainsType.size())
 		{
-			OutputSchema::SchemaEntry entry = OutputSchema::findSchemaEntry(output.Member->ContainsType, output.Output->SchemaName, ':');
+			OutputSchema::SchemaEntry entry = OutputSchema::findSchemaEntry(output.Member->ContainsType, output.Output->SchemaName);
 
 			output.Class = entry.Class;
 
@@ -997,7 +998,7 @@ namespace PacketSchema
 					}
 
 					out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
-					out << tabs << "\tPacketParsed<" << OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking::Packets", ':') << ">(" << *output << ");\n";
+					out << tabs << "\tPacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking.Packets"), "::") << ">(" << *output << ");\n";
 
 					if (output->ReturnOnFinish)
 					{
@@ -1111,7 +1112,7 @@ namespace PacketSchema
 
 					size_t i = 0;
 
-					std::string typeName = OutputSchema::stripCommonNamespaces(data.Type->TypeName, "Networking::Packets", ':');
+					std::string typeName = OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(data.Type->TypeName, "Networking.Packets"), "::");
 
 					for (const auto& enumEntry : data.EnumNames)
 					{
@@ -1132,7 +1133,7 @@ namespace PacketSchema
 				{
 					type = PacketInfoType::ValueWrite;
 
-					out << "\n" << tabs << output.Name << " = " << "(" << OutputSchema::stripCommonNamespaces(output.Member->Type, "Networking::Packets", ':') << ")" << data << ";\n";
+					out << "\n" << tabs << output.Name << " = " << "(" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output.Member->Type, "Networking.Packets"), "::") << ")" << data << ";\n";
 				}
 
 				if (data.HasBitOutputs)
@@ -1177,7 +1178,10 @@ namespace PacketSchema
 
 				if (array.Type == PacketArray::TypeEnum::For)
 				{
-					out << tabs << containerName << ".resize(" << data << ");\n\n";
+					if (output.Output)
+					{
+						out << tabs << containerName << ".resize(" << data << ");\n\n";
+					}
 
 					out << tabs << "for (" << data.Type->TypeName << " " << generator.LoopIndex << " = 0; " << generator.LoopIndex << " < " << data << "; ++" << generator.LoopIndex << ")\n";
 					out << tabs << "{\n";
@@ -1215,7 +1219,10 @@ namespace PacketSchema
 					stack.push_back({ i, array.RegionEnd, output, true, true });
 					generator.Push();
 
-					out << tabs << containerName << ".push_back({});\n";
+					if (output.Output)
+					{
+						out << tabs << containerName << ".push_back({});\n";
+					}
 
 					if (array.Name.size())
 					{
@@ -1289,7 +1296,7 @@ namespace PacketSchema
 			{
 				const PacketOutput& output = opcode.Outputs[index];
 
-				out << tabs << OutputSchema::stripCommonNamespaces(output.Class->Scope, "Networking::Packets", ':') << " " << output << ";\n";
+				out << tabs << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output.Class->Scope, "Networking.Packets"), "::") << " " << output << ";\n";
 
 				if (stack.size())
 				{
@@ -1322,7 +1329,7 @@ namespace PacketSchema
 				}
 
 				out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
-				out << tabs << "\tPacketParsed<" << OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking::Packets", ':') << ">(" << *output << ");\n";
+				out << tabs << "\tPacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking.Packets"), "::") << ">(" << *output << ");\n";
 
 				if (output->ReturnOnFinish)
 				{
@@ -1360,7 +1367,7 @@ namespace PacketSchema
 			}
 
 			out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
-			out << tabs << "\tPacketParsed<" << OutputSchema::stripCommonNamespaces(topOutput->Class->Scope, "Networking::Packets", ':') << ">(" << *topOutput << ");\n";
+			out << tabs << "\tPacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(topOutput->Class->Scope, "Networking.Packets"), "::") << ">(" << *topOutput << ");\n";
 
 			if (topOutput->ReturnOnFinish)
 			{
@@ -1828,7 +1835,7 @@ namespace PacketSchema
 
 			for (const OutputSchema::SchemaClass* schemaClass : outputsReferenced)
 			{
-				std::string typeName = OutputSchema::stripCommonNamespaces(schemaClass->Scope, "Networking::Packets", ':');
+				std::string typeName = OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(schemaClass->Scope, "Networking.Packets"), "::");
 				headerOut << "\t\ttemplate <>\n";
 				headerOut << "\t\tvoid PacketParsed<" << typeName << ">(const " << typeName << "& packet);\n\n";
 			}

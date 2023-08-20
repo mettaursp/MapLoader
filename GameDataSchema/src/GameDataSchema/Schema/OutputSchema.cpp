@@ -82,6 +82,13 @@ namespace OutputSchema
 				continue;
 			}
 
+			if (strcmp(name, "parent") == 0)
+			{
+				schemaEnum.ParentType = value;
+
+				continue;
+			}
+
 			std::cout << "unknown attribute of node 'value': '" << name << "'" << std::endl;
 		}
 
@@ -111,6 +118,24 @@ namespace OutputSchema
 		{ "Vector3S", "<Engine/Math/Vector3S.h>" }
 	};
 
+	const std::unordered_set<std::string> builtIns = {
+		"char",
+		"unsigned char",
+		"signed char",
+		"short",
+		"unsigned short",
+		"int",
+		"unsigned int",
+		"long long",
+		"unsigned long long",
+		"float",
+		"double",
+		"std::vector",
+		"std::string",
+		"std::wstring",
+		"Vector3S"
+	};
+
 	void readMember(SchemaMember& schemaMember, tinyxml2::XMLElement* element, SchemaClass* rootClass)
 	{
 		for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute; attribute = attribute->Next())
@@ -129,16 +154,6 @@ namespace OutputSchema
 			{
 				schemaMember.Type = value;
 
-				if (rootClass && !rootClass->RequiredHeaders.contains(schemaMember.Type))
-				{
-					auto headerEntry = requiredHeaders.find(schemaMember.Type);
-
-					if (headerEntry != requiredHeaders.end())
-					{
-						rootClass->RequiredHeaders.insert(headerEntry->second);
-					}
-				}
-
 				continue;
 			}
 
@@ -156,7 +171,50 @@ namespace OutputSchema
 				continue;
 			}
 
+			if (strcmp(name, "schemaName") == 0)
+			{
+				schemaMember.SchemaName = value;
+
+				continue;
+			}
+
 			std::cout << "unknown attribute of node 'member': '" << name << "'" << std::endl;
+		}
+
+		if (schemaMember.ContainsType.size())
+		{
+			if (!builtIns.contains(schemaMember.ContainsType))
+			{
+				std::string newType = findFullPath(schemaMember.Scope, schemaMember.ContainsType, pickSchema(schemaMember.SchemaName, schemaMember.ParentSchemaName));
+
+				if (newType.size())
+				{
+					schemaMember.ContainsType = newType;
+				}
+			}
+		}
+
+		if (schemaMember.Type.size())
+		{
+			if (!builtIns.contains(schemaMember.Type))
+			{
+				std::string newType = findFullPath(schemaMember.Scope, schemaMember.Type, pickSchema(schemaMember.SchemaName, schemaMember.ParentSchemaName));
+
+				if (newType.size())
+				{
+					schemaMember.Type = newType;
+				}
+			}
+
+			if (rootClass && !rootClass->RequiredHeaders.contains(schemaMember.Type))
+			{
+				auto headerEntry = requiredHeaders.find(schemaMember.Type);
+
+				if (headerEntry != requiredHeaders.end())
+				{
+					rootClass->RequiredHeaders.insert(headerEntry->second);
+				}
+			}
 		}
 
 		if (element->FirstChildElement())
@@ -244,13 +302,14 @@ namespace OutputSchema
 
 				SchemaClass& childSchema = schemaClass.ChildClasses.back();
 
-				childSchema.Scope = schemaClass.Scope + "::";
+				childSchema.Scope = schemaClass.Scope + ".";
+				childSchema.SchemaName = schemaClass.SchemaName;
 
 				readClass(childSchema, child, rootClass, schemaClass.ChildTypeSuffix + typeSuffix);
 
 				if (childSchema.IsMember)
 				{
-					schemaClass.Members.push_back({ childSchema.TypeName, childSchema.MemberName, "", "", schemaClass.ChildClasses.size() - 1});
+					schemaClass.Members.push_back({ childSchema.TypeName, childSchema.MemberName, "", "", "", "", "", schemaClass.ChildClasses.size() - 1});
 				}
 
 				continue;
@@ -261,6 +320,9 @@ namespace OutputSchema
 				schemaClass.Members.push_back({});
 
 				SchemaMember& memberSchema = schemaClass.Members.back();
+
+				memberSchema.Scope = schemaClass.Scope;
+				memberSchema.ParentSchemaName = schemaClass.SchemaName;
 
 				readMember(memberSchema, child, rootClass);
 
@@ -273,7 +335,8 @@ namespace OutputSchema
 
 				SchemaEnum& childSchema = schemaClass.Enums.back();
 
-				childSchema.Scope = schemaClass.Scope + "::";
+				childSchema.Scope = schemaClass.Scope + ".";
+				childSchema.SchemaName = schemaClass.SchemaName;
 
 				readEnum(childSchema, child);
 
@@ -342,10 +405,11 @@ namespace OutputSchema
 			SchemaNamespace& childNamespace = parentNamespace.Namespaces.back();
 
 			childNamespace.Scope = parentNamespace.Scope;
+			childNamespace.SchemaName = parentNamespace.SchemaName;
 
 			if (parentNamespace.Scope.size())
 			{
-				childNamespace.Scope += "::";
+				childNamespace.Scope += ".";
 			}
 
 			readNamespace(childNamespace, element);
@@ -360,10 +424,11 @@ namespace OutputSchema
 			SchemaClass& childClass = parentNamespace.Classes.back();
 
 			childClass.Scope = parentNamespace.Scope;
+			childClass.SchemaName = parentNamespace.SchemaName;
 
 			if (parentNamespace.Scope.size())
 			{
-				childClass.Scope += "::";
+				childClass.Scope += ".";
 			}
 
 			readClass(childClass, element, &childClass);
@@ -378,10 +443,11 @@ namespace OutputSchema
 			SchemaCollection& childCollection = parentNamespace.Collections.back();
 
 			childCollection.Scope = parentNamespace.Scope;
+			childCollection.SchemaName = parentNamespace.SchemaName;
 
 			if (parentNamespace.Scope.size())
 			{
-				childCollection.Scope += "::";
+				childCollection.Scope += ".";
 			}
 
 			readCollection(childCollection, element);
@@ -396,10 +462,11 @@ namespace OutputSchema
 			SchemaEnum& childSchema = parentNamespace.Enums.back();
 
 			childSchema.Scope = parentNamespace.Scope;
+			childSchema.SchemaName = parentNamespace.SchemaName;
 
 			if (parentNamespace.Scope.size())
 			{
-				childSchema.Scope += "::";
+				childSchema.Scope += ".";
 			}
 
 			readEnum(childSchema, element);
@@ -418,6 +485,7 @@ namespace OutputSchema
 		CollectionSchema& schema = CollectionSchemas[name];
 
 		schema.Name = name;
+		schema.Global.SchemaName = name;
 
 		document.LoadFile(filePath.string().c_str());
 
@@ -487,7 +555,7 @@ namespace OutputSchema
 
 			for (const SchemaCollection& collection : current->Collections)
 			{
-				if (collection.Name == name)
+				if (collection.Name == name && start >= path.size())
 				{
 					return {
 						.Type = SchemaEntryType::Collection,
@@ -498,7 +566,7 @@ namespace OutputSchema
 
 			for (const SchemaEnum& childEnum : current->Enums)
 			{
-				if (childEnum.Name == name)
+				if (childEnum.Name == name && start >= path.size())
 				{
 					return {
 						.Type = SchemaEntryType::Enum,
@@ -532,6 +600,15 @@ namespace OutputSchema
 					currentClass = &childClass;
 				}
 			}
+
+			if (currentClass)
+			{
+				break;
+			}
+
+			current = nullptr;
+
+			break;
 		}
 
 		if (current == nullptr && currentClass == nullptr)
@@ -579,7 +656,7 @@ namespace OutputSchema
 
 			for (const SchemaEnum& childEnum : currentClass->Enums)
 			{
-				if (childEnum.Name == name)
+				if (childEnum.Name == name && start >= path.size())
 				{
 					return {
 						.Type = SchemaEntryType::Enum,
@@ -588,12 +665,23 @@ namespace OutputSchema
 				}
 			}
 
+			bool found = false;
+
 			for (const SchemaClass& childClass : currentClass->ChildClasses)
 			{
 				if (childClass.Name == name)
 				{
+					found = true;
+
 					currentClass = &childClass;
 				}
+			}
+
+			if (!found)
+			{
+				currentClass = nullptr;
+
+				break;
 			}
 		}
 
@@ -606,6 +694,91 @@ namespace OutputSchema
 			.Type = SchemaEntryType::Class,
 			.Class = currentClass
 		};
+	}
+
+	std::string findIncludeDirectory(const std::string_view& path, const std::string& schemaName, char separator)
+	{
+		auto schemaIndex = CollectionSchemas.find(schemaName);
+
+		if (schemaIndex == CollectionSchemas.end())
+		{
+			return "";
+		}
+
+		if (path.size() == 0)
+		{
+			return "";
+		}
+
+		const SchemaNamespace* current = &schemaIndex->second.Global;
+		const SchemaClass* currentClass = nullptr;
+
+		size_t start = 0;
+		size_t length = 0;
+
+		while (current && start < path.size())
+		{
+			for (length; start + length < path.size() && path[start + length] != separator; ++length);
+
+			if (length == 0)
+			{
+				return {};
+			}
+
+			std::string_view name = { path.data() + start, length };
+
+			start += length;
+
+			while (start < path.size() && path[start] == separator)
+			{
+				++start;
+			}
+
+			length = 0;
+
+			for (const SchemaCollection& collection : current->Collections)
+			{
+				if (collection.Name == name)
+				{
+					return "<GameData/Collection/" + collection.Name + ".h>";
+				}
+			}
+
+			for (const SchemaEnum& childEnum : current->Enums)
+			{
+				if (childEnum.Name == name)
+				{
+					return "<GameData/" + childEnum.Directory + "/" + childEnum.Name + ".h>";
+				}
+			}
+
+			bool found = false;
+
+			for (const SchemaNamespace& childNamespace : current->Namespaces)
+			{
+				if (childNamespace.Name == name)
+				{
+					found = true;
+
+					current = &childNamespace;
+				}
+			}
+
+			if (found)
+			{
+				continue;
+			}
+
+			for (const SchemaClass& childClass : current->Classes)
+			{
+				if (childClass.Name == name)
+				{
+					return "<GameData/" + childClass.Directory + "/" + childClass.Name + ".h>";
+				}
+			}
+		}
+
+		return "";
 	}
 
 	const SchemaMember* findSchemaMember(const SchemaClass* schemaClass, const std::string path, char separator)
@@ -655,6 +828,11 @@ namespace OutputSchema
 		return currentMember;
 	}
 
+	std::string pickSchema(const std::string & override, const std::string& base)
+	{
+		return override.size() ? override : base;
+	}
+
 	std::string stripCommonNamespaces(const std::string& primaryNamespace, const std::string& secondaryNamespace, char separator)
 	{
 		size_t lastSeparator = 0;
@@ -681,7 +859,7 @@ namespace OutputSchema
 			}
 		}
 
-		if (lastSeparator < primaryNamespace.size() && lastSeparator == secondaryNamespace.size())
+		if (lastSeparator < primaryNamespace.size())// && lastSeparator == secondaryNamespace.size())
 		{
 			while (lastSeparator < primaryNamespace.size() && primaryNamespace[lastSeparator] == separator)
 			{
@@ -690,5 +868,79 @@ namespace OutputSchema
 		}
 
 		return primaryNamespace.substr(lastSeparator, primaryNamespace.size() - lastSeparator);
+	}
+
+	std::string findFullPath(const std::string& currentPath, const std::string& subPath, const std::string& schemaName, char separator)
+	{
+		if (builtIns.contains(subPath))
+		{
+			return subPath;
+		}
+
+		for (std::string parentPath = currentPath; parentPath.size(); parentPath = stripLastPath(parentPath))
+		{
+			SchemaEntry entry = findSchemaEntry(parentPath + separator + subPath, schemaName, separator);
+
+			if (entry.Type != SchemaEntryType::None)
+			{
+				return parentPath + separator + subPath;
+			}
+		}
+
+		SchemaEntry entry = findSchemaEntry(subPath, schemaName, separator);
+
+		if (entry.Type != SchemaEntryType::None)
+		{
+			return subPath;
+		}
+
+		return "";
+	}
+
+	std::string stripLastPath(const std::string& path, char separator)
+	{
+		if (!path.size())
+		{
+			return path;
+		}
+
+		for (size_t i = path.size() - 1; i < path.size(); --i)
+		{
+			if (path[i] == separator)
+			{
+				while (i < path.size() && path[i] == separator)
+				{
+					--i;
+				}
+
+				if (i >= path.size())
+				{
+					return "";
+				}
+
+				return path.substr(0, i + 1);
+			}
+		}
+
+		return "";
+	}
+
+	std::string swapSeparator(const std::string& path, std::string newSeparator, char separator)
+	{
+		std::string out;
+
+		for (size_t i = 0; i < path.size(); ++i)
+		{
+			if (path[i] != separator)
+			{
+				out.push_back(path[i]);
+
+				continue;
+			}
+
+			out += newSeparator;
+		}
+
+		return out;
 	}
 }

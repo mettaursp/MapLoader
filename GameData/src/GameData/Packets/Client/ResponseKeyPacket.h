@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameData/Enums/AccountId.h>
+
 namespace Networking
 {
 	namespace Packets
@@ -8,7 +10,7 @@ namespace Networking
 		{
 			struct ResponseKeyPacket
 			{
-				long long AccountId = 0;
+				Enum::AccountId AccountId;
 				int TokenA = 0;
 				int TokenB = 0;
 				unsigned long long MachineHigh = 0;

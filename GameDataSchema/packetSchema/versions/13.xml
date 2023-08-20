@@ -1,6 +1,7 @@
 <packetSchema version="13" inheritPrevious="false">
 	<source name="server">
 		<opcodeReference value="0x1D" version="12" opcode="0x1D" />
+		<opcodeReference value="0x3D" version="12" opcode="0x3E" />
 		<opcode name="Buff" value="0x47">
 			<output type="Networking.Packets.Server.BuffPacket" schemaName="packetData" />
 			<data type="byte" name="mode" output="Mode">
@@ -44,10 +45,30 @@
 	</source>
 	<source name="client">
 		<opcodeReference value="0x01" version="12" opcode="0x01" />
+		<opcodeReference value="0x02" version="12" opcode="0x02" />
+		<opcode name="LogIn" value="0x03">
+			<data type="byte" name="mode">
+				<enum name="Unknown0" value="0" />
+				<enum name="Unknown1" value="1" />
+				<enum name="Unknown2" value="2" />
+			</data>
+			<data type="wstring" name="auth1" />
+			<data type="wstring" name="auth2" />
+
+			<data type="ulong" name="unknown" />
+			<data type="ulong" name="unknown" />
+
+			<data type="int" name="unknown" />
+			<data type="short" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="int" name="unknown" />
+		</opcode>
 		<opcodeReference value="0x04" version="12" opcode="0x04" />
 		<opcodeReference value="0x0A" version="12" opcode="0x0A" />
 		<opcodeReference value="0x0D" version="12" opcode="0x0D" />
 		<opcodeReference value="0x20" version="12" opcode="0x20" />
+		<opcodeReference value="0x21" version="12" opcode="0x21" />
+		<opcodeReference value="0x22" version="12" opcode="0x22" />
 		<opcodeReference value="0xB5" version="12" opcode="0xB7" />
 	</source>
 </packetSchema>

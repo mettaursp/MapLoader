@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GameData/Packets\Client/RequestQuitPacket.h>
+
 namespace Networking
 {
 	namespace Packets

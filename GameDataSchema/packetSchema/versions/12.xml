@@ -40,6 +40,162 @@
 			</condition>
 			<data type="byte" name="unknown" />
 		</opcode>
+		<opcode name="SkillDamage" value="0x3E">
+			<data type="byte" name="mode" output="Mode">
+				<enum name="SyncDamage" value="0" />
+				<enum name="Damage" value="1" />
+				<enum name="DotDamage" value="3" />
+				<enum name="Heal" value="4" />
+				<enum name="RegionDamage" value="5" />
+				<enum name="TileSkill" value="6" />
+				<enum name="Unknown7" value="7" />
+				<enum name="Unknown8" value="8" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageSyncPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<condition data="skillId" value="0" comparison="equal">
+					<data type="byte" name="unknown" />
+				</condition>
+				<condition data="skillId" value="0" comparison="notEqual">
+					<data type="ushort" name="skillLevel" output="SkillLevel" />
+					<data type="byte" name="motionPoint" output="MotionPoint" />
+					<data type="byte" name="attackPoint" output="AttackPoint" />
+					<data type="Vector3Short" name="position" output="Position" />
+					<data type="Vector3S" name="direction" output="Direction" />
+					<data type="bool" name="isChaining" output="IsChaining" />
+					<data type="int" name="serverTick" output="ServerTick" />
+					<data type="byte" name="count" />
+					<array data="count" output="Hits">
+						<data type="long" name="unknown" />
+						<data type="long" name="skillAttack" output="SkillAttack" />
+						<data type="int" name="targetId" output="TargetId" />
+						<data type="short" name="animation" output="Animation" />
+					</array>
+				</condition>
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamagePacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="long" name="skillAttack" output="SkillAttack" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<data type="ushort" name="skillLevel" output="SkillLevel" />
+				<data type="byte" name="motionPoint" output="MotionPoint" />
+				<data type="byte" name="attackPoint" output="AttackPoint" />
+				<data type="Vector3Short" name="position" output="Position" />
+				<data type="Vector3Short" name="direction" output="Direction" />
+				<data type="byte" name="count" />
+				<array data="count" output="DamagedTargets">
+					<data type="int" name="targetId" output="TargetId" />
+					<data type="byte" name="damageCount" />
+					<array data="damageCount" output="Damages">
+						<data type="byte" name="hitType" output="HitType">
+							<enum name="Normal" value="0" />
+							<enum name="Critical" value="1" />
+							<enum name="Miss" value="2" />
+							<enum name="Block" value="3" />
+							<enum name="Unknown4" value="4" />
+							<enum name="Unknown8" value="8" />
+						</data>
+						<data type="long" name="damage" output="Damage" />
+					</array>
+				</array>
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageDotPacket" schemaName="packetData" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="int" name="targetId" output="TargetId" />
+				<data type="int" name="serverTick" output="ServerTick" />
+				<data type="byte" name="hitType" output="HitType">
+					<enum name="Normal" value="0" />
+					<enum name="Critical" value="1" />
+					<enum name="Miss" value="2" />
+					<enum name="Block" value="3" />
+					<enum name="Unknown4" value="4" />
+					<enum name="Unknown8" value="8" />
+				</data>
+				<data type="int" name="damage" output="Damage" />
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageHealPacket" schemaName="packetData" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="int" name="targetId" output="TargetId" />
+				<data type="int" name="serverTick" output="ServerTick" />
+				<data type="int" name="hpAmount" output="HpAmount" />
+				<data type="int" name="spAmount" output="SpAmount" />
+				<data type="int" name="epAmount" output="EpAmount" />
+				<data type="bool" name="isVisible" output="IsVisible" />
+			</condition>
+			<condition data="mode" value="5" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageRegionPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="int" name="regionSkillObjectId" output="RegionSkillObjectId" />
+				<data type="byte" name="attackPoint" output="AttackPoint" />
+				<data type="byte" name="count" />
+				<array data="count" output="DamagedTargets">
+					<data type="int" name="targetId" output="TargetId" />
+					<data type="byte" name="damageCount" />
+					<data type="Vector3Short" name="position" output="Position" />
+					<data type="Vector3S" name="direction" output="Direction" />
+					<array data="damageCount" output="Damages">
+						<data type="byte" name="hitType" output="HitType">
+							<enum name="Normal" value="0" />
+							<enum name="Critical" value="1" />
+							<enum name="Miss" value="2" />
+							<enum name="Block" value="3" />
+							<enum name="Unknown4" value="4" />
+							<enum name="Unknown8" value="8" />
+						</data>
+						<data type="long" name="damage" output="Damage" />
+					</array>
+				</array>
+			</condition>
+			<condition data="mode" value="6" comparison="equal">
+				<output type="Networking.Packets.Server.SkillDamageTilePacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<data type="ushort" name="skillLevel" output="SkillLevel" />
+				<data type="byte" name="count" />
+				<array data="count" output="DamagedTargets">
+					<data type="int" name="targetId" output="TargetId" />
+					<data type="byte" name="damageCount" />
+					<data type="Vector3Short" name="position" output="Position" />
+					<data type="Vector3S" name="direction" output="Direction" />
+					<array data="damageCount" output="Damages">
+						<data type="byte" name="hitType" output="HitType">
+							<enum name="Normal" value="0" />
+							<enum name="Critical" value="1" />
+							<enum name="Miss" value="2" />
+							<enum name="Block" value="3" />
+							<enum name="Unknown4" value="4" />
+							<enum name="Unknown8" value="8" />
+						</data>
+						<data type="long" name="damage" output="Damage" />
+					</array>
+				</array>
+			</condition>
+			<condition data="mode" value="7" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="int" name="count" />
+				<array data="count">
+					<data type="int" name="unknown" />
+				</array>
+			</condition>
+			<condition data="mode" value="8" comparison="equal">
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="bool" name="hasTarget" />
+				<condition data="hasTarget" value="1" comparison="equal">
+					<data type="uint" name="skillId" output="SkillId" />
+					<data type="ushort" name="skillLevel" output="SkillLevel" />
+					<data type="int" name="unknown" />
+					<data type="int" name="npcId" />
+				</condition>
+			</condition>
+		</opcode>
 		<opcode name="Buff" value="0x48">
 			<output type="Networking.Packets.Server.BuffPacket" schemaName="packetData" />
 			<data type="byte" name="mode" output="Mode">
@@ -47,9 +203,9 @@
 				<enum name="Remove" value="1" />
 				<enum name="Update" value="2" />
 			</data>
-			<data type="int" name="targetActor" output="TargetActor" />
+			<data type="int" name="targetId" output="TargetId" />
 			<data type="int" name="instanceId" output="InstanceId" />
-			<data type="int" name="sourceActor" output="SourceActor" />
+			<data type="int" name="sourceId" output="SourceId" />
 			<condition data="instanceId" value="0" comparison="notEqual">
 				<condition data="mode" value="0" comparison="equal">
 					<data type="int" name="startTime" output="StartTime" />
@@ -79,6 +235,67 @@
 				</condition>
 			</condition>
 		</opcode>
+		<opcode name="Trophy" value="0x5F">
+			<data type="byte" name="mode">
+				<enum name="TableStart" value="0" />
+				<enum name="TableContent" value="1" />
+				<enum name="Update" value="2" />
+				<enum name="Favorite" value="4" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.TrophyStartPacket" schemaName="packetData" />
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.TrophyContentPacket" schemaName="packetData" />
+				<data type="int" name="count" />
+				<array data="count" output="Trophies">
+					<data type="int" name="trophyId" output="TrophyId" />
+					<data type="int" name="unknown">
+						<enum name="Unknown" value="1" />
+						<enum name="Unknown" value="2" />
+						<enum name="Unknown" value="3" />
+						<enum name="Unknown" value="4" />
+						<enum name="Unknown" value="5" />
+						<enum name="Unknown" value="6" />
+						<enum name="Unknown" value="7" />
+						<enum name="Unknown" value="8" />
+						<enum name="Unknown" value="9" />
+					</data>
+					<data type="byte" name="status" output="Status">
+						<enum name="InProgress" value="2" />
+						<enum name="Finished" value="3" />
+					</data>
+					<data type="int" name="isDone" output="IsDone" />
+					<data type="int" name="nextGrade" output="NextGrade" />
+					<data type="int" name="lastReward" output="LastReward" />
+					<data type="bool" name="isFavorited" output="IsFavorited" />
+					<data type="long" name="counter" output="Counter" />
+					<data type="int" name="timestampsCount" />
+					<array data="timestampsCount" output="Timestamps">
+						<data type="int" name="index" output="Index" />
+						<data type="long" name="timestamp" output="Time" />
+					</array>
+				</array>
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<output type="Networking.Packets.Server.TrophyUpdatePacket" schemaName="packetData" />
+				<data type="int" name="trophyId" output="TrophyId" />
+				<data type="byte" name="status" output="Status">
+					<enum name="InProgress" value="2" />
+					<enum name="Finished" value="3" />
+				</data>
+				<data type="int" name="isDone" output="IsDone" />
+				<data type="int" name="nextGrade" output="NextGrade" />
+				<data type="int" name="lastReward" output="LastReward" />
+				<data type="bool" name="isFavorited" output="IsFavorited" />
+				<data type="long" name="counter" output="Counter" />
+				<data type="int" name="timestampsCount" />
+				<array data="timestampsCount" output="Timestamps">
+					<data type="int" name="index" output="Index" />
+					<data type="long" name="timestamp" output="Time" />
+				</array>
+			</condition>
+		</opcode>
 	</source>
 	<source name="client">
 		<opcode name="ResponseVersion" value="0x01">
@@ -87,14 +304,54 @@
 			<data type="ushort" name="feature" />
 			<data type="ushort" name="locale" />
 		</opcode>
+		<opcode name="Handshake" value="0x02">
+			<output type="Networking.Packets.Client.HandshakePacket" schemaName="packetData" />
+			<data type="byte" name="function" output="Function" />
+			<data type="int" name="count" />
+			<array data="count" output="Data">
+				<data type="wstring" name="unknown" output="String" />
+				<data type="long" name="unknown" />
+			</array>
+		</opcode>
+		<opcode name="LogIn" value="0x03">
+			<data type="byte" name="mode">
+				<enum name="UserPass" value="0" />
+				<enum name="AuthToken1" value="1" />
+				<enum name="AuthToken2" value="2" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Client.LogInPacket" schemaName="packetData" />
+				<data type="wstring" name="username" output="Username" />
+				<data type="wstring" name="password" output="Password" />
+				<data type="short" name="unknown" />
+				<data type="ulong" name="machineLow" output="MachineLow" />
+				<data type="ulong" name="machineHigh" output="MachineHigh" />
+				<data type="int" name="unknownMachineIdPtr" />
+				<data type="int" name="sessionKey" output="SessionKey" />
+				<data type="string" name="locale" output="Locale" />
+			</condition>
+			<condition data="mode" value="0" comparison="notEqual">
+				<output type="Networking.Packets.Client.LogInAuthTokenPacket" schemaName="packetData" />
+				<data type="long" name="unknown" />
+				<data type="string" name="authToken" />
+				<data type="short" name="unknown" />
+				<data type="int" name="unknown" />
+				<data type="ulong" name="machineLow" output="MachineLow" />
+				<data type="ulong" name="machineHigh" output="MachineHigh" />
+				<data type="int" name="unknown" />
+				<data type="int" name="unknown" />
+				<data type="string" name="locale" output="Locale" />
+				<data type="byte" name="unknown" />
+			</condition>
+		</opcode>
 		<opcode name="ResponseKey" value="0x04">
 			<output type="Networking.Packets.Client.ResponseKeyPacket" schemaName="packetData" />
 			<data type="long" name="accountId" output="AccountId" />
 			<condition data="accountId" value="0" comparison="notEqual">
 				<data type="int" name="tokenA" output="TokenA" />
 				<data type="int" name="tokenB" output="TokenB" />
-				<data type="ulong" name="machineHigh" />
-				<data type="ulong" name="machineLow" />
+				<data type="ulong" name="machineHigh" output="MachineHigh" />
+				<data type="ulong" name="machineLow" output="MachineLow" />
 			</condition>
 		</opcode>
 		<opcode name="ResponseHeartbeat" value="0x0A">
@@ -121,8 +378,8 @@
 				<output type="Networking.Packets.Client.SkillCastPacket" schemaName="packetData" />
 				<data type="long" name="skillSn" output="SkillSn" />
 				<data type="int" name="serverTick" output="ServerTick" />
-				<data type="int" name="skillId" output="SkillId" />
-				<data type="short" name="skillLevel" output="SkillLevel" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<data type="ushort" name="skillLevel" output="SkillLevel" />
 				<data type="byte" name="attackPoint" output="AttackPoint" />
 				<data type="Vector3S" name="position" output="Position" />
 				<data type="Vector3S" name="direction" output="Direction" />
@@ -162,14 +419,12 @@
 						<enum name="default" value="0" />
 					</data>
 					<array data="count" name="projectile" output="Projectiles">
-						<data type="int" name="attackCount" output="AttackCount" />
-						<data type="int" name="sourceId" output="SourceId" />
+						<data type="long" name="skillAttack" output="SkillAttack" />
 						<data type="int" name="targetId" output="TargetId" />
 						<data type="byte" name="index" output="Index" />
 						<data type="bool" name="moreTargets" />
 						<array data="moreTargets" type="while" name="nextTarget" output="ChainTargets">
-							<data type="int" name="attackCount" output="AttackCount" />
-							<data type="int" name="sourceId" output="SourceId" />
+							<data type="long" name="skillAttack" output="SkillAttack" />
 							<data type="int" name="targetId" output="TargetId" />
 							<data type="byte" name="index" output="Index" />
 							<data type="byte" name="unknown" />
@@ -180,8 +435,7 @@
 				<condition data="damageMode" value="1" comparison="equal">
 					<output type="Networking.Packets.Client.SkillDamagePacket" schemaName="packetData" />
 					<data type="long" name="skillSn" output="SkillSn" />
-					<data type="int" name="attackCounter" output="AttackCounter" />
-					<data type="int" name="sourceId" output="SourceId" />
+					<data type="long" name="skillAttack" output="SkillAttack" />
 					<data type="Vector3S" name="position" output="Position" />
 					<data type="Vector3S" name="hitPoint" output="HitPoint" />
 					<data type="Vector3S" name="rotation" output="Rotation" />
@@ -210,8 +464,8 @@
 			<condition data="mode" value="2" comparison="equal">
 				<output type="Networking.Packets.Client.SkillSyncPacket" schemaName="packetData" />
 				<data type="long" name="skillSn" output="SkillSn" />
-				<data type="int" name="skillId" output="SkillId" />
-				<data type="short" name="skillLevel" output="SkillLevel" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<data type="ushort" name="skillLevel" output="SkillLevel" />
 				<data type="byte" name="motionPoint" output="MotionPoint" />
 				<data type="Vector3S" name="position" output="Position" />
 				<data type="Vector3S" name="unknown" />
@@ -235,6 +489,92 @@
 			<condition data="mode" value="4" comparison="equal">
 				<output type="Networking.Packets.Client.SkillCancelPacket" schemaName="packetData" />
 				<data type="long" name="skillSn" output="SkillSn" />
+			</condition>
+		</opcode>
+		<opcode name="StateSkill" value="0x21">
+			<data type="byte" name="mode">
+				<enum name="Unknown0" value="0" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Client.StateSkillPacket" schemaName="packetData" />
+				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="uint" name="serverTick" output="ServerTick" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<data type="ushort" name="skillLevel" output="SkillLevel">
+					<enum name="Level1" value="1" />
+				</data>
+				<data type="int" name="animation" output="Animation" />
+				<data type="int" name="clientTick" output="ClientTick" />
+				<data type="long" name="unknown" />
+			</condition>
+		</opcode>
+		<opcode name="NpcTalk" value="0x22">
+			<data type="byte" name="mode">
+				<enum name="Close" value="0" />
+				<enum name="Begin" value="1" />
+				<enum name="Continue" value="2" />
+				<enum name="EnchantUnknown" value="4" />
+				<enum name="Enchant" value="6" />
+				<enum name="NextQuest" value="7" />
+				<enum name="AllianceQuestAccept" value="8" />
+				<enum name="AllianceQuestTalk" value="9" />
+				<enum name="CCustomSelectableDistractorCinematicComponent" value="11" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkClosePacket" schemaName="packetData" />
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkBeginPacket" schemaName="packetData" />
+				<data type="int" name="objectId" output="ObjectId" />
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkContinuePacket" schemaName="packetData" />
+				<data type="int" name="index" output="Index" />
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkEnchantUnknownPacket" schemaName="packetData" />
+				<data type="short" name="unknown" />
+			</condition>
+			<condition data="mode" value="6" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkEnchantPacket" schemaName="packetData" />
+				<data type="int" name="npcId" output="NpcId" />
+				<data type="int" name="scriptId" output="ScriptId" />
+				<data type="short" name="eventType" output="EventType">
+					<enum name="Begin" value="1" />
+					<enum name="InProgress" value="2" />
+					<enum name="Result" value="3" />
+					<enum name="Unknown" value="202" />
+				</data>
+				<condition data="eventType" value="1" comparison="equal">
+					<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+				</condition>
+				<condition data="eventType" value="202" comparison="equal">
+					<data type="short" name="unknown" />
+				</condition>
+			</condition>
+			<condition data="mode" value="7" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkNextQuestPacket" schemaName="packetData" />
+				<data type="int" name="questId" output="QuestId" />
+				<data type="short" name="eventType" output="EventType">
+					<enum name="Complete" value="0" />
+					<enum name="Start" value="2" />
+				</data>
+			</condition>
+			<condition data="mode" value="8" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkAllianceQuestAcceptPacket" schemaName="packetData" />
+				<data type="int" name="index" output="Index" />
+				<data type="short" name="eventType" output="EventType">
+					<enum name="Complete" value="0" />
+					<enum name="Start" value="2" />
+				</data>
+			</condition>
+			<condition data="mode" value="9" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkAllianceQuestTalkPacket" schemaName="packetData" />
+			</condition>
+			<condition data="mode" value="11" comparison="equal">
+				<output type="Networking.Packets.Client.NpcTalkCinematicPacket" schemaName="packetData" />
+				<data type="int" name="objectId" output="Index" />
+				<data type="int" name="index" output="Index" />
 			</condition>
 		</opcode>
 		<opcode name="SystemInfo" value="0xB7">

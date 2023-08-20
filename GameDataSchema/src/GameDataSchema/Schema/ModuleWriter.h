@@ -37,8 +37,8 @@ namespace OutputSchema
 		void PushNamespace(StackHandle& handle, const std::string_view& name);
 		void PushStruct(const std::string_view& name);
 		void PushStruct(StackHandle& handle, const std::string_view& name);
-		void PushEnum(const std::string_view& name);
-		void PushEnum(StackHandle& handle, const std::string_view& name);
+		void PushEnum(const std::string_view& name, const std::string_view& parent = "");
+		void PushEnum(StackHandle& handle, const std::string_view& name, const std::string_view& parent = "");
 		void PushCollection(const std::string_view& name);
 		void PushCollection(StackHandle& handle, const std::string_view& name);
 		void PushLine();

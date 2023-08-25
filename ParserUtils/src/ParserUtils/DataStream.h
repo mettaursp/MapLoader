@@ -44,7 +44,6 @@ namespace ParserUtils
 		bool FoundUnknownValue = false;
 		bool IgnoreUnknownValues = false;
 		bool SuppressErrors = false;
-		std::stringstream FoundValues;
 
 		template <typename T>
 		bool Read(T& value);

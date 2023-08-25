@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct NpcTalkBeginPacket
 			{
-				Enum::ActorId ObjectId;
+				Enum::ActorId ActorId;
 			};
 		}
 	}

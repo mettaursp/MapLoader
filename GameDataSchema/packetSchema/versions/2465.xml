@@ -1,0 +1,9 @@
+<packetSchema version="2465">
+	<source name="server">
+		<opcodeReference value="0x55" version="12" opcode="0x56" />
+		<opcodeReference value="0x56" version="12" opcode="0x57" />
+		<opcodeReference value="0x57" removeReference="true" />
+	</source>
+	<source name="client">
+	</source>
+</packetSchema>

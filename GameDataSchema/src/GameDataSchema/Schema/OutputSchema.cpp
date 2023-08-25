@@ -89,6 +89,13 @@ namespace OutputSchema
 				continue;
 			}
 
+			if (strcmp(name, "file") == 0)
+			{
+				schemaEnum.FileName = value;
+
+				continue;
+			}
+
 			std::cout << "unknown attribute of node 'value': '" << name << "'" << std::endl;
 		}
 
@@ -217,9 +224,36 @@ namespace OutputSchema
 			}
 		}
 
-		if (element->FirstChildElement())
+		for (tinyxml2::XMLElement* child = element->FirstChildElement(); child; child = child->NextSiblingElement())
 		{
-			std::cout << "unknown child nodes on node 'member'" << std::endl;
+			const char* name = child->Name();
+
+			if (strcmp(name, "default") == 0)
+			{
+				const tinyxml2::XMLAttribute* nameAttrib = child->FindAttribute("name");
+				const tinyxml2::XMLAttribute* valueAttrib = child->FindAttribute("value");
+
+				if (nameAttrib == nullptr || valueAttrib == nullptr)
+				{
+					if (nameAttrib == nullptr)
+					{
+						std::cout << "member.default node missing name attribute" << std::endl;
+					}
+
+					if (valueAttrib == nullptr)
+					{
+						std::cout << "member.default node missing value attribute" << std::endl;
+					}
+
+					continue;
+				}
+
+				schemaMember.DefaultInitializerValues[nameAttrib->Value()] = valueAttrib->Value();
+
+				continue;
+			}
+
+			std::cout << "unknown child node '" << name << "' on node 'member'" << std::endl;
 		}
 	}
 
@@ -748,7 +782,7 @@ namespace OutputSchema
 			{
 				if (childEnum.Name == name)
 				{
-					return "<GameData/" + childEnum.Directory + "/" + childEnum.Name + ".h>";
+					return "<GameData/" + childEnum.Directory + "/" + (childEnum.FileName.size() ? childEnum.FileName : childEnum.Name) + ".h>";
 				}
 			}
 
@@ -781,7 +815,7 @@ namespace OutputSchema
 		return "";
 	}
 
-	const SchemaMember* findSchemaMember(const SchemaClass* schemaClass, const std::string path, char separator)
+	const SchemaMember* findSchemaMember(const SchemaClass* schemaClass, const std::string& path, char separator)
 	{
 		if (path.size() == 0 || !schemaClass)
 		{
@@ -820,10 +854,10 @@ namespace OutputSchema
 			}
 		}
 
-		if (start < path.size())
-		{
-			return nullptr;
-		}
+		//if (start < path.size())
+		//{
+		//	return nullptr;
+		//}
 
 		return currentMember;
 	}

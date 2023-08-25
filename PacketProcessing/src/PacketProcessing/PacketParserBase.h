@@ -4,22 +4,26 @@
 
 #include <ParserUtils/DataStream.h>
 
+#include "Handlers/SniffHandler/SniffHandler.h"
+
 namespace Networking
 {
 	namespace Packets
 	{
-		void ParsePacket(ParserUtils::DataStream& stream, unsigned short version, bool isServer, unsigned short opcode);
+		typedef SniffHandler PacketHandler;
+
+		void ParsePacket(PacketHandler& handler, unsigned short version, bool isServer, unsigned short opcode);
 
 		const bool ServerPacket = true;
 		const bool ClientPacket = false;
 
 		template <short Version, bool IsServer, short Opcode>
-		void ParsePacket(ParserUtils::DataStream& stream) { }
+		void ParsePacket(PacketHandler& handler) { }
 
 		template <>
-		void ParsePacket<0, false, 0>(ParserUtils::DataStream& stream);
+		void ParsePacket<0, false, 0>(PacketHandler& handler);
 
-		typedef void (*PacketParserCallback)(ParserUtils::DataStream& stream);
+		typedef void (*PacketParserCallback)(PacketHandler& handler);
 
 		struct PacketOpcodeData
 		{

@@ -1,5 +1,7 @@
 <packetSchema version="13" inheritPrevious="false">
 	<source name="server">
+		<opcodeReference value="0x7" version="12" opcode="0x7" />
+		<opcodeReference value="0x16" version="12" opcode="0x16" />
 		<opcodeReference value="0x1D" version="12" opcode="0x1D" />
 		<opcodeReference value="0x3D" version="12" opcode="0x3E" />
 		<opcode name="Buff" value="0x47">
@@ -42,6 +44,9 @@
 				<data type="int" name="unknown" />
 			</condition>
 		</opcode>
+		<opcodeReference value="0x56" version="12" opcode="0x56" />
+		<opcodeReference value="0x57" version="12" opcode="0x57" />
+		<opcodeReference value="0x5E" version="12" opcode="0x5F" />
 	</source>
 	<source name="client">
 		<opcodeReference value="0x01" version="12" opcode="0x01" />

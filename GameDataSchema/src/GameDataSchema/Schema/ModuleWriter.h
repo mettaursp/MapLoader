@@ -44,6 +44,7 @@ namespace OutputSchema
 		void PushLine();
 		void PushMember(const SchemaClass& type);
 		void PushMember(const std::string& type, const std::string_view& name, const std::string_view& value);
+		void PushMember(const std::string& type, const std::string_view& name, const std::vector<std::string>& initializers);
 		void PushEnumValue(const std::string& name, const std::string_view& value, bool isLast);
 		void PopStack();
 
@@ -56,6 +57,8 @@ namespace OutputSchema
 		std::vector<StackContext> Stack;
 		std::vector<char> Indentation;
 	};
+
+	void addProjectNode(tinyxml2::XMLElement* root, const char* nodeType, const std::string& fileName, const char* filterContents);
 
 	void generateModuleNamespace(ModuleWriter& module, const std::string& currentNamespace);
 

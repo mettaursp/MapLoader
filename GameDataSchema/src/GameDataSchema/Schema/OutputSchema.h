@@ -22,6 +22,7 @@ namespace OutputSchema
 		std::string Scope;
 		std::string ParentSchemaName;
 		size_t ChildClassIndex = (size_t)-1;
+		std::unordered_map<std::string, std::string> DefaultInitializerValues;
 	};
 
 	struct SchemaEnumValue
@@ -37,6 +38,7 @@ namespace OutputSchema
 		std::string Directory = "Enums";
 		std::string SchemaName;
 		std::string ParentType;
+		std::string FileName;
 
 		std::vector<SchemaEnumValue> Values;
 	};
@@ -127,7 +129,7 @@ namespace OutputSchema
 
 	SchemaEntry findSchemaEntry(const std::string_view& path, const std::string& schemaName, char separator = '.');
 	std::string findIncludeDirectory(const std::string_view& path, const std::string& schemaName, char separator = '.');
-	const SchemaMember* findSchemaMember(const SchemaClass* schemaClass, const std::string path, char separator = '.');
+	const SchemaMember* findSchemaMember(const SchemaClass* schemaClass, const std::string& path, char separator = '.');
 	std::string pickSchema(const std::string & override, const std::string& base);
 
 	std::string stripCommonNamespaces(const std::string& primaryNamespace, const std::string& secondaryNamespace, char separator = '.');

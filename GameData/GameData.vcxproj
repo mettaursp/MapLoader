@@ -108,6 +108,9 @@
         <ClInclude Include="./../GameData\src/GameData\Enums\NpcId.h"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapId.h"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\QuestId.h"/>
     </ItemGroup>
     <ItemGroup>
@@ -139,6 +142,42 @@
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\SkillAttackId.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\NpcType.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeBasic.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\Stat.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\Stat.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\StatLong.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\StatLong.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\Reconnect7Packet.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\Reconnect7Packet.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatPacket.h"/>
@@ -187,6 +226,18 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\BuffPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpc.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddNpc.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpc.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpc.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyStartPacket.h"/>

@@ -164,6 +164,23 @@ namespace OutputSchema
 		Out << ";\n";
 	}
 
+	void ModuleWriter::PushMember(const std::string& type, const std::string_view& name, const std::vector<std::string>& initializers)
+	{
+		Out << Indent() << type << " " << name << (initializers.size() ? " = {\n" : " = { };\n");
+
+		if (!initializers.size())
+		{
+			return;
+		}
+
+		for (size_t i = 0; i < initializers.size(); ++i)
+		{
+			Out << Indent() << "\t" << initializers[i] << (i + 1 < initializers.size() ? ",\n" : "\n");
+		}
+
+		Out << Indent() << "};\n";
+	}
+
 	void ModuleWriter::PushEnumValue(const std::string& name, const std::string_view& value, bool isLast)
 	{
 		Out << Indent() << name;
@@ -333,6 +350,79 @@ namespace OutputSchema
 						typeName += "<" + innerTypeName + ">";
 					}
 
+					if (member.DefaultInitializerValues.size())
+					{
+						std::vector<std::string> values(member.DefaultInitializerValues.size());
+						std::vector<unsigned long long> order(member.DefaultInitializerValues.size());
+
+						unsigned int current = 0;
+						size_t cutOut = 0;
+
+						SchemaEntry entry = findSchemaEntry(member.Type, pickSchema(member.SchemaName, member.ParentSchemaName));
+
+						if (entry.Class == nullptr)
+						{
+							module.PushMember(typeName, member.Name, "");
+
+							continue;
+						}
+
+						for (const auto& initializerEntry : member.DefaultInitializerValues)
+						{
+							unsigned long long memberIndex = (unsigned long long)-1;
+							const SchemaMember* referredMember = nullptr;
+
+							for (size_t i = 0; i < entry.Class->Members.size(); ++i)
+							{
+								if (entry.Class->Members[i].Name == initializerEntry.first)
+								{
+									referredMember = &entry.Class->Members[i];
+									memberIndex = (unsigned long long)-1;
+
+									break;
+								}
+							}
+
+							order[current] = (unsigned long long)current | (memberIndex << 32);
+
+							if (referredMember == nullptr)
+							{
+								++current;
+								++cutOut;
+
+								continue;
+							}
+
+							SchemaEntry entry = findSchemaEntry(referredMember->Type, pickSchema(referredMember->SchemaName, referredMember->ParentSchemaName));
+
+							values[current] = "." + initializerEntry.first + " = ";
+
+							if (entry.Type != SchemaEntryType::None)
+							{
+								values[current] += swapSeparator(initializerEntry.second, "::");
+							}
+							else
+							{
+								values[current] += initializerEntry.second;
+							}
+
+							++current;
+						}
+
+						std::vector<std::string> initializers(member.DefaultInitializerValues.size() - cutOut);
+
+						for (size_t i = 0; i < initializers.size(); ++i)
+						{
+							size_t index = (size_t)(order[i] & 0xFFFFFFFF);
+
+							initializers[i] = values[index];
+						}
+
+						module.PushMember(typeName, member.Name, initializers);
+
+						continue;
+					}
+
 					std::string defaultValue = member.DefaultValue;
 
 					if (member.DefaultValue.size())
@@ -421,9 +511,61 @@ namespace OutputSchema
 		}
 	}
 
+	struct OutputNamespace
+	{
+		std::unordered_map<std::string, const SchemaEnum*> Enums;
+		std::unordered_map<std::string, OutputNamespace> Namespaces;
+	};
+	
+	struct OutputFile
+	{
+		std::string Directory;
+		OutputNamespace Global;
+	};
+
+	std::unordered_map<std::string, OutputFile> outputFiles;
+
 	void generateEnum(const SchemaEnum& schemaEnum, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
 	{
 		fs::path outputDir = gameDataProjDir / "src/GameData" / schemaEnum.Directory;
+
+		if (schemaEnum.FileName.size())
+		{
+			fs::create_directories(outputDir);
+
+			std::string fileName = (outputDir / (schemaEnum.FileName + ".h")).string();
+
+			OutputFile& file = outputFiles[fileName];
+
+			file.Directory = schemaEnum.Directory;
+
+			OutputNamespace* current = &file.Global;
+
+			size_t start = 0;
+			size_t length = 0;
+
+			while (start < currentNamespace.size())
+			{
+				for (length; start + length < currentNamespace.size() && currentNamespace[start + length] != '.'; ++length);
+
+				if (length == 0)
+				{
+					break;
+				}
+
+				std::string_view name = { currentNamespace.data() + start, length };
+
+				start += length + 1;
+				length = 0;
+
+				current = &current->Namespaces[std::string(name)];
+			}
+
+			current->Enums[schemaEnum.Name] = &schemaEnum;
+
+			return;
+		}
+
 		fs::path outputHeader = outputDir / (schemaEnum.Name + ".h");
 
 		fs::create_directories(outputDir);
@@ -444,6 +586,47 @@ namespace OutputSchema
 			generateModuleNamespace(module, currentNamespace);
 
 			generateEnumDefinitions(schemaEnum, module, currentNamespace);
+		}
+	}
+
+	void generateEnums(ModuleWriter& module, const OutputNamespace& out, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
+	{
+		for (const auto& current : out.Enums)
+		{
+			generateEnumDefinitions(*current.second, module, currentNamespace);
+		}
+
+		for (const auto& current : out.Namespaces)
+		{
+			module.PushNamespace(current.first);
+
+			generateEnums(module, current.second, vcxprojRoot, filtersRoot, currentNamespace.size() ? currentNamespace + "." + current.first : current.first);
+
+			module.PopStack();
+		}
+	}
+
+	void generateEnums(tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot)
+	{
+		for (const auto& file : outputFiles)
+		{
+			std::string outputHeader = file.first;
+
+			addProjectNode(vcxprojRoot, "ClInclude", outputHeader, nullptr);
+
+			std::string filter = "Source Files\\" + file.second.Directory;
+
+			addProjectNode(filtersRoot, "ClInclude", outputHeader, filter.c_str());
+
+			{
+				std::ofstream outFile(outputHeader);
+
+				outFile << "#pragma once\n\n";
+
+				ModuleWriter module(outFile);
+
+				generateEnums(module, file.second.Global, vcxprojRoot, filtersRoot, "");
+			}
 		}
 	}
 
@@ -659,6 +842,8 @@ namespace OutputSchema
 
 			generateItemsInNamespace(schema.second.Global, vcxprojRoot, filtersRoot);
 		}
+
+		generateEnums(vcxprojRoot, filtersRoot);
 
 		vcxproj.SaveFile(vcxprojPath.string().c_str());
 		filters.SaveFile(filtersPath.string().c_str());

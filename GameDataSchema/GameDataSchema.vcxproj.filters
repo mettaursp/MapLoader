@@ -56,7 +56,7 @@
     <ClInclude Include="src\GameDataSchema\Schema\ModuleWriter.h">
       <Filter>Source Files\Schema</Filter>
     </ClInclude>
-    <ClInclude Include="src\GameDataSchema\Schema\PacketScheam.h">
+    <ClInclude Include="src\GameDataSchema\Schema\PacketSchema.h">
       <Filter>Source Files\Schema</Filter>
     </ClInclude>
   </ItemGroup>

@@ -187,7 +187,7 @@
     <ClInclude Include="src\GameDataSchema\Schema\GameSchema.h" />
     <ClInclude Include="src\GameDataSchema\Schema\ModuleWriter.h" />
     <ClInclude Include="src\GameDataSchema\Schema\OutputSchema.h" />
-    <ClInclude Include="src\GameDataSchema\Schema\PacketScheam.h" />
+    <ClInclude Include="src\GameDataSchema\Schema\PacketSchema.h" />
     <ClInclude Include="src\GameDataSchema\Schema\SchemaTypes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

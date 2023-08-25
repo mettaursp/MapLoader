@@ -31,6 +31,9 @@
         <Filter Include="Source Files\Packets\Client">
             <UniqueIdentifier>{ede7145e-0f6a-4688-bc2a-24f17620cc03}</UniqueIdentifier>
         </Filter>
+        <Filter Include="Source Files\Data\Meta">
+            <UniqueIdentifier>{1feb876f-6b8c-4692-843b-7fc52951a49e}</UniqueIdentifier>
+        </Filter>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\HitType.h">
@@ -69,6 +72,11 @@
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\NpcId.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapId.h">
             <Filter>Source Files\Enums</Filter>
         </ClInclude>
     </ItemGroup>
@@ -126,6 +134,66 @@
         <ClInclude Include="./../GameData\src/GameData\Enums\SkillAttackId.h">
             <Filter>Source Files\Enums</Filter>
         </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\NpcType.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeBasic.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\Stat.h">
+            <Filter>Source Files\Data</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\Stat.cpp">
+            <Filter>Source Files\Data</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\StatLong.h">
+            <Filter>Source Files\Data</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\StatLong.cpp">
+            <Filter>Source Files\Data</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\Reconnect7Packet.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\Reconnect7Packet.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatPacket.h">
@@ -204,6 +272,26 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\BuffPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpc.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddNpc.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpc.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpc.cpp">
             <Filter>Source Files\Packets\Server</Filter>
         </ClCompile>
     </ItemGroup>

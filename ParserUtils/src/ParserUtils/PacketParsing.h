@@ -18,9 +18,11 @@ namespace ParserUtils
 		const bool PrintErrors = true;
 		const bool PrintUnknownValues = true;
 
-		template <typename T>
-		void Read(const char* name, DataStream& stream, T& value, const char* tabs, const std::source_location location = std::source_location::current())
+		template <typename T, typename HandlerType>
+		void Read(const char* name, HandlerType& handler, T& value, const char* tabs, const std::source_location location = std::source_location::current())
 		{
+			DataStream& stream = handler.PacketStream;
+
 			if (stream.HasRecentlyFailed)
 			{
 				return;
@@ -45,7 +47,7 @@ namespace ParserUtils
 			{
 				if (!(!PrintOutput && stream.SuppressErrors))
 				{
-					std::ostream& out = PrintOutput ? std::cout : stream.FoundValues;
+					std::ostream& out = PrintOutput ? std::cout : handler.FoundValues;
 
 					out << tabs << name << ": ";
 

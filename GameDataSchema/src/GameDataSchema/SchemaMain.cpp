@@ -5,11 +5,12 @@
 #include "Schema/SchemaTypes.h"
 #include "Schema/OutputSchema.h"
 #include "Schema/ModuleWriter.h"
-#include "Schema/PacketScheam.h"
+#include "Schema/PacketSchema.h"
 
 #include <PacketProcessing/PacketParser.h>
 #include <ParserUtils/DataStream.h>
 #include <ParserUtils/PacketParsing.h>
+#include <PacketProcessing/Handlers/SniffHandler/SniffHandler.h>
 
 namespace fs = std::filesystem;
 
@@ -28,6 +29,9 @@ const std::unordered_set<unsigned short> ignoreClientPacketUnknownValues = {
 const std::unordered_set<unsigned short> ignoreServerPacketUnknownValues = {
 	
 };
+
+Networking::Packets::Metadata gms2Data;
+Networking::Packets::Metadata kms2Data;
 
 namespace ParserUtils
 {
@@ -65,6 +69,10 @@ namespace ParserUtils
 
 		unsigned short parseMsb(const fs::path& path)
 		{
+			Networking::Packets::SniffHandler handler;
+
+			size_t readPackets = 0;
+
 			std::ifstream file(path, std::ios::binary);
 
 			unsigned short version = 0;
@@ -120,6 +128,8 @@ namespace ParserUtils
 				}
 			}
 
+			handler.Data = build == 12 ? &gms2Data : &kms2Data;
+
 			while (!file.eof())
 			{
 				long long timeStamp;
@@ -164,7 +174,10 @@ namespace ParserUtils
 					read(file, val);
 				}
 
-				ParserUtils::DataStream stream{ { reinterpret_cast<char*>(buffer.data()), buffer.size() } };
+				handler.PacketStream =  ParserUtils::DataStream { { reinterpret_cast<char*>(buffer.data()), buffer.size() } };
+				handler.FoundValues = {};
+
+				ParserUtils::DataStream& stream = handler.PacketStream;
 
 				std::cout << std::dec;
 
@@ -173,7 +186,9 @@ namespace ParserUtils
 				stream.IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
 				stream.SuppressErrors = printedPacketAlready.contains(opcodeVersion);
 
-				Networking::Packets::ParsePacket(stream, build, !outbound, opcode);
+				Networking::Packets::ParsePacket(handler, build, !outbound, opcode);
+
+				++readPackets;
 
 				if (stream.Index == 0 || (!ParserUtils::Packets::PrintErrors && !ParserUtils::Packets::PrintUnknownValues) || stream.SuppressErrors || printedAlready.contains(build))
 				{
@@ -233,7 +248,7 @@ namespace ParserUtils
 						}
 					}
 
-					std::string values = stream.FoundValues.str();
+					std::string values = handler.FoundValues.str();
 
 					if (values.size())
 					{
@@ -246,11 +261,13 @@ namespace ParserUtils
 					{
 						//printedAlready.insert(build);
 						printedPacketAlready.insert(opcodeVersion);
-						ParserUtils::DataStream stream{ { reinterpret_cast<char*>(buffer.data()), buffer.size() } };
 
-						stream.IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
+						handler.PacketStream = ParserUtils::DataStream{ { reinterpret_cast<char*>(buffer.data()), buffer.size() } };
+						handler.FoundValues = {};
 
-						Networking::Packets::ParsePacket(stream, build, !outbound, opcode);
+						handler.PacketStream.IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
+
+						Networking::Packets::ParsePacket(handler, build, !outbound, opcode);
 					}
 				}
 			}
@@ -368,6 +385,262 @@ int main(int argc, char** argv)
 	gms2Reader.Load(ms2Root / "Data", false);
 	kms2Reader.Load(kms2Root / "Data", false);
 
+	std::string output;
+
+	const auto visit1 = [&output](const Archive::ArchivePath& path)
+	{
+		unsigned int id = atoi(path.GetPath().filename().stem().string().c_str());
+
+		Networking::Packets::NpcData& npc = gms2Data.Npcs[id];
+
+		output.clear();
+
+		path.Read(output);
+
+		if (output.size() == 0)
+		{
+			std::cout << "failed to read " << path.GetPath() << std::endl;
+
+			return false;
+		}
+
+		tinyxml2::XMLDocument document;
+
+		document.Parse(output.data(), output.size());
+
+		tinyxml2::XMLElement* rootElement = document.RootElement();
+
+		if (!rootElement) return false;
+
+		tinyxml2::XMLElement* environmentElement = rootElement->FirstChildElement("environment");
+
+		if (!environmentElement) return false;
+
+		tinyxml2::XMLElement* basicElement = environmentElement->FirstChildElement("basic");
+
+		if (!basicElement) return false;
+
+		const tinyxml2::XMLAttribute* classAttribute = basicElement->FindAttribute("class");
+		const tinyxml2::XMLAttribute* friendlyAttribute = basicElement->FindAttribute("friendly");
+
+		if (classAttribute)
+		{
+			npc.Class = atoi(classAttribute->Value());
+		}
+
+		if (friendlyAttribute)
+		{
+			npc.NpcType = atoi(friendlyAttribute->Value());
+		}
+
+		tinyxml2::XMLElement* statElement = environmentElement->FirstChildElement("stat");
+
+		if (!statElement) return false;
+
+		npc.HasHiddenHp |= statElement->FindAttribute("hiddenhpadd") != nullptr;
+		//npc.HasHiddenHp |= statElement->FindAttribute("hiddenhpadd01") != nullptr;
+		//npc.HasHiddenHp |= statElement->FindAttribute("hiddenhpadd02") != nullptr;
+		//npc.HasHiddenHp |= statElement->FindAttribute("hiddenhpadd03") != nullptr;
+		//npc.HasHiddenHp |= statElement->FindAttribute("hiddenhpadd04") != nullptr;
+
+		return false;
+	};
+
+	const auto visit2 = [&output](const Archive::ArchivePath& path)
+	{
+		output.clear();
+
+		path.Read(output);
+
+		if (output.size() == 0)
+		{
+			std::cout << "failed to read " << path.GetPath() << std::endl;
+
+			return false;
+		}
+
+		tinyxml2::XMLDocument document;
+
+		document.Parse(output.data(), output.size());
+
+		tinyxml2::XMLElement* rootElement = document.RootElement();
+
+		if (!rootElement) return false;
+
+		for (tinyxml2::XMLElement* npcElement = rootElement->FirstChildElement(); npcElement; npcElement = npcElement->NextSiblingElement())
+		{
+			const tinyxml2::XMLAttribute* idAttribute = npcElement->FindAttribute("id");
+
+			if (!idAttribute) continue;
+
+			unsigned int id = atoi(idAttribute->Value());
+
+			Networking::Packets::NpcData& npc = kms2Data.Npcs[id];
+
+			tinyxml2::XMLElement* environmentElement = npcElement->FirstChildElement("environment");
+
+			if (!environmentElement) continue;
+
+			const tinyxml2::XMLAttribute* classAttribute = environmentElement->FindAttribute("class");
+			const tinyxml2::XMLAttribute* friendlyAttribute = environmentElement->FindAttribute("friendly");
+
+			if (classAttribute)
+			{
+				npc.Class = atoi(classAttribute->Value());
+			}
+
+			if (friendlyAttribute)
+			{
+				npc.NpcType = atoi(friendlyAttribute->Value());
+			}
+
+			tinyxml2::XMLElement* statElement = environmentElement->FirstChildElement("stat");
+
+			if (!statElement) continue;
+
+			npc.HasHiddenHp |= statElement->FindAttribute("hiddenhpadd") != nullptr;
+		}
+
+		return false;
+	};
+
+	bool regenerate = !true;
+
+	if (!regenerate)
+	{
+		Archive::ForEachFile(gms2Reader.GetPath("Xml/npc", true), true, visit1);
+		Archive::ForEachFile(kms2Reader.GetPath("Xml/npcdata", true), true, visit2);
+
+		{
+			Archive::ArchivePath path = gms2Reader.GetPath("Xml/string/en/npcname.xml", true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+
+				if (!idAttribute || !nameAttribute) continue;
+
+				unsigned int id = atoi(idAttribute->Value());
+				
+				gms2Data.Npcs[id].Name = nameAttribute->Value();
+			}
+		}
+		{
+			Archive::ArchivePath path = kms2Reader.GetPath("Xml/string/en/npcname.xml", true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+
+				if (!idAttribute || !nameAttribute) continue;
+
+				unsigned int id = atoi(idAttribute->Value());
+
+				kms2Data.Npcs[id].Name = nameAttribute->Value();
+			}
+		}
+		{
+			Archive::ArchivePath path = gms2Reader.GetPath("Xml/string/en/mapname.xml", true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+
+				if (!idAttribute || !nameAttribute) continue;
+
+				unsigned int id = atoi(idAttribute->Value());
+
+				gms2Data.Maps[id].Name = nameAttribute->Value();
+			}
+		}
+		{
+			Archive::ArchivePath path = kms2Reader.GetPath("Xml/string/en/mapname.xml", true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+
+				if (!idAttribute || !nameAttribute) continue;
+
+				unsigned int id = atoi(idAttribute->Value());
+
+				kms2Data.Maps[id].Name = nameAttribute->Value();
+			}
+		}
+	}
+
 	GameSchema::readSchemas(schemaDir / "gms2", true);
 	GameSchema::readSchemas(schemaDir / "kms2", false);
 	//GameSchema::validateSchemas(gms2Reader, true, validateGms2Dirs);
@@ -377,11 +650,11 @@ int main(int argc, char** argv)
 	OutputSchema::readSchemas(packetSchemaDir / "output");
 	PacketSchema::readSchemas(packetSchemaDir / "versions");
 
-	bool regenerate = !true;
 
 	if (regenerate)
 	{
 		PacketSchema::generateParsers();
+		PacketSchema::generateHandlers("SniffHandler");
 		OutputSchema::generateGameData();
 	}
 	else

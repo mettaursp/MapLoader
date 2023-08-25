@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct NpcTalkCinematicPacket
 			{
-				Enum::ActorId ObjectId;
+				Enum::ActorId ActorId;
 				int Index = 0;
 			};
 		}

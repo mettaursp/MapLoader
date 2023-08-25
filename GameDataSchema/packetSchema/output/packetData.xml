@@ -8,64 +8,101 @@
 			<value name="Unknown4" value="4" />
 			<value name="Unknown8" value="8" />
 		</enum>
-		<enum name="SkillId" parent="unsigned int" directory="Enums">
+		<enum name="SkillId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="SkillLevel" parent="unsigned short" directory="Enums">
+		<enum name="SkillLevel" parent="unsigned short" directory="Enums" file="Handles">
 			<value name="Zero" value="0" />
 		</enum>
-		<enum name="EffectId" parent="unsigned int" directory="Enums">
+		<enum name="EffectId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="EffectLevel" parent="unsigned short" directory="Enums">
+		<enum name="EffectLevel" parent="unsigned short" directory="Enums" file="Handles">
 			<value name="Zero" value="0" />
 		</enum>
-		<enum name="SkillSn" parent="unsigned long long" directory="Enums">
+		<enum name="SkillSn" parent="unsigned long long" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ActorId" parent="unsigned int" directory="Enums">
+		<enum name="ActorId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="NpcId" parent="unsigned int" directory="Enums">
+		<enum name="NpcId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="QuestId" parent="unsigned int" directory="Enums">
+		<enum name="MapId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="TrophyId" parent="unsigned int" directory="Enums">
+		<enum name="QuestId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ScriptId" parent="unsigned int" directory="Enums">
+		<enum name="TrophyId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ChannelId" parent="unsigned int" directory="Enums">
+		<enum name="ScriptId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="SuperChatId" parent="unsigned int" directory="Enums">
+		<enum name="ChannelId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="EffectInstanceId" parent="unsigned int" directory="Enums">
+		<enum name="SuperChatId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="CharacterId" parent="unsigned long long" directory="Enums">
+		<enum name="EffectInstanceId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="AccountId" parent="unsigned long long" directory="Enums">
+		<enum name="CharacterId" parent="unsigned long long" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums">
+		<enum name="AccountId" parent="unsigned long long" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ClubId" parent="unsigned long long" directory="Enums">
+		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="SkillAttackId" parent="unsigned long long" directory="Enums">
+		<enum name="ClubId" parent="unsigned long long" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
+		<enum name="SkillAttackId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="NpcType" parent="unsigned long long" directory="Enums">
+			<value name="Enemy" value="0" />
+			<value name="Ally" value="1" />
+			<value name="Friendly" value="2" />
+		</enum>
+		<enum name="StatAttributeBasic" parent="unsigned char" directory="Enums">
+			<value name="Hp" value="4" />
+			<value name="MoveSpeed" value="14" />
+		</enum>
+	</namespace>
+	<namespace name="Maple">
+		<namespace name="Game">
+			<class name="Stat" directory="Data">
+				<member name="Type" type="Enum.StatAttributeBasic" default="Enum.StatAttributeBasic.Hp" />
+				<member name="Max" type="unsigned int" />
+				<member name="Base" type="unsigned int" />
+				<member name="Current" type="unsigned int" />
+			</class>
+			<class name="StatLong" directory="Data">
+				<member name="Type" type="Enum.StatAttributeBasic" />
+				<member name="Max" type="unsigned long long" />
+				<member name="Base" type="unsigned long long" />
+				<member name="Current" type="unsigned long long" />
+			</class>
+		</namespace>
 	</namespace>
 	<namespace name="Networking">
 		<namespace name="Packets">
 			<namespace name="Server">
+				<class name="ReconnectPacket" directory="Packets\Server">
+				</class>
+				<class name="Reconnect7Packet" directory="Packets\Server">
+				</class>
+				<class name="RequestFieldEnterPacket" directory="Packets\Server">
+					<member name="MapId" type="Enum.MapId" />
+					<member name="Position" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+				</class>
 				<class name="UserChatPacket" directory="Packets\Server">
 					<enum name="TypeEnum">
 						<value name="All" value="0" />
@@ -202,6 +239,45 @@
 					<member name="Enabled" type="bool" />
 					<member name="UpdateShield" type="bool" />
 					<member name="ShieldHealth" type="long long" />
+				</class>
+				<class name="FieldAddNpc" directory="Packets\Server">
+					<class name="Effect" isMember="false">
+						<member name="OwnerId" type="Enum.ActorId" />
+						<member name="InstanceId" type="Enum.EffectInstanceId" />
+						<member name="CasterId" type="Enum.ActorId" />
+						<member name="StartTick" type="int" />
+						<member name="EndTick" type="int" />
+						<member name="EffectId" type="Enum.EffectId" />
+						<member name="EffectLevel" type="Enum.EffectLevel" />
+						<member name="Stacks" type="int" />
+						<member name="Enabled" type="bool" />
+						<member name="ShieldHealth" type="long long" />
+					</class>
+					<class name="Skill" isMember="false">
+						<member name="SkillId" type="Enum.SkillId" />
+						<member name="SkillLevel" type="Enum.SkillLevel" />
+					</class>
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="NpcId" type="Enum.NpcId" />
+					<member name="Position" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+					<member name="KfmName" type="std::string" />
+					<member name="Hp" type="Maple.Game.StatLong">
+						<default name="Type" value="Enum.StatAttributeBasic.Hp" />
+					</member>
+					<member name="MoveSpeed" type="Maple.Game.Stat">
+						<default name="Type" value="Enum.StatAttributeBasic.MoveSpeed" />
+					</member>
+					<member name="IsDead" type="bool" />
+					<member name="AdditionalEffects" type="std::vector" contains="Effect" />
+					<member name="PetItemIstanceId" type="Enum.ItemInstanceId" />
+					<member name="Level" type="unsigned short" />
+					<member name="SpawnEffect" type="std::wstring" />
+					<member name="Skills" type="std::vector" contains="Skill" />
+					<member name="HiddenHpAdd" type="long long" />
+				</class>
+				<class name="FieldRemoveNpc" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
 				</class>
 				<class name="TrophyStartPacket" directory="Packets\Server">
 				</class>
@@ -376,7 +452,7 @@
 				<class name="NpcTalkClosePacket" directory="Packets\Client">
 				</class>
 				<class name="NpcTalkBeginPacket" directory="Packets\Client">
-					<member name="ObjectId" type="Enum.ActorId" />
+					<member name="ActorId" type="Enum.ActorId" />
 				</class>
 				<class name="NpcTalkContinuePacket" directory="Packets\Client">
 					<member name="Index" type="int" />
@@ -413,7 +489,7 @@
 				<class name="NpcTalkAllianceQuestTalkPacket" directory="Packets\Client">
 				</class>
 				<class name="NpcTalkCinematicPacket" directory="Packets\Client">
-					<member name="ObjectId" type="Enum.ActorId" />
+					<member name="ActorId" type="Enum.ActorId" />
 					<member name="Index" type="int" />
 				</class>
 				<class name="SystemInfoPacket" directory="Packets\Client">

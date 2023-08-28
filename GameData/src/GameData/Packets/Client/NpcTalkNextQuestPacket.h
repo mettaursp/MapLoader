@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameData/Enums/QuestId.h>
+#include <GameData/Enums/Handles.h>
 #include <GameData/Packets\Client/NpcTalkNextQuestPacket.h>
 
 namespace Networking

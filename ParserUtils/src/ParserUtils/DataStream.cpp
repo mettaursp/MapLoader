@@ -145,9 +145,37 @@ namespace ParserUtils
 
 		return true;
 	}
+
+	template <>
+	bool DataStream::Read<Color4I_BGRA>(Color4I_BGRA& value)
+	{
+		if (HasRecentlyFailed)
+		{
+			return false;
+		}
+
+		if (Index + sizeof(Vector3Short) > Data.size())
+		{
+			HasRecentlyFailed = true;
+
+			return false;
+		}
+
+		Read<unsigned char>(value.B);
+		Read<unsigned char>(value.G);
+		Read<unsigned char>(value.R);
+		Read<unsigned char>(value.A);
+
+		return true;
+	}
 }
 
 std::ostream& operator<<(std::ostream& out, const Vector3Short& vector)
 {
 	return out << "< " << vector.X << ", " << vector.Y << ", " << vector.Z << " >";
+}
+
+std::ostream& operator<<(std::ostream& out, const Color4I_BGRA& vector)
+{
+	return out << "{ R: " << (int)vector.R << "; G: " << (int)vector.G << "; B: " << (int)vector.B << "; A: " << (int)vector.A << " }";
 }

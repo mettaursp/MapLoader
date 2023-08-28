@@ -1,4 +1,294 @@
 <packetSchema version="12">
+	<blocks>
+		<block name="BasicStat">
+			<data type="short" name="type" output="Type" />
+			<data type="int" name="value" output="Value" />
+			<data type="float" name="rate" output="Rate" />
+		</block>
+		<block name="SpecialStat">
+			<data type="short" name="type" output="Type" />
+			<data type="float" name="value" output="Value" />
+			<data type="float" name="rate" output="Rate" />
+		</block>
+		<block name="BasicAndSpecialStats">
+			<data type="short" name="statCount" />
+			<array data="statCount" output="Basic">
+				<useBlock name="BasicStat" version="12" />
+			</array>
+			<read name="statCount" />
+			<array data="statCount" output="Special">
+				<useBlock name="SpecialStat" version="12" />
+			</array>
+		</block>
+		<block name="ItemBinding">
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="wstring" name="name" output="Name" />
+		</block>
+		<block name="ItemCustomization" params="itemId">
+			<outputMember output="DyeColor">
+				<data type="Color4I" name="dyeColorPrimary" output="Primary" />
+				<data type="Color4I" name="dyeColorSecondary" output="Secondary" />
+				<data type="Color4I" name="dyeColorTertiary" output="Tertiary" />
+				<data type="int" name="dyeColorIndex" output="Index" />
+				<data type="int" name="unknown" />
+			</outputMember>
+			<data type="short" name="itemCategory" doRead="false">
+				<!--
+				<enum name="Cap" value="113" />
+				<enum name="Hair" value="102" />
+				<enum name="Decal" value="104" />
+				-->
+			</data>
+			<function data="itemCategory" name="GetItemCategory" params="itemId" />
+			<condition data="itemCategory" value="113" comparison="equal">
+				<outputMember output="Cap">
+					<data type="Vector3S" name="position1" output="Position1" />
+					<data type="Vector3S" name="position2" output="Position2" />
+					<data type="Vector3S" name="position3" output="Position3" />
+					<data type="Vector3S" name="position4" output="Position4" />
+					<data type="float" name="unknown" />
+				</outputMember>
+			</condition>
+			<condition data="itemCategory" value="102" comparison="equal">
+				<outputMember output="Hair">
+					<data type="float" name="backLength" output="BackLength" />
+					<data type="Vector3S" name="backPosition1" output="BackPosition1" />
+					<data type="Vector3S" name="backPosition2" output="BackPosition2" />
+					<data type="float" name="frontLength" output="FrontLength" />
+					<data type="Vector3S" name="frontPosition1" output="FrontPosition1" />
+					<data type="Vector3S" name="frontPosition2" output="FrontPosition2" />
+				</outputMember>
+			</condition>
+			<condition data="itemCategory" value="104" comparison="equal">
+				<outputMember output="Decal">
+					<data type="Vector3S" name="position1" output="Position1" />
+					<data type="Vector3S" name="position2" output="Position2" />
+					<data type="Vector3S" name="position3" output="Position3" />
+					<data type="Vector3S" name="position4" output="Position4" />
+				</outputMember>
+			</condition>
+		</block>
+		<block name="ItemData" params="itemId">
+			<data type="int" name="amount" output="Amount" />
+			<data type="int" name="unknown" />
+			<data type="int" name="unknown">
+				<enum name="Unknown" value="-1" />
+			</data>
+			<data type="long" name="creationTime" output="CreationTime" />
+			<data type="long" name="expirationTime" output="ExpirationTime" />
+			<data type="long" name="unknown" />
+			<data type="int" name="timesChanged" output="TimesChanged" />
+			<data type="int" name="remainingUses" output="RemainingUses" />
+			<data type="bool" name="isLocked" output="IsLocked" />
+			<data type="long" name="unlockTime" output="UnlockTime" />
+			<data type="short" name="glamorForges" output="GlamorForges" />
+			<data type="byte" name="unknownBool">
+				<enum name="Unknown" value="0" />
+			</data>
+			<data type="int" name="unknown" />
+			<useBlock name="ItemCustomization" version="12" output="Customization" />
+			<outputMember output="Stats">
+				<data type="byte" name="unknown" />
+				<useBlock name="BasicAndSpecialStats" version="12" output="Constant" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<useBlock name="BasicAndSpecialStats" version="12" output="Static" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<useBlock name="BasicAndSpecialStats" version="12" output="Random" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<useBlock name="BasicAndSpecialStats" version="12" output="Title" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment1" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment2" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment3" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment4" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment5" />
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+			</outputMember>
+			<outputMember output="Enchantment">
+				<data type="int" name="enchantLevel" output="Level" />
+				<data type="int" name="enchantExp" output="EnchantExp" />
+				<data type="byte" name="enchantCharges" output="EnchantCharges" />
+				<data type="long" name="unknown" />
+				<data type="int" name="unknown" />
+				<data type="int" name="unknown" />
+				<data type="bool" name="canRepackage" output="CanRepackage" />
+				<data type="int" name="charges" output="Charges" />
+				<data type="byte" name="basicStatCount" />
+				<array data="basicStatCount" output="Basic">
+					<data type="int" name="type" output="Type" />
+					<data type="int" name="value" output="Value" />
+					<data type="float" name="rate" output="Rate" />
+				</array>
+			</outputMember>
+			<outputMember output="LimitBreak">
+				<data type="int" name="limitBreakLevel" output="Level" />
+				<outputMember output="Stats">
+					<data type="int" name="statCount" />
+					<array data="statCount" output="Basic">
+						<useBlock name="BasicStat" version="12" />
+					</array>
+					<read name="statCount" />
+					<array data="statCount" output="Special">
+						<useBlock name="SpecialStat" version="12" />
+					</array>
+				</outputMember>
+			</outputMember>
+			<data type="byte" name="extraDataType" doRead="false">
+				<enum name="None" value="0" />
+				<enum name="TemplateBlueprint" value="1" />
+				<enum name="Pet" value="2" />
+				<enum name="Music" value="3" />
+				<enum name="Badge" value="4" />
+			</data>
+			<function data="extraDataType" name="GetItemExtraDataType" params="itemId" />
+			<condition data="extraDataType" value="1" comparison="equal">
+				<outputMember output="Template">
+					<data type="long" name="unknown" />
+					<data type="wstring" name="fileName" output="FileName" />
+					<data type="wstring" name="name" output="Name" />
+					<data type="byte" name="unknown" />
+					<data type="int" name="unknown" />
+					<data type="long" name="accountId" output="AccountId" />
+					<data type="long" name="characterId" output="CharacterId" />
+					<data type="wstring" name="author" output="Author" />
+					<data type="long" name="creationTime" output="CreationTime" />
+					<data type="wstring" name="url" output="Url" />
+					<data type="byte" name="unknown" />
+				</outputMember>
+				<outputMember output="Blueprint">
+					<data type="long" name="unknown" />
+					<data type="int" name="unknown" />
+					<data type="int" name="unknown" />
+					<data type="int" name="unknown" />
+					<data type="long" name="unknown" />
+					<data type="int" name="unknown" />
+					<data type="long" name="unknown" />
+					<data type="long" name="unknown" />
+					<data type="wstring" name="unknown" />
+				</outputMember>
+			</condition>
+			<condition data="extraDataType" value="2" comparison="equal">
+				<outputMember output="Pet">
+					<data type="wstring" name="name" output="Name" />
+					<data type="long" name="exp" output="Exp" />
+					<data type="int" name="evolvePoints" output="EvolvePoints" />
+					<data type="int" name="level" output="Level" />
+					<data type="bool" name="hasItems" output="HasItems">
+						<enum name="No" value="0" />
+					</data>
+				</outputMember>
+			</condition>
+			<condition data="extraDataType" value="3" comparison="equal">
+				<outputMember output="Music">
+					<data type="int" name="length" output="Length" />
+					<data type="int" name="instrument" output="Instrument" />
+					<data type="wstring" name="title" output="Title" />
+					<data type="wstring" name="author" output="Author" />
+					<data type="int" name="unknown">
+						<enum name="Unknown" value="1" />
+					</data>
+					<data type="long" name="authorId" output="AuthorId" />
+					<data type="bool" name="isLocked" output="IsLocked" />
+					<data type="long" name="unknown" />
+					<data type="long" name="unknown" />
+				</outputMember>
+			</condition>
+			<condition data="extraDataType" value="4" comparison="equal">
+				<outputMember output="Badge">
+					<data type="byte" name="unknown">
+						<enum name="Unknown" value="1" />
+					</data>
+					<data type="byte" name="type" output="Type">
+						<enum name="Transparency" value="1" />
+						<enum name="Pet" value="11" />
+					</data>
+					<data type="wstring" name="id" output="Id" />
+					<condition data="type" value="1" comparison="equal">
+						<data type="bool" name="transparency" output="Transparency[0]" /> <!--Headgear-->
+						<data type="bool" name="transparency" output="Transparency[1]" /> <!--Eyewear-->
+						<data type="bool" name="transparency" output="Transparency[2]" /> <!--Top-->
+						<data type="bool" name="transparency" output="Transparency[3]" /> <!--Bottom-->
+						<data type="bool" name="transparency" output="Transparency[4]" /> <!--Cape-->
+						<data type="bool" name="transparency" output="Transparency[5]" /> <!--Earrings-->
+						<data type="bool" name="transparency" output="Transparency[6]" /> <!--Face-->
+						<data type="bool" name="transparency" output="Transparency[7]" /> <!--Gloves-->
+						<data type="bool" name="transparency" output="Transparency[8]" /> <!--Unknown-->
+						<data type="bool" name="transparency" output="Transparency[9]" /> <!--Shoes-->
+					</condition>
+					<condition data="type" value="11" comparison="equal">
+						<data type="int" name="petSkinId" output="PetSkinId" />
+					</condition>
+				</outputMember>
+			</condition>
+			<outputMember output="ItemTransfer">
+				<data type="int" name="transferFlags" output="TransferFlags" />
+				<data type="bool" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+				<data type="int" name="remainingTrades" output="RemainingTrades" />
+				<data type="int" name="remainingPackages" output="RemainingPackages" />
+				<data type="byte" name="unknown" />
+				<data type="bool" name="unknown">
+					<enum name="Unknown" value="1" />
+				</data>
+				<data type="bool" name="isBound" output="IsBound" />
+				<condition data="isBound" value="1" comparison="equal">
+					<useBlock name="ItemBinding" version="12" output="Binding" />
+				</condition>
+			</outputMember>
+			<outputMember output="ItemSocket">
+				<data type="byte" name="maxSlots" output="MaxSlots" />
+				<data type="byte" name="unlockedSlots" output="UnlockedSlots" />
+				<array data="unlockedSlots" output="Sockets">
+					<data type="bool" name="hasGem" output="HasGem" />
+					<condition data="hasGem" value="1" comparison="equal">
+						<outputMember output="Gem">
+							<data type="int" name="itemId" output="ItemId" />
+							<data type="bool" name="isBound" output="IsBound" />
+							<condition data="isBound" value="1" comparison="equal">
+								<useBlock name="ItemBinding" version="12" output="Binding" />
+							</condition>
+							<data type="bool" name="isLocked" output="IsLocked" />
+							<condition data="isLocked" value="1" comparison="equal">
+								<data type="byte" name="unknown" />
+								<data type="long" name="unlockTime" output="UnlockTime" />
+							</condition>
+						</outputMember>
+					</condition>
+				</array>
+			</outputMember>
+			<outputMember output="ItemCouple">
+				<data type="long" name="characterId" output="CharacterId" />
+				<condition data="characterId" value="0" comparison="notEqual">
+					<data type="wstring" name="name" output="Name" />
+					<data type="bool" name="isCreator" output="IsCreator" />
+				</condition>
+			</outputMember>
+			<useBlock name="ItemBinding" version="12" output="Binding" />
+		</block>
+	</blocks>
 	<source name="server">
 		<opcode name="Reconnect7" value="0x7">
 			<output type="Networking.Packets.Server.Reconnect7Packet" schemaName="packetData" />
@@ -20,6 +310,7 @@
 				<data type="int" name="unknown" />
 			</condition>
 		</opcode>
+		<!--
 		<opcode name="FieldAddPlayer" value="0x17">
 			<output type="Networking.Packets.Server.FieldAddPlayerPacket" schemaName="packetData" />
 			<outputMember output="Player">
@@ -50,8 +341,8 @@
 				<data type="int" name="returnMapId" output="ReturnMapId" />
 				<data type="Vector3S" name="returnPosition" output="ReturnPosition" />
 				<data type="int" name="gearScore" output="GearScore" />
-				<data type="int" name="skinColorPrimary" output="SkinColor.Primary" />
-				<data type="int" name="skinColorSecondary" output="SkinColor.Secondary" />
+				<data type="Color4I" name="skinColorPrimary" output="SkinColor.Primary" />
+				<data type="Color4I" name="skinColorSecondary" output="SkinColor.Secondary" />
 				<data type="long" name="creationTime" output="CreationTime" />
 				<data type="int" name="combatTrophyCount" output="CombatTrophyCount" />
 				<data type="int" name="adventureTrophyCount" output="AdventureTrophyCount" />
@@ -173,33 +464,132 @@
 			<outputMember output="Stats">
 				<data type="byte" name="statCount" />
 				<condition data="statCount" value="35" comparison="equal">
-					<data type="long" name="health" output="Basic[4].Max" />
-					<data type="int" name="attackSpeed" output="Basic[13].Max" />
-					<data type="int" name="moveSpeed" output="Basic[14].Max" />
-					<data type="int" name="mountMoveSpeed" output="Basic[22].Max" />
-					<data type="int" name="jumpHeight" output="Basic[32].Max" />
-					<data type="long" name="health" output="Basic[4].Base" />
-					<data type="int" name="attackSpeed" output="Basic[13].Base" />
-					<data type="int" name="moveSpeed" output="Basic[14].Base" />
-					<data type="int" name="mountMoveSpeed" output="Basic[22].Base" />
-					<data type="int" name="jumpHeight" output="Basic[32].Base" />
-					<data type="long" name="health" output="Basic[4].Current" />
-					<data type="int" name="attackSpeed" output="Basic[13].Current" />
-					<data type="int" name="moveSpeed" output="Basic[14].Current" />
-					<data type="int" name="mountMoveSpeed" output="Basic[22].Current" />
-					<data type="int" name="jumpHeight" output="Basic[32].Current" />
+					<data type="ulong" name="health" output="Basic[4].Max" />
+					<data type="uint" name="attackSpeed" output="Basic[13].Max" />
+					<data type="uint" name="moveSpeed" output="Basic[14].Max" />
+					<data type="uint" name="mountMoveSpeed" output="Basic[22].Max" />
+					<data type="uint" name="jumpHeight" output="Basic[32].Max" />
+					<data type="ulong" name="health" output="Basic[4].Base" />
+					<data type="uint" name="attackSpeed" output="Basic[13].Base" />
+					<data type="uint" name="moveSpeed" output="Basic[14].Base" />
+					<data type="uint" name="mountMoveSpeed" output="Basic[22].Base" />
+					<data type="uint" name="jumpHeight" output="Basic[32].Base" />
+					<data type="ulong" name="health" output="Basic[4].Current" />
+					<data type="uint" name="attackSpeed" output="Basic[13].Current" />
+					<data type="uint" name="moveSpeed" output="Basic[14].Current" />
+					<data type="uint" name="mountMoveSpeed" output="Basic[22].Current" />
+					<data type="uint" name="jumpHeight" output="Basic[32].Current" />
 				</condition>
 				<condition data="statCount" value="35" comparison="notEqual">
-					<array data="skillCount" output="Skills">
+					<array data="statCount" output="Basic">
+						<data type="byte" name="statType" />
+						<condition data="statType" value="4" comparison="equal">
+							<data type="ulong" name="health" output="Basic[statType].Max" />
+							<data type="ulong" name="health" output="Basic[statType].Base" />
+							<data type="ulong" name="health" output="Basic[statType].Current" />
+						</condition>
+						<condition data="statType" value="4" comparison="notEqual">
+							<data type="uint" name="health" output="Basic[statType].Max" />
+							<data type="uint" name="health" output="Basic[statType].Base" />
+							<data type="uint" name="health" output="Basic[statType].Current" />
+						</condition>
 					</array>
-					<data type="long" name="clubId" output="ClubId" />
 				</condition>
 			</outputMember>
 			<data type="bool" name="inBattle" output="InBattle" />
+			<outputMember output="CubeItem">
+				<data type="byte" name="unknown" />
+				<data type="int" name="itemId" output="ItemId" />
+				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+				<data type="long" name="unknown" />
+				<data type="bool" name="isUgc" />
+				<condition data="isUgc" value="1" comparison="equal">
+					<outputMember output="UgcItem">
+						<data type="long" name="ugcId" output="UgcId" />
+						<data type="wstring" name="uuid" output="UUID" />
+						<data type="wstring" name="name" output="Name" />
+						<data type="byte" name="unknown" />
+						<data type="int" name="unknown" />
+						<data type="long" name="accountId" output="AccountId" />
+						<data type="long" name="characterId" output="CharacterId" />
+						<data type="wstring" name="characterName" output="CharacterName" />
+						<data type="long" name="creationTime" output="CreationTime" />
+						<data type="wstring" name="ugcUrl" output="UgcUrl" />
+						<data type="byte" name="unknown" />
+					</outputMember>
+				</condition>
+				<data type="int" name="unknown" />
+			</outputMember>
+			<data type="Color4I" name="skinColorPrimary" output="SkinColor.Primary" />
+			<data type="Color4I" name="skinColorSecondary" output="SkinColor.Secondary" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="bool" name="onMount" output="OnMount" />
+			<condition data="isUgc" value="1" comparison="equal">
+				<outputMember output="Mount">
+					<data type="byte" name="rideMode" output="RideMode">
+						<enum name="RideOnAction" value="0" />
+						<enum name="RideOnActionUseItem" value="1" />
+						<enum name="RideOnActionAdditionalEffect" value="2" />
+						<enum name="RideOnActionHideAndSeek" value="3" />
+					</data>
+					<data type="int" name="mountId" output="MountId" />
+					<data type="int" name="mountObjectId" output="MountObjectId" />
+					<condition data="rideMode" value="0" comparison="equal">
+					</condition>
+					<condition data="rideMode" value="1" comparison="equal">
+						<data type="int" name="itemId" output="ItemId" />
+						<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+						<outputMember output="UgcItem">
+							<data type="long" name="ugcId" output="UgcId" />
+							<data type="wstring" name="uuid" output="UUID" />
+							<data type="wstring" name="name" output="Name" />
+							<data type="byte" name="unknown" />
+							<data type="int" name="unknown" />
+							<data type="long" name="accountId" output="AccountId" />
+							<data type="long" name="characterId" output="CharacterId" />
+							<data type="wstring" name="characterName" output="CharacterName" />
+							<data type="long" name="creationTime" output="CreationTime" />
+							<data type="wstring" name="ugcUrl" output="UgcUrl" />
+							<data type="byte" name="unknown" />
+						</outputMember>
+					</condition>
+					<condition data="rideMode" value="2" comparison="equal">
+						<data type="int" name="itemId" output="ItemId" />
+						<data type="short" name="unknown" />
+					</condition>
+					<condition data="rideMode" value="3" comparison="equal">
+					</condition>
+					<data type="short" name="count" />
+					<array data="statCount" output="UnknownItems">
+						<data type="int" name="unknown" />
+						<data type="byte" name="unknown" />
+					</array>
+				</outputMember>
+			</condition>
+			<data type="int" name="unknown" />
+			<data type="long" name="timestamp" output="Timestamp" />
+			<data type="int" name="weeklyArchitectScore" output="WeeklyArchitectScore" />
+			<data type="int" name="architectScore" output="ArchitectScore" />
+			<outputMember output="EquipBuffer">
+				<data type="bool" name="isDeflated" />
+				<data type="int" name="bufferSize" />
+				<buffer sizeData="bufferSize" deflatedData="isDeflated">
+					<data type="byte" name="itemCount" />
+					<array data="itemCount" output="EquippedItems">
+						<data type="int" name="itemId" output="ItemId" />
+						<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+						<data type="wstring" name="equipSlot" output="EquipSlot" />
+						<data type="int" name="rarity" output="Rarity" />
+						<outputMember output="Data">
+						</outputMember>
+					</array>
+				</buffer>
+			</outputMember>
 		</opcode>
+		-->
 		<opcode name="FieldRemovePlayer" value="0x18">
 			<output type="Networking.Packets.Server.FieldRemovePlayerPacket" schemaName="packetData" />
-			<data type="int" name="actorId" output="ActorId" />
+			<data type="int" name="characterId" output="CharacterId" />
 		</opcode>
 		<opcode name="UserChat" value="0x1D">
 			<output type="Networking.Packets.Server.UserChatPacket" schemaName="packetData" />
@@ -240,6 +630,39 @@
 				<data type="long" name="clubId" output="ClubId" />
 			</condition>
 			<data type="byte" name="unknown" />
+		</opcode>
+		<opcode name="FieldAddItem" value="0x2B">
+			<output type="Networking.Packets.Server.FieldAddItemPacket" schemaName="packetData" />
+			<data type="int" name="objectId" output="ObjectId" />
+			<data type="int" name="itemId" output="ItemId" />
+			<data type="int" name="amount" output="Amount" />
+			<data type="bool" name="hasUid" />
+			<condition data="hasUid" value="1" comparison="equal">
+				<data type="long" name="uid" output="Uid" />
+			</condition>
+			<data type="Vector3S" name="position" output="Position" />
+			<data type="int" name="ownerId" output="OwnerId" />
+			<data type="int" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="int" name="rarity" output="Rarity">
+				<enum name="None" value="0" />
+				<enum name="Common" value="1" />
+				<enum name="Rare" value="2" />
+				<enum name="Exceptional" value="3" />
+				<enum name="Epic" value="4" />
+				<enum name="Legendary" value="5" />
+				<enum name="Ascendant" value="6" />
+			</data>
+			<data type="short" name="unknown" />
+			<data type="bool" name="unknown" />
+			<data type="bool" name="unknown" />
+			<condition data="itemId" value="90000001" value2="90000003" comparison="notBetween">
+				<useBlock name="ItemData" version="12" output="ItemData" />
+			</condition>
+		</opcode>
+		<opcode name="FieldRemoveItem" value="0x2C">
+			<output type="Networking.Packets.Server.FieldRemoveItemPacket" schemaName="packetData" />
+			<data type="int" name="objectId" output="ObjectId" />
 		</opcode>
 		<opcode name="SkillDamage" value="0x3E">
 			<data type="byte" name="mode" output="Mode">

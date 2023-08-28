@@ -164,6 +164,11 @@ namespace OutputSchema
 		Out << ";\n";
 	}
 
+	void ModuleWriter::PushMember(const std::string& type, const std::string_view& name, size_t arrayLength)
+	{
+		Out << Indent() << type << " " << name << "[" << arrayLength << "] = {};\n";
+	}
+
 	void ModuleWriter::PushMember(const std::string& type, const std::string_view& name, const std::vector<std::string>& initializers)
 	{
 		Out << Indent() << type << " " << name << (initializers.size() ? " = {\n" : " = { };\n");
@@ -347,7 +352,16 @@ namespace OutputSchema
 					{
 						std::string innerTypeName = swapSeparator(stripCommonNamespaces(member.ContainsType, schemaClass.Scope), "::");
 
-						typeName += "<" + innerTypeName + ">";
+						if (member.Type == "array")
+						{
+							module.PushMember(innerTypeName, member.Name, member.Length);
+
+							continue;
+						}
+						else
+						{
+							typeName += "<" + innerTypeName + ">";
+						}
 					}
 
 					if (member.DefaultInitializerValues.size())
@@ -589,7 +603,7 @@ namespace OutputSchema
 		}
 	}
 
-	void generateEnums(ModuleWriter& module, const OutputNamespace& out, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
+	void generateEnums(ModuleWriter& module, const OutputNamespace& out, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace, bool pushNamespace = true)
 	{
 		for (const auto& current : out.Enums)
 		{
@@ -598,11 +612,17 @@ namespace OutputSchema
 
 		for (const auto& current : out.Namespaces)
 		{
-			module.PushNamespace(current.first);
+			if (pushNamespace)
+			{
+				module.PushNamespace(current.first);
+			}
 
 			generateEnums(module, current.second, vcxprojRoot, filtersRoot, currentNamespace.size() ? currentNamespace + "." + current.first : current.first);
 
-			module.PopStack();
+			if (pushNamespace)
+			{
+				module.PopStack();
+			}
 		}
 	}
 
@@ -625,7 +645,7 @@ namespace OutputSchema
 
 				ModuleWriter module(outFile);
 
-				generateEnums(module, file.second.Global, vcxprojRoot, filtersRoot, "");
+				generateEnums(module, file.second.Global, vcxprojRoot, filtersRoot, "", false);
 			}
 		}
 	}
@@ -832,7 +852,21 @@ namespace OutputSchema
 			child = next;
 		}
 
-		fs::remove_all(gameDataProjDir / "src");
+		
+		try
+		{
+			if (fs::exists(gameDataProjDir / "src"))
+			{
+				fs::remove_all(gameDataProjDir / "src");
+			}
+		}
+		catch (fs::filesystem_error& err)
+		{
+			std::cout << "couldn't clear directory";
+
+			return;
+		}
+
 		fs::create_directories(gameDataProjDir / "src/GameData/Collection");
 		fs::create_directories(gameDataProjDir / "src/GameData/Data");
 

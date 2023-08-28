@@ -21,6 +21,7 @@ namespace OutputSchema
 		std::string SchemaName;
 		std::string Scope;
 		std::string ParentSchemaName;
+		size_t Length = 0;
 		size_t ChildClassIndex = (size_t)-1;
 		std::unordered_map<std::string, std::string> DefaultInitializerValues;
 	};

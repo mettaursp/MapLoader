@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameData/Enums/MapId.h>
 #include <Engine/Math/Vector3S.h>
+#include <GameData/Enums/Handles.h>
 
 namespace Networking
 {

@@ -4,6 +4,7 @@
 #include <sstream>
 
 #include <Engine/Math/Vector3S-decl.h>
+#include <Engine/Math/Color4I.h>
 
 struct Vector3Short
 {
@@ -26,7 +27,31 @@ struct Vector3Short
 	}
 };
 
+struct Color4I_BGRA
+{
+	unsigned char B = 0;
+	unsigned char G = 0;
+	unsigned char R = 0;
+	unsigned char A = 0;
+
+	Color4I_BGRA() {}
+
+	Color4I_BGRA(const Color4I& vector)
+	{
+		B = vector.B;
+		G = vector.G;
+		R = vector.R;
+		A = vector.A;
+	}
+
+	operator Color4I()
+	{
+		return { R, G, B, A };
+	}
+};
+
 std::ostream& operator<<(std::ostream& out, const Vector3Short& vector);
+std::ostream& operator<<(std::ostream& out, const Color4I_BGRA& vector);
 
 namespace ParserUtils
 {
@@ -98,4 +123,7 @@ namespace ParserUtils
 
 	template <>
 	bool DataStream::Read<Vector3Short>(Vector3Short& value);
+
+	template <>
+	bool DataStream::Read<Color4I_BGRA>(Color4I_BGRA& value);
 }

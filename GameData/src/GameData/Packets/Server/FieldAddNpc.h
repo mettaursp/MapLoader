@@ -1,19 +1,12 @@
 #pragma once
 
 #include <Engine/Math/Vector3S.h>
+#include <GameData/Enums/Handles.h>
 #include <string>
 #include <vector>
-#include <GameData/Packets\Server/FieldAddNpc.h>
-#include <GameData/Enums/ActorId.h>
-#include <GameData/Data/Stat.h>
-#include <GameData/Enums/NpcId.h>
 #include <GameData/Data/StatLong.h>
-#include <GameData/Enums/ItemInstanceId.h>
-#include <GameData/Enums/EffectInstanceId.h>
-#include <GameData/Enums/EffectId.h>
-#include <GameData/Enums/EffectLevel.h>
-#include <GameData/Enums/SkillId.h>
-#include <GameData/Enums/SkillLevel.h>
+#include <GameData/Data/Stat.h>
+#include <GameData/Packets\Server/FieldAddNpc.h>
 
 namespace Networking
 {

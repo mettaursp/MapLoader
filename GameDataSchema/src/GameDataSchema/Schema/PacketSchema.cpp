@@ -29,18 +29,38 @@ namespace PacketSchema
 		{ "wstring", { "wstring", "std::wstring", "", 0 }},
 		{ "Vector3S", { "Vector3S", "Vector3S", "", 0 }},
 		{ "Vector3Short", { "Vector3Short", "Vector3Short", "", 0 }},
-		{ "vector", { "vector", "std::vector", "", 0 }}
+		{ "vector", { "vector", "std::vector", "", 0 }},
+		{ "Color4I", { "Color4I", "Color4I_BGRA", "", 0 }}
 	};
 
 	std::unordered_map<unsigned short, PacketVersion> PacketVersions;
 
+	struct DataOutput
+	{
+		std::string Name;
+		const PacketOutput* Output = nullptr;
+		const OutputSchema::SchemaMember* Member = nullptr;
+		const OutputSchema::SchemaClass* Class = nullptr;
+	};
+
+	struct StackEntry
+	{
+		size_t StartIndex = (size_t)-1;
+		size_t EndIndex = (size_t)-1;
+		DataOutput Output;
+		bool IsLoop = false;
+		bool IncrementLoopCounter = false;
+	};
+
 	DataResult findDataReference(const PacketOpcode& opcode, const std::vector<StackEntry>& stack, const std::string_view& name, size_t index)
 	{
-		const PacketInfo& current = index < opcode.Layout.size() ? opcode.Layout[index] : opcode.Layout.back();
+		index = index < opcode.Layout.size() ? index : opcode.Layout.size() - 1;
 
+		const PacketInfo& current = index < opcode.Layout.size() ? opcode.Layout[index] : opcode.Layout.back();
+		
 		DataResult result;
 
-		for (size_t i = 0; !result.Found && i < opcode.Layout.size(); ++i)
+		for (size_t i = 0; !result.Found && i < index; ++i)
 		{
 			const PacketInfo& info = opcode.Layout[i];
 
@@ -54,7 +74,26 @@ namespace PacketSchema
 				continue;
 			}
 
-			if (stack[info.StackDepth - 1].StartIndex > i)
+			size_t startIndex = stack[info.StackDepth - 1].StartIndex;
+
+			if (startIndex > i)
+			{
+				continue;
+			}
+
+			const PacketInfo& stackStartInfo = opcode.Layout[i];
+
+			size_t regionEnd = opcode.Layout.size();
+
+			switch (stackStartInfo.Type)
+			{
+			case PacketInfoType::Condition: regionEnd = opcode.Conditions[stackStartInfo.Index].RegionEnd; break;
+			case PacketInfoType::OutputMember: regionEnd = opcode.OutputMembers[stackStartInfo.Index].RegionEnd; break;
+			case PacketInfoType::Array: regionEnd = opcode.Arrays[stackStartInfo.Index].RegionEnd; break;
+			case PacketInfoType::Buffer: regionEnd = opcode.Buffers[stackStartInfo.Index].RegionEnd; break;
+			}
+
+			if (regionEnd <= index)
 			{
 				continue;
 			}
@@ -67,11 +106,21 @@ namespace PacketSchema
 			}
 		}
 
+		for (size_t i = 0; i < opcode.Parameters.size(); ++i)
+		{
+			if (opcode.Parameters[i] == name)
+			{
+				return { true, (size_t)-1 - opcode.Parameters.size() + i };
+			}
+		}
+
 		return { false, (size_t)-1 };
 	}
 
 	DataResult OpcodeParser::FindDataReference(const std::string_view& name, size_t index) const
 	{
+		index = index < Opcode.Layout.size() ? index : Opcode.Layout.size() - 1;
+
 		const PacketInfo& current = index < Opcode.Layout.size() ? Opcode.Layout[index] : Opcode.Layout.back();
 
 		DataResult result;
@@ -90,7 +139,26 @@ namespace PacketSchema
 				continue;
 			}
 
-			if (NodeStack[info.StackDepth - 1].StartIndex > i)
+			size_t startIndex = NodeStack[info.StackDepth - 1].StartIndex;
+
+			if (startIndex > i)
+			{
+				continue;
+			}
+
+			const PacketInfo& stackStartInfo = Opcode.Layout[i];
+
+			size_t regionEnd = Opcode.Layout.size();
+
+			switch (stackStartInfo.Type)
+			{
+			case PacketInfoType::Condition: regionEnd = Opcode.Conditions[stackStartInfo.Index].RegionEnd; break;
+			case PacketInfoType::OutputMember: regionEnd = Opcode.OutputMembers[stackStartInfo.Index].RegionEnd; break;
+			case PacketInfoType::Array: regionEnd = Opcode.Arrays[stackStartInfo.Index].RegionEnd; break;
+			case PacketInfoType::Buffer: regionEnd = Opcode.Buffers[stackStartInfo.Index].RegionEnd; break;
+			}
+
+			if (regionEnd <= index)
 			{
 				continue;
 			}
@@ -100,6 +168,14 @@ namespace PacketSchema
 			if (data.Name == name)
 			{
 				return { true, i };
+			}
+		}
+
+		for (size_t i = 0; i < Opcode.Parameters.size(); ++i)
+		{
+			if (Opcode.Parameters[i] == name)
+			{
+				return { true, (size_t)-1 - Opcode.Parameters.size() + i };
 			}
 		}
 
@@ -209,17 +285,84 @@ namespace PacketSchema
 
 				if (!result.Found)
 				{
-					std::cout << FileName << ": unknown referenced data '" << value << "' in condition node" << std::endl;
+					std::cout << FileName << ": 1` data '" << value << "' in read node" << std::endl;
 
 					continue;
 				}
 
-				const PacketInfo& info = Opcode.Layout[result.DataIndex];
-				PacketData& data = Opcode.Data[info.Index];
+				if (result.DataIndex < Opcode.Layout.size())
+				{
+					const PacketInfo& info = Opcode.Layout[result.DataIndex];
+					PacketData& data = Opcode.Data[info.Index];
 
-				data.Referenced = true;
+					data.Referenced = true;
+				}
+
 				dataRead.DataIndex = result.DataIndex;
 				dataRead.Name = value;
+
+				continue;
+			}
+
+			std::cout << FileName << ": unknown attribute '" << name << "' in read node" << std::endl;
+		}
+	}
+
+	void OpcodeParser::ReadBuffer(tinyxml2::XMLElement* element)
+	{
+		PacketBuffer& buffer = Opcode.Buffers.back();
+
+		DataResult result;
+
+		for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute; attribute = attribute->Next())
+		{
+			const char* name = attribute->Name();
+			const char* value = attribute->Value();
+
+			if (strcmp(name, "sizeData") == 0)
+			{
+				result = FindDataReference(value);
+
+				if (!result.Found)
+				{
+					std::cout << FileName << ": unknown referenced data '" << value << "' in buffer node sizeData" << std::endl;
+
+					continue;
+				}
+
+				if (result.DataIndex < Opcode.Layout.size())
+				{
+					const PacketInfo& info = Opcode.Layout[result.DataIndex];
+					PacketData& data = Opcode.Data[info.Index];
+
+					data.Referenced = true;
+				}
+
+				buffer.BufferSizeDataIndex = result.DataIndex;
+
+				continue;
+			}
+
+			if (strcmp(name, "deflatedData") == 0)
+			{
+				result = FindDataReference(value);
+
+				if (!result.Found)
+				{
+					std::cout << FileName << ": unknown referenced data '" << value << "' in buffer node deflatedData" << std::endl;
+
+					continue;
+				}
+
+				if (result.DataIndex < Opcode.Layout.size())
+				{
+					const PacketInfo& info = Opcode.Layout[result.DataIndex];
+					PacketData& data = Opcode.Data[info.Index];
+
+					data.Referenced = true;
+				}
+
+				buffer.IsDeflatedDataIndex = result.DataIndex;
 
 				continue;
 			}
@@ -250,17 +393,23 @@ namespace PacketSchema
 			{
 				result = FindDataReference(value);
 
-				if (result.Found)
+				if (!result.Found)
 				{
 					std::cout << FileName << ": unknown referenced data '" << value << "' in function node" << std::endl;
+
+					FindDataReference(value);
 
 					continue;
 				}
 
-				const PacketInfo& info = Opcode.Layout[result.DataIndex];
-				PacketData& data = Opcode.Data[info.Index];
+				if (result.DataIndex < Opcode.Layout.size())
+				{
+					const PacketInfo& info = Opcode.Layout[result.DataIndex];
+					PacketData& data = Opcode.Data[info.Index];
 
-				data.Referenced = true;
+					data.Referenced = true;
+				}
+
 				function.DataIndex = result.DataIndex;
 
 				continue;
@@ -295,14 +444,20 @@ namespace PacketSchema
 					{
 						std::cout << FileName << ": unknown referenced param data '" << current << "' in function node" << std::endl;
 
+						FindDataReference(value);
+
 						continue;
 					}
 
-					const PacketInfo& info = Opcode.Layout[result.DataIndex];
-					PacketData& data = Opcode.Data[info.Index];
+					if (paramResult.DataIndex < Opcode.Layout.size())
+					{
+						const PacketInfo& info = Opcode.Layout[paramResult.DataIndex];
+						PacketData& data = Opcode.Data[info.Index];
 
-					data.Referenced = true;
-					function.ParamDataIndices.push_back(result.DataIndex);
+						data.Referenced = true;
+					}
+
+					function.ParamDataIndices.push_back(paramResult.DataIndex);
 
 					start = i + 1;
 				}
@@ -487,10 +642,14 @@ namespace PacketSchema
 					continue;
 				}
 
-				const PacketInfo& info = Opcode.Layout[result.DataIndex];
-				PacketData& data = Opcode.Data[info.Index];
+				if (result.DataIndex < Opcode.Layout.size())
+				{
+					const PacketInfo& info = Opcode.Layout[result.DataIndex];
+					PacketData& data = Opcode.Data[info.Index];
 
-				data.Referenced = true;
+					data.Referenced = true;
+				}
+
 				condition.DataIndex = result.DataIndex;
 
 				continue;
@@ -503,6 +662,17 @@ namespace PacketSchema
 				bool isHex = valueData.size() > 2 && valueData[0] == '0' && (valueData[1] == 'x' || valueData[1] == 'X');
 
 				condition.Value = isHex ? (size_t)strtoll(valueData.data() + 2, nullptr, 16) : (size_t)atoll(valueData.data());
+
+				continue;
+			}
+
+			if (strcmp(name, "value2") == 0)
+			{
+				std::string_view valueData = value;
+
+				bool isHex = valueData.size() > 2 && valueData[0] == '0' && (valueData[1] == 'x' || valueData[1] == 'X');
+
+				condition.Value2 = isHex ? (size_t)strtoll(valueData.data() + 2, nullptr, 16) : (size_t)atoll(valueData.data());
 
 				continue;
 			}
@@ -540,6 +710,14 @@ namespace PacketSchema
 				{
 					condition.Comparison = PacketInfoComparison::NotEqual;
 				}
+				else if (strcmp(value, "between") == 0)
+				{
+					condition.Comparison = PacketInfoComparison::Between;
+				}
+				else if (strcmp(value, "notBetween") == 0)
+				{
+					condition.Comparison = PacketInfoComparison::NotBetween;
+				}
 				else
 				{
 					std::cout << FileName << ": unknown comparison type '" << value << "'" << std::endl;
@@ -576,13 +754,19 @@ namespace PacketSchema
 				{
 					std::cout << FileName << ": unknown referenced data '" << value << "' in array node" << std::endl;
 
+					FindDataReference(value);
+
 					continue;
 				}
 
-				const PacketInfo& info = Opcode.Layout[result.DataIndex];
-				PacketData& data = Opcode.Data[info.Index];
+				if (result.DataIndex < Opcode.Layout.size())
+				{
+					const PacketInfo& info = Opcode.Layout[result.DataIndex];
+					PacketData& data = Opcode.Data[info.Index];
 
-				data.Referenced = true;
+					data.Referenced = true;
+				}
+
 				array.DataIndex = result.DataIndex;
 
 				continue;
@@ -636,6 +820,7 @@ namespace PacketSchema
 		while (NodeStack.size())
 		{
 			NodeStackEntry& node = NodeStack.back();
+			bool forcePopEarly = false;
 
 			if (node.Element != nullptr)
 			{
@@ -659,6 +844,8 @@ namespace PacketSchema
 
 					NodeStack.push_back({ node.Element->FirstChildElement() });
 					NodeStack.back().StartIndex = Opcode.Layout.size();
+
+					continue;
 				}
 				else if (strcmp(name, "output") == 0)
 				{
@@ -678,6 +865,8 @@ namespace PacketSchema
 
 					NodeStack.push_back({ node.Element->FirstChildElement() });
 					NodeStack.back().StartIndex = Opcode.Layout.size();
+
+					continue;
 				}
 				else if (strcmp(name, "read") == 0)
 				{
@@ -704,6 +893,281 @@ namespace PacketSchema
 
 					NodeStack.push_back({ node.Element->FirstChildElement() });
 					NodeStack.back().StartIndex = Opcode.Layout.size();
+
+					continue;
+				}
+				else if (strcmp(name, "buffer") == 0)
+				{
+					node.BufferIndex = Opcode.Buffers.size();
+
+					Opcode.Layout.push_back({ PacketInfoType::Buffer, Opcode.Buffers.size(), NodeStack.size() });
+					Opcode.Buffers.push_back({ Opcode.Buffers.size() });
+
+					ReadBuffer(node.Element);
+
+					NodeStack.push_back({ node.Element->FirstChildElement() });
+					NodeStack.back().StartIndex = Opcode.Layout.size();
+
+					continue;
+				}
+				else if (strcmp(name, "useBlock") == 0)
+				{
+					const tinyxml2::XMLAttribute* nameAttrib = node.Element->FindAttribute("name");
+					const tinyxml2::XMLAttribute* versionAttrib = node.Element->FindAttribute("version");
+					const tinyxml2::XMLAttribute* outputAttrib = node.Element->FindAttribute("output");
+					const tinyxml2::XMLAttribute* targetAttrib = node.Element->FindAttribute("target");
+
+					if (nameAttrib == nullptr || versionAttrib == nullptr)
+					{
+						if (!nameAttrib)
+						{
+							std::cout << "block node missing name attribute" << std::endl;
+						}
+
+						if (!versionAttrib)
+						{
+							std::cout << "block node missing version attribute" << std::endl;
+						}
+
+						continue;
+					}
+
+					if (outputAttrib != nullptr)
+					{
+						node.OutputMemberIndex = Opcode.OutputMembers.size();
+
+						Opcode.Layout.push_back({ PacketInfoType::OutputMember, Opcode.OutputMembers.size(), NodeStack.size() });
+						Opcode.OutputMembers.push_back({ Opcode.OutputMembers.size() });
+
+						Opcode.OutputMembers.back().Output = outputAttrib->Value();
+
+						if (targetAttrib)
+						{
+							Opcode.OutputMembers.back().Target = targetAttrib->Value();
+						}
+
+						NodeStack.push_back({ nullptr });
+						NodeStack.back().StartIndex = Opcode.Layout.size();
+
+						forcePopEarly = true;
+					}
+
+					const char* name = nameAttrib->Value();
+					unsigned short version = (unsigned short)atoi(versionAttrib->Value());
+
+					const auto& versionEntry = PacketVersions.find(version);
+
+					if (versionEntry == PacketVersions.end())
+					{
+						std::cout << "useBlock node referencing unknown packet version " << version << std::endl;
+
+						continue;
+					}
+
+					const auto& blockEntry = versionEntry->second.Blocks.find(name);
+
+					if (versionEntry == PacketVersions.end())
+					{
+						std::cout << "useBlock node referencing unknown block '" << name << "' in packet version " << version << std::endl;
+
+						continue;
+					}
+
+					const PacketOpcode& block = blockEntry->second;
+
+					size_t dataCount = Opcode.Data.size();
+					size_t layoutCount = Opcode.Layout.size();
+					size_t start = Opcode.Layout.size();
+
+					Opcode.Layout.resize(start + block.Layout.size());
+
+					const auto updateData = [this, &block, layoutCount](size_t& index, size_t infoIndex)
+					{
+						size_t newLayoutCount = Opcode.Layout.size();
+
+						if (index < block.Layout.size())
+						{
+							index += layoutCount;
+
+							if (index >= newLayoutCount)
+							{
+								std::cout << Opcode.Name << ": data index adjusted to out of bounds index: " << index << " vs " << newLayoutCount << std::endl;
+							}
+							
+							return;
+						}
+
+						if (index < (size_t)-1 && index >= (size_t)-1 - block.Parameters.size())
+						{
+							size_t param = index - ((size_t)-1 - block.Parameters.size());
+
+							DataResult result = FindDataReference(block.Parameters[param], infoIndex);
+
+							if (result.Found)
+							{
+								index = result.DataIndex;
+
+								if (index >= newLayoutCount && !(index < (size_t)-1 && index >= (size_t)-1 - Opcode.Parameters.size()))
+								{
+									std::cout << Opcode.Name << ": data index adjusted to out of bounds index: " << index << " vs " << newLayoutCount << std::endl;
+								}
+
+								return;
+							}
+						}
+					};
+
+					start = Opcode.Data.size();
+
+					Opcode.Data.resize(start + block.Data.size());
+
+					for (size_t i = start; i < Opcode.Data.size(); ++i)
+					{
+						auto& data = Opcode.Data[i];
+
+						data = block.Data[i - start];
+
+						data.Index = i;
+					}
+
+					start = Opcode.Conditions.size();
+
+					Opcode.Conditions.resize(start + block.Conditions.size());
+
+					for (size_t i = start; i < Opcode.Conditions.size(); ++i)
+					{
+						auto& condition = Opcode.Conditions[i];
+
+						condition = block.Conditions[i - start];
+
+						condition.RegionEnd += layoutCount;
+					}
+
+					start = Opcode.Outputs.size();
+
+					Opcode.Outputs.resize(start + block.Outputs.size());
+
+					for (size_t i = start; i < Opcode.Outputs.size(); ++i)
+					{
+						auto& output = Opcode.Outputs[i];
+
+						output = block.Outputs[i - start];
+
+						output.OutputIndex += start;
+					}
+
+					start = Opcode.OutputMembers.size();
+
+					Opcode.OutputMembers.resize(start + block.OutputMembers.size());
+
+					for (size_t i = start; i < Opcode.OutputMembers.size(); ++i)
+					{
+						auto& outputMember = Opcode.OutputMembers[i];
+
+						outputMember = block.OutputMembers[i - start];
+
+						outputMember.OutputMemberIndex += start;
+						outputMember.RegionEnd += layoutCount;
+					}
+
+					start = Opcode.Arrays.size();
+
+					Opcode.Arrays.resize(start + block.Arrays.size());
+
+					for (size_t i = start; i < Opcode.Arrays.size(); ++i)
+					{
+						auto& array = Opcode.Arrays[i];
+
+						array = block.Arrays[i - start];
+
+						array.RegionEnd += layoutCount;
+					}
+
+					start = Opcode.Reads.size();
+
+					Opcode.Reads.resize(start + block.Reads.size());
+
+					for (size_t i = start; i < Opcode.Reads.size(); ++i)
+					{
+						auto& read = Opcode.Reads[i];
+
+						read = block.Reads[i - start];
+
+						read.Index += start;
+					}
+
+					start = Opcode.Functions.size();
+
+					Opcode.Functions.resize(start + block.Functions.size());
+
+					for (size_t i = start; i < Opcode.Functions.size(); ++i)
+					{
+						auto& function = Opcode.Functions[i];
+
+						function = block.Functions[i - start];
+
+						function.Index += start;
+					}
+
+					start = Opcode.Buffers.size();
+
+					Opcode.Buffers.resize(start + block.Buffers.size());
+
+					for (size_t i = start; i < Opcode.Buffers.size(); ++i)
+					{
+						auto& buffer = Opcode.Buffers[i];
+
+						buffer = block.Buffers[i - start];
+
+						buffer.BufferIndex += start;
+						buffer.RegionEnd += layoutCount;
+					}
+
+					for (size_t i = layoutCount; i < Opcode.Layout.size(); ++i)
+					{
+						auto& layout = Opcode.Layout[i];
+
+						layout = block.Layout[i - layoutCount];
+
+						layout.StackDepth += NodeStack.size() - 1;
+
+						switch (layout.Type)
+						{
+						case PacketInfoType::Data: layout.Index += Opcode.Data.size() - block.Data.size(); break;
+						case PacketInfoType::Condition:
+							layout.Index += Opcode.Conditions.size() - block.Conditions.size();
+							updateData(Opcode.Conditions[layout.Index].DataIndex, i);
+
+							break;
+						case PacketInfoType::Output: layout.Index += Opcode.Outputs.size() - block.Outputs.size(); break;
+						case PacketInfoType::OutputMember: layout.Index += Opcode.OutputMembers.size() - block.OutputMembers.size(); break;
+						case PacketInfoType::Array:
+							layout.Index += Opcode.Arrays.size() - block.Arrays.size();
+							updateData(Opcode.Arrays[layout.Index].DataIndex, i);
+
+							break;
+						case PacketInfoType::DataRead:
+							layout.Index += Opcode.Reads.size() - block.Reads.size();
+							updateData(Opcode.Reads[layout.Index].DataIndex, i);
+
+							break;
+						case PacketInfoType::Function:
+							layout.Index += Opcode.Functions.size() - block.Functions.size();
+							updateData(Opcode.Functions[layout.Index].DataIndex, i);
+							for (size_t& paramIndex : Opcode.Functions[layout.Index].ParamDataIndices)
+							{
+								updateData(paramIndex, i);
+							}
+
+							break;
+						case PacketInfoType::Buffer:
+							layout.Index += Opcode.Buffers.size() - block.Buffers.size();
+							updateData(Opcode.Buffers[layout.Index].BufferSizeDataIndex, i);
+							updateData(Opcode.Buffers[layout.Index].IsDeflatedDataIndex, i);
+
+							break;
+						}
+					}
 				}
 				else
 				{
@@ -711,8 +1175,10 @@ namespace PacketSchema
 				}
 			}
 
-			while (NodeStack.size() && NodeStack.back().Element == nullptr)
+			while (NodeStack.size() && (NodeStack.back().Element == nullptr || forcePopEarly))
 			{
+				forcePopEarly = false;
+
 				NodeStack.pop_back();
 
 				if (NodeStack.size())
@@ -734,9 +1200,15 @@ namespace PacketSchema
 						Opcode.OutputMembers[next.OutputMemberIndex].RegionEnd = Opcode.Layout.size();
 					}
 
+					if (next.BufferIndex != (size_t)-1)
+					{
+						Opcode.Buffers[next.BufferIndex].RegionEnd = Opcode.Layout.size();
+					}
+
 					next.ConditionIndex = (size_t)-1;
 					next.ArrayIndex = (size_t)-1;
 					next.OutputMemberIndex = (size_t)-1;
+					next.BufferIndex = (size_t)-1;
 				}
 			}
 
@@ -746,7 +1218,100 @@ namespace PacketSchema
 				NodeStack.back().ConditionIndex = (size_t)-1;
 				NodeStack.back().ArrayIndex = (size_t)-1;
 				NodeStack.back().OutputMemberIndex = (size_t)-1;
+				NodeStack.back().BufferIndex = (size_t)-1;
 			}
+		}
+	}
+
+	void OpcodeParser::Print()
+	{
+		if constexpr (!PrintGeneratedOpcodes)
+		{
+			return;
+		}
+
+		char tabs[32] = { 0 };
+		const char* const typeNames[] = {
+			"Data",
+			"Condition",
+			"Output",
+			"OutputMember",
+			"Array",
+			"Function",
+			"Buffer",
+		};
+		const char* const compares[] = {
+			"Equal",
+			"NotEqual",
+			"Between",
+			"NotBetween"
+		};
+		bool compare2[] = {
+			false,
+			false,
+			true,
+			true
+		};
+
+		const auto indent = [&tabs](size_t depth)
+		{
+			tabs[0] = '\n';
+
+			for (int i = 0; i <= (int)depth + 1; ++i)
+			{
+				tabs[i + 1] = i < depth ? '\t' : 0;
+			}
+
+			return tabs;
+		};
+
+		for (size_t i = 0; i < Opcode.Layout.size(); ++i)
+		{
+			const auto& layout = Opcode.Layout[i];
+
+			size_t index = layout.Index;
+
+			std::cout << (indent(layout.StackDepth) + 1) << "[" << i << "] " << typeNames[(int)layout.Type] << " <" << layout.StackDepth << ">: " << index;
+
+			switch (layout.Type)
+			{
+			case PacketInfoType::Data:
+				std::cout << indent(layout.StackDepth + 1) << Opcode.Data[index].Type->Name << " " << Opcode.Data[index].Name << " - " << Opcode.Data[index].Output << " [" << Opcode.Data[index].Target << "]";
+				break;
+			case PacketInfoType::DataRead:
+				std::cout << indent(layout.StackDepth + 1) << Opcode.Reads[index].Name << "; Data: [" << Opcode.Reads[index].DataIndex << "]";
+				break;
+			case PacketInfoType::Condition:
+				std::cout << " -> [" << Opcode.Conditions[index].RegionEnd << "]" << indent(layout.StackDepth + 1) << "Data: [" << Opcode.Conditions[index].DataIndex << "]: " << compares[(int)Opcode.Conditions[index].Comparison] << "(" << Opcode.Conditions[index].Value;
+				if (compare2[(int)Opcode.Conditions[index].Comparison])
+					std::cout << ", " << Opcode.Conditions[index].Value2;
+				std::cout << ")";
+				break;
+			case PacketInfoType::Output:
+				std::cout << indent(layout.StackDepth + 1) << Opcode.Outputs[index].Class->Name << " " << Opcode.Outputs[index].Name;
+				break;
+			case PacketInfoType::OutputMember:
+				std::cout << indent(layout.StackDepth + 1) << Opcode.OutputMembers[index].Output << " [" << Opcode.OutputMembers[index].Target << "]";
+				break;
+			case PacketInfoType::Array:
+				std::cout << " -> [" << Opcode.Arrays[index].RegionEnd << "]" << indent(layout.StackDepth + 1) << "Data: [" << Opcode.Arrays[index].DataIndex << "]: " << Opcode.Arrays[index].Output << " [" << Opcode.Arrays[index].Target << "]";
+				break;
+			case PacketInfoType::Function:
+				std::cout << indent(layout.StackDepth + 1) << "Data: [" << Opcode.Functions[index].DataIndex << "]: " << Opcode.Functions[index].Name << "(";
+				for (size_t i = 0; i < Opcode.Functions[index].ParamDataIndices.size(); ++i)
+				{
+					std::cout << "[" << Opcode.Functions[index].ParamDataIndices[i] << "]";
+					if (i + 1 < Opcode.Functions[index].ParamDataIndices.size())
+						std::cout << ", ";
+				}
+				std::cout << ")";
+				break;
+			case PacketInfoType::Buffer:
+				std::cout << " -> [" << Opcode.Buffers[index].RegionEnd << "]" << indent(layout.StackDepth + 1) << "Buffer([" << Opcode.Buffers[index].BufferSizeDataIndex << "], [" << Opcode.Buffers[index].IsDeflatedDataIndex << "])";
+				break;
+			}
+
+			std::cout << std::endl;
 		}
 	}
 
@@ -760,6 +1325,8 @@ namespace PacketSchema
 
 		if (root == nullptr)
 		{
+			std::cout << "invalid xml " << filePath << std::endl;
+
 			return;
 		}
 
@@ -785,6 +1352,73 @@ namespace PacketSchema
 
 		for (tinyxml2::XMLElement* child = root->FirstChildElement(); child; child = child->NextSiblingElement())
 		{
+			if (strcmp(child->Name(), "blocks") == 0)
+			{
+				for (tinyxml2::XMLElement* blockElement = child->FirstChildElement(); blockElement; blockElement = blockElement->NextSiblingElement())
+				{
+					if (strcmp(blockElement->Name(), "block") != 0)
+					{
+						std::cout << filePath.string() << ": unknown node '" << blockElement->Name() << "' in blocks" << std::endl;
+
+						continue;
+					}
+
+					const tinyxml2::XMLAttribute* nameAttrib = blockElement->FindAttribute("name");
+					const tinyxml2::XMLAttribute* paramsAttrib = blockElement->FindAttribute("params");
+
+					if (nameAttrib == nullptr)
+					{
+						std::cout << filePath.string() << ": opcode node missing name attribute" << std::endl;
+
+						continue;
+					}
+
+					const char* name = nameAttrib->Value();
+
+					PacketOpcode& block = schema.Blocks[name];
+
+					block.Name = name;
+					block.IsServer = false;
+
+					OpcodeParser parser = { filePath.string(), block };
+
+					if (paramsAttrib != nullptr)
+					{
+						std::string_view paramsValue = paramsAttrib->Value();
+
+						size_t start = 0;
+						size_t length = 0;
+
+						while (start <= paramsValue.size())
+						{
+							for (length; start + length < paramsValue.size() && paramsValue[start + length] != ','; ++length);
+
+							if (length == 0)
+							{
+								++start;
+							}
+
+							std::string_view name = { paramsValue.data() + start, length };
+
+							start += length + 1;
+							length = 0;
+
+							block.Parameters.push_back(std::string(name));
+						}
+					}
+
+					if constexpr (PrintGeneratedOpcodes)
+					{
+						std::cout << "Block: " << name << std::endl;
+					}
+
+					parser.Read(blockElement);
+					parser.Print();
+				}
+
+				continue;
+			}
+
 			if (strcmp(child->Name(), "source") != 0)
 			{
 				std::cout << filePath.string() << ": unknown node '" << child->Name() << "' in packetSchema" << std::endl;
@@ -930,12 +1564,12 @@ namespace PacketSchema
 
 				if (nameAttrib == nullptr || valueAttrib == nullptr)
 				{
-					if (nameAttrib)
+					if (!nameAttrib)
 					{
 						std::cout << filePath.string() << ": opcode node missing name attribute" << std::endl;
 					}
 
-					if (valueAttrib)
+					if (!valueAttrib)
 					{
 						std::cout << filePath.string() << ": opcode node missing value attribute" << std::endl;
 					}
@@ -972,13 +1606,22 @@ namespace PacketSchema
 
 				OpcodeParser parser = { filePath.string(), opcode };
 
+				if constexpr (PrintGeneratedOpcodes)
+				{
+					std::cout << "Opcode: " << (isServer ? "[Server] 0x" : "[Client] 0x") << std::hex << value << std::dec << std::endl;
+				}
+
 				parser.Read(opcodeElement);
+				parser.Print();
 			}
 		}
 	}
 
 	void readSchemas(const fs::path& directory)
 	{
+		std::vector<unsigned int> versions;
+		std::vector<fs::path> paths;
+
 		for (const auto& entry : fs::recursive_directory_iterator{ directory })
 		{
 			const fs::path& path = entry.path();
@@ -989,7 +1632,20 @@ namespace PacketSchema
 
 			if (extension != ".xml") continue;
 
-			readSchema(path);
+			unsigned int version = (unsigned int)atoi(path.filename().stem().string().c_str());
+			unsigned int index = (unsigned int)paths.size();
+
+			paths.push_back(path);
+			versions.push_back((version << 16) | index);
+		}
+
+		std::sort(versions.begin(), versions.end());
+
+		for (unsigned int data : versions)
+		{
+			unsigned int index = data & 0xFFFF;
+
+			readSchema(paths[index]);
 		}
 	}
 
@@ -1039,23 +1695,6 @@ namespace PacketSchema
 
 		return out << "output" << output.OutputIndex;
 	}
-
-	struct DataOutput
-	{
-		std::string Name;
-		const PacketOutput* Output = nullptr;
-		const OutputSchema::SchemaMember* Member = nullptr;
-		const OutputSchema::SchemaClass* Class = nullptr;
-	};
-
-	struct StackEntry
-	{
-		size_t StartIndex = (size_t)-1;
-		size_t EndIndex = (size_t)-1;
-		DataOutput Output;
-		bool IsLoop = false;
-		bool IncrementLoopCounter = false;
-	};
 
 	DataOutput findOutput(const std::string& name, const std::unordered_map<std::string, const PacketOutput*>& outputs, const PacketOutput* topOutput, const std::vector<StackEntry>& stack)
 	{
@@ -1115,6 +1754,11 @@ namespace PacketSchema
 
 		if (output.Member->ContainsType.size())
 		{
+			if (output.Member->Type == "array")
+			{
+				return output;
+			}
+
 			OutputSchema::SchemaEntry entry = OutputSchema::findSchemaEntry(output.Member->ContainsType, output.Output->SchemaName);
 
 			output.Class = entry.Class;
@@ -1140,7 +1784,6 @@ namespace PacketSchema
 
 		size_t start = 0;
 		size_t length = 0;
-
 
 		while (start < path.size())
 		{
@@ -1179,11 +1822,18 @@ namespace PacketSchema
 				name = { name.data(), openBracket };
 			}
 
-			output = findOutput(output, std::string(name));
+			DataOutput nextOutput = findOutput(output, std::string(name));
 
 			if (indexValue.size())
 			{
-				if (!output.Member || !output.Member->ContainsType.size())
+				if (nextOutput.Member && nextOutput.Member->Type == "array")
+				{
+					nextOutput.Name += '[' + std::string(indexValue) + ']';
+
+					return nextOutput;
+				}
+
+				if (!nextOutput.Member || !nextOutput.Member->ContainsType.size())
 				{
 					std::cout << "attempt to use subscript '" << indexValue << "' in output '" << path << "' that isn't an indexable type" << std::endl;
 
@@ -1194,7 +1844,7 @@ namespace PacketSchema
 
 				if (!result.Found)
 				{
-					output.Name += '[' + std::string(indexValue) + ']';
+					nextOutput.Name += '[' + std::string(indexValue) + ']';
 
 					continue;
 				}
@@ -1205,24 +1855,48 @@ namespace PacketSchema
 
 				bool makeVariable = !paramData.Read || paramData.HasBitOutputs || paramData.Referenced || paramData.Output.size() == 0 || (paramOutput.Member && paramOutput.Member->Type != paramData.Type->TypeName);
 
-				output.Name += '[';
+				nextOutput.Name += '[';
 
 				if (makeVariable || !paramOutput.Member)
 				{
 					std::stringstream out;
 					out << paramData;
-					output.Name += out.str();
+					nextOutput.Name += out.str();
 				}
 				else
 				{
-					output.Name += paramOutput.Name;
+					nextOutput.Name += paramOutput.Name;
 				}
 
-				output.Name += ']';
+				nextOutput.Name += ']';
 			}
+
+			output = nextOutput;
 		}
 
 		return output;
+	}
+
+	std::string getReference(size_t dataIndex, const PacketOpcode& opcode, size_t index, const std::unordered_map<std::string, const PacketOutput*>& outputs, const PacketOutput* topOutput, const std::vector<StackEntry>& stack)
+	{
+		const PacketData& paramData = opcode.Data[opcode.Layout[dataIndex].Index];
+
+		DataOutput paramOutput = paramData.Output.size() ? findOutput(opcode, index, paramData.Target, outputs, topOutput, stack, paramData.Output) : DataOutput{};
+
+		bool memberTypeDoesntMatch = paramOutput.Member && (paramOutput.Member->Type == "array" ? paramOutput.Member->ContainsType != paramData.Type->TypeName : paramOutput.Member->Type != paramData.Type->TypeName);
+		bool makeVariable = !paramData.Read || paramData.HasBitOutputs || paramData.Referenced || paramData.Output.size() == 0 || memberTypeDoesntMatch;
+
+		if (makeVariable || !paramOutput.Member)
+		{
+			std::stringstream out;
+			out << paramData;
+
+			return out.str();
+		}
+		else
+		{
+			return paramOutput.Name;
+		}
 	}
 
 	std::unordered_map<const OutputSchema::SchemaClass*, bool> outputsReferenced;
@@ -1292,6 +1966,11 @@ namespace PacketSchema
 			PacketInfoType type = opcode.Layout[i].Type;
 			size_t index = opcode.Layout[i].Index;
 
+			if (opcode.Layout[i].StackDepth - 1 != stack.size())
+			{
+				std::cout << opcode.Name << "[" << i << "]: stack size mismatch: " << opcode.Layout[i].StackDepth - 1 << " vs " << stack.size() << std::endl;
+			}
+
 			if (type == PacketInfoType::Data || type == PacketInfoType::DataRead || type == PacketInfoType::Function)
 			{
 				size_t functionIndex = index;
@@ -1313,9 +1992,10 @@ namespace PacketSchema
 
 				DataOutput output = data.Output.size() ? findOutput(opcode, i, data.Target, outputs, topOutput, stack, data.Output) : DataOutput{};
 
-				bool makeVariable = !data.Read || data.HasBitOutputs || data.Referenced || data.Output.size() == 0 || (output.Member && output.Member->Type != data.Type->TypeName);
+				bool memberTypeDoesntMatch = output.Member && (output.Member->Type == "array" ? output.Member->ContainsType != data.Type->TypeName : output.Member->Type != data.Type->TypeName);
+				bool makeVariable = !data.Read || data.HasBitOutputs || data.Referenced || data.Output.size() == 0 || memberTypeDoesntMatch;
 
-				if ((lastType != PacketInfoType::Data || makeVariable || !output.Member) && lastType != PacketInfoType::Condition && lastType != PacketInfoType::Array)
+				if ((lastType != PacketInfoType::Data || makeVariable || !output.Member) && lastType != PacketInfoType::Condition && lastType != PacketInfoType::Array && lastType != PacketInfoType::OutputMember && lastType != PacketInfoType::Buffer)
 				{
 					out << "\n";
 				}
@@ -1377,24 +2057,14 @@ namespace PacketSchema
 
 					out << " = handler." << function.Name << "(";
 
-					for (size_t i = 0; i < function.ParamDataIndices.size(); ++i)
+					for (size_t j = 0; j < function.ParamDataIndices.size(); ++j)
 					{
-						const PacketData& paramData = opcode.Data[opcode.Layout[function.ParamDataIndices[i]].Index];
 
-						DataOutput paramOutput = paramData.Output.size() ? findOutput(opcode, i, paramData.Target, outputs, topOutput, stack, paramData.Output) : DataOutput{};
+						std::string param = getReference(function.ParamDataIndices[j], opcode, i, outputs, topOutput, stack);
 
-						bool makeVariable = !paramData.Read || paramData.HasBitOutputs || paramData.Referenced || paramData.Output.size() == 0 || (paramOutput.Member && paramOutput.Member->Type != paramData.Type->TypeName);
+						out << param;
 
-						if (makeVariable || !paramOutput.Member)
-						{
-							out << paramData;
-						}
-						else
-						{
-							out << paramOutput.Name;
-						}
-
-						if (i + 1 < function.ParamDataIndices.size())
+						if (j + 1 < function.ParamDataIndices.size())
 						{
 							out << ", ";
 						}
@@ -1485,16 +2155,37 @@ namespace PacketSchema
 
 				DataOutput output = outputMember.Output.size() ? findOutput(opcode, i, outputMember.Target, outputs, topOutput, stack, outputMember.Output) : DataOutput{};
 
-				stack.push_back({ i, outputMember.RegionEnd, output, true });
+				out << "\n" << tabs << "{\n";
+
+				stack.push_back({ i, outputMember.RegionEnd, output });
 				generator.Push();
 				
+				continue;
+			}
+
+			if (type == PacketInfoType::Buffer)
+			{
+				const PacketBuffer& buffer = opcode.Buffers[index];
+
+				out << "\n" << tabs << "{\n";
+
+				stack.push_back({ i, buffer.RegionEnd });
+				generator.Push();
+
+				std::string sizeParam = getReference(buffer.BufferSizeDataIndex, opcode, i, outputs, topOutput, stack);
+				std::string isDeflatedParam = getReference(buffer.IsDeflatedDataIndex, opcode, i, outputs, topOutput, stack);
+
+				out << tabs << "Buffer buffer" << index << "(handler, " << sizeParam << ", " << isDeflatedParam << ");\n";
+
 				continue;
 			}
 
 			if (type == PacketInfoType::Array)
 			{
 				const PacketArray& array = opcode.Arrays[index];
-				const PacketData& data = opcode.Data[array.DataIndex];
+				const PacketData& data = opcode.Data[opcode.Layout[array.DataIndex].Index];
+
+				std::string param = getReference(array.DataIndex, opcode, i, outputs, topOutput, stack);
 
 				DataOutput output = array.Output.size() ? findOutput(opcode, i, array.Target, outputs, topOutput, stack, array.Output) : DataOutput{};
 
@@ -1511,10 +2202,10 @@ namespace PacketSchema
 				{
 					if (output.Output)
 					{
-						out << tabs << containerName << ".resize(" << data << ");\n\n";
+						out << tabs << "ResizeVector(handler, " << containerName << ", " << data << ");\n\n";
 					}
 
-					out << tabs << "for (" << data.Type->TypeName << " " << generator.LoopIndex << " = 0; " << generator.LoopIndex << " < " << data << "; ++" << generator.LoopIndex << ")\n";
+					out << tabs << "for (" << data.Type->TypeName << " " << generator.LoopIndex << " = 0; " << generator.LoopIndex << " < " << param << " && !handler.PacketStream.HasRecentlyFailed; ++" << generator.LoopIndex << ")\n";
 					out << tabs << "{\n";
 
 					stack.push_back({ i, array.RegionEnd, output, true });
@@ -1544,7 +2235,7 @@ namespace PacketSchema
 				{
 					out << tabs << "size_t " << generator.LoopIndex << " = 0;\n\n";
 
-					out << tabs << "while (" << data << ")\n";
+					out << tabs << "while (" << data << " && !handler.PacketStream.HasRecentlyFailed)\n";
 					out << tabs << "{\n";
 
 					stack.push_back({ i, array.RegionEnd, output, true, true });
@@ -1591,13 +2282,15 @@ namespace PacketSchema
 
 				out << tabs << "if (";
 
+				std::string param = getReference(condition.DataIndex, opcode, i, outputs, topOutput, stack);
+
 				if (condition.BitIndex != 0xFF)
 				{
-					out << "GetBit(" << data << ", " << (int)condition.BitIndex << ")";
+					out << "GetBit(" << param << ", " << (int)condition.BitIndex << ")";
 				}
 				else
 				{
-					out << data;
+					out << param;
 				}
 
 				if (condition.Comparison == PacketInfoComparison::Equal)
@@ -1610,6 +2303,14 @@ namespace PacketSchema
 				else if (condition.Comparison == PacketInfoComparison::NotEqual)
 				{
 					out << " != " << condition.Value;
+				}
+				else if (condition.Comparison == PacketInfoComparison::Between)
+				{
+					out << " >= " << condition.Value << " && " << param << " <= " << condition.Value2;
+				}
+				else if (condition.Comparison == PacketInfoComparison::NotBetween)
+				{
+					out << " < " << condition.Value << " || " << param << " > " << condition.Value2;
 				}
 
 				out << ")\n";
@@ -2118,7 +2819,6 @@ namespace PacketSchema
 			for (const auto& versionEntry : PacketVersions)
 			{
 				short version = versionEntry.first;
-
 
 				for (const auto& opcodeEntry : versionEntry.second.ClientOpcodes)
 				{

@@ -2,9 +2,7 @@
 
 #include <Engine/Math/Vector3S.h>
 #include <vector>
-#include <GameData/Enums/SkillSn.h>
-#include <GameData/Enums/ActorId.h>
-#include <GameData/Enums/SkillAttackId.h>
+#include <GameData/Enums/Handles.h>
 #include <GameData/Packets\Client/SkillDamagePacket.h>
 
 namespace Networking

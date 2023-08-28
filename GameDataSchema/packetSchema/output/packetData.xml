@@ -8,6 +8,15 @@
 			<value name="Unknown4" value="4" />
 			<value name="Unknown8" value="8" />
 		</enum>
+		<enum name="Rarity" directory="Enums">
+			<value name="None" value="0" />
+			<value name="Common" value="1" />
+			<value name="Rare" value="2" />
+			<value name="Exceptional" value="3" />
+			<value name="Epic" value="4" />
+			<value name="Legendary" value="5" />
+			<value name="Ascendant" value="6" />
+		</enum>
 		<enum name="SkillId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
@@ -38,6 +47,15 @@
 		<enum name="TrophyId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
+		<enum name="ItemId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="PetId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ItemEntityId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
 		<enum name="ScriptId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
@@ -45,6 +63,9 @@
 			<value name="Null" value="0" />
 		</enum>
 		<enum name="SuperChatId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="BadgeId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
 		<enum name="EffectInstanceId" parent="unsigned int" directory="Enums" file="Handles">
@@ -74,6 +95,19 @@
 			<value name="Hp" value="4" />
 			<value name="MoveSpeed" value="14" />
 		</enum>
+		<enum name="StatAttributeSpecial" parent="unsigned short" directory="Enums">
+		</enum>
+		<enum name="ItemExtraDataType" parent="unsigned char" directory="Enums">
+			<value name="None" value="0" />
+			<value name="TemplateBlueprint" value="1" />
+			<value name="Pet" value="2" />
+			<value name="Music" value="3" />
+			<value name="Badge" value="4" />
+		</enum>
+		<enum name="BadgeType" parent="unsigned char" directory="Enums">
+			<value name="Transparency" value="1" />
+			<value name="Pet" value="11" />
+		</enum>
 	</namespace>
 	<namespace name="Maple">
 		<namespace name="Game">
@@ -89,6 +123,163 @@
 				<member name="Base" type="unsigned long long" />
 				<member name="Current" type="unsigned long long" />
 			</class>
+			<class name="DyeColor" directory="Data">
+				<member name="Primary" type="Color4I" />
+				<member name="Secondary" type="Color4I" />
+				<member name="Tertiary" type="Color4I" />
+				<member name="Index" type="unsigned int" />
+			</class>
+			<class name="ItemCapCustomization">
+				<member name="Position1" type="Vector3S" />
+				<member name="Position2" type="Vector3S" />
+				<member name="Position3" type="Vector3S" />
+				<member name="Position4" type="Vector3S" />
+			</class>
+			<class name="ItemHairCustomization">
+				<member name="BackLength" type="float" />
+				<member name="BackPosition1" type="Vector3S" />
+				<member name="BackPosition2" type="Vector3S" />
+				<member name="FrontLength" type="float" />
+				<member name="FrontPosition1" type="Vector3S" />
+				<member name="FrontPosition2" type="Vector3S" />
+			</class>
+			<class name="ItemDecalCustomization">
+				<member name="Position1" type="Vector3S" />
+				<member name="Position2" type="Vector3S" />
+				<member name="Position3" type="Vector3S" />
+				<member name="Position4" type="Vector3S" />
+			</class>
+			<class name="ItemCustomization">
+				<member name="DyeColor" type="DyeColor" />
+				<member name="Cap" type="ItemCapCustomization" />
+				<member name="Hair" type="ItemHairCustomization" />
+				<member name="Decal" type="ItemDecalCustomization" />
+			</class>
+			<class name="BasicStat" directory="Data">
+				<member name="Type" type="Enum.StatAttributeBasic" />
+				<member name="Value" type="int" />
+				<member name="Rate" type="float" />
+			</class>
+			<class name="SpecialStat" directory="Data">
+				<member name="Type" type="Enum.StatAttributeSpecial" />
+				<member name="Value" type="float" />
+				<member name="Rate" type="float" />
+			</class>
+			<class name="BonusStats">
+				<member name="Basic" type="std::vector" contains="BasicStat" />
+				<member name="Special" type="std::vector" contains="SpecialStat" />
+			</class>
+			<class name="ItemStats">
+				<member name="Constant" type="BonusStats" />
+				<member name="Static" type="BonusStats" />
+				<member name="Random" type="BonusStats" />
+				<member name="Title" type="BonusStats" />
+				<member name="Empowerment1" type="BonusStats" />
+				<member name="Empowerment2" type="BonusStats" />
+				<member name="Empowerment3" type="BonusStats" />
+				<member name="Empowerment4" type="BonusStats" />
+				<member name="Empowerment5" type="BonusStats" />
+			</class>
+			<class name="ItemEnchantment">
+				<member name="Level" type="unsigned int" />
+				<member name="EnchantExp" type="unsigned int" />
+				<member name="EnchantCharges" type="unsigned char" />
+				<member name="CanRepackage" type="bool" />
+				<member name="Charges" type="unsigned int" />
+				<member name="Basic" type="std::vector" contains="BasicStat" />
+			</class>
+			<class name="ItemLimitBreak">
+				<member name="Level" type="unsigned int" />
+				<member name="Stats" type="BonusStats" />
+			</class>
+			<class name="ItemTemplate">
+				<member name="FileName" type="std::wstring" />
+				<member name="Name" type="std::wstring" />
+				<member name="AccountId" type="Enum.AccountId" />
+				<member name="CharacterId" type="Enum.CharacterId" />
+				<member name="Author" type="std::wstring" />
+				<member name="CreationTime" type="unsigned long long" />
+				<member name="Url" type="std::wstring" />
+			</class>
+			<class name="ItemBlueprint">
+			</class>
+			<class name="ItemPet">
+				<member name="Name" type="std::wstring" />
+				<member name="Exp" type="unsigned long long" />
+				<member name="EvolvePoints" type="unsigned int" />
+				<member name="Level" type="unsigned int" />
+				<member name="HasItems" type="bool" />
+			</class>
+			<class name="ItemMusic">
+				<member name="Length" type="unsigned int" />
+				<member name="Instrument" type="unsigned int" />
+				<member name="Title" type="std::wstring" />
+				<member name="Author" type="std::wstring" />
+				<member name="AuthorId" type="Enum.CharacterId" />
+				<member name="IsLocked" type="bool" />
+			</class>
+			<class name="ItemBadge">
+				<member name="Type" type="Enum.BadgeType" />
+				<member name="Id" type="std::wstring" />
+				<member name="BadgeId" type="Enum.BadgeId" />
+				<member name="Transparency" type="array" contains="bool" length="10" />
+				<member name="PetSkinId" type="Enum.PetId" />
+			</class>
+			<class name="ItemBinding">
+				<member name="CharacterId" type="Enum.CharacterId" />
+				<member name="Name" type="std::wstring" />
+			</class>
+			<class name="ItemTransfer">
+				<member name="TransferFlags" type="unsigned int" />
+				<member name="RemainingTrades" type="unsigned int" />
+				<member name="RemainingPackages" type="unsigned int" />
+				<member name="IsBound" type="bool" />
+				<member name="ItemBinding" type="ItemBinding" />
+			</class>
+			<class name="ItemSocket">
+				<class name="Slot" isMember="false">
+					<class name="GemData" isMember="false">
+						<member name="ItemId" type="Enum.ItemId" />
+						<member name="IsBound" type="bool" />
+						<member name="ItemBinding" type="ItemBinding" />
+						<member name="IsLocked" type="bool" />
+						<member name="UnlockTime" type="unsigned long long" />
+					</class>
+					<member name="HasGem" type="bool" />
+					<member name="Gem" type="GemData" />
+				</class>
+				<member name="MaxSlots" type="unsigned char" />
+				<member name="UnlockedSlots" type="unsigned char" />
+				<member name="Sockets" type="std::vector" contains="Slot" />
+			</class>
+			<class name="ItemCouple">
+				<member name="CharacterId" type="Enum.CharacterId" />
+				<member name="Name" type="std::wstring" />
+				<member name="IsCreator" type="bool" />
+			</class>
+			<class name="ItemData" directory="Data">
+				<member name="Amount" type="unsigned int" />
+				<member name="CreationTime" type="unsigned long long" />
+				<member name="ExpirationTime" type="unsigned long long" />
+				<member name="TimesChanged" type="unsigned int" />
+				<member name="RemainingUses" type="unsigned int" />
+				<member name="IsLocked" type="bool" />
+				<member name="UnlockTime" type="bool" />
+				<member name="GlamorForges" type="bool" />
+				<member name="Customization" type="ItemCustomization" />
+				<member name="Stats" type="ItemStats" />
+				<member name="Enchantment" type="ItemEnchantment" />
+				<member name="LimitBreak" type="ItemLimitBreak" />
+				<member name="Template" type="ItemTemplate" />
+				<member name="Blueprint" type="ItemBlueprint" />
+				<member name="Pet" type="ItemPet" />
+				<member name="Music" type="ItemMusic" />
+				<member name="Badge" type="ItemBadge" />
+				<member name="ItemTransfer" type="ItemTransfer" />
+				<member name="ItemSocket" type="ItemSocket" />
+				<member name="ItemCouple" type="ItemCouple" />
+				<member name="ItemBinding" type="ItemBinding" />
+			</class>
 		</namespace>
 	</namespace>
 	<namespace name="Networking">
@@ -102,6 +293,9 @@
 					<member name="MapId" type="Enum.MapId" />
 					<member name="Position" type="Vector3S" />
 					<member name="Rotation" type="Vector3S" />
+				</class>
+				<class name="FieldRemovePlayerPacket" directory="Packets\Server">
+					<member name="CharacterId" type="Enum.CharacterId" />
 				</class>
 				<class name="UserChatPacket" directory="Packets\Server">
 					<enum name="TypeEnum">
@@ -132,6 +326,19 @@
 					<member name="ChannelId" type="Enum.ChannelId" />
 					<member name="SuperChatId" type="Enum.SuperChatId" />
 					<member name="ClubId" type="Enum.ClubId" />
+				</class>
+				<class name="FieldAddItemPacket" directory="Packets\Server">
+					<member name="ObjectId" type="Enum.ItemEntityId" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="Amount" type="unsigned int" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Position" type="Vector3S" />
+					<member name="OwnerId" type="Enum.CharacterId" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="FieldRemoveItemPacket" directory="Packets\Server">
+					<member name="ObjectId" type="Enum.ItemEntityId" />
 				</class>
 				<class name="SkillDamageSyncPacket" directory="Packets\Server">
 					<class name="HitEntity" isMember="false">

@@ -44,7 +44,6 @@ namespace PacketSchema
 		bool Read = true;
 		std::string Output;
 		std::string Target;
-		std::string Index;
 
 		std::vector<PacketDataBit> Flags;
 		std::unordered_map<size_t, std::string> EnumNames;
@@ -73,6 +72,7 @@ namespace PacketSchema
 		OutputMember,
 		Array,
 		Function,
+		Buffer,
 		ValueWrite,
 		Validation,
 		ArrayOutput,
@@ -82,7 +82,9 @@ namespace PacketSchema
 	enum class PacketInfoComparison : unsigned char
 	{
 		Equal,
-		NotEqual
+		NotEqual,
+		Between,
+		NotBetween
 	};
 
 	struct PacketCondition
@@ -90,6 +92,7 @@ namespace PacketSchema
 		size_t DataIndex = (size_t)-1;
 		unsigned char BitIndex = 0xFF;
 		size_t Value = 0;
+		size_t Value2 = 0;
 		PacketInfoComparison Comparison = PacketInfoComparison::Equal;
 		size_t RegionEnd = 0;
 	};
@@ -103,7 +106,6 @@ namespace PacketSchema
 		};
 
 		size_t DataIndex = (size_t)-1;
-		size_t OutputIndex = (size_t)-1;
 		std::string Output;
 		std::string Target;
 		std::string Name;
@@ -129,6 +131,14 @@ namespace PacketSchema
 		size_t RegionEnd = 0;
 	};
 
+	struct PacketBuffer
+	{
+		size_t BufferIndex = (size_t)-1;
+		size_t BufferSizeDataIndex = (size_t)-1;
+		size_t IsDeflatedDataIndex = (size_t)-1;
+		size_t RegionEnd = 0;
+	};
+
 	struct PacketInfo
 	{
 		PacketInfoType Type = PacketInfoType::Data;
@@ -149,7 +159,9 @@ namespace PacketSchema
 		std::vector<PacketArray> Arrays;
 		std::vector<PacketRead> Reads;
 		std::vector<PacketFunction> Functions;
+		std::vector<PacketBuffer> Buffers;
 		std::vector<PacketInfo> Layout;
+		std::vector<std::string> Parameters;
 	};
 
 	struct PacketOpcodeReference
@@ -164,6 +176,7 @@ namespace PacketSchema
 	{
 		unsigned short Version = 0;
 		bool InheritPrevious = true;
+		std::unordered_map<std::string, PacketOpcode> Blocks;
 		std::unordered_map<unsigned short, PacketOpcode> ServerOpcodes;
 		std::unordered_map<unsigned short, PacketOpcode> ClientOpcodes;
 		std::unordered_map<unsigned short, PacketOpcodeReference> ServerOpcodeReferences;
@@ -180,6 +193,8 @@ namespace PacketSchema
 		size_t DataIndex = (size_t)-1;
 	};
 
+	const bool PrintGeneratedOpcodes = false;
+
 	struct OpcodeParser
 	{
 		struct NodeStackEntry
@@ -188,13 +203,13 @@ namespace PacketSchema
 			size_t ConditionIndex = (size_t)-1;
 			size_t ArrayIndex = (size_t)-1;
 			size_t OutputMemberIndex = (size_t)-1;
+			size_t BufferIndex = (size_t)-1;
 			size_t StartIndex = (size_t)-1;
 		};
 
 		std::string FileName;
 		PacketOpcode& Opcode;
 		std::vector<NodeStackEntry> NodeStack;
-		//std::vector<size_t> StackDepths = { };
 
 		DataResult FindDataReference(const std::string_view& name, size_t index = (size_t)-1) const;
 		void ReadData(tinyxml2::XMLElement* element);
@@ -204,7 +219,9 @@ namespace PacketSchema
 		void ReadFunction(tinyxml2::XMLElement* element);
 		void ReadOutput(tinyxml2::XMLElement* element);
 		void ReadOutputMember(tinyxml2::XMLElement* element);
+		void ReadBuffer(tinyxml2::XMLElement* element);
 		void Read(tinyxml2::XMLElement* element);
+		void Print();
 	};
 
 	void readSchema(const fs::path& filePath);

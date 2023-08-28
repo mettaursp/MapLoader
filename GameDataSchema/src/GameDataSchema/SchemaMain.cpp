@@ -504,12 +504,193 @@ int main(int argc, char** argv)
 		return false;
 	};
 
+	const auto visit3 = [&output](const Archive::ArchivePath& path)
+	{
+		output.clear();
+
+		path.Read(output);
+
+		if (output.size() == 0)
+		{
+			std::cout << "failed to read " << path.GetPath() << std::endl;
+
+			return false;
+		}
+
+		tinyxml2::XMLDocument document;
+
+		document.Parse(output.data(), output.size());
+
+		tinyxml2::XMLElement* rootElement = document.RootElement();
+
+		if (!rootElement) return false;
+
+		unsigned int id = (unsigned int)atoi(path.GetPath().filename().stem().string().c_str());
+
+		Networking::Packets::ItemData& item = gms2Data.Items[id];
+
+		for (tinyxml2::XMLElement* environmentElement = rootElement->FirstChildElement(); environmentElement; environmentElement = environmentElement->NextSiblingElement())
+		{
+			tinyxml2::XMLElement* gemElement = environmentElement->FirstChildElement("gem");
+
+			if (gemElement)
+			{
+				const tinyxml2::XMLAttribute* systemAttribute = gemElement->FindAttribute("system");
+
+				if (systemAttribute)
+				{
+					item.BadgeType = (unsigned char)atoi(systemAttribute->Value());
+				}
+			}
+
+			tinyxml2::XMLElement* uccElement = environmentElement->FirstChildElement("ucc");
+
+			if (uccElement)
+			{
+				const tinyxml2::XMLAttribute* meshAttribute = uccElement->FindAttribute("mesh");
+
+				if (meshAttribute)
+				{
+					item.HasTemplate = strcmp(meshAttribute->Value(), "") != 0;
+				}
+			}
+
+			tinyxml2::XMLElement* propertyElement = environmentElement->FirstChildElement("property");
+
+			if (propertyElement)
+			{
+				const tinyxml2::XMLAttribute* typeAttribute = propertyElement->FindAttribute("type");
+
+				if (typeAttribute)
+				{
+					unsigned char type = (unsigned char)atoi(typeAttribute->Value());
+
+					item.HasBlueprint = type == 22;
+				}
+			}
+
+			tinyxml2::XMLElement* petElement = environmentElement->FirstChildElement("pet");
+
+			if (petElement)
+			{
+				const tinyxml2::XMLAttribute* petIDAttribute = petElement->FindAttribute("petID");
+
+				if (petIDAttribute)
+				{
+					item.PetId = (unsigned int)atoi(petIDAttribute->Value());
+				}
+			}
+
+			tinyxml2::XMLElement* scoreElement = environmentElement->FirstChildElement("MusicScore");
+
+			if (scoreElement)
+			{
+				const tinyxml2::XMLAttribute* customAttribute = scoreElement->FindAttribute("isCustomNote");
+
+				if (customAttribute)
+				{
+					item.IsMusicScore = strcmp(customAttribute->Value(), "true") == 0;
+					item.IsCustomNote = strcmp(customAttribute->Value(), "true") == 0;
+				}
+			}
+		}
+
+		return false;
+	};
+
+	const auto visit4 = [&output](const Archive::ArchivePath& path)
+	{
+		output.clear();
+
+		path.Read(output);
+
+		if (output.size() == 0)
+		{
+			std::cout << "failed to read " << path.GetPath() << std::endl;
+
+			return false;
+		}
+
+		tinyxml2::XMLDocument document;
+
+		document.Parse(output.data(), output.size());
+
+		tinyxml2::XMLElement* rootElement = document.RootElement();
+
+		if (!rootElement) return false;
+
+		for (tinyxml2::XMLElement* itemElement = rootElement->FirstChildElement(); itemElement; itemElement = itemElement->NextSiblingElement())
+		{
+			const tinyxml2::XMLAttribute* idAttribute = itemElement->FindAttribute("id");
+
+			if (!idAttribute) continue;
+
+			unsigned int id = (unsigned int)atoi(idAttribute->Value());
+
+			Networking::Packets::ItemData& item = gms2Data.Items[id];
+
+			for (tinyxml2::XMLElement* environmentElement = itemElement->FirstChildElement(); environmentElement; environmentElement = environmentElement->NextSiblingElement())
+			{
+				tinyxml2::XMLElement* uccElement = environmentElement->FirstChildElement("ucc");
+
+				if (uccElement)
+				{
+					const tinyxml2::XMLAttribute* meshAttribute = uccElement->FindAttribute("mesh");
+
+					if (meshAttribute)
+					{
+						item.HasTemplate = strcmp(meshAttribute->Value(), "") != 0;
+					}
+				}
+
+				tinyxml2::XMLElement* propertyElement = environmentElement->FirstChildElement("property");
+
+				if (propertyElement)
+				{
+					const tinyxml2::XMLAttribute* typeAttribute = propertyElement->FindAttribute("type");
+					const tinyxml2::XMLAttribute* categoryAttribute = propertyElement->FindAttribute("category");
+					const tinyxml2::XMLAttribute* param1Attribute = propertyElement->FindAttribute("param1");
+
+					if (typeAttribute)
+					{
+						unsigned char type = (unsigned char)atoi(typeAttribute->Value());
+
+						item.HasBlueprint = type == 22;
+					}
+
+					if (categoryAttribute && param1Attribute)
+					{
+						if (strcmp(categoryAttribute->Value(), "Pet") == 0)
+						{
+							item.PetId = (unsigned int)atoi(param1Attribute->Value());
+						}
+
+						if (strcmp(categoryAttribute->Value(), "SYSTEM") == 0)
+						{
+							item.BadgeType = (unsigned char)atoi(param1Attribute->Value());
+						}
+					}
+
+					if (categoryAttribute)
+					{
+						item.IsMusicScore = strcmp(categoryAttribute->Value(), "ugcScore") == 0;
+						item.IsCustomNote = strcmp(categoryAttribute->Value(), "ugcScore") == 0;
+					}
+				}
+			}
+		}
+
+		return false;
+	};
+
 	bool regenerate = !true;
 
 	if (!regenerate)
 	{
 		Archive::ForEachFile(gms2Reader.GetPath("Xml/npc", true), true, visit1);
+		Archive::ForEachFile(gms2Reader.GetPath("Xml/item", true), true, visit3);
 		Archive::ForEachFile(kms2Reader.GetPath("Xml/npcdata", true), true, visit2);
+		Archive::ForEachFile(kms2Reader.GetPath("Xml/itemdata", true), true, visit4);
 
 		{
 			Archive::ArchivePath path = gms2Reader.GetPath("Xml/string/en/npcname.xml", true);
@@ -637,6 +818,82 @@ int main(int argc, char** argv)
 				unsigned int id = atoi(idAttribute->Value());
 
 				kms2Data.Maps[id].Name = nameAttribute->Value();
+			}
+		}
+		{
+			Archive::ArchivePath path = gms2Reader.GetPath("Xml/string/en/itemname.xml", true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+				const tinyxml2::XMLAttribute* classAttribute = keyElement->FindAttribute("class");
+
+				if (!idAttribute || !nameAttribute) continue;
+
+				unsigned int id = atoi(idAttribute->Value());
+
+				gms2Data.Items[id].Name = nameAttribute->Value();
+
+				if (classAttribute)
+				{
+					gms2Data.Items[id].Class = classAttribute->Value();
+				}
+			}
+		}
+		{
+			Archive::ArchivePath path = kms2Reader.GetPath("Xml/string/en/itemname.xml", true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+				const tinyxml2::XMLAttribute* classAttribute = keyElement->FindAttribute("class");
+
+				if (!idAttribute || !nameAttribute) continue;
+
+				unsigned int id = atoi(idAttribute->Value());
+
+				kms2Data.Items[id].Name = nameAttribute->Value();
+
+				if (classAttribute)
+				{
+					kms2Data.Items[id].Class = classAttribute->Value();
+				}
 			}
 		}
 	}

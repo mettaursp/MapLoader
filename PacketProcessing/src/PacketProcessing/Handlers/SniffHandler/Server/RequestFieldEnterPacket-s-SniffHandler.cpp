@@ -11,17 +11,17 @@ namespace Networking
 			Field = {};
 			
 			const auto& entry = Data->Maps.find((unsigned int)packet.MapId);
-
+		
 			Field.MapId = (unsigned int)packet.MapId;
-
+		
 			if (entry != Data->Maps.end())
 			{
 				Field.CurrentMap = &entry->second;
-
+		
 				if constexpr (ParserUtils::Packets::PrintOutput)
 				{
 					Field.PrintedMap = true;
-
+		
 					std::cout << "entered map [" << (unsigned int)packet.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
 				}
 			}
@@ -30,7 +30,7 @@ namespace Networking
 				if constexpr (ParserUtils::Packets::PrintOutput)
 				{
 					Field.PrintedMap = true;
-
+		
 					std::cout << "entered map [" << (unsigned int)packet.MapId << "]" << std::endl;
 				}
 			}

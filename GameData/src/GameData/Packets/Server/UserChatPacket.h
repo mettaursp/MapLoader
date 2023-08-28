@@ -1,12 +1,8 @@
 #pragma once
 
-#include <GameData/Enums/ClubId.h>
+#include <GameData/Enums/Handles.h>
 #include <string>
-#include <GameData/Enums/ChannelId.h>
-#include <GameData/Enums/AccountId.h>
-#include <GameData/Enums/CharacterId.h>
 #include <GameData/Packets\Server/UserChatPacket.h>
-#include <GameData/Enums/SuperChatId.h>
 
 namespace Networking
 {

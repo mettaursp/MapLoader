@@ -172,6 +172,9 @@
     <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">
       <Project>{01d10ca8-8e23-4880-b235-786919567bc4}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\GameEngine\GameEngine.vcxproj">
+      <Project>{47e24c64-85dd-4f64-8761-a13fd4d198ec}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\PacketProcessing\PacketProcessing.vcxproj">
       <Project>{b2bd6ad0-602e-46e5-aa20-9426af655145}</Project>
     </ProjectReference>

@@ -2,8 +2,7 @@
 
 #include <Engine/Math/Vector3S.h>
 #include <vector>
-#include <GameData/Enums/SkillSn.h>
-#include <GameData/Enums/ActorId.h>
+#include <GameData/Enums/Handles.h>
 #include <GameData/Packets\Server/SkillDamageRegionPacket.h>
 #include <GameData/Enums/HitType.h>
 

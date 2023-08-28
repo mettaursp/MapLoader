@@ -21,10 +21,23 @@ namespace Networking
 			std::string Name;
 		};
 
+		struct ItemData
+		{
+			std::string Name;
+			std::string Class;
+			bool HasTemplate = false;
+			bool HasBlueprint = false;
+			unsigned int PetId = 0;
+			bool IsMusicScore = false;
+			bool IsCustomNote = false;
+			unsigned char BadgeType = 0;
+		};
+
 		struct Metadata
 		{
 			std::unordered_map<unsigned int, NpcData> Npcs;
 			std::unordered_map<unsigned int, MapData> Maps;
+			std::unordered_map<unsigned int, ItemData> Items;
 		};
 
 		struct Actor
@@ -81,6 +94,8 @@ namespace Networking
 
 			bool IsNpcBoss(unsigned int npcId) const;
 			bool NpcHasHiddenHp(unsigned int npcId) const;
+			unsigned char GetItemExtraDataType(unsigned int itemId) const;
+			unsigned short GetItemCategory(unsigned int itemId) const;
 
 		private:
 

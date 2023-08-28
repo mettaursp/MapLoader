@@ -3,6 +3,9 @@
 		<opcodeReference value="0x7" version="12" opcode="0x7" />
 		<opcodeReference value="0x16" version="12" opcode="0x16" />
 		<opcodeReference value="0x1D" version="12" opcode="0x1D" />
+		<opcodeReference value="0x18" version="12" opcode="0x18" />
+		<opcodeReference value="0x2B" version="12" opcode="0x2B" />
+		<opcodeReference value="0x2C" version="12" opcode="0x2C" />
 		<opcodeReference value="0x3D" version="12" opcode="0x3E" />
 		<opcode name="Buff" value="0x47">
 			<output type="Networking.Packets.Server.BuffPacket" schemaName="packetData" />

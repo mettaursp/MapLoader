@@ -7,6 +7,7 @@ namespace Networking
 		template <>
 		void SniffHandler::PacketParsed<Server::Reconnect7Packet>(const Server::Reconnect7Packet& packet)
 		{
+			
 		}
 	}
 }

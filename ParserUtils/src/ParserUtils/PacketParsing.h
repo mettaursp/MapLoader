@@ -18,6 +18,54 @@ namespace ParserUtils
 		const bool PrintErrors = true;
 		const bool PrintUnknownValues = true;
 
+		template <typename T, typename Size, typename HandlerType>
+		void ResizeVector(HandlerType& handler, std::vector<T>& vector, Size size, const std::source_location location = std::source_location::current())
+		{
+			DataStream& stream = handler.PacketStream;
+
+			if (stream.HasRecentlyFailed)
+			{
+				return;
+			}
+
+			if constexpr (std::is_signed_v<Size>)
+			{
+				if (size < 0)
+				{
+					stream.HasRecentlyFailed = true;
+
+					if constexpr (PrintErrors)
+					{
+						if (!stream.SuppressErrors)
+						{
+							std::cout << location.file_name() << "[" << location.line() << "," << location.column() << "] " << location.function_name() << ": attempt to set vector to a negative size: " << size << std::endl;
+						}
+					}
+
+					return;
+				}
+			}
+
+			size_t remaining = stream.Data.size() - stream.Index;
+
+			if (size > remaining)
+			{
+				stream.HasRecentlyFailed = true;
+
+				if constexpr (PrintErrors)
+				{
+					if (!stream.SuppressErrors)
+					{
+						std::cout << location.file_name() << "[" << location.line() << "," << location.column() << "] " << location.function_name() << ": attempt to set vector to a size larger than the remaining number of bytes : " << size << "; remaining: " << remaining << std::endl;
+					}
+				}
+
+				return;
+			}
+
+			vector.resize(remaining);
+		}
+
 		template <typename T, typename HandlerType>
 		void Read(const char* name, HandlerType& handler, T& value, const char* tabs, const std::source_location location = std::source_location::current())
 		{
@@ -28,6 +76,7 @@ namespace ParserUtils
 				return;
 			}
 
+			size_t lastIndex = stream.Index;
 			bool succeeded = stream.Read<T>(value);
 
 			if (!succeeded)
@@ -49,7 +98,7 @@ namespace ParserUtils
 				{
 					std::ostream& out = PrintOutput ? std::cout : handler.FoundValues;
 
-					out << tabs << name << ": ";
+					out << tabs << "[" << (stream.Index - lastIndex) << "] " << name << ": ";
 
 					if constexpr (std::is_same_v<T, char> || std::is_same_v<T, unsigned char> || std::is_same_v<T, signed char>)
 					{

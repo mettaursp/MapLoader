@@ -122,7 +122,8 @@ namespace OutputSchema
 		{ "std::string", "<string>" },
 		{ "std::wstring", "<string>" },
 		{ "std::vector", "<vector>" },
-		{ "Vector3S", "<Engine/Math/Vector3S.h>" }
+		{ "Vector3S", "<Engine/Math/Vector3S.h>" },
+		{ "Color4I", "<Engine/Math/Color4I.h>" }
 	};
 
 	const std::unordered_set<std::string> builtIns = {
@@ -140,7 +141,9 @@ namespace OutputSchema
 		"std::vector",
 		"std::string",
 		"std::wstring",
-		"Vector3S"
+		"Vector3S",
+		"Color4I"
+		"array"
 	};
 
 	void readMember(SchemaMember& schemaMember, tinyxml2::XMLElement* element, SchemaClass* rootClass)
@@ -181,6 +184,13 @@ namespace OutputSchema
 			if (strcmp(name, "schemaName") == 0)
 			{
 				schemaMember.SchemaName = value;
+
+				continue;
+			}
+
+			if (strcmp(name, "length") == 0)
+			{
+				schemaMember.Length = (size_t)atoll(value);
 
 				continue;
 			}

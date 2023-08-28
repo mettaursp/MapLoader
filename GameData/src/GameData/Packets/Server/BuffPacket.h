@@ -1,10 +1,7 @@
 #pragma once
 
-#include <GameData/Enums/EffectLevel.h>
-#include <GameData/Enums/EffectInstanceId.h>
 #include <GameData/Packets\Server/BuffPacket.h>
-#include <GameData/Enums/ActorId.h>
-#include <GameData/Enums/EffectId.h>
+#include <GameData/Enums/Handles.h>
 
 namespace Networking
 {

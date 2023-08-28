@@ -1,12 +1,8 @@
 #pragma once
 
-#include <GameData/Enums/SkillLevel.h>
 #include <Engine/Math/Vector3S.h>
 #include <vector>
-#include <GameData/Enums/SkillId.h>
-#include <GameData/Enums/SkillSn.h>
-#include <GameData/Enums/SkillAttackId.h>
-#include <GameData/Enums/ActorId.h>
+#include <GameData/Enums/Handles.h>
 #include <GameData/Packets\Server/SkillDamageSyncPacket.h>
 
 namespace Networking

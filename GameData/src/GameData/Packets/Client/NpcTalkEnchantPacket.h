@@ -1,9 +1,7 @@
 #pragma once
 
-#include <GameData/Enums/NpcId.h>
-#include <GameData/Enums/ScriptId.h>
+#include <GameData/Enums/Handles.h>
 #include <GameData/Packets\Client/NpcTalkEnchantPacket.h>
-#include <GameData/Enums/ItemInstanceId.h>
 
 namespace Networking
 {

@@ -1,8 +1,6 @@
 #pragma once
 
-#include <GameData/Enums/SkillId.h>
-#include <GameData/Enums/SkillSn.h>
-#include <GameData/Enums/SkillLevel.h>
+#include <GameData/Enums/Handles.h>
 
 namespace Networking
 {

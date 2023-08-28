@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Engine/Math/Vector3S.h>
-#include <GameData/Enums/SkillSn.h>
+#include <GameData/Enums/Handles.h>
 
 namespace Networking
 {

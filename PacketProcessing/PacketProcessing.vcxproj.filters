@@ -266,4 +266,34 @@
             <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
         </ClCompile>
     </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\BasicStat-c-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SpecialStat-c-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\BonusStats-c-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemCustomization-c-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemBinding-c-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemData-c-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
 </Project>

@@ -1,0 +1,73 @@
+<outputSchema isGlobal="true">
+	<namespace name="Enum">
+		<enum name="SkillId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="SkillLevel" parent="unsigned short" directory="Enums" file="Handles">
+			<value name="Zero" value="0" />
+		</enum>
+		<enum name="EffectId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="EffectLevel" parent="unsigned short" directory="Enums" file="Handles">
+			<value name="Zero" value="0" />
+		</enum>
+		<enum name="SkillSn" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ActorId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="NpcId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="MapId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="QuestId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="TrophyId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ItemId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="PetId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ItemEntityId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ScriptId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ChannelId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="SuperChatId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="BadgeId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="EffectInstanceId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="CharacterId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="AccountId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ClubId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="SkillAttackId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+	</namespace>
+</outputSchema>

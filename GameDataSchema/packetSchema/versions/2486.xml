@@ -1,26 +1,8 @@
 <packetSchema version="2486">
 	<blocks>
-		<block name="BasicStat">
-			<data type="short" name="type" output="Type" />
-			<data type="int" name="value" output="Value" />
-			<data type="float" name="rate" output="rate" />
-		</block>
-		<block name="SpecialStat">
-			<data type="short" name="type" output="Type" />
-			<data type="float" name="value" output="Value" />
-			<data type="float" name="rate" output="Rate" />
-		</block>
-		<block name="BasicAndSpecialStats">
-			<data type="short" name="statCount" />
-			<array data="statCount" output="Basic">
-				<useBlock name="BasicStat" version="2486" />
-			</array>
-			<read name="statCount" />
-			<array data="statCount" output="Special">
-				<useBlock name="SpecialStat" version="2486" />
-			</array>
-		</block>
-		<block name="ItemData" params="itemId">
+		<block name="ItemData">
+			<outputParam type="Maple.Game.ItemData" schema="packetData" />
+			<blockParam name="itemId" type="unsigned int" />
 			<data type="int" name="amount" output="Amount" />
 			<data type="int" name="unknown">
 				<enum name="Unknown" value="-1" />
@@ -37,25 +19,25 @@
 			<data type="byte" name="unknownBool">
 				<enum name="Unknown" value="0" />
 			</data>
-			<useBlock name="ItemCustomization" version="12" output="Customization" />
+			<useBlock name="ItemCustomization" version="12" output="Customization" args="itemId" />
 			<outputMember output="Stats">
-				<useBlock name="BasicAndSpecialStats" version="2486" output="Constant" />
+				<useBlock name="BasicAndSpecialStats" version="12" output="Constant" />
 				<data type="int" name="unknown">
 					<enum name="Unknown" value="0" />
 				</data>
-				<useBlock name="BasicAndSpecialStats" version="2486" output="Static" />
+				<useBlock name="BasicAndSpecialStats" version="12" output="Static" />
 				<data type="int" name="unknown">
 					<enum name="Unknown" value="0" />
 				</data>
-				<useBlock name="BasicAndSpecialStats" version="2486" output="Random" />
+				<useBlock name="BasicAndSpecialStats" version="12" output="Random" />
 				<data type="int" name="unknown">
 					<enum name="Unknown" value="0" />
 				</data>
-				<useBlock name="BasicAndSpecialStats" version="2486" output="Title" />
+				<useBlock name="BasicAndSpecialStats" version="12" output="Title" />
 				<data type="int" name="unknown">
 					<enum name="Unknown" value="0" />
 				</data>
-				<useBlock name="BasicAndSpecialStats" version="2486" output="Empowerment" />
+				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment1" />
 				<data type="int" name="unknown">
 					<enum name="Unknown" value="0" />
 				</data>
@@ -81,11 +63,11 @@
 				<outputMember output="Stats">
 					<data type="int" name="statCount" />
 					<array data="statCount" output="Basic">
-						<useBlock name="BasicStat" version="2486" />
+						<useBlock name="BasicStat" version="12" />
 					</array>
 					<read name="statCount" />
 					<array data="statCount" output="Special">
-						<useBlock name="SpecialStat" version="2486" />
+						<useBlock name="SpecialStat" version="12" />
 					</array>
 				</outputMember>
 			</outputMember>
@@ -246,7 +228,7 @@
 			<data type="bool" name="unknown" />
 			<data type="bool" name="unknown" />
 			<condition data="itemId" value="90000001" value2="90000003" comparison="notBetween">
-				<useBlock name="ItemData" version="2486" output="ItemData" />
+				<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
 			</condition>
 		</opcode>
 		<opcode name="SkillDamage" value="0x3D">
@@ -272,9 +254,7 @@
 					<data type="ushort" name="skillLevel" output="SkillLevel" />
 					<data type="byte" name="motionPoint" output="MotionPoint" />
 					<data type="byte" name="attackPoint" output="AttackPoint" />
-					<data type="short" name="posX" />
-					<data type="short" name="posY" />
-					<data type="short" name="posZ" />
+					<data type="Vector3Short" name="position" output="Position" />
 					<data type="Vector3S" name="direction" output="Direction" />
 					<data type="bool" name="isChaining" output="IsChaining" />
 					<data type="byte" name="count" />
@@ -296,12 +276,8 @@
 				<data type="ushort" name="skillLevel" output="SkillLevel" />
 				<data type="byte" name="motionPoint" output="MotionPoint" />
 				<data type="byte" name="attackPoint" output="AttackPoint" />
-				<data type="short" name="posX" />
-				<data type="short" name="posY" />
-				<data type="short" name="posZ" />
-				<data type="short" name="dirX" />
-				<data type="short" name="dirY" />
-				<data type="short" name="dirZ" />
+				<data type="Vector3Short" name="position" output="Position" />
+				<data type="Vector3Short" name="direction" output="Direction" />
 				<data type="byte" name="count" />
 				<array data="count" output="DamagedTargets">
 					<data type="int" name="targetId" output="TargetId" />
@@ -354,9 +330,7 @@
 				<array data="count" output="DamagedTargets">
 					<data type="int" name="targetId" output="TargetId" />
 					<data type="byte" name="damageCount" />
-					<data type="short" name="posX" />
-					<data type="short" name="posY" />
-					<data type="short" name="posZ" />
+					<data type="Vector3Short" name="position" output="Position" />
 					<data type="Vector3S" name="direction" output="Direction" />
 					<array data="damageCount" output="Damages">
 						<data type="byte" name="hitType" output="HitType">
@@ -380,9 +354,7 @@
 				<array data="count" output="DamagedTargets">
 					<data type="int" name="targetId" output="TargetId" />
 					<data type="byte" name="damageCount" />
-					<data type="short" name="posX" />
-					<data type="short" name="posY" />
-					<data type="short" name="posZ" />
+					<data type="Vector3Short" name="position" output="Position" />
 					<data type="Vector3S" name="direction" output="Direction" />
 					<array data="damageCount" output="Damages">
 						<data type="byte" name="hitType" output="HitType">

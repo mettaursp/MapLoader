@@ -1,0 +1,17 @@
+<outputSchema isGlobal="true">
+	<namespace name="Enum">
+		<enum name="Rarity" directory="Enums">
+			<value name="None" value="0" />
+			<value name="Common" value="1" />
+			<value name="Rare" value="2" />
+			<value name="Exceptional" value="3" />
+			<value name="Epic" value="4" />
+			<value name="Legendary" value="5" />
+			<value name="Ascendant" value="6" />
+		</enum>
+		<enum name="BadgeType" parent="unsigned char" directory="Enums">
+			<value name="Transparency" value="1" />
+			<value name="Pet" value="11" />
+		</enum>
+	</namespace>
+</outputSchema>

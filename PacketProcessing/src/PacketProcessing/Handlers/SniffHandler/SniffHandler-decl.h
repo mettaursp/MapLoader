@@ -3,6 +3,7 @@
 #include <unordered_map>
 
 #include <ParserUtils/DataStream.h>
+#include <GameData/Enums/Handles.h>
 
 namespace Networking
 {
@@ -35,9 +36,9 @@ namespace Networking
 
 		struct Metadata
 		{
-			std::unordered_map<unsigned int, NpcData> Npcs;
-			std::unordered_map<unsigned int, MapData> Maps;
-			std::unordered_map<unsigned int, ItemData> Items;
+			std::unordered_map<Enum::NpcId, NpcData> Npcs;
+			std::unordered_map<Enum::MapId, MapData> Maps;
+			std::unordered_map<Enum::ItemId, ItemData> Items;
 		};
 
 		struct Actor
@@ -92,9 +93,10 @@ namespace Networking
 			template <typename T>
 			void PacketParsed(const T& packet);
 
-			bool IsNpcBoss(unsigned int npcId) const;
-			bool NpcHasHiddenHp(unsigned int npcId) const;
+			bool IsNpcBoss(Enum::NpcId npcId) const;
+			bool NpcHasHiddenHp(Enum::NpcId npcId) const;
 			unsigned char GetItemExtraDataType(unsigned int itemId) const;
+			unsigned short GetItemCategory(Enum::ItemId itemId) const;
 			unsigned short GetItemCategory(unsigned int itemId) const;
 
 		private:

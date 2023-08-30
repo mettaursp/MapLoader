@@ -10,7 +10,7 @@ namespace Networking
 		{
 			Field = {};
 			
-			const auto& entry = Data->Maps.find((unsigned int)packet.MapId);
+			const auto& entry = Data->Maps.find(packet.MapId);
 		
 			Field.MapId = (unsigned int)packet.MapId;
 		

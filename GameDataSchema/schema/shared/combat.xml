@@ -1,0 +1,23 @@
+<outputSchema isGlobal="true">
+	<namespace name="Enum">
+		<enum name="HitType" directory="Enums">
+			<value name="Normal" value="0" />
+			<value name="Critical" value="1" />
+			<value name="Miss" value="2" />
+			<value name="Block" value="3" />
+			<value name="Unknown4" value="4" />
+			<value name="Unknown8" value="8" />
+		</enum>
+		<enum name="NpcType" parent="unsigned long long" directory="Enums">
+			<value name="Enemy" value="0" />
+			<value name="Ally" value="1" />
+			<value name="Friendly" value="2" />
+		</enum>
+		<enum name="StatAttributeBasic" parent="unsigned char" directory="Enums">
+			<value name="Hp" value="4" />
+			<value name="MoveSpeed" value="14" />
+		</enum>
+		<enum name="StatAttributeSpecial" parent="unsigned short" directory="Enums">
+		</enum>
+	</namespace>
+</outputSchema>

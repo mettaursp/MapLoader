@@ -4,7 +4,7 @@ namespace Networking
 {
 	namespace Packets
 	{
-		bool SniffHandler::IsNpcBoss(unsigned int npcId) const
+		bool SniffHandler::IsNpcBoss(Enum::NpcId npcId) const
 		{
 			if (Data == nullptr)
 			{
@@ -21,7 +21,7 @@ namespace Networking
 			return npcHandle->second.Class >= 3 && npcHandle->second.NpcType == 0;
 		}
 
-		bool SniffHandler::NpcHasHiddenHp(unsigned int npcId) const
+		bool SniffHandler::NpcHasHiddenHp(Enum::NpcId npcId) const
 		{
 			return false;
 
@@ -47,7 +47,7 @@ namespace Networking
 				return 0;
 			}
 
-			const auto itemHandle = Data->Items.find(itemId);
+			const auto itemHandle = Data->Items.find((Enum::ItemId)itemId);
 
 			if (itemHandle == Data->Items.end())
 			{
@@ -75,6 +75,11 @@ namespace Networking
 			}
 
 			return 0;
+		}
+
+		unsigned short SniffHandler::GetItemCategory(Enum::ItemId itemId) const
+		{
+			return (unsigned short)((unsigned int)itemId / 100000);
 		}
 
 		unsigned short SniffHandler::GetItemCategory(unsigned int itemId) const

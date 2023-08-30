@@ -17,7 +17,7 @@ namespace Maple
 				{
 					Enum::ItemId ItemId;
 					bool IsBound = false;
-					ItemBinding ItemBinding;
+					ItemBinding Binding;
 					bool IsLocked = false;
 					unsigned long long UnlockTime = 0;
 				};

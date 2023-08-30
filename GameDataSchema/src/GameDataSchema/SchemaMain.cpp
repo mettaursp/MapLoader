@@ -389,7 +389,7 @@ int main(int argc, char** argv)
 
 	const auto visit1 = [&output](const Archive::ArchivePath& path)
 	{
-		unsigned int id = atoi(path.GetPath().filename().stem().string().c_str());
+		Enum::NpcId id = (Enum::NpcId)atoi(path.GetPath().filename().stem().string().c_str());
 
 		Networking::Packets::NpcData& npc = gms2Data.Npcs[id];
 
@@ -473,7 +473,7 @@ int main(int argc, char** argv)
 
 			if (!idAttribute) continue;
 
-			unsigned int id = atoi(idAttribute->Value());
+			Enum::NpcId id = (Enum::NpcId)atoi(idAttribute->Value());
 
 			Networking::Packets::NpcData& npc = kms2Data.Npcs[id];
 
@@ -525,7 +525,7 @@ int main(int argc, char** argv)
 
 		if (!rootElement) return false;
 
-		unsigned int id = (unsigned int)atoi(path.GetPath().filename().stem().string().c_str());
+		Enum::ItemId id = (Enum::ItemId)atoi(path.GetPath().filename().stem().string().c_str());
 
 		Networking::Packets::ItemData& item = gms2Data.Items[id];
 
@@ -625,7 +625,7 @@ int main(int argc, char** argv)
 
 			if (!idAttribute) continue;
 
-			unsigned int id = (unsigned int)atoi(idAttribute->Value());
+			Enum::ItemId id = (Enum::ItemId)atoi(idAttribute->Value());
 
 			Networking::Packets::ItemData& item = gms2Data.Items[id];
 
@@ -719,7 +719,7 @@ int main(int argc, char** argv)
 
 				if (!idAttribute || !nameAttribute) continue;
 
-				unsigned int id = atoi(idAttribute->Value());
+				Enum::NpcId id = (Enum::NpcId)atoi(idAttribute->Value());
 				
 				gms2Data.Npcs[id].Name = nameAttribute->Value();
 			}
@@ -751,7 +751,7 @@ int main(int argc, char** argv)
 
 				if (!idAttribute || !nameAttribute) continue;
 
-				unsigned int id = atoi(idAttribute->Value());
+				Enum::NpcId id = (Enum::NpcId)atoi(idAttribute->Value());
 
 				kms2Data.Npcs[id].Name = nameAttribute->Value();
 			}
@@ -783,7 +783,7 @@ int main(int argc, char** argv)
 
 				if (!idAttribute || !nameAttribute) continue;
 
-				unsigned int id = atoi(idAttribute->Value());
+				Enum::MapId id = (Enum::MapId)atoi(idAttribute->Value());
 
 				gms2Data.Maps[id].Name = nameAttribute->Value();
 			}
@@ -815,7 +815,7 @@ int main(int argc, char** argv)
 
 				if (!idAttribute || !nameAttribute) continue;
 
-				unsigned int id = atoi(idAttribute->Value());
+				Enum::MapId id = (Enum::MapId)atoi(idAttribute->Value());
 
 				kms2Data.Maps[id].Name = nameAttribute->Value();
 			}
@@ -848,7 +848,7 @@ int main(int argc, char** argv)
 
 				if (!idAttribute || !nameAttribute) continue;
 
-				unsigned int id = atoi(idAttribute->Value());
+				Enum::ItemId id = (Enum::ItemId)atoi(idAttribute->Value());
 
 				gms2Data.Items[id].Name = nameAttribute->Value();
 
@@ -886,7 +886,7 @@ int main(int argc, char** argv)
 
 				if (!idAttribute || !nameAttribute) continue;
 
-				unsigned int id = atoi(idAttribute->Value());
+				Enum::ItemId id = (Enum::ItemId)atoi(idAttribute->Value());
 
 				kms2Data.Items[id].Name = nameAttribute->Value();
 
@@ -898,6 +898,7 @@ int main(int argc, char** argv)
 		}
 	}
 
+	OutputSchema::readSchemas(schemaDir / "shared");
 	GameSchema::readSchemas(schemaDir / "gms2", true);
 	GameSchema::readSchemas(schemaDir / "kms2", false);
 	//GameSchema::validateSchemas(gms2Reader, true, validateGms2Dirs);

@@ -1,16 +1,19 @@
 <packetSchema version="12">
 	<blocks>
 		<block name="BasicStat">
+			<outputParam type="Maple.Game.BasicStat" schema="packetData" />
 			<data type="short" name="type" output="Type" />
 			<data type="int" name="value" output="Value" />
 			<data type="float" name="rate" output="Rate" />
 		</block>
 		<block name="SpecialStat">
+			<outputParam type="Maple.Game.SpecialStat" schema="packetData" />
 			<data type="short" name="type" output="Type" />
 			<data type="float" name="value" output="Value" />
 			<data type="float" name="rate" output="Rate" />
 		</block>
 		<block name="BasicAndSpecialStats">
+			<outputParam type="Maple.Game.BonusStats" schema="packetData" />
 			<data type="short" name="statCount" />
 			<array data="statCount" output="Basic">
 				<useBlock name="BasicStat" version="12" />
@@ -21,10 +24,13 @@
 			</array>
 		</block>
 		<block name="ItemBinding">
+			<outputParam type="Maple.Game.ItemBinding" schema="packetData" />
 			<data type="long" name="characterId" output="CharacterId" />
 			<data type="wstring" name="name" output="Name" />
 		</block>
-		<block name="ItemCustomization" params="itemId">
+		<block name="ItemCustomization">
+			<outputParam type="Maple.Game.ItemCustomization" schema="packetData" />
+			<blockParam name="itemId" type="unsigned int" />
 			<outputMember output="DyeColor">
 				<data type="Color4I" name="dyeColorPrimary" output="Primary" />
 				<data type="Color4I" name="dyeColorSecondary" output="Secondary" />
@@ -68,7 +74,9 @@
 				</outputMember>
 			</condition>
 		</block>
-		<block name="ItemData" params="itemId">
+		<block name="ItemData">
+			<outputParam type="Maple.Game.ItemData" schema="packetData" />
+			<blockParam name="itemId" type="unsigned int" />
 			<data type="int" name="amount" output="Amount" />
 			<data type="int" name="unknown" />
 			<data type="int" name="unknown">
@@ -86,7 +94,7 @@
 				<enum name="Unknown" value="0" />
 			</data>
 			<data type="int" name="unknown" />
-			<useBlock name="ItemCustomization" version="12" output="Customization" />
+			<useBlock name="ItemCustomization" version="12" output="Customization" args="itemId" />
 			<outputMember output="Stats">
 				<data type="byte" name="unknown" />
 				<useBlock name="BasicAndSpecialStats" version="12" output="Constant" />
@@ -657,7 +665,7 @@
 			<data type="bool" name="unknown" />
 			<data type="bool" name="unknown" />
 			<condition data="itemId" value="90000001" value2="90000003" comparison="notBetween">
-				<useBlock name="ItemData" version="12" output="ItemData" />
+				<useBlock name="ItemData" version="12" output="ItemData" args="itemId" />
 			</condition>
 		</opcode>
 		<opcode name="FieldRemoveItem" value="0x2C">

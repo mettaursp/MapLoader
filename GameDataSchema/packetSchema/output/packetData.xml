@@ -1,112 +1,11 @@
 <outputSchema>
 	<namespace name="Enum">
-		<enum name="HitType" directory="Enums">
-			<value name="Normal" value="0" />
-			<value name="Critical" value="1" />
-			<value name="Miss" value="2" />
-			<value name="Block" value="3" />
-			<value name="Unknown4" value="4" />
-			<value name="Unknown8" value="8" />
-		</enum>
-		<enum name="Rarity" directory="Enums">
-			<value name="None" value="0" />
-			<value name="Common" value="1" />
-			<value name="Rare" value="2" />
-			<value name="Exceptional" value="3" />
-			<value name="Epic" value="4" />
-			<value name="Legendary" value="5" />
-			<value name="Ascendant" value="6" />
-		</enum>
-		<enum name="SkillId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="SkillLevel" parent="unsigned short" directory="Enums" file="Handles">
-			<value name="Zero" value="0" />
-		</enum>
-		<enum name="EffectId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="EffectLevel" parent="unsigned short" directory="Enums" file="Handles">
-			<value name="Zero" value="0" />
-		</enum>
-		<enum name="SkillSn" parent="unsigned long long" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="ActorId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="NpcId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="MapId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="QuestId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="TrophyId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="ItemId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="PetId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="ItemEntityId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="ScriptId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="ChannelId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="SuperChatId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="BadgeId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="EffectInstanceId" parent="unsigned int" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="CharacterId" parent="unsigned long long" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="AccountId" parent="unsigned long long" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="ClubId" parent="unsigned long long" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="SkillAttackId" parent="unsigned long long" directory="Enums" file="Handles">
-			<value name="Null" value="0" />
-		</enum>
-		<enum name="NpcType" parent="unsigned long long" directory="Enums">
-			<value name="Enemy" value="0" />
-			<value name="Ally" value="1" />
-			<value name="Friendly" value="2" />
-		</enum>
-		<enum name="StatAttributeBasic" parent="unsigned char" directory="Enums">
-			<value name="Hp" value="4" />
-			<value name="MoveSpeed" value="14" />
-		</enum>
-		<enum name="StatAttributeSpecial" parent="unsigned short" directory="Enums">
-		</enum>
 		<enum name="ItemExtraDataType" parent="unsigned char" directory="Enums">
 			<value name="None" value="0" />
 			<value name="TemplateBlueprint" value="1" />
 			<value name="Pet" value="2" />
 			<value name="Music" value="3" />
 			<value name="Badge" value="4" />
-		</enum>
-		<enum name="BadgeType" parent="unsigned char" directory="Enums">
-			<value name="Transparency" value="1" />
-			<value name="Pet" value="11" />
 		</enum>
 	</namespace>
 	<namespace name="Maple">
@@ -234,14 +133,14 @@
 				<member name="RemainingTrades" type="unsigned int" />
 				<member name="RemainingPackages" type="unsigned int" />
 				<member name="IsBound" type="bool" />
-				<member name="ItemBinding" type="ItemBinding" />
+				<member name="Binding" type="ItemBinding" />
 			</class>
 			<class name="ItemSocket">
 				<class name="Slot" isMember="false">
 					<class name="GemData" isMember="false">
 						<member name="ItemId" type="Enum.ItemId" />
 						<member name="IsBound" type="bool" />
-						<member name="ItemBinding" type="ItemBinding" />
+						<member name="Binding" type="ItemBinding" />
 						<member name="IsLocked" type="bool" />
 						<member name="UnlockTime" type="unsigned long long" />
 					</class>
@@ -278,7 +177,7 @@
 				<member name="ItemTransfer" type="ItemTransfer" />
 				<member name="ItemSocket" type="ItemSocket" />
 				<member name="ItemCouple" type="ItemCouple" />
-				<member name="ItemBinding" type="ItemBinding" />
+				<member name="Binding" type="ItemBinding" />
 			</class>
 		</namespace>
 	</namespace>

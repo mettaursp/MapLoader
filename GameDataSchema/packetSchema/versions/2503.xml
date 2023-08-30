@@ -23,9 +23,7 @@
 					<data type="ushort" name="skillLevel" output="SkillLevel" />
 					<data type="byte" name="motionPoint" output="MotionPoint" />
 					<data type="byte" name="attackPoint" output="AttackPoint" />
-					<data type="short" name="posX" />
-					<data type="short" name="posY" />
-					<data type="short" name="posZ" />
+					<data type="Vector3Short" name="position" output="Position" />
 					<data type="Vector3S" name="direction" output="Direction" />
 					<data type="bool" name="isChaining" output="IsChaining" />
 					<data type="byte" name="count" />
@@ -47,12 +45,8 @@
 				<data type="ushort" name="skillLevel" output="SkillLevel" />
 				<data type="byte" name="motionPoint" output="MotionPoint" />
 				<data type="byte" name="attackPoint" output="AttackPoint" />
-				<data type="short" name="posX" />
-				<data type="short" name="posY" />
-				<data type="short" name="posZ" />
-				<data type="short" name="dirX" />
-				<data type="short" name="dirY" />
-				<data type="short" name="dirZ" />
+				<data type="Vector3Short" name="position" output="Position" />
+				<data type="Vector3Short" name="direction" output="Direction" />
 				<data type="byte" name="count" />
 				<array data="count" output="DamagedTargets">
 					<data type="int" name="targetId" output="TargetId" />
@@ -105,9 +99,7 @@
 				<array data="count" output="DamagedTargets">
 					<data type="int" name="targetId" output="TargetId" />
 					<data type="byte" name="damageCount" />
-					<data type="short" name="posX" />
-					<data type="short" name="posY" />
-					<data type="short" name="posZ" />
+					<data type="Vector3Short" name="position" output="Position" />
 					<data type="Vector3S" name="direction" output="Direction" />
 					<array data="damageCount" output="Damages">
 						<data type="byte" name="hitType" output="HitType">
@@ -131,9 +123,7 @@
 				<array data="count" output="DamagedTargets">
 					<data type="int" name="targetId" output="TargetId" />
 					<data type="byte" name="damageCount" />
-					<data type="short" name="posX" />
-					<data type="short" name="posY" />
-					<data type="short" name="posZ" />
+					<data type="Vector3Short" name="position" output="Position" />
 					<data type="Vector3S" name="direction" output="Direction" />
 					<array data="damageCount" output="Damages">
 						<data type="byte" name="hitType" output="HitType">

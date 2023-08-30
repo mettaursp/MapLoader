@@ -288,4 +288,22 @@
     <ItemGroup>
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TrophyUpdatePacket-s-SniffHandler.cpp"/>
     </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\BasicStat-c-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SpecialStat-c-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\BonusStats-c-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemCustomization-c-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemBinding-c-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemData-c-SniffHandler.cpp"/>
+    </ItemGroup>
 </Project>

@@ -40,7 +40,7 @@ namespace Maple
 			ItemTransfer ItemTransfer;
 			ItemSocket ItemSocket;
 			ItemCouple ItemCouple;
-			ItemBinding ItemBinding;
+			ItemBinding Binding;
 		};
 	}
 }

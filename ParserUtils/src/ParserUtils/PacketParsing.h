@@ -10,6 +10,42 @@ std::string toString(const std::wstring& wstr);
 
 std::ostream& operator<<(std::ostream& out, const std::wstring& string);
 
+template <typename T> requires std::is_enum_v<T>
+std::ostream& operator<<(std::ostream& out, T value)
+{
+	return out << (unsigned long long)value;
+}
+
+template <typename T, typename U> requires std::is_enum_v<T>
+bool operator==(T left, U right)
+{
+	return (U)left == right;
+}
+
+template <typename T, typename U> requires std::is_enum_v<T>
+bool operator<(T left, U right)
+{
+	return (U)left < right;
+}
+
+template <typename T, typename U> requires std::is_enum_v<T>
+bool operator>(T left, U right)
+{
+	return (U)left > right;
+}
+
+template <typename T, typename U> requires std::is_enum_v<T>
+bool operator<=(T left, U right)
+{
+	return (U)left <= right;
+}
+
+template <typename T, typename U> requires std::is_enum_v<T>
+bool operator>=(T left, U right)
+{
+	return (U)left >= right;
+}
+
 namespace ParserUtils
 {
 	namespace Packets
@@ -63,11 +99,11 @@ namespace ParserUtils
 				return;
 			}
 
-			vector.resize(remaining);
+			vector.resize(size);
 		}
 
 		template <typename T, typename HandlerType>
-		void Read(const char* name, HandlerType& handler, T& value, const char* tabs, const std::source_location location = std::source_location::current())
+		void ReadValue(const char* name, HandlerType& handler, T& value, const char* tabs, const std::source_location location = std::source_location::current())
 		{
 			DataStream& stream = handler.PacketStream;
 
@@ -112,6 +148,28 @@ namespace ParserUtils
 					out << std::endl;
 				}
 			}
+		}
+
+		template <typename T, typename HandlerType, typename VarType>
+		void Read(const char* name, HandlerType& handler, VarType& value, const char* tabs, const std::source_location location = std::source_location::current())
+		{
+			if constexpr (std::is_same_v<T, VarType>)
+			{
+				ReadValue<T>(name, handler, value, tabs, location);
+
+				return;
+			}
+
+			if (handler.PacketStream.HasRecentlyFailed)
+			{
+				return;
+			}
+
+			T tempValue = {};
+
+			ReadValue<T>(name, handler, tempValue, tabs, location);
+
+			value = (VarType)tempValue;
 		}
 
 		template <typename T>

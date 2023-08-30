@@ -36,37 +36,7 @@
         </Filter>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\HitType.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Rarity.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\NpcType.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeBasic.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeSpecial.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\ItemExtraDataType.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\BadgeType.h">
             <Filter>Source Files\Enums</Filter>
         </ClInclude>
     </ItemGroup>
@@ -739,6 +709,36 @@
         <ClCompile Include="./../GameData\src/GameData\Packets\Client\SystemInfoPacket.cpp">
             <Filter>Source Files\Packets\Client</Filter>
         </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\HitType.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\NpcType.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeBasic.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeSpecial.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\Rarity.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\BadgeType.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\Handles.h">

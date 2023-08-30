@@ -12,7 +12,7 @@ namespace Maple
 			unsigned int RemainingTrades = 0;
 			unsigned int RemainingPackages = 0;
 			bool IsBound = false;
-			ItemBinding ItemBinding;
+			ItemBinding Binding;
 		};
 	}
 }

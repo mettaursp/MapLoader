@@ -23,6 +23,7 @@ namespace PacketSchema
 		std::string TypeName;
 		std::string DefaultValue;
 		size_t Size = 0;
+		std::vector<std::string> CanCastTo;
 	};
 
 	extern const std::unordered_map<std::string, PacketType> PacketTypes;
@@ -73,6 +74,7 @@ namespace PacketSchema
 		Array,
 		Function,
 		Buffer,
+		BlockFunction,
 		ValueWrite,
 		Validation,
 		ArrayOutput,
@@ -139,6 +141,16 @@ namespace PacketSchema
 		size_t RegionEnd = 0;
 	};
 
+	struct PacketBlockFunction
+	{
+		size_t BlockFunctionIndex = (size_t)-1;
+		std::string Name;
+		std::string Output;
+		std::string Target;
+		unsigned int Version = 0;
+		std::vector<size_t> Arguments;
+	};
+
 	struct PacketInfo
 	{
 		PacketInfoType Type = PacketInfoType::Data;
@@ -148,9 +160,20 @@ namespace PacketSchema
 
 	struct PacketOpcode
 	{
+		struct Parameter
+		{
+			std::string Name;
+			std::string Type;
+			std::string Schema;
+		};
+
 		unsigned short Value = 0;
 		std::string Name;
 		bool IsServer = false;
+
+		bool IsBlock = false;
+		bool BlockOutputInitialized = false;
+		Parameter BlockOutput;
 
 		std::vector<PacketData> Data;
 		std::vector<PacketCondition> Conditions;
@@ -160,8 +183,9 @@ namespace PacketSchema
 		std::vector<PacketRead> Reads;
 		std::vector<PacketFunction> Functions;
 		std::vector<PacketBuffer> Buffers;
+		std::vector<PacketBlockFunction> BlockFunctions;
 		std::vector<PacketInfo> Layout;
-		std::vector<std::string> Parameters;
+		std::vector<Parameter> Parameters;
 	};
 
 	struct PacketOpcodeReference
@@ -176,7 +200,8 @@ namespace PacketSchema
 	{
 		unsigned short Version = 0;
 		bool InheritPrevious = true;
-		std::unordered_map<std::string, PacketOpcode> Blocks;
+		std::unordered_map<std::string, PacketOpcode> BlockData;
+		std::vector<PacketOpcode*> Blocks;
 		std::unordered_map<unsigned short, PacketOpcode> ServerOpcodes;
 		std::unordered_map<unsigned short, PacketOpcode> ClientOpcodes;
 		std::unordered_map<unsigned short, PacketOpcodeReference> ServerOpcodeReferences;

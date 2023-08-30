@@ -34,7 +34,7 @@ namespace Networking
 				return;
 			}
 		
-			const auto npcEntry = Data->Npcs.find((unsigned int)packet.NpcId);
+			const auto npcEntry = Data->Npcs.find(packet.NpcId);
 		
 			if (npcEntry == Data->Npcs.end())
 			{

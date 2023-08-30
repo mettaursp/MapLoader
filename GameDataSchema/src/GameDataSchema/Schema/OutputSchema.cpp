@@ -5,6 +5,7 @@
 namespace OutputSchema
 {
 	std::unordered_map<std::string, CollectionSchema> CollectionSchemas;
+	std::vector<CollectionSchema*> GlobalSchemas;
 
 	void readNamespace(SchemaNamespace& schemaNamespace, tinyxml2::XMLElement* element)
 	{
@@ -231,6 +232,17 @@ namespace OutputSchema
 				{
 					rootClass->RequiredHeaders.insert(headerEntry->second);
 				}
+			}
+		}
+
+
+		if (!schemaMember.SchemaName.size())
+		{
+			SchemaEntry entry = findSchemaEntry(schemaMember.ContainsType.size() ? schemaMember.ContainsType : schemaMember.Type, schemaMember.ParentSchemaName);
+
+			if (entry.Type != SchemaEntryType::None)
+			{
+				schemaMember.SchemaName = schemaMember.ParentSchemaName;
 			}
 		}
 
@@ -525,15 +537,25 @@ namespace OutputSchema
 	{
 		std::string name = filePath.filename().stem().string();
 
-		tinyxml2::XMLDocument document;
 		CollectionSchema& schema = CollectionSchemas[name];
 
 		schema.Name = name;
 		schema.Global.SchemaName = name;
 
+		tinyxml2::XMLDocument document;
+
 		document.LoadFile(filePath.string().c_str());
 
 		tinyxml2::XMLElement* root = document.RootElement();
+
+		const tinyxml2::XMLAttribute* isGlobalAttribute = root->FindAttribute("isGlobal");
+
+		std::string schemaReferenceName = name;
+
+		if (isGlobalAttribute && strcmp(isGlobalAttribute->Value(), "true") == 0)
+		{
+			GlobalSchemas.push_back(&schema);
+		}
 
 		for (tinyxml2::XMLElement* child = root->FirstChildElement(); child; child = child->NextSiblingElement())
 		{
@@ -557,16 +579,11 @@ namespace OutputSchema
 		}
 	}
 
-	SchemaEntry findSchemaEntry(const std::string_view& path, const std::string& schemaName, char separator)
+	SchemaEntry findSchemaEntryInternal(const std::string_view& path, const std::string& schemaName, char separator)
 	{
 		auto schemaIndex = CollectionSchemas.find(schemaName);
 
 		if (schemaIndex == CollectionSchemas.end())
-		{
-			return {};
-		}
-
-		if (path.size() == 0)
 		{
 			return {};
 		}
@@ -740,7 +757,34 @@ namespace OutputSchema
 		};
 	}
 
-	std::string findIncludeDirectory(const std::string_view& path, const std::string& schemaName, char separator)
+	SchemaEntry findSchemaEntry(const std::string_view& path, const std::string& schemaName, char separator)
+	{
+		if (path.size() == 0)
+		{
+			return {};
+		}
+
+		SchemaEntry entry = findSchemaEntryInternal(path, schemaName, separator);
+
+		if (entry.Type != SchemaEntryType::None)
+		{
+			return entry;
+		}
+
+		for (size_t i = 0; i < GlobalSchemas.size(); ++i)
+		{
+			SchemaEntry entry = findSchemaEntryInternal(path, GlobalSchemas[i]->Name, separator);
+
+			if (entry.Type != SchemaEntryType::None)
+			{
+				return entry;
+			}
+		}
+
+		return {};
+	}
+
+	std::string findIncludeDirectoryInternal(const std::string_view& path, const std::string& schemaName, char separator)
 	{
 		auto schemaIndex = CollectionSchemas.find(schemaName);
 
@@ -819,6 +863,33 @@ namespace OutputSchema
 				{
 					return "<GameData/" + childClass.Directory + "/" + childClass.Name + ".h>";
 				}
+			}
+		}
+
+		return "";
+	}
+
+	std::string findIncludeDirectory(const std::string_view& path, const std::string& schemaName, char separator)
+	{
+		if (path.size() == 0)
+		{
+			return "";
+		}
+
+		std::string include = findIncludeDirectoryInternal(path, schemaName, separator);
+
+		if (include.size())
+		{
+			return include;
+		}
+
+		for (size_t i = 0; i < GlobalSchemas.size(); ++i)
+		{
+			include = findIncludeDirectoryInternal(path, GlobalSchemas[i]->Name, separator);
+
+			if (include.size())
+			{
+				return include;
 			}
 		}
 

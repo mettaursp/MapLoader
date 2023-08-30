@@ -1,14 +1,17 @@
 <packetSchema version="2497">
 	<blocks>
 		<block name="BasicStat">
+			<outputParam type="Maple.Game.BasicStat" schema="packetData" />
 			<data type="short" name="type" output="Type" />
 			<data type="int" name="value" output="Value" />
 		</block>
 		<block name="SpecialStat">
+			<outputParam type="Maple.Game.SpecialStat" schema="packetData" />
 			<data type="short" name="type" output="Type" />
 			<data type="float" name="rate" output="Rate" />
 		</block>
 		<block name="BasicAndSpecialStats">
+			<outputParam type="Maple.Game.BonusStats" schema="packetData" />
 			<data type="short" name="statCount" />
 			<array data="statCount" output="Basic">
 				<useBlock name="BasicStat" version="2497" />
@@ -18,7 +21,9 @@
 				<useBlock name="SpecialStat" version="2497" />
 			</array>
 		</block>
-		<block name="ItemData" params="itemId">
+		<block name="ItemData">
+			<outputParam type="Maple.Game.ItemData" schema="packetData" />
+			<blockParam name="itemId" type="unsigned int" />
 			<data type="int" name="amount" output="Amount" />
 			<data type="int" name="unknown">
 				<enum name="Unknown" value="-1" />
@@ -35,7 +40,7 @@
 			<data type="byte" name="unknownBool">
 				<enum name="Unknown" value="0" />
 			</data>
-			<useBlock name="ItemCustomization" version="12" output="Customization" />
+			<useBlock name="ItemCustomization" version="12" output="Customization" args="itemId" />
 			<outputMember output="Stats">
 				<useBlock name="BasicAndSpecialStats" version="2497" output="Static" />
 				<data type="int" name="unknown">
@@ -45,7 +50,7 @@
 				<data type="int" name="unknown">
 					<enum name="Unknown" value="0" />
 				</data>
-				<useBlock name="BasicAndSpecialStats" version="2497" output="Empowerment" />
+				<useBlock name="BasicAndSpecialStats" version="2497" output="Empowerment1" />
 				<data type="int" name="unknown">
 					<enum name="Unknown" value="0" />
 				</data>
@@ -235,7 +240,7 @@
 			<data type="bool" name="unknown" />
 			<data type="bool" name="unknown" />
 			<condition data="itemId" value="90000001" value2="90000003" comparison="notBetween">
-				<useBlock name="ItemData" version="2497" output="ItemData" />
+				<useBlock name="ItemData" version="2497" output="ItemData" args="itemId" />
 			</condition>
 		</opcode>
 	</source>

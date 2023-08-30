@@ -84,25 +84,7 @@
     <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
     <ImportGroup Label="ExtensionTargets"/>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\HitType.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Rarity.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\NpcType.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeBasic.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeSpecial.h"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\ItemExtraDataType.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\BadgeType.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\Stat.h"/>
@@ -505,6 +487,24 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Client\SystemInfoPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\HitType.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\NpcType.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeBasic.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeSpecial.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\Rarity.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\BadgeType.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\Handles.h"/>

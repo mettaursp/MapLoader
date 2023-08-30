@@ -115,6 +115,7 @@ namespace OutputSchema
 	};
 
 	extern std::unordered_map<std::string, CollectionSchema> CollectionSchemas;
+	extern std::vector<CollectionSchema*> GlobalSchemas;
 
 	void readNamespace(SchemaNamespace& schemaNamespace, tinyxml2::XMLElement* element);
 

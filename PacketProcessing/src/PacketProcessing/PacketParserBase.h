@@ -39,6 +39,9 @@ namespace Networking
 			std::vector<PacketOpcodeData> ClientCallbacks;
 		};
 
+		extern const std::vector<size_t> VersionIndices;
+		extern const std::vector<PacketVersionData> Versions;
+
 		template <typename T>
 		void PacketParsed(const T& packet) {}
 	}

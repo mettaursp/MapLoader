@@ -2457,6 +2457,339 @@ namespace PacketSchema
 		generator.LoopIndex = 'i';
 	}
 
+	void generateParserOpcodeTable(std::ofstream& cppOut)
+	{
+		unsigned short minVersion = 0xFFFF;
+		unsigned short maxVersion = 0;
+
+		for (const auto& versionEntry : PacketVersions)
+		{
+			if (versionEntry.first > 13)
+			{
+				minVersion = std::min(minVersion, versionEntry.first);
+				maxVersion = std::max(maxVersion, versionEntry.first);
+			}
+		}
+
+		if (minVersion != 0xFFFF && PacketVersions.contains(13))
+		{
+			--minVersion;
+		}
+
+		struct OpcodeData
+		{
+			const PacketOpcode* Opcode = nullptr;
+			const PacketOpcodeReference* Reference = nullptr;
+			std::string Name;
+			unsigned short Version = 0;
+		};
+
+		struct VersionData
+		{
+			const PacketVersion* Version = nullptr;
+			size_t Index = (size_t)-1;
+
+			unsigned short MinServerOpcode = 0xFFFF;
+			unsigned short MaxServerOpcode = 0;
+			unsigned short MinClientOpcode = 0xFFFF;
+			unsigned short MaxClientOpcode = 0;
+
+			std::vector<OpcodeData> ServerOpcodes;
+			std::vector<OpcodeData> ClientOpcodes;
+		};
+
+		std::vector<VersionData> versions;
+		std::vector<VersionData> versionOverrides(maxVersion - minVersion + 1);
+
+		if (PacketVersions.contains(12))
+		{
+			versions.push_back({ &PacketVersions[12], 12 });
+		}
+
+		if (PacketVersions.contains(13))
+		{
+			versionOverrides[0] = { &PacketVersions[13], 13 };
+		}
+
+		size_t baseVersionCount = versions.size();
+
+		for (const auto& versionEntry : PacketVersions)
+		{
+			if (versionEntry.first == 12)
+			{
+				continue;
+			}
+
+			versionOverrides[std::max(versionEntry.first, minVersion) - minVersion] = { &versionEntry.second };
+		}
+
+		for (size_t i = 0; i < versionOverrides.size(); ++i)
+		{
+			VersionData& data = versionOverrides[i];
+
+			if (!data.Version)
+			{
+				versionOverrides[i] = versionOverrides[i - 1];
+
+				continue;
+			}
+
+			data.Index = versions.size();
+
+			versions.push_back({ data.Version, (unsigned short)data.Version->Version });
+		}
+
+		cppOut << "#include \"PacketParser.h\"\n\n";
+		cppOut << "#include <vector>\n\n";
+		cppOut << "namespace Networking\n{\n";
+
+		cppOut << "\tnamespace Packets\n\t{\n";
+
+		cppOut << "\t\tconst std::vector<size_t> VersionIndices = {\n";
+		cppOut << "\t\t\t";
+
+		for (size_t i = 0; i < versionOverrides.size(); ++i)
+		{
+			cppOut << versionOverrides[i].Index;
+
+			if (i + 1 < versionOverrides.size())
+			{
+				cppOut << ", ";
+			}
+		}
+
+		cppOut << "\n";
+		cppOut << "\t\t};\n";
+
+		cppOut << "\t\tconst std::vector<PacketVersionData> Versions = {\n";
+
+		for (size_t i = 0; i < versions.size(); ++i)
+		{
+			size_t versionId = versions[i].Index;
+
+			{
+
+				VersionData& versionData = versions[i];
+				const PacketVersion* version = versionData.Version;
+
+				bool hasServerOpcodes = false;
+				bool hasClientOpcodes = false;
+
+				unsigned short& minServerOpcode = versionData.MinServerOpcode;
+				unsigned short& maxServerOpcode = versionData.MaxServerOpcode;
+				unsigned short& minClientOpcode = versionData.MinClientOpcode;
+				unsigned short& maxClientOpcode = versionData.MaxClientOpcode;
+
+				if (i > 0 && version->InheritPrevious)
+				{
+					minServerOpcode = versions[i - 1].MinServerOpcode;
+					maxServerOpcode = versions[i - 1].MaxServerOpcode;
+					minClientOpcode = versions[i - 1].MinClientOpcode;
+					maxClientOpcode = versions[i - 1].MaxClientOpcode;
+
+					hasServerOpcodes = versions[i - 1].ServerOpcodes.size() > 0;
+					hasClientOpcodes = versions[i - 1].ClientOpcodes.size() > 0;
+				}
+
+				for (const auto& opcodeEntry : version->ServerOpcodes)
+				{
+					minServerOpcode = std::min(minServerOpcode, opcodeEntry.first);
+					maxServerOpcode = std::max(maxServerOpcode, opcodeEntry.first);
+				}
+
+				for (const auto& opcodeEntry : version->ClientOpcodes)
+				{
+					minClientOpcode = std::min(minClientOpcode, opcodeEntry.first);
+					maxClientOpcode = std::max(maxClientOpcode, opcodeEntry.first);
+				}
+
+				for (const auto& opcodeEntry : version->ServerOpcodeReferences)
+				{
+					minServerOpcode = std::min(minServerOpcode, opcodeEntry.first);
+					maxServerOpcode = std::max(maxServerOpcode, opcodeEntry.first);
+				}
+
+				for (const auto& opcodeEntry : version->ClientOpcodeReferences)
+				{
+					minClientOpcode = std::min(minClientOpcode, opcodeEntry.first);
+					maxClientOpcode = std::max(maxClientOpcode, opcodeEntry.first);
+				}
+
+				hasServerOpcodes |= version->ServerOpcodes.size() || version->ServerOpcodeReferences.size();
+				hasClientOpcodes |= version->ClientOpcodes.size() || version->ClientOpcodeReferences.size();
+
+				std::vector<OpcodeData>& serverOpcodes = versionData.ServerOpcodes;
+				std::vector<OpcodeData>& clientOpcodes = versionData.ClientOpcodes;
+
+				serverOpcodes.resize(hasServerOpcodes ? maxServerOpcode - minServerOpcode + 1 : 0);
+				clientOpcodes.resize(hasClientOpcodes ? maxClientOpcode - minClientOpcode + 1 : 0);
+
+				if (i > 0 && version->InheritPrevious)
+				{
+					for (size_t j = minServerOpcode; j <= maxServerOpcode; ++j)
+					{
+						if (!version->DoNotInheritServer.contains((unsigned short)j))
+						{
+							serverOpcodes[j - minServerOpcode] = versions[i - 1].ServerOpcodes[j - versions[i - 1].MinServerOpcode];
+						}
+					}
+
+					for (size_t j = minClientOpcode; j <= maxClientOpcode; ++j)
+					{
+						if (!version->DoNotInheritClient.contains((unsigned short)j))
+						{
+							clientOpcodes[j - minClientOpcode] = versions[i - 1].ClientOpcodes[j - versions[i - 1].MinClientOpcode];
+						}
+					}
+				}
+
+				for (const auto& opcodeEntry : version->ServerOpcodes)
+				{
+					serverOpcodes[opcodeEntry.first - minServerOpcode] = { &opcodeEntry.second, nullptr, opcodeEntry.second.Name, version->Version };
+				}
+
+				for (const auto& opcodeEntry : version->ClientOpcodes)
+				{
+					clientOpcodes[opcodeEntry.first - minClientOpcode] = { &opcodeEntry.second, nullptr, opcodeEntry.second.Name, version->Version };
+				}
+
+				for (const auto& opcodeEntry : version->ServerOpcodeReferences)
+				{
+					const PacketOpcodeReference& reference = opcodeEntry.second;
+					std::string name = "error";
+
+					size_t index = 0;
+
+					if (reference.TargetVersion == 12)
+					{
+						index = 0;
+					}
+					else if (reference.TargetVersion == 13)
+					{
+						index = baseVersionCount;
+					}
+					if (reference.TargetVersion >= minVersion && reference.TargetVersion <= maxVersion)
+					{
+						index = versionOverrides[reference.TargetVersion - minVersion].Index;
+					}
+
+					name = versions[index].ServerOpcodes[reference.TargetOpcode - versions[index].MinServerOpcode].Name;
+
+					serverOpcodes[opcodeEntry.first - minServerOpcode] = { nullptr, &reference, name };
+				}
+
+				for (const auto& opcodeEntry : version->ClientOpcodeReferences)
+				{
+					const PacketOpcodeReference& reference = opcodeEntry.second;
+					std::string name = "error";
+
+					size_t index = 0;
+
+					if (reference.TargetVersion == 12)
+					{
+						index = 0;
+					}
+					else if (reference.TargetVersion == 13)
+					{
+						index = baseVersionCount;
+					}
+					else if (reference.TargetVersion >= minVersion && reference.TargetVersion <= maxVersion)
+					{
+						index = versionOverrides[reference.TargetVersion - minVersion].Index;
+					}
+
+					name = versions[index].ClientOpcodes[reference.TargetOpcode - versions[index].MinClientOpcode].Name;
+
+					clientOpcodes[opcodeEntry.first - minClientOpcode] = { nullptr, &opcodeEntry.second, name };
+				}
+
+				cppOut << "\t\t\t{\n";
+				cppOut << "\t\t\t\t0x" << std::hex << minServerOpcode << ", 0x" << minClientOpcode << std::dec << ",\n";
+
+				if (serverOpcodes.size() > 0)
+				{
+					cppOut << "\t\t\t\t{\n";
+
+					for (size_t i = 0; i < serverOpcodes.size(); ++i)
+					{
+						const OpcodeData& opcodeData = serverOpcodes[i];
+
+						if (opcodeData.Reference != nullptr)
+						{
+							cppOut << "\t\t\t\t\t{ \"" << opcodeData.Name << "\", &ParsePacket<" << opcodeData.Reference->TargetVersion << ", ServerPacket, 0x" << std::hex << opcodeData.Reference->TargetOpcode << std::dec << "> }" << (i + 1 < serverOpcodes.size() ? ",\n" : "\n");
+
+							continue;
+						}
+
+						const PacketOpcode* opcode = opcodeData.Opcode;
+
+						if (!opcode)
+						{
+							cppOut << "\t\t\t\t\t{ \"\", &ParsePacket<0, false, 0> }" << (i + 1 < serverOpcodes.size() ? ",\n" : "\n");
+
+							continue;
+						}
+
+						cppOut << "\t\t\t\t\t{ \"" << opcode->Name << "\", &ParsePacket<" << opcodeData.Version << ", ServerPacket, 0x" << std::hex << (minServerOpcode + i) << std::dec << (i + 1 < serverOpcodes.size() ? "> },\n" : "> }\n");
+					}
+
+					cppOut << "\t\t\t\t},\n";
+				}
+				else
+				{
+					cppOut << "\t\t\t\t{ },\n";
+				}
+
+				if (clientOpcodes.size() > 0)
+				{
+					cppOut << "\t\t\t\t{\n";
+
+					for (size_t i = 0; i < clientOpcodes.size(); ++i)
+					{
+						const OpcodeData& opcodeData = clientOpcodes[i];
+
+						if (opcodeData.Reference != nullptr)
+						{
+							cppOut << "\t\t\t\t\t{ \"" << opcodeData.Name << "\", &ParsePacket<" << opcodeData.Reference->TargetVersion << ", ClientPacket, 0x" << std::hex << opcodeData.Reference->TargetOpcode << std::dec << "> }" << (i + 1 < clientOpcodes.size() ? ",\n" : "\n");
+
+							continue;
+						}
+
+						const PacketOpcode* opcode = opcodeData.Opcode;
+
+						if (!opcode)
+						{
+							cppOut << "\t\t\t\t\t{ \"\", &ParsePacket<0, false, 0> }" << (i + 1 < clientOpcodes.size() ? ",\n" : "\n");
+
+							continue;
+						}
+
+						cppOut << "\t\t\t\t\t{ \"" << opcode->Name << "\", &ParsePacket<" << opcodeData.Version << ", ClientPacket, 0x" << std::hex << (minClientOpcode + i) << std::dec << (i + 1 < clientOpcodes.size() ? "> },\n" : "> }\n");
+					}
+
+					cppOut << "\t\t\t\t}\n";
+				}
+				else
+				{
+					cppOut << "\t\t\t\t{ }\n";
+				}
+
+				cppOut << "\t\t\t}";
+
+				if (i + 1 < versions.size())
+				{
+					cppOut << ",";
+				}
+
+				cppOut << "\n";
+			}
+		}
+
+		cppOut << "\t\t};\n";
+		cppOut << "\t};\n";
+		cppOut << "};\n";
+	}
+
 	void generateParsers()
 	{
 		fs::path headerPath = packetProjDir / "src/PacketProcessing/PacketParser.h";
@@ -2497,6 +2830,14 @@ namespace PacketSchema
 			headerOut << "}\n";
 		}
 
+		fs::path tableCppPath = packetProjDir / "src/PacketProcessing/PacketOpcodes.cpp";
+
+		{
+			std::ofstream cppOut(tableCppPath);
+
+			generateParserOpcodeTable(cppOut);
+		}
+
 		fs::path cppPath = packetProjDir / "src/PacketProcessing/PacketParser.cpp";
 
 		outputsReferenced.clear();
@@ -2513,353 +2854,6 @@ namespace PacketSchema
 			cppOut << "\tnamespace Packets\n\t{\n";
 
 			Generator generator;
-
-			unsigned short minVersion = 0xFFFF;
-			unsigned short maxVersion = 0;
-
-			for (const auto& versionEntry : PacketVersions)
-			{
-				if (versionEntry.first > 13)
-				{
-					minVersion = std::min(minVersion, versionEntry.first);
-					maxVersion = std::max(maxVersion, versionEntry.first);
-				}
-			}
-
-			if (minVersion != 0xFFFF && PacketVersions.contains(13))
-			{
-				--minVersion;
-			}
-
-			struct OpcodeData
-			{
-				const PacketOpcode* Opcode = nullptr;
-				const PacketOpcodeReference* Reference = nullptr;
-				std::string Name;
-				unsigned short Version = 0;
-			};
-
-			struct VersionData
-			{
-				const PacketVersion* Version = nullptr;
-				size_t Index = (size_t)-1;
-
-				unsigned short MinServerOpcode = 0xFFFF;
-				unsigned short MaxServerOpcode = 0;
-				unsigned short MinClientOpcode = 0xFFFF;
-				unsigned short MaxClientOpcode = 0;
-
-				std::vector<OpcodeData> ServerOpcodes;
-				std::vector<OpcodeData> ClientOpcodes;
-			};
-
-			std::vector<VersionData> versions;
-			std::vector<VersionData> versionOverrides(maxVersion - minVersion + 1);
-
-			if (PacketVersions.contains(12))
-			{
-				versions.push_back({ &PacketVersions[12], 12 });
-			}
-
-			if (PacketVersions.contains(13))
-			{
-				versionOverrides[0] = { &PacketVersions[13], 13 };
-			}
-
-			size_t baseVersionCount = versions.size();
-
-			for (const auto& versionEntry : PacketVersions)
-			{
-				if (versionEntry.first == 12)
-				{
-					continue;
-				}
-
-				versionOverrides[std::max(versionEntry.first, minVersion) - minVersion] = { &versionEntry.second };
-			}
-
-			for (size_t i = 0; i < versionOverrides.size(); ++i)
-			{
-				VersionData& data = versionOverrides[i];
-
-				if (!data.Version)
-				{
-					versionOverrides[i] = versionOverrides[i - 1];
-
-					continue;
-				}
-
-				data.Index = versions.size();
-				
-				versions.push_back({ data.Version, (unsigned short)data.Version->Version });
-			}
-
-			cppOut << "\t\tvoid ParsePacket(PacketHandler& handler, unsigned short version, bool isServer, unsigned short opcode)\n";
-			cppOut << "\t\t{\n";
-
-			cppOut << "\t\t\tstatic const std::vector<size_t> versionIndices = {\n";
-			cppOut << "\t\t\t\t";
-
-			for (size_t i = 0; i < versionOverrides.size(); ++i)
-			{
-				cppOut << versionOverrides[i].Index;
-
-				if (i + 1 < versionOverrides.size())
-				{
-					cppOut << ", ";
-				}
-			}
-
-			cppOut << "\n";
-			cppOut << "\t\t\t};\n";
-
-			cppOut << "\t\t\tstatic const std::vector<PacketVersionData> versions = {\n";
-
-			for (size_t i = 0; i < versions.size(); ++i)
-			{
-				size_t versionId = versions[i].Index;
-
-				{
-
-					VersionData& versionData = versions[i];
-					const PacketVersion* version = versionData.Version;
-
-					bool hasServerOpcodes = false;
-					bool hasClientOpcodes = false;
-
-					unsigned short& minServerOpcode = versionData.MinServerOpcode;
-					unsigned short& maxServerOpcode = versionData.MaxServerOpcode;
-					unsigned short& minClientOpcode = versionData.MinClientOpcode;
-					unsigned short& maxClientOpcode = versionData.MaxClientOpcode;
-
-					if (i > 0 && version->InheritPrevious)
-					{
-						minServerOpcode = versions[i - 1].MinServerOpcode;
-						maxServerOpcode = versions[i - 1].MaxServerOpcode;
-						minClientOpcode = versions[i - 1].MinClientOpcode;
-						maxClientOpcode = versions[i - 1].MaxClientOpcode;
-
-						hasServerOpcodes = versions[i - 1].ServerOpcodes.size() > 0;
-						hasClientOpcodes = versions[i - 1].ClientOpcodes.size() > 0;
-					}
-
-					for (const auto& opcodeEntry : version->ServerOpcodes)
-					{
-						minServerOpcode = std::min(minServerOpcode, opcodeEntry.first);
-						maxServerOpcode = std::max(maxServerOpcode, opcodeEntry.first);
-					}
-
-					for (const auto& opcodeEntry : version->ClientOpcodes)
-					{
-						minClientOpcode = std::min(minClientOpcode, opcodeEntry.first);
-						maxClientOpcode = std::max(maxClientOpcode, opcodeEntry.first);
-					}
-
-					for (const auto& opcodeEntry : version->ServerOpcodeReferences)
-					{
-						minServerOpcode = std::min(minServerOpcode, opcodeEntry.first);
-						maxServerOpcode = std::max(maxServerOpcode, opcodeEntry.first);
-					}
-
-					for (const auto& opcodeEntry : version->ClientOpcodeReferences)
-					{
-						minClientOpcode = std::min(minClientOpcode, opcodeEntry.first);
-						maxClientOpcode = std::max(maxClientOpcode, opcodeEntry.first);
-					}
-
-					hasServerOpcodes |= version->ServerOpcodes.size() || version->ServerOpcodeReferences.size();
-					hasClientOpcodes |= version->ClientOpcodes.size() || version->ClientOpcodeReferences.size();
-
-					std::vector<OpcodeData>& serverOpcodes = versionData.ServerOpcodes;
-					std::vector<OpcodeData>& clientOpcodes = versionData.ClientOpcodes;
-
-					serverOpcodes.resize(hasServerOpcodes ? maxServerOpcode - minServerOpcode + 1 : 0);
-					clientOpcodes.resize(hasClientOpcodes ? maxClientOpcode - minClientOpcode + 1 : 0);
-
-					if (i > 0 && version->InheritPrevious)
-					{
-						for (size_t j = minServerOpcode; j <= maxServerOpcode; ++j)
-						{
-							if (!version->DoNotInheritServer.contains((unsigned short)j))
-							{
-								serverOpcodes[j - minServerOpcode] = versions[i - 1].ServerOpcodes[j - versions[i - 1].MinServerOpcode];
-							}
-						}
-
-						for (size_t j = minClientOpcode; j <= maxClientOpcode; ++j)
-						{
-							if (!version->DoNotInheritClient.contains((unsigned short)j))
-							{
-								clientOpcodes[j - minClientOpcode] = versions[i - 1].ClientOpcodes[j - versions[i - 1].MinClientOpcode];
-							}
-						}
-					}
-
-					for (const auto& opcodeEntry : version->ServerOpcodes)
-					{
-						serverOpcodes[opcodeEntry.first - minServerOpcode] = { &opcodeEntry.second, nullptr, opcodeEntry.second.Name, version->Version };
-					}
-
-					for (const auto& opcodeEntry : version->ClientOpcodes)
-					{
-						clientOpcodes[opcodeEntry.first - minClientOpcode] = { &opcodeEntry.second, nullptr, opcodeEntry.second.Name, version->Version };
-					}
-
-					for (const auto& opcodeEntry : version->ServerOpcodeReferences)
-					{
-						const PacketOpcodeReference& reference = opcodeEntry.second;
-						std::string name = "error";
-
-						size_t index = 0;
-
-						if (reference.TargetVersion == 12)
-						{
-							index = 0;
-						}
-						else if (reference.TargetVersion == 13)
-						{
-							index = baseVersionCount;
-						}
-						if (reference.TargetVersion >= minVersion && reference.TargetVersion <= maxVersion)
-						{
-							index = versionOverrides[reference.TargetVersion - minVersion].Index;
-						}
-
-						name = versions[index].ServerOpcodes[reference.TargetOpcode - versions[index].MinServerOpcode].Name;
-
-						serverOpcodes[opcodeEntry.first - minServerOpcode] = { nullptr, &reference, name };
-					}
-
-					for (const auto& opcodeEntry : version->ClientOpcodeReferences)
-					{
-						const PacketOpcodeReference& reference = opcodeEntry.second;
-						std::string name = "error";
-
-						size_t index = 0;
-
-						if (reference.TargetVersion == 12)
-						{
-							index = 0;
-						}
-						else if (reference.TargetVersion == 13)
-						{
-							index = baseVersionCount;
-						}
-						else if (reference.TargetVersion >= minVersion && reference.TargetVersion <= maxVersion)
-						{
-							index = versionOverrides[reference.TargetVersion - minVersion].Index;
-						}
-
-						name = versions[index].ClientOpcodes[reference.TargetOpcode - versions[index].MinClientOpcode].Name;
-
-						clientOpcodes[opcodeEntry.first - minClientOpcode] = { nullptr, &opcodeEntry.second, name };
-					}
-
-					cppOut << "\t\t\t\t{\n";
-					cppOut << "\t\t\t\t\t0x" << std::hex << minServerOpcode << ", 0x" << minClientOpcode << std::dec << ",\n";
-
-					if (serverOpcodes.size() > 0)
-					{
-						cppOut << "\t\t\t\t\t{\n";
-
-						for (size_t i = 0; i < serverOpcodes.size(); ++i)
-						{
-							const OpcodeData& opcodeData = serverOpcodes[i];
-
-							if (opcodeData.Reference != nullptr)
-							{
-								cppOut << "\t\t\t\t\t\t{ \"" << opcodeData.Name << "\", &ParsePacket<" << opcodeData.Reference->TargetVersion << ", ServerPacket, 0x" << std::hex << opcodeData.Reference->TargetOpcode << std::dec << "> }" << (i + 1 < serverOpcodes.size() ? ",\n" : "\n");
-
-								continue;
-							}
-
-							const PacketOpcode* opcode = opcodeData.Opcode;
-
-							if (!opcode)
-							{
-								cppOut << "\t\t\t\t\t\t{ \"\", &ParsePacket<0, false, 0> }" << (i + 1 < serverOpcodes.size() ? ",\n" : "\n");
-
-								continue;
-							}
-
-							cppOut << "\t\t\t\t\t\t{ \"" << opcode->Name << "\", &ParsePacket<" << opcodeData.Version << ", ServerPacket, 0x" << std::hex << (minServerOpcode + i) << std::dec << (i + 1 < serverOpcodes.size() ? "> },\n" : "> }\n");
-						}
-
-						cppOut << "\t\t\t\t\t},\n";
-					}
-					else
-					{
-						cppOut << "\t\t\t\t\t{ },\n";
-					}
-
-					if (clientOpcodes.size() > 0)
-					{
-						cppOut << "\t\t\t\t\t{\n";
-
-						for (size_t i = 0; i < clientOpcodes.size(); ++i)
-						{
-							const OpcodeData& opcodeData = clientOpcodes[i];
-
-							if (opcodeData.Reference != nullptr)
-							{
-								cppOut << "\t\t\t\t\t\t{ \"" << opcodeData.Name << "\", &ParsePacket<" << opcodeData.Reference->TargetVersion << ", ClientPacket, 0x" << std::hex << opcodeData.Reference->TargetOpcode << std::dec << "> }" << (i + 1 < clientOpcodes.size() ? ",\n" : "\n");
-
-								continue;
-							}
-
-							const PacketOpcode* opcode = opcodeData.Opcode;
-
-							if (!opcode)
-							{
-								cppOut << "\t\t\t\t\t\t{ \"\", &ParsePacket<0, false, 0> }" << (i + 1 < clientOpcodes.size() ? ",\n" : "\n");
-
-								continue;
-							}
-
-							cppOut << "\t\t\t\t\t\t{ \"" << opcode->Name << "\", &ParsePacket<" << opcodeData.Version << ", ClientPacket, 0x" << std::hex << (minClientOpcode + i) << std::dec << (i + 1 < clientOpcodes.size() ? "> },\n" : "> }\n");
-						}
-
-						cppOut << "\t\t\t\t\t}\n";
-					}
-					else
-					{
-						cppOut << "\t\t\t\t\t{ }\n";
-					}
-
-					cppOut << "\t\t\t\t}";
-
-					if (i + 1 < versions.size())
-					{
-						cppOut << ",";
-					}
-
-					cppOut << "\n";
-				}
-			}
-
-			cppOut << "\t\t\t};\n\n";
-
-			cppOut << "\t\t\tsize_t versionIndex = version == 12 ? 0 : versionIndices[std::min(" << maxVersion - minVersion << ", std::max(version, (unsigned short)" << minVersion << ") - " << minVersion << ")];\n";
-
-			cppOut << "\t\t\tconst PacketVersionData& versionData = versions[versionIndex];\n\n";
-
-			cppOut << "\t\t\tsize_t minOpcode = isServer ? versionData.MinServerOpcode : versionData.MinClientOpcode;\n\n";
-			cppOut << "\t\t\tconst auto& opcodes = isServer ? versionData.ServerCallbacks : versionData.ClientCallbacks;\n\n";
-
-			cppOut << "\t\t\tif (opcode < minOpcode || opcode - minOpcode >= opcodes.size())\n";
-			cppOut << "\t\t\t{\n";
-			
-			cppOut << "\t\t\t\treturn;\n";
-			
-			cppOut << "\t\t\t}\n\n";
-			cppOut << "\t\t\tif constexpr (ParserUtils::Packets::PrintOutput)\n";
-			cppOut << "\t\t\t{\n";
-			cppOut << "\t\t\t\tstd::cout << \"[\" << version << \"] Packet Opcode 0x\" << std::hex << opcode << std::dec << \": \" << opcodes[opcode - minOpcode].Name << std::endl;\n";
-			cppOut << "\t\t\t}\n\n";
-
-			cppOut << "\t\t\topcodes[opcode - minOpcode].Callback(handler);\n";
-;
-			cppOut << "\t\t}\n\n";
 
 			std::vector<unsigned int> versionEntries;
 			std::vector<const PacketVersion*> versionData;

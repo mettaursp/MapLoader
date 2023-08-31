@@ -149,6 +149,7 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler.cpp"/>
+        <ClCompile Include="src\PacketProcessing\PacketOpcodes.cpp"/>
         <ClCompile Include="src\PacketProcessing\PacketParser.cpp"/>
         <ClCompile Include="src\PacketProcessing\PacketParserBase.cpp"/>
     </ItemGroup>

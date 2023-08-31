@@ -50,6 +50,9 @@
         <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler.cpp">
             <Filter>Source Files\Handlers\SniffHandler</Filter>
         </ClCompile>
+        <ClCompile Include="src\PacketProcessing\PacketOpcodes.cpp">
+            <Filter>Source Files</Filter>
+        </ClCompile>
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserChatPacket-s-SniffHandler.cpp">

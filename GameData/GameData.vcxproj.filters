@@ -271,6 +271,16 @@
         </ClCompile>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\EffectStats.h">
+            <Filter>Source Files\Data</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\EffectStats.cpp">
+            <Filter>Source Files\Data</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
@@ -411,22 +421,22 @@
         </ClCompile>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpc.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcPacket.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddNpc.cpp">
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcPacket.cpp">
             <Filter>Source Files\Packets\Server</Filter>
         </ClCompile>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpc.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcPacket.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpc.cpp">
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcPacket.cpp">
             <Filter>Source Files\Packets\Server</Filter>
         </ClCompile>
     </ItemGroup>

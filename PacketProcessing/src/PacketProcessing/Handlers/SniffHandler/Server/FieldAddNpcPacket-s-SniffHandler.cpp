@@ -6,7 +6,7 @@ namespace Networking
 	namespace Packets
 	{
 		template <>
-		void SniffHandler::PacketParsed<Server::FieldAddNpc>(const Server::FieldAddNpc& packet)
+		void SniffHandler::PacketParsed<Server::FieldAddNpcPacket>(const Server::FieldAddNpcPacket& packet)
 		{
 			if (!Field.CurrentMap)
 			{

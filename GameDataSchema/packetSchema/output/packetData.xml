@@ -179,6 +179,13 @@
 				<member name="ItemCouple" type="ItemCouple" />
 				<member name="Binding" type="ItemBinding" />
 			</class>
+			<class name="EffectStats">
+				<member name="StartTime" type="unsigned int" />
+				<member name="EndTime" type="unsigned int" />
+				<member name="EffectId" type="Enum.EffectId" />
+				<member name="EffectLevel" type="Enum.EffectLevel" />
+				<member name="Stacks" type="unsigned int" />
+			</class>
 		</namespace>
 	</namespace>
 	<namespace name="Networking">
@@ -337,16 +344,12 @@
 					<member name="InstanceId" type="Enum.EffectInstanceId" />
 					<member name="SourceId" type="Enum.ActorId" />
 					<member name="UpdateEffect" type="bool" />
-					<member name="StartTime" type="int" />
-					<member name="EndTime" type="int" />
-					<member name="EffectId" type="Enum.EffectId" />
-					<member name="EffectLevel" type="Enum.EffectLevel" />
-					<member name="Stacks" type="int" />
+					<member name="Stats" type="Maple.Game.EffectStats" />
 					<member name="Enabled" type="bool" />
 					<member name="UpdateShield" type="bool" />
 					<member name="ShieldHealth" type="long long" />
 				</class>
-				<class name="FieldAddNpc" directory="Packets\Server">
+				<class name="FieldAddNpcPacket" directory="Packets\Server">
 					<class name="Effect" isMember="false">
 						<member name="OwnerId" type="Enum.ActorId" />
 						<member name="InstanceId" type="Enum.EffectInstanceId" />
@@ -382,7 +385,7 @@
 					<member name="Skills" type="std::vector" contains="Skill" />
 					<member name="HiddenHpAdd" type="long long" />
 				</class>
-				<class name="FieldRemoveNpc" directory="Packets\Server">
+				<class name="FieldRemoveNpcPacket" directory="Packets\Server">
 					<member name="ActorId" type="Enum.ActorId" />
 				</class>
 				<class name="TrophyStartPacket" directory="Packets\Server">

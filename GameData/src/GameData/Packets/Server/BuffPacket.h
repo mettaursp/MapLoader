@@ -2,6 +2,7 @@
 
 #include <GameData/Packets\Server/BuffPacket.h>
 #include <GameData/Enums/Handles.h>
+#include <GameData/Data/EffectStats.h>
 
 namespace Networking
 {
@@ -23,11 +24,7 @@ namespace Networking
 				Enum::EffectInstanceId InstanceId;
 				Enum::ActorId SourceId;
 				bool UpdateEffect = false;
-				int StartTime = 0;
-				int EndTime = 0;
-				Enum::EffectId EffectId;
-				Enum::EffectLevel EffectLevel;
-				int Stacks = 0;
+				Maple::Game::EffectStats Stats;
 				bool Enabled = false;
 				bool UpdateShield = false;
 				long long ShieldHealth = 0;

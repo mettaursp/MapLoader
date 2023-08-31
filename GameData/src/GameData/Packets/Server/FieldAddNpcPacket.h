@@ -4,9 +4,9 @@
 #include <GameData/Enums/Handles.h>
 #include <string>
 #include <vector>
+#include <GameData/Packets\Server/FieldAddNpcPacket.h>
 #include <GameData/Data/StatLong.h>
 #include <GameData/Data/Stat.h>
-#include <GameData/Packets\Server/FieldAddNpc.h>
 
 namespace Networking
 {
@@ -14,7 +14,7 @@ namespace Networking
 	{
 		namespace Server
 		{
-			struct FieldAddNpc
+			struct FieldAddNpcPacket
 			{
 				struct Effect
 				{

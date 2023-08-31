@@ -164,10 +164,10 @@
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserChatPacket-s-SniffHandler.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddNpc-s-SniffHandler.cpp"/>
+        <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\Server\FieldAddNpcPacket-s-SniffHandler.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemoveNpc-s-SniffHandler.cpp"/>
+        <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\Server\FieldRemoveNpcPacket-s-SniffHandler.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RequestFieldEnterPacket-s-SniffHandler.cpp"/>
@@ -290,21 +290,6 @@
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TrophyUpdatePacket-s-SniffHandler.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\BasicStat-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SpecialStat-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\BonusStats-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemCustomization-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemBinding-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ItemData-c-SniffHandler.cpp"/>
     </ItemGroup>
 </Project>

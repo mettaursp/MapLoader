@@ -1872,13 +1872,13 @@ namespace PacketSchema
 
 				if (output != nullptr && outputData.Member == nullptr)
 				{
-					if (!outputsReferenced.contains(output->Class))
-					{
-						outputsReferenced[output->Class] = opcode.IsServer;
-					}
-
 					if (stack.size() > 1 || !opcode.IsBlock)
 					{
+						if (!outputsReferenced.contains(output->Class))
+						{
+							outputsReferenced[output->Class] = opcode.IsServer;
+						}
+
 						out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
 						out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking.Packets"), "::") << ">(" << *output << ");\n";
 
@@ -2389,13 +2389,13 @@ namespace PacketSchema
 
 			if (output != nullptr && outputData.Member == nullptr)
 			{
-				if (!outputsReferenced.contains(output->Class))
-				{
-					outputsReferenced[output->Class] = opcode.IsServer;
-				}
-
 				if (stack.size() > 1 || !opcode.IsBlock)
 				{
+					if (!outputsReferenced.contains(output->Class))
+					{
+						outputsReferenced[output->Class] = opcode.IsServer;
+					}
+
 					out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
 					out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking.Packets"), "::") << ">(" << *output << ");\n";
 
@@ -2435,13 +2435,13 @@ namespace PacketSchema
 
 		if (topOutput)
 		{
-			if (!outputsReferenced.contains(topOutput->Class))
-			{
-				outputsReferenced[topOutput->Class] = opcode.IsServer;
-			}
-
 			if (stack.size() > 1 || !opcode.IsBlock)
 			{
+				if (!outputsReferenced.contains(topOutput->Class))
+				{
+					outputsReferenced[topOutput->Class] = opcode.IsServer;
+				}
+
 				out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
 				out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(topOutput->Class->Scope, "Networking.Packets"), "::") << ">(" << *topOutput << ");\n";
 

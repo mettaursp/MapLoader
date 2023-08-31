@@ -225,6 +225,12 @@
         <ClCompile Include="./../GameData\src/GameData\Data\ItemData.cpp"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\EffectStats.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\EffectStats.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.h"/>
     </ItemGroup>
     <ItemGroup>
@@ -309,16 +315,16 @@
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\BuffPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpc.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddNpc.cpp"/>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpc.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpc.cpp"/>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyStartPacket.h"/>

@@ -852,19 +852,22 @@ namespace OutputSchema
 			child = next;
 		}
 
-		
-		try
+		while (fs::exists(gameDataProjDir / "src"))
 		{
-			if (fs::exists(gameDataProjDir / "src"))
+			try
 			{
-				fs::remove_all(gameDataProjDir / "src");
+				if (fs::exists(gameDataProjDir / "src"))
+				{
+					fs::remove_all(gameDataProjDir / "src");
+				}
 			}
-		}
-		catch (fs::filesystem_error& err)
-		{
-			std::cout << "couldn't clear directory";
+			catch (fs::filesystem_error& err)
+			{
+				std::cout << "couldn't clear directory. press enter to try again...";
 
-			return;
+				int a = 0;
+				std::cin >> a;
+			}
 		}
 
 		fs::create_directories(gameDataProjDir / "src/GameData/Collection");

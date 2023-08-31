@@ -8,7 +8,7 @@ namespace Networking
 	{
 		namespace Server
 		{
-			struct FieldRemoveNpc
+			struct FieldRemoveNpcPacket
 			{
 				Enum::ActorId ActorId;
 			};

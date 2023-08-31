@@ -138,6 +138,353 @@ namespace Networking
 			}
 		}
 
+		void ParseItemEnchantmentHeader_v12(PacketHandler& handler, Maple::Game::ItemEnchantment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<int>("enchantLevel", handler, blockOutput.Level, "\t\t");
+			Read<int>("enchantExp", handler, blockOutput.EnchantExp, "\t\t");
+			Read<unsigned char>("enchantCharges", handler, blockOutput.EnchantCharges, "\t\t");
+
+			long long unknown_var3 = 0;
+			Read<long long>("unknown", handler, unknown_var3, "\t\t");
+
+			int unknown_var4 = 0;
+			Read<int>("unknown", handler, unknown_var4, "\t\t");
+
+			int unknown_var5 = 0;
+			Read<int>("unknown", handler, unknown_var5, "\t\t");
+			Read<bool>("canRepackage", handler, blockOutput.CanRepackage, "\t\t");
+
+			ValidateValues(stream, "canRepackage", "\t\t", blockOutput.CanRepackage, (bool)0, (bool)1);
+
+			Read<int>("charges", handler, blockOutput.Charges, "\t\t");
+		}
+
+		void ParseItemEnchantment_v12(PacketHandler& handler, Maple::Game::ItemEnchantment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			ParseItemEnchantmentHeader_v12(handler, blockOutput);
+
+			unsigned char basicStatCount_var0 = 0;
+			Read<unsigned char>("basicStatCount", handler, basicStatCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Basic, basicStatCount_var0);
+
+			for (unsigned char i = 0; i < basicStatCount_var0 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			{
+				Read<int>("type", handler, blockOutput.Basic[i].Type, "\t\t\t");
+				Read<int>("value", handler, blockOutput.Basic[i].Value, "\t\t\t");
+				Read<float>("rate", handler, blockOutput.Basic[i].Rate, "\t\t\t");
+			}
+		}
+
+		void ParseItemTemplate_v12(PacketHandler& handler, Maple::Game::ItemTemplate& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			long long unknown_var0 = 0;
+			Read<long long>("unknown", handler, unknown_var0, "\t\t");
+			Read<std::wstring>("fileName", handler, blockOutput.FileName, "\t\t");
+			Read<std::wstring>("name", handler, blockOutput.Name, "\t\t");
+
+			unsigned char unknown_var3 = 0;
+			Read<unsigned char>("unknown", handler, unknown_var3, "\t\t");
+
+			int unknown_var4 = 0;
+			Read<int>("unknown", handler, unknown_var4, "\t\t");
+			Read<long long>("accountId", handler, blockOutput.AccountId, "\t\t");
+			Read<long long>("characterId", handler, blockOutput.CharacterId, "\t\t");
+			Read<std::wstring>("author", handler, blockOutput.Author, "\t\t");
+			Read<long long>("creationTime", handler, blockOutput.CreationTime, "\t\t");
+			Read<std::wstring>("url", handler, blockOutput.Url, "\t\t");
+
+			unsigned char unknown_var10 = 0;
+			Read<unsigned char>("unknown", handler, unknown_var10, "\t\t");
+		}
+
+		void ParseItemBlueprint_v12(PacketHandler& handler, Maple::Game::ItemBlueprint& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			long long unknown_var0 = 0;
+			Read<long long>("unknown", handler, unknown_var0, "\t\t");
+
+			int unknown_var1 = 0;
+			Read<int>("unknown", handler, unknown_var1, "\t\t");
+
+			int unknown_var2 = 0;
+			Read<int>("unknown", handler, unknown_var2, "\t\t");
+
+			int unknown_var3 = 0;
+			Read<int>("unknown", handler, unknown_var3, "\t\t");
+
+			long long unknown_var4 = 0;
+			Read<long long>("unknown", handler, unknown_var4, "\t\t");
+
+			int unknown_var5 = 0;
+			Read<int>("unknown", handler, unknown_var5, "\t\t");
+
+			long long unknown_var6 = 0;
+			Read<long long>("unknown", handler, unknown_var6, "\t\t");
+
+			long long unknown_var7 = 0;
+			Read<long long>("unknown", handler, unknown_var7, "\t\t");
+
+			std::wstring unknown_var8;
+			Read<std::wstring>("unknown", handler, unknown_var8, "\t\t");
+		}
+
+		void ParseItemPet_v12(PacketHandler& handler, Maple::Game::ItemPet& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<std::wstring>("name", handler, blockOutput.Name, "\t\t");
+			Read<long long>("exp", handler, blockOutput.Exp, "\t\t");
+			Read<int>("evolvePoints", handler, blockOutput.EvolvePoints, "\t\t");
+			Read<int>("level", handler, blockOutput.Level, "\t\t");
+			Read<bool>("hasItems", handler, blockOutput.HasItems, "\t\t");
+
+			ValidateValues(stream, "hasItems", "\t\t", blockOutput.HasItems, (bool)0, (bool)1);
+		}
+
+		void ParseItemMusic_v12(PacketHandler& handler, Maple::Game::ItemMusic& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<int>("length", handler, blockOutput.Length, "\t\t");
+			Read<int>("instrument", handler, blockOutput.Instrument, "\t\t");
+			Read<std::wstring>("title", handler, blockOutput.Title, "\t\t");
+			Read<std::wstring>("author", handler, blockOutput.Author, "\t\t");
+
+			int unknown_var4 = 0;
+			Read<int>("unknown", handler, unknown_var4, "\t\t");
+
+			ValidateValues(stream, "unknown", "\t\t", unknown_var4, (int)1);
+
+			Read<long long>("authorId", handler, blockOutput.AuthorId, "\t\t");
+			Read<bool>("isLocked", handler, blockOutput.IsLocked, "\t\t");
+
+			ValidateValues(stream, "isLocked", "\t\t", blockOutput.IsLocked, (bool)0, (bool)1);
+
+			long long unknown_var7 = 0;
+			Read<long long>("unknown", handler, unknown_var7, "\t\t");
+
+			long long unknown_var8 = 0;
+			Read<long long>("unknown", handler, unknown_var8, "\t\t");
+		}
+
+		void ParseItemBadgeTransparency_v12(PacketHandler& handler, Maple::Game::ItemBadge& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[0], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[0], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[1], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[1], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[2], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[2], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[3], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[3], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[4], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[4], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[5], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[5], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[6], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[6], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[7], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[7], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[8], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[8], (bool)0, (bool)1);
+
+			Read<bool>("transparency", handler, blockOutput.Transparency[9], "\t\t");
+
+			ValidateValues(stream, "transparency", "\t\t", blockOutput.Transparency[9], (bool)0, (bool)1);
+		}
+
+		void ParseItemBadge_v12(PacketHandler& handler, Maple::Game::ItemBadge& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			unsigned char unknown_var0 = 0;
+			Read<unsigned char>("unknown", handler, unknown_var0, "\t\t");
+
+			ValidateValues(stream, "unknown", "\t\t", unknown_var0, (unsigned char)1);
+
+			Read<unsigned char>("type", handler, blockOutput.Type, "\t\t");
+
+			ValidateValues(stream, "type", "\t\t", blockOutput.Type, (unsigned char)1, (unsigned char)11);
+
+			Read<std::wstring>("id", handler, blockOutput.Id, "\t\t");
+
+			if (blockOutput.Type == 1)
+			{
+				ParseItemBadgeTransparency_v12(handler, blockOutput);
+			}
+
+			if (blockOutput.Type == 11)
+			{
+				Read<int>("petSkinId", handler, blockOutput.PetSkinId, "\t\t\t");
+			}
+		}
+
+		void ParseItemTransfer_v12(PacketHandler& handler, Maple::Game::ItemTransfer& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<int>("transferFlags", handler, blockOutput.TransferFlags, "\t\t");
+
+			bool unknown_var1 = false;
+			Read<bool>("unknown", handler, unknown_var1, "\t\t");
+
+			ValidateValues(stream, "unknown", "\t\t", unknown_var1, (bool)0, (bool)1);
+
+			Read<int>("remainingTrades", handler, blockOutput.RemainingTrades, "\t\t");
+			Read<int>("remainingPackages", handler, blockOutput.RemainingPackages, "\t\t");
+
+			unsigned char unknown_var4 = 0;
+			Read<unsigned char>("unknown", handler, unknown_var4, "\t\t");
+
+			bool unknown_var5 = false;
+			Read<bool>("unknown", handler, unknown_var5, "\t\t");
+
+			ValidateValues(stream, "unknown", "\t\t", unknown_var5, (bool)0, (bool)1);
+
+			Read<bool>("isBound", handler, blockOutput.IsBound, "\t\t");
+
+			ValidateValues(stream, "isBound", "\t\t", blockOutput.IsBound, (bool)0, (bool)1);
+
+			if (blockOutput.IsBound)
+			{
+				ParseItemBinding_v12(handler, blockOutput.Binding);
+			}
+		}
+
+		void ParseItemSocket_v12(PacketHandler& handler, Maple::Game::ItemSocket& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<unsigned char>("maxSlots", handler, blockOutput.MaxSlots, "\t\t");
+			Read<unsigned char>("unlockedSlots", handler, blockOutput.UnlockedSlots, "\t\t");
+
+			ResizeVector(handler, blockOutput.Sockets, blockOutput.UnlockedSlots);
+
+			for (unsigned char i = 0; i < blockOutput.UnlockedSlots && !handler.PacketStream.HasRecentlyFailed; ++i)
+			{
+				Read<bool>("hasGem", handler, blockOutput.Sockets[i].HasGem, "\t\t\t");
+
+				ValidateValues(stream, "hasGem", "\t\t\t", blockOutput.Sockets[i].HasGem, (bool)0, (bool)1);
+
+				if (blockOutput.Sockets[i].HasGem)
+				{
+
+					{
+						Read<int>("itemId", handler, blockOutput.Sockets[i].Gem.ItemId, "\t\t\t\t\t");
+						Read<bool>("isBound", handler, blockOutput.Sockets[i].Gem.IsBound, "\t\t\t\t\t");
+
+						ValidateValues(stream, "isBound", "\t\t\t\t\t", blockOutput.Sockets[i].Gem.IsBound, (bool)0, (bool)1);
+
+						if (blockOutput.Sockets[i].Gem.IsBound)
+						{
+							ParseItemBinding_v12(handler, blockOutput.Sockets[i].Gem.Binding);
+						}
+
+						Read<bool>("isLocked", handler, blockOutput.Sockets[i].Gem.IsLocked, "\t\t\t\t\t");
+
+						ValidateValues(stream, "isLocked", "\t\t\t\t\t", blockOutput.Sockets[i].Gem.IsLocked, (bool)0, (bool)1);
+
+						if (blockOutput.Sockets[i].Gem.IsLocked)
+						{
+							unsigned char unknown_var6 = 0;
+							Read<unsigned char>("unknown", handler, unknown_var6, "\t\t\t\t\t\t");
+							Read<long long>("unlockTime", handler, blockOutput.Sockets[i].Gem.UnlockTime, "\t\t\t\t\t\t");
+						}
+					}
+				}
+			}
+		}
+
+		void ParseItemCouple_v12(PacketHandler& handler, Maple::Game::ItemCouple& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<long long>("characterId", handler, blockOutput.CharacterId, "\t\t");
+
+			if (blockOutput.CharacterId != 0)
+			{
+				Read<std::wstring>("name", handler, blockOutput.Name, "\t\t\t");
+				Read<bool>("isCreator", handler, blockOutput.IsCreator, "\t\t\t");
+
+				ValidateValues(stream, "isCreator", "\t\t\t", blockOutput.IsCreator, (bool)0, (bool)1);
+			}
+		}
+
+		void ParseItemHeader_v12(PacketHandler& handler, Maple::Game::ItemData& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<long long>("creationTime", handler, blockOutput.CreationTime, "\t\t");
+			Read<long long>("expirationTime", handler, blockOutput.ExpirationTime, "\t\t");
+
+			long long unknown_var2 = 0;
+			Read<long long>("unknown", handler, unknown_var2, "\t\t");
+			Read<int>("timesChanged", handler, blockOutput.TimesChanged, "\t\t");
+			Read<int>("remainingUses", handler, blockOutput.RemainingUses, "\t\t");
+			Read<bool>("isLocked", handler, blockOutput.IsLocked, "\t\t");
+
+			ValidateValues(stream, "isLocked", "\t\t", blockOutput.IsLocked, (bool)0, (bool)1);
+
+			Read<long long>("unlockTime", handler, blockOutput.UnlockTime, "\t\t");
+			Read<short>("glamorForges", handler, blockOutput.GlamorForges, "\t\t");
+
+			unsigned char unknownBool_var8 = 0;
+			Read<unsigned char>("unknownBool", handler, unknownBool_var8, "\t\t");
+
+			ValidateValues(stream, "unknownBool", "\t\t", unknownBool_var8, (unsigned char)0);
+		}
+
 		void ParseItemData_v12(PacketHandler& handler, Maple::Game::ItemData& blockOutput, unsigned int itemId_param0)
 		{
 			using namespace ParserUtils::Packets;
@@ -153,399 +500,171 @@ namespace Networking
 			Read<int>("unknown", handler, unknown_var2, "\t\t");
 
 			ValidateValues(stream, "unknown", "\t\t", unknown_var2, (int)18446744073709551615);
+			ParseItemHeader_v12(handler, blockOutput);
 
-			Read<long long>("creationTime", handler, blockOutput.CreationTime, "\t\t");
-			Read<long long>("expirationTime", handler, blockOutput.ExpirationTime, "\t\t");
-
-			long long unknown_var5 = 0;
-			Read<long long>("unknown", handler, unknown_var5, "\t\t");
-			Read<int>("timesChanged", handler, blockOutput.TimesChanged, "\t\t");
-			Read<int>("remainingUses", handler, blockOutput.RemainingUses, "\t\t");
-			Read<bool>("isLocked", handler, blockOutput.IsLocked, "\t\t");
-
-			ValidateValues(stream, "isLocked", "\t\t", blockOutput.IsLocked, (bool)0, (bool)1);
-
-			Read<long long>("unlockTime", handler, blockOutput.UnlockTime, "\t\t");
-			Read<short>("glamorForges", handler, blockOutput.GlamorForges, "\t\t");
-
-			unsigned char unknownBool_var11 = 0;
-			Read<unsigned char>("unknownBool", handler, unknownBool_var11, "\t\t");
-
-			ValidateValues(stream, "unknownBool", "\t\t", unknownBool_var11, (unsigned char)0);
-
-			int unknown_var12 = 0;
-			Read<int>("unknown", handler, unknown_var12, "\t\t");
+			int unknown_var3 = 0;
+			Read<int>("unknown", handler, unknown_var3, "\t\t");
 			ParseItemCustomization_v12(handler, blockOutput.Customization, itemId_param0);
 
 			{
 
-				unsigned char unknown_var13 = 0;
-				Read<unsigned char>("unknown", handler, unknown_var13, "\t\t\t");
+				unsigned char unknown_var4 = 0;
+				Read<unsigned char>("unknown", handler, unknown_var4, "\t\t\t");
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Constant);
 
-				int unknown_var14 = 0;
-				Read<int>("unknown", handler, unknown_var14, "\t\t\t");
+				int unknown_var5 = 0;
+				Read<int>("unknown", handler, unknown_var5, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var14, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var5, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Static);
 
-				int unknown_var15 = 0;
-				Read<int>("unknown", handler, unknown_var15, "\t\t\t");
+				int unknown_var6 = 0;
+				Read<int>("unknown", handler, unknown_var6, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var15, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var6, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Random);
 
-				int unknown_var16 = 0;
-				Read<int>("unknown", handler, unknown_var16, "\t\t\t");
+				int unknown_var7 = 0;
+				Read<int>("unknown", handler, unknown_var7, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var16, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var7, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Title);
 
-				int unknown_var17 = 0;
-				Read<int>("unknown", handler, unknown_var17, "\t\t\t");
+				int unknown_var8 = 0;
+				Read<int>("unknown", handler, unknown_var8, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var17, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var8, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Empowerment1);
 
-				int unknown_var18 = 0;
-				Read<int>("unknown", handler, unknown_var18, "\t\t\t");
+				int unknown_var9 = 0;
+				Read<int>("unknown", handler, unknown_var9, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var18, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var9, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Empowerment2);
 
-				int unknown_var19 = 0;
-				Read<int>("unknown", handler, unknown_var19, "\t\t\t");
+				int unknown_var10 = 0;
+				Read<int>("unknown", handler, unknown_var10, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var19, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var10, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Empowerment3);
 
-				int unknown_var20 = 0;
-				Read<int>("unknown", handler, unknown_var20, "\t\t\t");
+				int unknown_var11 = 0;
+				Read<int>("unknown", handler, unknown_var11, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var20, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var11, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Empowerment4);
 
-				int unknown_var21 = 0;
-				Read<int>("unknown", handler, unknown_var21, "\t\t\t");
+				int unknown_var12 = 0;
+				Read<int>("unknown", handler, unknown_var12, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var21, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var12, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Empowerment5);
 
-				int unknown_var22 = 0;
-				Read<int>("unknown", handler, unknown_var22, "\t\t\t");
+				int unknown_var13 = 0;
+				Read<int>("unknown", handler, unknown_var13, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var22, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var13, (int)0);
 			}
+			ParseItemEnchantment_v12(handler, blockOutput.Enchantment);
 
 			{
 
-				Read<int>("enchantLevel", handler, blockOutput.Enchantment.Level, "\t\t\t");
-				Read<int>("enchantExp", handler, blockOutput.Enchantment.EnchantExp, "\t\t\t");
-				Read<unsigned char>("enchantCharges", handler, blockOutput.Enchantment.EnchantCharges, "\t\t\t");
-
-				long long unknown_var26 = 0;
-				Read<long long>("unknown", handler, unknown_var26, "\t\t\t");
-
-				int unknown_var27 = 0;
-				Read<int>("unknown", handler, unknown_var27, "\t\t\t");
-
-				int unknown_var28 = 0;
-				Read<int>("unknown", handler, unknown_var28, "\t\t\t");
-				Read<bool>("canRepackage", handler, blockOutput.Enchantment.CanRepackage, "\t\t\t");
-
-				ValidateValues(stream, "canRepackage", "\t\t\t", blockOutput.Enchantment.CanRepackage, (bool)0, (bool)1);
-
-				Read<int>("charges", handler, blockOutput.Enchantment.Charges, "\t\t\t");
-
-				unsigned char basicStatCount_var31 = 0;
-				Read<unsigned char>("basicStatCount", handler, basicStatCount_var31, "\t\t\t");
-
-				ResizeVector(handler, blockOutput.Enchantment.Basic, basicStatCount_var31);
-
-				for (unsigned char i = 0; i < basicStatCount_var31 && !handler.PacketStream.HasRecentlyFailed; ++i)
-				{
-					Read<int>("type", handler, blockOutput.Enchantment.Basic[i].Type, "\t\t\t\t");
-					Read<int>("value", handler, blockOutput.Enchantment.Basic[i].Value, "\t\t\t\t");
-					Read<float>("rate", handler, blockOutput.Enchantment.Basic[i].Rate, "\t\t\t\t");
-				}
-			}
-
-			{
 				Read<int>("limitBreakLevel", handler, blockOutput.LimitBreak.Level, "\t\t\t");
 
 				{
 
-					int statCount_var36 = 0;
-					Read<int>("statCount", handler, statCount_var36, "\t\t\t\t");
+					int statCount_var15 = 0;
+					Read<int>("statCount", handler, statCount_var15, "\t\t\t\t");
 
-					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var36);
+					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var15);
 
-					for (int i = 0; i < statCount_var36 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var15 && !handler.PacketStream.HasRecentlyFailed; ++i)
 					{
 						ParseBasicStat_v12(handler, blockOutput.LimitBreak.Stats.Basic[i]);
 					}
 
-					Read<int>("statCount", handler, statCount_var36, "\t\t\t\t");
+					Read<int>("statCount", handler, statCount_var15, "\t\t\t\t");
 
-					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var36);
+					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var15);
 
-					for (int i = 0; i < statCount_var36 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var15 && !handler.PacketStream.HasRecentlyFailed; ++i)
 					{
 						ParseSpecialStat_v12(handler, blockOutput.LimitBreak.Stats.Special[i]);
 					}
 				}
 			}
 
-			unsigned char extraDataType_var37 = 0;
+			unsigned char extraDataType_var16 = 0;
 
-			extraDataType_var37 = handler.GetItemExtraDataType(itemId_param0);
+			extraDataType_var16 = handler.GetItemExtraDataType(itemId_param0);
 
-			ValidateValues(stream, "extraDataType", "\t\t", extraDataType_var37, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
+			ValidateValues(stream, "extraDataType", "\t\t", extraDataType_var16, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
 
-			if (extraDataType_var37 == 1)
+			if (extraDataType_var16 == 1)
 			{
-
-				{
-					long long unknown_var38 = 0;
-					Read<long long>("unknown", handler, unknown_var38, "\t\t\t\t");
-					Read<std::wstring>("fileName", handler, blockOutput.Template.FileName, "\t\t\t\t");
-					Read<std::wstring>("name", handler, blockOutput.Template.Name, "\t\t\t\t");
-
-					unsigned char unknown_var41 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var41, "\t\t\t\t");
-
-					int unknown_var42 = 0;
-					Read<int>("unknown", handler, unknown_var42, "\t\t\t\t");
-					Read<long long>("accountId", handler, blockOutput.Template.AccountId, "\t\t\t\t");
-					Read<long long>("characterId", handler, blockOutput.Template.CharacterId, "\t\t\t\t");
-					Read<std::wstring>("author", handler, blockOutput.Template.Author, "\t\t\t\t");
-					Read<long long>("creationTime", handler, blockOutput.Template.CreationTime, "\t\t\t\t");
-					Read<std::wstring>("url", handler, blockOutput.Template.Url, "\t\t\t\t");
-
-					unsigned char unknown_var48 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var48, "\t\t\t\t");
-				}
-
-				{
-
-					long long unknown_var49 = 0;
-					Read<long long>("unknown", handler, unknown_var49, "\t\t\t\t");
-
-					int unknown_var50 = 0;
-					Read<int>("unknown", handler, unknown_var50, "\t\t\t\t");
-
-					int unknown_var51 = 0;
-					Read<int>("unknown", handler, unknown_var51, "\t\t\t\t");
-
-					int unknown_var52 = 0;
-					Read<int>("unknown", handler, unknown_var52, "\t\t\t\t");
-
-					long long unknown_var53 = 0;
-					Read<long long>("unknown", handler, unknown_var53, "\t\t\t\t");
-
-					int unknown_var54 = 0;
-					Read<int>("unknown", handler, unknown_var54, "\t\t\t\t");
-
-					long long unknown_var55 = 0;
-					Read<long long>("unknown", handler, unknown_var55, "\t\t\t\t");
-
-					long long unknown_var56 = 0;
-					Read<long long>("unknown", handler, unknown_var56, "\t\t\t\t");
-
-					std::wstring unknown_var57;
-					Read<std::wstring>("unknown", handler, unknown_var57, "\t\t\t\t");
-				}
+				ParseItemTemplate_v12(handler, blockOutput.Template);
+				ParseItemBlueprint_v12(handler, blockOutput.Blueprint);
 			}
 
-			if (extraDataType_var37 == 2)
+			if (extraDataType_var16 == 2)
 			{
-
-				{
-					Read<std::wstring>("name", handler, blockOutput.Pet.Name, "\t\t\t\t");
-					Read<long long>("exp", handler, blockOutput.Pet.Exp, "\t\t\t\t");
-					Read<int>("evolvePoints", handler, blockOutput.Pet.EvolvePoints, "\t\t\t\t");
-					Read<int>("level", handler, blockOutput.Pet.Level, "\t\t\t\t");
-					Read<bool>("hasItems", handler, blockOutput.Pet.HasItems, "\t\t\t\t");
-
-					ValidateValues(stream, "hasItems", "\t\t\t\t", blockOutput.Pet.HasItems, (bool)0, (bool)1);
-				}
+				ParseItemPet_v12(handler, blockOutput.Pet);
 			}
 
-			if (extraDataType_var37 == 3)
+			if (extraDataType_var16 == 3)
 			{
-
-				{
-					Read<int>("length", handler, blockOutput.Music.Length, "\t\t\t\t");
-					Read<int>("instrument", handler, blockOutput.Music.Instrument, "\t\t\t\t");
-					Read<std::wstring>("title", handler, blockOutput.Music.Title, "\t\t\t\t");
-					Read<std::wstring>("author", handler, blockOutput.Music.Author, "\t\t\t\t");
-
-					int unknown_var67 = 0;
-					Read<int>("unknown", handler, unknown_var67, "\t\t\t\t");
-
-					ValidateValues(stream, "unknown", "\t\t\t\t", unknown_var67, (int)1);
-
-					Read<long long>("authorId", handler, blockOutput.Music.AuthorId, "\t\t\t\t");
-					Read<bool>("isLocked", handler, blockOutput.Music.IsLocked, "\t\t\t\t");
-
-					ValidateValues(stream, "isLocked", "\t\t\t\t", blockOutput.Music.IsLocked, (bool)0, (bool)1);
-
-					long long unknown_var70 = 0;
-					Read<long long>("unknown", handler, unknown_var70, "\t\t\t\t");
-
-					long long unknown_var71 = 0;
-					Read<long long>("unknown", handler, unknown_var71, "\t\t\t\t");
-				}
+				ParseItemMusic_v12(handler, blockOutput.Music);
 			}
 
-			if (extraDataType_var37 == 4)
+			if (extraDataType_var16 == 4)
 			{
-
-				{
-					unsigned char unknown_var72 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var72, "\t\t\t\t");
-
-					ValidateValues(stream, "unknown", "\t\t\t\t", unknown_var72, (unsigned char)1);
-
-					Read<unsigned char>("type", handler, blockOutput.Badge.Type, "\t\t\t\t");
-
-					ValidateValues(stream, "type", "\t\t\t\t", blockOutput.Badge.Type, (unsigned char)1, (unsigned char)11);
-
-					Read<std::wstring>("id", handler, blockOutput.Badge.Id, "\t\t\t\t");
-
-					if (blockOutput.Badge.Type == 1)
-					{
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[0], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[0], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[1], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[1], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[2], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[2], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[3], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[3], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[4], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[4], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[5], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[5], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[6], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[6], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[7], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[7], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[8], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[8], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[9], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[9], (bool)0, (bool)1);
-					}
-
-					if (blockOutput.Badge.Type == 11)
-					{
-						Read<int>("petSkinId", handler, blockOutput.Badge.PetSkinId, "\t\t\t\t\t");
-					}
-				}
+				ParseItemBadge_v12(handler, blockOutput.Badge);
 			}
-
-			{
-				Read<int>("transferFlags", handler, blockOutput.ItemTransfer.TransferFlags, "\t\t\t");
-
-				bool unknown_var87 = false;
-				Read<bool>("unknown", handler, unknown_var87, "\t\t\t");
-
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var87, (bool)0, (bool)1);
-
-				Read<int>("remainingTrades", handler, blockOutput.ItemTransfer.RemainingTrades, "\t\t\t");
-				Read<int>("remainingPackages", handler, blockOutput.ItemTransfer.RemainingPackages, "\t\t\t");
-
-				unsigned char unknown_var90 = 0;
-				Read<unsigned char>("unknown", handler, unknown_var90, "\t\t\t");
-
-				bool unknown_var91 = false;
-				Read<bool>("unknown", handler, unknown_var91, "\t\t\t");
-
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var91, (bool)0, (bool)1);
-
-				Read<bool>("isBound", handler, blockOutput.ItemTransfer.IsBound, "\t\t\t");
-
-				ValidateValues(stream, "isBound", "\t\t\t", blockOutput.ItemTransfer.IsBound, (bool)0, (bool)1);
-
-				if (blockOutput.ItemTransfer.IsBound)
-				{
-					ParseItemBinding_v12(handler, blockOutput.ItemTransfer.Binding);
-				}
-			}
-
-			{
-
-				Read<unsigned char>("maxSlots", handler, blockOutput.ItemSocket.MaxSlots, "\t\t\t");
-				Read<unsigned char>("unlockedSlots", handler, blockOutput.ItemSocket.UnlockedSlots, "\t\t\t");
-
-				ResizeVector(handler, blockOutput.ItemSocket.Sockets, blockOutput.ItemSocket.UnlockedSlots);
-
-				for (unsigned char i = 0; i < blockOutput.ItemSocket.UnlockedSlots && !handler.PacketStream.HasRecentlyFailed; ++i)
-				{
-					Read<bool>("hasGem", handler, blockOutput.ItemSocket.Sockets[i].HasGem, "\t\t\t\t");
-
-					ValidateValues(stream, "hasGem", "\t\t\t\t", blockOutput.ItemSocket.Sockets[i].HasGem, (bool)0, (bool)1);
-
-					if (blockOutput.ItemSocket.Sockets[i].HasGem)
-					{
-
-						{
-							Read<int>("itemId", handler, blockOutput.ItemSocket.Sockets[i].Gem.ItemId, "\t\t\t\t\t\t");
-							Read<bool>("isBound", handler, blockOutput.ItemSocket.Sockets[i].Gem.IsBound, "\t\t\t\t\t\t");
-
-							ValidateValues(stream, "isBound", "\t\t\t\t\t\t", blockOutput.ItemSocket.Sockets[i].Gem.IsBound, (bool)0, (bool)1);
-
-							if (blockOutput.ItemSocket.Sockets[i].Gem.IsBound)
-							{
-								ParseItemBinding_v12(handler, blockOutput.ItemSocket.Sockets[i].Gem.Binding);
-							}
-
-							Read<bool>("isLocked", handler, blockOutput.ItemSocket.Sockets[i].Gem.IsLocked, "\t\t\t\t\t\t");
-
-							ValidateValues(stream, "isLocked", "\t\t\t\t\t\t", blockOutput.ItemSocket.Sockets[i].Gem.IsLocked, (bool)0, (bool)1);
-
-							if (blockOutput.ItemSocket.Sockets[i].Gem.IsLocked)
-							{
-								unsigned char unknown_var99 = 0;
-								Read<unsigned char>("unknown", handler, unknown_var99, "\t\t\t\t\t\t\t");
-								Read<long long>("unlockTime", handler, blockOutput.ItemSocket.Sockets[i].Gem.UnlockTime, "\t\t\t\t\t\t\t");
-							}
-						}
-					}
-				}
-			}
-
-			{
-				Read<long long>("characterId", handler, blockOutput.ItemCouple.CharacterId, "\t\t\t");
-
-				if (blockOutput.ItemCouple.CharacterId != 0)
-				{
-					Read<std::wstring>("name", handler, blockOutput.ItemCouple.Name, "\t\t\t\t");
-					Read<bool>("isCreator", handler, blockOutput.ItemCouple.IsCreator, "\t\t\t\t");
-
-					ValidateValues(stream, "isCreator", "\t\t\t\t", blockOutput.ItemCouple.IsCreator, (bool)0, (bool)1);
-				}
-			}
+			ParseItemTransfer_v12(handler, blockOutput.ItemTransfer);
+			ParseItemSocket_v12(handler, blockOutput.ItemSocket);
+			ParseItemCouple_v12(handler, blockOutput.ItemCouple);
 			ParseItemBinding_v12(handler, blockOutput.Binding);
+		}
+
+		void ParseEffectStats_v12(PacketHandler& handler, Maple::Game::EffectStats& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			Read<int>("startTime", handler, blockOutput.StartTime, "\t\t");
+			Read<int>("endTime", handler, blockOutput.EndTime, "\t\t");
+			Read<int>("effectId", handler, blockOutput.EffectId, "\t\t");
+			Read<short>("effectLevel", handler, blockOutput.EffectLevel, "\t\t");
+			Read<int>("stacks", handler, blockOutput.Stacks, "\t\t");
+		}
+
+		void ParseItemBadge_v2486(PacketHandler& handler, Maple::Game::ItemBadge& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream;
+
+			unsigned char unknown_var0 = 0;
+			Read<unsigned char>("unknown", handler, unknown_var0, "\t\t");
+
+			ValidateValues(stream, "unknown", "\t\t", unknown_var0, (unsigned char)1);
+
+			Read<unsigned char>("type", handler, blockOutput.Type, "\t\t");
+
+			ValidateValues(stream, "type", "\t\t", blockOutput.Type, (unsigned char)1, (unsigned char)11);
+
+			Read<int>("id", handler, blockOutput.BadgeId, "\t\t");
+
+			if (blockOutput.Type == 1)
+			{
+				ParseItemBadgeTransparency_v12(handler, blockOutput);
+			}
+
+			if (blockOutput.Type == 11)
+			{
+				Read<int>("petSkinId", handler, blockOutput.PetSkinId, "\t\t\t");
+			}
 		}
 
 		void ParseItemData_v2486(PacketHandler& handler, Maple::Game::ItemData& blockOutput, unsigned int itemId_param0)
@@ -563,367 +682,99 @@ namespace Networking
 
 			int unknown_var2 = 0;
 			Read<int>("unknown", handler, unknown_var2, "\t\t");
-			Read<long long>("creationTime", handler, blockOutput.CreationTime, "\t\t");
-			Read<long long>("expirationTime", handler, blockOutput.ExpirationTime, "\t\t");
-
-			long long unknown_var5 = 0;
-			Read<long long>("unknown", handler, unknown_var5, "\t\t");
-			Read<int>("timesChanged", handler, blockOutput.TimesChanged, "\t\t");
-			Read<int>("remainingUses", handler, blockOutput.RemainingUses, "\t\t");
-			Read<bool>("isLocked", handler, blockOutput.IsLocked, "\t\t");
-
-			ValidateValues(stream, "isLocked", "\t\t", blockOutput.IsLocked, (bool)0, (bool)1);
-
-			Read<long long>("unlockTime", handler, blockOutput.UnlockTime, "\t\t");
-			Read<short>("glamorForges", handler, blockOutput.GlamorForges, "\t\t");
-
-			unsigned char unknownBool_var11 = 0;
-			Read<unsigned char>("unknownBool", handler, unknownBool_var11, "\t\t");
-
-			ValidateValues(stream, "unknownBool", "\t\t", unknownBool_var11, (unsigned char)0);
+			ParseItemHeader_v12(handler, blockOutput);
 			ParseItemCustomization_v12(handler, blockOutput.Customization, itemId_param0);
 
 			{
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Constant);
 
-				int unknown_var12 = 0;
-				Read<int>("unknown", handler, unknown_var12, "\t\t\t");
+				int unknown_var3 = 0;
+				Read<int>("unknown", handler, unknown_var3, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var12, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var3, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Static);
 
-				int unknown_var13 = 0;
-				Read<int>("unknown", handler, unknown_var13, "\t\t\t");
+				int unknown_var4 = 0;
+				Read<int>("unknown", handler, unknown_var4, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var13, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var4, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Random);
 
-				int unknown_var14 = 0;
-				Read<int>("unknown", handler, unknown_var14, "\t\t\t");
+				int unknown_var5 = 0;
+				Read<int>("unknown", handler, unknown_var5, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var14, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var5, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Title);
 
-				int unknown_var15 = 0;
-				Read<int>("unknown", handler, unknown_var15, "\t\t\t");
+				int unknown_var6 = 0;
+				Read<int>("unknown", handler, unknown_var6, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var15, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var6, (int)0);
 				ParseBasicAndSpecialStats_v12(handler, blockOutput.Stats.Empowerment1);
 
-				int unknown_var16 = 0;
-				Read<int>("unknown", handler, unknown_var16, "\t\t\t");
+				int unknown_var7 = 0;
+				Read<int>("unknown", handler, unknown_var7, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var16, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var7, (int)0);
 			}
+			ParseItemEnchantment_v12(handler, blockOutput.Enchantment);
 
 			{
 
-				Read<int>("enchantLevel", handler, blockOutput.Enchantment.Level, "\t\t\t");
-				Read<int>("enchantExp", handler, blockOutput.Enchantment.EnchantExp, "\t\t\t");
-				Read<unsigned char>("enchantCharges", handler, blockOutput.Enchantment.EnchantCharges, "\t\t\t");
-
-				long long unknown_var20 = 0;
-				Read<long long>("unknown", handler, unknown_var20, "\t\t\t");
-
-				int unknown_var21 = 0;
-				Read<int>("unknown", handler, unknown_var21, "\t\t\t");
-
-				int unknown_var22 = 0;
-				Read<int>("unknown", handler, unknown_var22, "\t\t\t");
-				Read<bool>("canRepackage", handler, blockOutput.Enchantment.CanRepackage, "\t\t\t");
-
-				ValidateValues(stream, "canRepackage", "\t\t\t", blockOutput.Enchantment.CanRepackage, (bool)0, (bool)1);
-
-				Read<int>("charges", handler, blockOutput.Enchantment.Charges, "\t\t\t");
-
-				unsigned char basicStatCount_var25 = 0;
-				Read<unsigned char>("basicStatCount", handler, basicStatCount_var25, "\t\t\t");
-
-				ResizeVector(handler, blockOutput.Enchantment.Basic, basicStatCount_var25);
-
-				for (unsigned char i = 0; i < basicStatCount_var25 && !handler.PacketStream.HasRecentlyFailed; ++i)
-				{
-					Read<int>("type", handler, blockOutput.Enchantment.Basic[i].Type, "\t\t\t\t");
-					Read<int>("value", handler, blockOutput.Enchantment.Basic[i].Value, "\t\t\t\t");
-					Read<float>("rate", handler, blockOutput.Enchantment.Basic[i].Rate, "\t\t\t\t");
-				}
-			}
-
-			{
 				Read<int>("limitBreakLevel", handler, blockOutput.LimitBreak.Level, "\t\t\t");
 
 				{
 
-					int statCount_var30 = 0;
-					Read<int>("statCount", handler, statCount_var30, "\t\t\t\t");
+					int statCount_var9 = 0;
+					Read<int>("statCount", handler, statCount_var9, "\t\t\t\t");
 
-					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var30);
+					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var9);
 
-					for (int i = 0; i < statCount_var30 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var9 && !handler.PacketStream.HasRecentlyFailed; ++i)
 					{
 						ParseBasicStat_v12(handler, blockOutput.LimitBreak.Stats.Basic[i]);
 					}
 
-					Read<int>("statCount", handler, statCount_var30, "\t\t\t\t");
+					Read<int>("statCount", handler, statCount_var9, "\t\t\t\t");
 
-					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var30);
+					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var9);
 
-					for (int i = 0; i < statCount_var30 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var9 && !handler.PacketStream.HasRecentlyFailed; ++i)
 					{
 						ParseSpecialStat_v12(handler, blockOutput.LimitBreak.Stats.Special[i]);
 					}
 				}
 			}
 
-			unsigned char extraDataType_var31 = 0;
+			unsigned char extraDataType_var10 = 0;
 
-			extraDataType_var31 = handler.GetItemExtraDataType(itemId_param0);
+			extraDataType_var10 = handler.GetItemExtraDataType(itemId_param0);
 
-			ValidateValues(stream, "extraDataType", "\t\t", extraDataType_var31, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
+			ValidateValues(stream, "extraDataType", "\t\t", extraDataType_var10, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
 
-			if (extraDataType_var31 == 1)
+			if (extraDataType_var10 == 1)
 			{
-
-				{
-					long long unknown_var32 = 0;
-					Read<long long>("unknown", handler, unknown_var32, "\t\t\t\t");
-					Read<std::wstring>("fileName", handler, blockOutput.Template.FileName, "\t\t\t\t");
-					Read<std::wstring>("name", handler, blockOutput.Template.Name, "\t\t\t\t");
-
-					unsigned char unknown_var35 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var35, "\t\t\t\t");
-
-					int unknown_var36 = 0;
-					Read<int>("unknown", handler, unknown_var36, "\t\t\t\t");
-					Read<long long>("accountId", handler, blockOutput.Template.AccountId, "\t\t\t\t");
-					Read<long long>("characterId", handler, blockOutput.Template.CharacterId, "\t\t\t\t");
-					Read<std::wstring>("author", handler, blockOutput.Template.Author, "\t\t\t\t");
-					Read<long long>("creationTime", handler, blockOutput.Template.CreationTime, "\t\t\t\t");
-					Read<std::wstring>("url", handler, blockOutput.Template.Url, "\t\t\t\t");
-
-					unsigned char unknown_var42 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var42, "\t\t\t\t");
-				}
-
-				{
-
-					long long unknown_var43 = 0;
-					Read<long long>("unknown", handler, unknown_var43, "\t\t\t\t");
-
-					int unknown_var44 = 0;
-					Read<int>("unknown", handler, unknown_var44, "\t\t\t\t");
-
-					int unknown_var45 = 0;
-					Read<int>("unknown", handler, unknown_var45, "\t\t\t\t");
-
-					int unknown_var46 = 0;
-					Read<int>("unknown", handler, unknown_var46, "\t\t\t\t");
-
-					long long unknown_var47 = 0;
-					Read<long long>("unknown", handler, unknown_var47, "\t\t\t\t");
-
-					int unknown_var48 = 0;
-					Read<int>("unknown", handler, unknown_var48, "\t\t\t\t");
-
-					long long unknown_var49 = 0;
-					Read<long long>("unknown", handler, unknown_var49, "\t\t\t\t");
-
-					long long unknown_var50 = 0;
-					Read<long long>("unknown", handler, unknown_var50, "\t\t\t\t");
-
-					std::wstring unknown_var51;
-					Read<std::wstring>("unknown", handler, unknown_var51, "\t\t\t\t");
-				}
+				ParseItemTemplate_v12(handler, blockOutput.Template);
+				ParseItemBlueprint_v12(handler, blockOutput.Blueprint);
 			}
 
-			if (extraDataType_var31 == 2)
+			if (extraDataType_var10 == 2)
 			{
-
-				{
-					Read<std::wstring>("name", handler, blockOutput.Pet.Name, "\t\t\t\t");
-					Read<long long>("exp", handler, blockOutput.Pet.Exp, "\t\t\t\t");
-					Read<int>("evolvePoints", handler, blockOutput.Pet.EvolvePoints, "\t\t\t\t");
-					Read<int>("level", handler, blockOutput.Pet.Level, "\t\t\t\t");
-					Read<bool>("hasItems", handler, blockOutput.Pet.HasItems, "\t\t\t\t");
-
-					ValidateValues(stream, "hasItems", "\t\t\t\t", blockOutput.Pet.HasItems, (bool)0, (bool)1);
-				}
+				ParseItemPet_v12(handler, blockOutput.Pet);
 			}
 
-			if (extraDataType_var31 == 3)
+			if (extraDataType_var10 == 3)
 			{
-
-				{
-					Read<int>("length", handler, blockOutput.Music.Length, "\t\t\t\t");
-					Read<int>("instrument", handler, blockOutput.Music.Instrument, "\t\t\t\t");
-					Read<std::wstring>("title", handler, blockOutput.Music.Title, "\t\t\t\t");
-					Read<std::wstring>("author", handler, blockOutput.Music.Author, "\t\t\t\t");
-
-					int unknown_var61 = 0;
-					Read<int>("unknown", handler, unknown_var61, "\t\t\t\t");
-
-					ValidateValues(stream, "unknown", "\t\t\t\t", unknown_var61, (int)1);
-
-					Read<long long>("authorId", handler, blockOutput.Music.AuthorId, "\t\t\t\t");
-					Read<bool>("isLocked", handler, blockOutput.Music.IsLocked, "\t\t\t\t");
-
-					ValidateValues(stream, "isLocked", "\t\t\t\t", blockOutput.Music.IsLocked, (bool)0, (bool)1);
-
-					long long unknown_var64 = 0;
-					Read<long long>("unknown", handler, unknown_var64, "\t\t\t\t");
-
-					long long unknown_var65 = 0;
-					Read<long long>("unknown", handler, unknown_var65, "\t\t\t\t");
-				}
+				ParseItemMusic_v12(handler, blockOutput.Music);
 			}
 
-			if (extraDataType_var31 == 4)
+			if (extraDataType_var10 == 4)
 			{
-
-				{
-					unsigned char unknown_var66 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var66, "\t\t\t\t");
-
-					ValidateValues(stream, "unknown", "\t\t\t\t", unknown_var66, (unsigned char)1);
-
-					Read<unsigned char>("type", handler, blockOutput.Badge.Type, "\t\t\t\t");
-
-					ValidateValues(stream, "type", "\t\t\t\t", blockOutput.Badge.Type, (unsigned char)1, (unsigned char)11);
-
-					Read<int>("id", handler, blockOutput.Badge.BadgeId, "\t\t\t\t");
-
-					if (blockOutput.Badge.Type == 1)
-					{
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[0], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[0], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[1], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[1], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[2], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[2], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[3], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[3], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[4], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[4], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[5], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[5], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[6], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[6], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[7], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[7], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[8], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[8], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[9], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[9], (bool)0, (bool)1);
-					}
-
-					if (blockOutput.Badge.Type == 11)
-					{
-						Read<int>("petSkinId", handler, blockOutput.Badge.PetSkinId, "\t\t\t\t\t");
-					}
-				}
+				ParseItemBadge_v2486(handler, blockOutput.Badge);
 			}
-
-			{
-				Read<int>("transferFlags", handler, blockOutput.ItemTransfer.TransferFlags, "\t\t\t");
-
-				bool unknown_var81 = false;
-				Read<bool>("unknown", handler, unknown_var81, "\t\t\t");
-
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var81, (bool)0, (bool)1);
-
-				Read<int>("remainingTrades", handler, blockOutput.ItemTransfer.RemainingTrades, "\t\t\t");
-				Read<int>("remainingPackages", handler, blockOutput.ItemTransfer.RemainingPackages, "\t\t\t");
-
-				unsigned char unknown_var84 = 0;
-				Read<unsigned char>("unknown", handler, unknown_var84, "\t\t\t");
-
-				bool unknown_var85 = false;
-				Read<bool>("unknown", handler, unknown_var85, "\t\t\t");
-
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var85, (bool)0, (bool)1);
-
-				Read<bool>("isBound", handler, blockOutput.ItemTransfer.IsBound, "\t\t\t");
-
-				ValidateValues(stream, "isBound", "\t\t\t", blockOutput.ItemTransfer.IsBound, (bool)0, (bool)1);
-
-				if (blockOutput.ItemTransfer.IsBound)
-				{
-					ParseItemBinding_v12(handler, blockOutput.ItemTransfer.Binding);
-				}
-			}
-
-			{
-
-				Read<unsigned char>("maxSlots", handler, blockOutput.ItemSocket.MaxSlots, "\t\t\t");
-				Read<unsigned char>("unlockedSlots", handler, blockOutput.ItemSocket.UnlockedSlots, "\t\t\t");
-
-				ResizeVector(handler, blockOutput.ItemSocket.Sockets, blockOutput.ItemSocket.UnlockedSlots);
-
-				for (unsigned char i = 0; i < blockOutput.ItemSocket.UnlockedSlots && !handler.PacketStream.HasRecentlyFailed; ++i)
-				{
-					Read<bool>("hasGem", handler, blockOutput.ItemSocket.Sockets[i].HasGem, "\t\t\t\t");
-
-					ValidateValues(stream, "hasGem", "\t\t\t\t", blockOutput.ItemSocket.Sockets[i].HasGem, (bool)0, (bool)1);
-
-					if (blockOutput.ItemSocket.Sockets[i].HasGem)
-					{
-
-						{
-							Read<int>("itemId", handler, blockOutput.ItemSocket.Sockets[i].Gem.ItemId, "\t\t\t\t\t\t");
-							Read<bool>("isBound", handler, blockOutput.ItemSocket.Sockets[i].Gem.IsBound, "\t\t\t\t\t\t");
-
-							ValidateValues(stream, "isBound", "\t\t\t\t\t\t", blockOutput.ItemSocket.Sockets[i].Gem.IsBound, (bool)0, (bool)1);
-
-							if (blockOutput.ItemSocket.Sockets[i].Gem.IsBound)
-							{
-								ParseItemBinding_v12(handler, blockOutput.ItemSocket.Sockets[i].Gem.Binding);
-							}
-
-							Read<bool>("isLocked", handler, blockOutput.ItemSocket.Sockets[i].Gem.IsLocked, "\t\t\t\t\t\t");
-
-							ValidateValues(stream, "isLocked", "\t\t\t\t\t\t", blockOutput.ItemSocket.Sockets[i].Gem.IsLocked, (bool)0, (bool)1);
-
-							if (blockOutput.ItemSocket.Sockets[i].Gem.IsLocked)
-							{
-								unsigned char unknown_var93 = 0;
-								Read<unsigned char>("unknown", handler, unknown_var93, "\t\t\t\t\t\t\t");
-								Read<long long>("unlockTime", handler, blockOutput.ItemSocket.Sockets[i].Gem.UnlockTime, "\t\t\t\t\t\t\t");
-							}
-						}
-					}
-				}
-			}
-
-			{
-				Read<long long>("characterId", handler, blockOutput.ItemCouple.CharacterId, "\t\t\t");
-
-				if (blockOutput.ItemCouple.CharacterId != 0)
-				{
-					Read<std::wstring>("name", handler, blockOutput.ItemCouple.Name, "\t\t\t\t");
-					Read<bool>("isCreator", handler, blockOutput.ItemCouple.IsCreator, "\t\t\t\t");
-
-					ValidateValues(stream, "isCreator", "\t\t\t\t", blockOutput.ItemCouple.IsCreator, (bool)0, (bool)1);
-				}
-			}
+			ParseItemTransfer_v12(handler, blockOutput.ItemTransfer);
+			ParseItemSocket_v12(handler, blockOutput.ItemSocket);
+			ParseItemCouple_v12(handler, blockOutput.ItemCouple);
 			ParseItemBinding_v12(handler, blockOutput.Binding);
 		}
 
@@ -988,73 +839,39 @@ namespace Networking
 
 			int unknown_var2 = 0;
 			Read<int>("unknown", handler, unknown_var2, "\t\t");
-			Read<long long>("creationTime", handler, blockOutput.CreationTime, "\t\t");
-			Read<long long>("expirationTime", handler, blockOutput.ExpirationTime, "\t\t");
-
-			long long unknown_var5 = 0;
-			Read<long long>("unknown", handler, unknown_var5, "\t\t");
-			Read<int>("timesChanged", handler, blockOutput.TimesChanged, "\t\t");
-			Read<int>("remainingUses", handler, blockOutput.RemainingUses, "\t\t");
-			Read<bool>("isLocked", handler, blockOutput.IsLocked, "\t\t");
-
-			ValidateValues(stream, "isLocked", "\t\t", blockOutput.IsLocked, (bool)0, (bool)1);
-
-			Read<long long>("unlockTime", handler, blockOutput.UnlockTime, "\t\t");
-			Read<short>("glamorForges", handler, blockOutput.GlamorForges, "\t\t");
-
-			unsigned char unknownBool_var11 = 0;
-			Read<unsigned char>("unknownBool", handler, unknownBool_var11, "\t\t");
-
-			ValidateValues(stream, "unknownBool", "\t\t", unknownBool_var11, (unsigned char)0);
+			ParseItemHeader_v12(handler, blockOutput);
 			ParseItemCustomization_v12(handler, blockOutput.Customization, itemId_param0);
 
 			{
 				ParseBasicAndSpecialStats_v2497(handler, blockOutput.Stats.Static);
 
-				int unknown_var12 = 0;
-				Read<int>("unknown", handler, unknown_var12, "\t\t\t");
+				int unknown_var3 = 0;
+				Read<int>("unknown", handler, unknown_var3, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var12, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var3, (int)0);
 				ParseBasicAndSpecialStats_v2497(handler, blockOutput.Stats.Random);
 
-				int unknown_var13 = 0;
-				Read<int>("unknown", handler, unknown_var13, "\t\t\t");
+				int unknown_var4 = 0;
+				Read<int>("unknown", handler, unknown_var4, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var13, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var4, (int)0);
 				ParseBasicAndSpecialStats_v2497(handler, blockOutput.Stats.Empowerment1);
 
-				int unknown_var14 = 0;
-				Read<int>("unknown", handler, unknown_var14, "\t\t\t");
+				int unknown_var5 = 0;
+				Read<int>("unknown", handler, unknown_var5, "\t\t\t");
 
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var14, (int)0);
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var5, (int)0);
 			}
 
 			{
+				ParseItemEnchantmentHeader_v12(handler, blockOutput.Enchantment);
 
-				Read<int>("enchantLevel", handler, blockOutput.Enchantment.Level, "\t\t\t");
-				Read<int>("enchantExp", handler, blockOutput.Enchantment.EnchantExp, "\t\t\t");
-				Read<unsigned char>("enchantCharges", handler, blockOutput.Enchantment.EnchantCharges, "\t\t\t");
+				unsigned char basicStatCount_var6 = 0;
+				Read<unsigned char>("basicStatCount", handler, basicStatCount_var6, "\t\t\t");
 
-				long long unknown_var18 = 0;
-				Read<long long>("unknown", handler, unknown_var18, "\t\t\t");
+				ResizeVector(handler, blockOutput.Enchantment.Basic, basicStatCount_var6);
 
-				int unknown_var19 = 0;
-				Read<int>("unknown", handler, unknown_var19, "\t\t\t");
-
-				int unknown_var20 = 0;
-				Read<int>("unknown", handler, unknown_var20, "\t\t\t");
-				Read<bool>("canRepackage", handler, blockOutput.Enchantment.CanRepackage, "\t\t\t");
-
-				ValidateValues(stream, "canRepackage", "\t\t\t", blockOutput.Enchantment.CanRepackage, (bool)0, (bool)1);
-
-				Read<int>("charges", handler, blockOutput.Enchantment.Charges, "\t\t\t");
-
-				unsigned char basicStatCount_var23 = 0;
-				Read<unsigned char>("basicStatCount", handler, basicStatCount_var23, "\t\t\t");
-
-				ResizeVector(handler, blockOutput.Enchantment.Basic, basicStatCount_var23);
-
-				for (unsigned char i = 0; i < basicStatCount_var23 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < basicStatCount_var6 && !handler.PacketStream.HasRecentlyFailed; ++i)
 				{
 					Read<int>("type", handler, blockOutput.Enchantment.Basic[i].Type, "\t\t\t\t");
 					Read<int>("value", handler, blockOutput.Enchantment.Basic[i].Value, "\t\t\t\t");
@@ -1066,276 +883,56 @@ namespace Networking
 
 				{
 
-					int statCount_var27 = 0;
-					Read<int>("statCount", handler, statCount_var27, "\t\t\t\t");
+					int statCount_var10 = 0;
+					Read<int>("statCount", handler, statCount_var10, "\t\t\t\t");
 
-					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var27);
+					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var10);
 
-					for (int i = 0; i < statCount_var27 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var10 && !handler.PacketStream.HasRecentlyFailed; ++i)
 					{
 						ParseBasicStat_v2497(handler, blockOutput.LimitBreak.Stats.Basic[i]);
 					}
 
-					Read<int>("statCount", handler, statCount_var27, "\t\t\t\t");
+					Read<int>("statCount", handler, statCount_var10, "\t\t\t\t");
 
-					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var27);
+					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var10);
 
-					for (int i = 0; i < statCount_var27 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var10 && !handler.PacketStream.HasRecentlyFailed; ++i)
 					{
 						ParseSpecialStat_v2497(handler, blockOutput.LimitBreak.Stats.Special[i]);
 					}
 				}
 			}
 
-			unsigned char extraDataType_var28 = 0;
+			unsigned char extraDataType_var11 = 0;
 
-			extraDataType_var28 = handler.GetItemExtraDataType(itemId_param0);
+			extraDataType_var11 = handler.GetItemExtraDataType(itemId_param0);
 
-			ValidateValues(stream, "extraDataType", "\t\t", extraDataType_var28, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
+			ValidateValues(stream, "extraDataType", "\t\t", extraDataType_var11, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
 
-			if (extraDataType_var28 == 1)
+			if (extraDataType_var11 == 1)
 			{
-
-				{
-					long long unknown_var29 = 0;
-					Read<long long>("unknown", handler, unknown_var29, "\t\t\t\t");
-					Read<std::wstring>("fileName", handler, blockOutput.Template.FileName, "\t\t\t\t");
-					Read<std::wstring>("name", handler, blockOutput.Template.Name, "\t\t\t\t");
-
-					unsigned char unknown_var32 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var32, "\t\t\t\t");
-
-					int unknown_var33 = 0;
-					Read<int>("unknown", handler, unknown_var33, "\t\t\t\t");
-					Read<long long>("accountId", handler, blockOutput.Template.AccountId, "\t\t\t\t");
-					Read<long long>("characterId", handler, blockOutput.Template.CharacterId, "\t\t\t\t");
-					Read<std::wstring>("author", handler, blockOutput.Template.Author, "\t\t\t\t");
-					Read<long long>("creationTime", handler, blockOutput.Template.CreationTime, "\t\t\t\t");
-					Read<std::wstring>("url", handler, blockOutput.Template.Url, "\t\t\t\t");
-
-					unsigned char unknown_var39 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var39, "\t\t\t\t");
-				}
-
-				{
-
-					long long unknown_var40 = 0;
-					Read<long long>("unknown", handler, unknown_var40, "\t\t\t\t");
-
-					int unknown_var41 = 0;
-					Read<int>("unknown", handler, unknown_var41, "\t\t\t\t");
-
-					int unknown_var42 = 0;
-					Read<int>("unknown", handler, unknown_var42, "\t\t\t\t");
-
-					int unknown_var43 = 0;
-					Read<int>("unknown", handler, unknown_var43, "\t\t\t\t");
-
-					long long unknown_var44 = 0;
-					Read<long long>("unknown", handler, unknown_var44, "\t\t\t\t");
-
-					int unknown_var45 = 0;
-					Read<int>("unknown", handler, unknown_var45, "\t\t\t\t");
-
-					long long unknown_var46 = 0;
-					Read<long long>("unknown", handler, unknown_var46, "\t\t\t\t");
-
-					long long unknown_var47 = 0;
-					Read<long long>("unknown", handler, unknown_var47, "\t\t\t\t");
-
-					std::wstring unknown_var48;
-					Read<std::wstring>("unknown", handler, unknown_var48, "\t\t\t\t");
-				}
+				ParseItemTemplate_v12(handler, blockOutput.Template);
+				ParseItemBlueprint_v12(handler, blockOutput.Blueprint);
 			}
 
-			if (extraDataType_var28 == 2)
+			if (extraDataType_var11 == 2)
 			{
-
-				{
-					Read<std::wstring>("name", handler, blockOutput.Pet.Name, "\t\t\t\t");
-					Read<long long>("exp", handler, blockOutput.Pet.Exp, "\t\t\t\t");
-					Read<int>("evolvePoints", handler, blockOutput.Pet.EvolvePoints, "\t\t\t\t");
-					Read<int>("level", handler, blockOutput.Pet.Level, "\t\t\t\t");
-					Read<bool>("hasItems", handler, blockOutput.Pet.HasItems, "\t\t\t\t");
-
-					ValidateValues(stream, "hasItems", "\t\t\t\t", blockOutput.Pet.HasItems, (bool)0, (bool)1);
-				}
+				ParseItemPet_v12(handler, blockOutput.Pet);
 			}
 
-			if (extraDataType_var28 == 3)
+			if (extraDataType_var11 == 3)
 			{
-
-				{
-					Read<int>("length", handler, blockOutput.Music.Length, "\t\t\t\t");
-					Read<int>("instrument", handler, blockOutput.Music.Instrument, "\t\t\t\t");
-					Read<std::wstring>("title", handler, blockOutput.Music.Title, "\t\t\t\t");
-					Read<std::wstring>("author", handler, blockOutput.Music.Author, "\t\t\t\t");
-
-					int unknown_var58 = 0;
-					Read<int>("unknown", handler, unknown_var58, "\t\t\t\t");
-
-					ValidateValues(stream, "unknown", "\t\t\t\t", unknown_var58, (int)1);
-
-					Read<long long>("authorId", handler, blockOutput.Music.AuthorId, "\t\t\t\t");
-					Read<bool>("isLocked", handler, blockOutput.Music.IsLocked, "\t\t\t\t");
-
-					ValidateValues(stream, "isLocked", "\t\t\t\t", blockOutput.Music.IsLocked, (bool)0, (bool)1);
-
-					long long unknown_var61 = 0;
-					Read<long long>("unknown", handler, unknown_var61, "\t\t\t\t");
-
-					long long unknown_var62 = 0;
-					Read<long long>("unknown", handler, unknown_var62, "\t\t\t\t");
-				}
+				ParseItemMusic_v12(handler, blockOutput.Music);
 			}
 
-			if (extraDataType_var28 == 4)
+			if (extraDataType_var11 == 4)
 			{
-
-				{
-					unsigned char unknown_var63 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var63, "\t\t\t\t");
-
-					ValidateValues(stream, "unknown", "\t\t\t\t", unknown_var63, (unsigned char)1);
-
-					Read<unsigned char>("type", handler, blockOutput.Badge.Type, "\t\t\t\t");
-
-					ValidateValues(stream, "type", "\t\t\t\t", blockOutput.Badge.Type, (unsigned char)1, (unsigned char)11);
-
-					Read<int>("id", handler, blockOutput.Badge.BadgeId, "\t\t\t\t");
-
-					if (blockOutput.Badge.Type == 1)
-					{
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[0], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[0], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[1], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[1], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[2], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[2], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[3], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[3], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[4], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[4], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[5], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[5], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[6], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[6], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[7], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[7], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[8], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[8], (bool)0, (bool)1);
-
-						Read<bool>("transparency", handler, blockOutput.Badge.Transparency[9], "\t\t\t\t\t");
-
-						ValidateValues(stream, "transparency", "\t\t\t\t\t", blockOutput.Badge.Transparency[9], (bool)0, (bool)1);
-					}
-
-					if (blockOutput.Badge.Type == 11)
-					{
-						Read<int>("petSkinId", handler, blockOutput.Badge.PetSkinId, "\t\t\t\t\t");
-					}
-				}
+				ParseItemBadge_v2486(handler, blockOutput.Badge);
 			}
-
-			{
-				Read<int>("transferFlags", handler, blockOutput.ItemTransfer.TransferFlags, "\t\t\t");
-
-				bool unknown_var78 = false;
-				Read<bool>("unknown", handler, unknown_var78, "\t\t\t");
-
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var78, (bool)0, (bool)1);
-
-				Read<int>("remainingTrades", handler, blockOutput.ItemTransfer.RemainingTrades, "\t\t\t");
-				Read<int>("remainingPackages", handler, blockOutput.ItemTransfer.RemainingPackages, "\t\t\t");
-
-				unsigned char unknown_var81 = 0;
-				Read<unsigned char>("unknown", handler, unknown_var81, "\t\t\t");
-
-				bool unknown_var82 = false;
-				Read<bool>("unknown", handler, unknown_var82, "\t\t\t");
-
-				ValidateValues(stream, "unknown", "\t\t\t", unknown_var82, (bool)0, (bool)1);
-
-				Read<bool>("isBound", handler, blockOutput.ItemTransfer.IsBound, "\t\t\t");
-
-				ValidateValues(stream, "isBound", "\t\t\t", blockOutput.ItemTransfer.IsBound, (bool)0, (bool)1);
-
-				if (blockOutput.ItemTransfer.IsBound)
-				{
-					ParseItemBinding_v12(handler, blockOutput.ItemTransfer.Binding);
-				}
-			}
-
-			{
-
-				Read<unsigned char>("maxSlots", handler, blockOutput.ItemSocket.MaxSlots, "\t\t\t");
-				Read<unsigned char>("unlockedSlots", handler, blockOutput.ItemSocket.UnlockedSlots, "\t\t\t");
-
-				ResizeVector(handler, blockOutput.ItemSocket.Sockets, blockOutput.ItemSocket.UnlockedSlots);
-
-				for (unsigned char i = 0; i < blockOutput.ItemSocket.UnlockedSlots && !handler.PacketStream.HasRecentlyFailed; ++i)
-				{
-					Read<bool>("hasGem", handler, blockOutput.ItemSocket.Sockets[i].HasGem, "\t\t\t\t");
-
-					ValidateValues(stream, "hasGem", "\t\t\t\t", blockOutput.ItemSocket.Sockets[i].HasGem, (bool)0, (bool)1);
-
-					if (blockOutput.ItemSocket.Sockets[i].HasGem)
-					{
-
-						{
-							Read<int>("itemId", handler, blockOutput.ItemSocket.Sockets[i].Gem.ItemId, "\t\t\t\t\t\t");
-							Read<bool>("isBound", handler, blockOutput.ItemSocket.Sockets[i].Gem.IsBound, "\t\t\t\t\t\t");
-
-							ValidateValues(stream, "isBound", "\t\t\t\t\t\t", blockOutput.ItemSocket.Sockets[i].Gem.IsBound, (bool)0, (bool)1);
-
-							if (blockOutput.ItemSocket.Sockets[i].Gem.IsBound)
-							{
-								ParseItemBinding_v12(handler, blockOutput.ItemSocket.Sockets[i].Gem.Binding);
-							}
-
-							Read<bool>("isLocked", handler, blockOutput.ItemSocket.Sockets[i].Gem.IsLocked, "\t\t\t\t\t\t");
-
-							ValidateValues(stream, "isLocked", "\t\t\t\t\t\t", blockOutput.ItemSocket.Sockets[i].Gem.IsLocked, (bool)0, (bool)1);
-
-							if (blockOutput.ItemSocket.Sockets[i].Gem.IsLocked)
-							{
-								unsigned char unknown_var90 = 0;
-								Read<unsigned char>("unknown", handler, unknown_var90, "\t\t\t\t\t\t\t");
-								Read<long long>("unlockTime", handler, blockOutput.ItemSocket.Sockets[i].Gem.UnlockTime, "\t\t\t\t\t\t\t");
-							}
-						}
-					}
-				}
-			}
-
-			{
-				Read<long long>("characterId", handler, blockOutput.ItemCouple.CharacterId, "\t\t\t");
-
-				if (blockOutput.ItemCouple.CharacterId != 0)
-				{
-					Read<std::wstring>("name", handler, blockOutput.ItemCouple.Name, "\t\t\t\t");
-					Read<bool>("isCreator", handler, blockOutput.ItemCouple.IsCreator, "\t\t\t\t");
-
-					ValidateValues(stream, "isCreator", "\t\t\t\t", blockOutput.ItemCouple.IsCreator, (bool)0, (bool)1);
-				}
-			}
+			ParseItemTransfer_v12(handler, blockOutput.ItemTransfer);
+			ParseItemSocket_v12(handler, blockOutput.ItemSocket);
+			ParseItemCouple_v12(handler, blockOutput.ItemCouple);
 			ParseItemBinding_v12(handler, blockOutput.Binding);
 		}
 
@@ -2327,7 +1924,7 @@ namespace Networking
 
 			ParserUtils::DataStream& stream = handler.PacketStream;
 
-			Server::FieldAddNpc output0;
+			Server::FieldAddNpcPacket output0;
 
 			Read<int>("actorId", handler, output0.ActorId, "\t");
 			Read<int>("npcId", handler, output0.NpcId, "\t");
@@ -2439,7 +2036,7 @@ namespace Networking
 
 			if (stream.Succeeded())
 			{
-				handler.PacketParsed<Server::FieldAddNpc>(output0);
+				handler.PacketParsed<Server::FieldAddNpcPacket>(output0);
 
 				return;
 			}
@@ -2510,11 +2107,8 @@ namespace Networking
 			{
 				if (output0.Mode == 0)
 				{
-					Read<int>("startTime", handler, output0.StartTime, "\t\t\t");
-					Read<int>("endTime", handler, output0.EndTime, "\t\t\t");
-					Read<int>("effectId", handler, output0.EffectId, "\t\t\t");
-					Read<short>("effectLevel", handler, output0.EffectLevel, "\t\t\t");
-					Read<int>("stacks", handler, output0.Stacks, "\t\t\t");
+					ParseEffectStats_v12(handler, output0.Stats);
+
 					Read<bool>("hasShield", handler, output0.UpdateShield, "\t\t\t");
 
 					ValidateValues(stream, "hasShield", "\t\t\t", output0.UpdateShield, (bool)0, (bool)1);
@@ -2524,25 +2118,22 @@ namespace Networking
 
 				if (output0.Mode == 2)
 				{
-					int flags_var11 = 0;
-					Read<int>("flags", handler, flags_var11, "\t\t\t");
+					int flags_var6 = 0;
+					Read<int>("flags", handler, flags_var6, "\t\t\t");
 
-					output0.UpdateEffect = GetBit(flags_var11, 0);
-					output0.UpdateShield = GetBit(flags_var11, 1);
+					output0.UpdateEffect = GetBit(flags_var6, 0);
+					output0.UpdateShield = GetBit(flags_var6, 1);
 
-					if (GetBit(flags_var11, 0) == 1)
+					if (GetBit(flags_var6, 0) == 1)
 					{
-						Read<int>("startTime", handler, output0.StartTime, "\t\t\t\t");
-						Read<int>("endTime", handler, output0.EndTime, "\t\t\t\t");
-						Read<int>("effectId", handler, output0.EffectId, "\t\t\t\t");
-						Read<short>("effectLevel", handler, output0.EffectLevel, "\t\t\t\t");
-						Read<int>("stacks", handler, output0.Stacks, "\t\t\t\t");
+						ParseEffectStats_v12(handler, output0.Stats);
+
 						Read<bool>("enabled", handler, output0.Enabled, "\t\t\t\t");
 
 						ValidateValues(stream, "enabled", "\t\t\t\t", output0.Enabled, (bool)0, (bool)1);
 					}
 
-					if (GetBit(flags_var11, 1) == 1)
+					if (GetBit(flags_var6, 1) == 1)
 					{
 						Read<long long>("shieldHealth", handler, output0.ShieldHealth, "\t\t\t\t");
 					}
@@ -2714,13 +2305,13 @@ namespace Networking
 
 			ParserUtils::DataStream& stream = handler.PacketStream;
 
-			Server::FieldRemoveNpc output0;
+			Server::FieldRemoveNpcPacket output0;
 
 			Read<int>("actorId", handler, output0.ActorId, "\t");
 
 			if (stream.Succeeded())
 			{
-				handler.PacketParsed<Server::FieldRemoveNpc>(output0);
+				handler.PacketParsed<Server::FieldRemoveNpcPacket>(output0);
 
 				return;
 			}
@@ -3231,11 +2822,20 @@ namespace Networking
 
 			if (output0.Mode == 0)
 			{
-				Read<int>("startTime", handler, output0.StartTime, "\t\t");
-				Read<int>("endTime", handler, output0.EndTime, "\t\t");
-				Read<int>("effectId", handler, output0.EffectId, "\t\t");
-				Read<short>("effectLevel", handler, output0.EffectLevel, "\t\t");
-				Read<int>("stacks", handler, output0.Stacks, "\t\t");
+				int startTime_var4 = 0;
+				Read<int>("startTime", handler, startTime_var4, "\t\t");
+
+				int endTime_var5 = 0;
+				Read<int>("endTime", handler, endTime_var5, "\t\t");
+
+				int effectId_var6 = 0;
+				Read<int>("effectId", handler, effectId_var6, "\t\t");
+
+				short effectLevel_var7 = 0;
+				Read<short>("effectLevel", handler, effectLevel_var7, "\t\t");
+
+				int stacks_var8 = 0;
+				Read<int>("stacks", handler, stacks_var8, "\t\t");
 				Read<bool>("hasShield", handler, output0.UpdateShield, "\t\t");
 
 				ValidateValues(stream, "hasShield", "\t\t", output0.UpdateShield, (bool)0, (bool)1);
@@ -3253,11 +2853,20 @@ namespace Networking
 
 				if (GetBit(flags_var11, 0) == 1)
 				{
-					Read<int>("startTime", handler, output0.StartTime, "\t\t\t");
-					Read<int>("endTime", handler, output0.EndTime, "\t\t\t");
-					Read<int>("effectId", handler, output0.EffectId, "\t\t\t");
-					Read<short>("effectLevel", handler, output0.EffectLevel, "\t\t\t");
-					Read<int>("stacks", handler, output0.Stacks, "\t\t\t");
+					int startTime_var12 = 0;
+					Read<int>("startTime", handler, startTime_var12, "\t\t\t");
+
+					int endTime_var13 = 0;
+					Read<int>("endTime", handler, endTime_var13, "\t\t\t");
+
+					int effectId_var14 = 0;
+					Read<int>("effectId", handler, effectId_var14, "\t\t\t");
+
+					short effectLevel_var15 = 0;
+					Read<short>("effectLevel", handler, effectLevel_var15, "\t\t\t");
+
+					int stacks_var16 = 0;
+					Read<int>("stacks", handler, stacks_var16, "\t\t\t");
 					Read<bool>("enabled", handler, output0.Enabled, "\t\t\t");
 
 					ValidateValues(stream, "enabled", "\t\t\t", output0.Enabled, (bool)0, (bool)1);

@@ -29,6 +29,7 @@ namespace Networking
 				Vector3S Position;
 				Vector3S Direction;
 				bool IsChaining = false;
+				unsigned int ServerTick = 0;
 				std::vector<HitEntity> Hits;
 			};
 		}

@@ -9,7 +9,7 @@
 		<block name="SpecialStat">
 			<outputParam type="Maple.Game.SpecialStat" schema="packetData" />
 			<data type="short" name="type" output="Type" />
-			<data type="float" name="value" output="Value" />
+			<data type="int" name="value" output="Value" />
 			<data type="float" name="rate" output="Rate" />
 		</block>
 		<block name="BasicAndSpecialStats">
@@ -22,6 +22,7 @@
 			<array data="statCount" output="Special">
 				<useBlock name="SpecialStat" version="12" />
 			</array>
+			<data type="int" name="empowermentItemId" output="EmpowermentItemId" />
 		</block>
 		<block name="ItemBinding">
 			<outputParam type="Maple.Game.ItemBinding" schema="packetData" />
@@ -67,10 +68,10 @@
 			</condition>
 			<condition data="itemCategory" value="104" comparison="equal">
 				<outputMember output="Decal">
-					<data type="Vector3S" name="position1" output="Position1" />
-					<data type="Vector3S" name="position2" output="Position2" />
-					<data type="Vector3S" name="position3" output="Position3" />
-					<data type="Vector3S" name="position4" output="Position4" />
+					<data type="float" name="position1" /> <!-- output="Position1"-->
+					<data type="float" name="position2" /> <!-- output="Position2"-->
+					<data type="float" name="position3" /> <!-- output="Position3"-->
+					<data type="float" name="position4" /> <!-- output="Position4"-->
 				</outputMember>
 			</condition>
 		</block>
@@ -164,8 +165,19 @@
 				<enum name="Unknown" value="1" />
 			</data>
 			<data type="byte" name="type" output="Type">
+				<enum name="None" value="0" />
 				<enum name="Transparency" value="1" />
+				<enum name="Damage" value="2" />
+				<enum name="Chat" value="3" />
+				<enum name="Name" value="4" />
+				<enum name="Tombstone" value="5" />
+				<enum name="Swim" value="6" />
+				<enum name="Buddy" value="7" />
+				<enum name="Fishing" value="8" />
+				<enum name="Gather" value="9" />
+				<enum name="Effect" value="10" />
 				<enum name="Pet" value="11" />
+				<enum name="Meta" value="12" />
 			</data>
 			<data type="wstring" name="id" output="Id" />
 			<condition data="type" value="1" comparison="equal">
@@ -250,41 +262,14 @@
 			<outputMember output="Stats">
 				<data type="byte" name="unknown" />
 				<useBlock name="BasicAndSpecialStats" version="12" output="Constant" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 				<useBlock name="BasicAndSpecialStats" version="12" output="Static" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 				<useBlock name="BasicAndSpecialStats" version="12" output="Random" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 				<useBlock name="BasicAndSpecialStats" version="12" output="Title" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment1" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment2" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment3" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment4" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 				<useBlock name="BasicAndSpecialStats" version="12" output="Empowerment5" />
-				<data type="int" name="unknown">
-					<enum name="Unknown" value="0" />
-				</data>
 			</outputMember>
 			<useBlock name="ItemEnchantment" version="12" output="Enchantment" />
 			<outputMember output="LimitBreak">
@@ -334,6 +319,262 @@
 			<data type="short" name="effectLevel" output="EffectLevel" />
 			<data type="int" name="stacks" output="Stacks" />
 		</block>
+		<block name="CharacterData">
+			<outputParam type="Maple.Game.CharacterData" schema="packetData" />
+			<data type="long" name="accountId" output="AccountId" />
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="wstring" name="name" output="Name" />
+			<data type="byte" name="gender" output="Gender">
+				<enum name="Male" value="0" />
+				<enum name="Female" value="1" />
+			</data>
+			<data type="byte" name="unknown" />
+			<data type="long" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="int" name="mapId" output="MapId" />
+			<data type="int" name="mapInstanceId" output="MapInstanceId" />
+			<data type="int" name="unknown" />
+			<data type="ushort" name="level" output="Level" />
+			<data type="ushort" name="channel" output="Channel" />
+			<data type="int" name="jobCode" output="JobCode" />
+			<data type="int" name="job" output="Job" />
+			<data type="int" name="currentHp" output="Hp.Current" />
+			<data type="int" name="maxHp" output="Hp.Max" />
+			<data type="short" name="unknown" />
+			<data type="long" name="unknown" />
+			<data type="long" name="storageCooldown" output="StorageCooldown" />
+			<data type="long" name="doctorCooldown" output="DoctorCooldown" />
+			<data type="int" name="returnMapId" output="ReturnMapId" />
+			<data type="Vector3S" name="returnPosition" output="ReturnPosition" />
+			<data type="int" name="gearScore" output="GearScore" />
+			<data type="Color4I" name="skinColorPrimary" output="SkinColor.Primary" />
+			<data type="Color4I" name="skinColorSecondary" output="SkinColor.Secondary" />
+			<data type="long" name="creationTime" output="CreationTime" />
+			<data type="int" name="combatTrophyCount" output="CombatTrophyCount" />
+			<data type="int" name="adventureTrophyCount" output="AdventureTrophyCount" />
+			<data type="int" name="lifestyleTrophyCount" output="LifestyleTrophyCount" />
+			<data type="long" name="guildId" output="GuildId" />
+			<data type="wstring" name="guildName" output="GuildName" />
+			<data type="wstring" name="guildMotto" output="GuildMotto" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="byte" name="clubCount" />
+			<array data="clubCount" output="Clubs">
+				<data type="bool" name="hasClub" output="HasClub" />
+				<condition data="hasClub" value="1" comparison="equal">
+					<data type="long" name="clubId" output="ClubId" />
+					<data type="wstring" name="clubName" output="ClubName" />
+				</condition>
+			</array>
+			<data type="byte" name="unknown" />
+			<outputMember output="Mastery">
+				<data type="int" name="placeholderMastery">
+					<enum name="TheBest" value="0" />
+				</data>
+				<data type="int" name="fishingMastery" output="Fishing" />
+				<data type="int" name="performanceMastery" output="Performance" />
+				<data type="int" name="miningMastery" output="Mining" />
+				<data type="int" name="foragingMastery" output="Foraging" />
+				<data type="int" name="ranchingMastery" output="Ranching" />
+				<data type="int" name="farmingMastery" output="Farming" />
+				<data type="int" name="smithingMastery" output="Smithing" />
+				<data type="int" name="handicraftMastery" output="Handicraft" />
+				<data type="int" name="alchemyMastery" output="Alchemy" />
+				<data type="int" name="cookingMastery" output="Cooking" />
+				<data type="int" name="petTamingMastery" output="PetTaming" />
+			</outputMember>
+			<data type="wstring" name="username" output="Username" />
+			<data type="long" name="sessionId" output="SessionId" />
+			<data type="long" name="unknown">
+				<enum name="Unknown" value="0" />
+				<enum name="Unknown" value="2000" />
+			</data>
+			<data type="long" name="unknown">
+				<enum name="Unknown" value="0" />
+				<enum name="Unknown" value="3000" />
+			</data>
+			<data type="int" name="unknownCount" />
+			<array data="unknownCount" output="UnknownItems">
+				<data type="long" name="unknown" />
+			</array>
+			<data type="byte" name="unknown" />
+			<data type="bool" name="unknown" />
+			<data type="long" name="birthday" output="Birthday" />
+			<data type="int" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="long" name="unknownTime" />
+			<data type="int" name="prestigeLevel" output="PrestigeLevel" />
+			<data type="long" name="unknownTime" />
+			<data type="int" name="unknownCount2" />
+			<array data="unknownCount2" output="UnknownItems2">
+				<data type="long" name="unknown" />
+			</array>
+			<data type="int" name="unknownCount3" />
+			<array data="unknownCount3" output="UnknownItems3">
+				<data type="long" name="unknown" />
+			</array>
+			<data type="short" name="unknown" />
+			<data type="long" name="unknown" />
+		</block>
+		<block name="SkillDamagePacket">
+			<outputParam type="Networking.Packets.Server.SkillDamagePacket" schema="packetData" />
+			<data type="long" name="skillSn" output="SkillSn" />
+			<data type="long" name="skillAttack" output="SkillAttack" />
+			<data type="int" name="casterId" output="CasterId" />
+			<data type="uint" name="skillId" output="SkillId" />
+			<data type="ushort" name="skillLevel" output="SkillLevel" />
+			<data type="byte" name="motionPoint" output="MotionPoint" />
+			<data type="byte" name="attackPoint" output="AttackPoint" />
+			<data type="Vector3Short" name="position" output="Position" />
+			<data type="Vector3Short" name="direction" output="Direction" />
+			<data type="byte" name="count" />
+			<array data="count" output="DamagedTargets">
+				<data type="int" name="targetId" output="TargetId" />
+				<data type="byte" name="damageCount" />
+				<array data="damageCount" output="Damages">
+					<data type="byte" name="hitType" output="HitType">
+						<enum name="Normal" value="0" />
+						<enum name="Critical" value="1" />
+						<enum name="Miss" value="2" />
+						<enum name="Block" value="3" />
+						<enum name="Unknown4" value="4" />
+						<enum name="Unknown8" value="8" />
+					</data>
+					<data type="long" name="damage" output="Damage" />
+				</array>
+			</array>
+		</block>
+		<block name="SkillDamageDotPacket">
+			<outputParam type="Networking.Packets.Server.SkillDamageDotPacket" schema="packetData" />
+			<data type="int" name="casterId" output="CasterId" />
+			<data type="int" name="targetId" output="TargetId" />
+			<data type="int" name="serverTick" output="ServerTick" />
+			<data type="byte" name="hitType" output="HitType">
+				<enum name="Normal" value="0" />
+				<enum name="Critical" value="1" />
+				<enum name="Miss" value="2" />
+				<enum name="Block" value="3" />
+				<enum name="Unknown4" value="4" />
+				<enum name="Unknown8" value="8" />
+			</data>
+		</block>
+		<block name="SkillDamageHealPacket">
+			<outputParam type="Networking.Packets.Server.SkillDamageHealPacket" schema="packetData" />
+			<data type="int" name="casterId" output="CasterId" />
+			<data type="int" name="targetId" output="TargetId" />
+			<data type="int" name="serverTick" output="ServerTick" />
+			<data type="int" name="hpAmount" output="HpAmount" />
+			<data type="int" name="spAmount" output="SpAmount" />
+			<data type="int" name="epAmount" output="EpAmount" />
+			<data type="bool" name="isVisible" output="IsVisible" />
+		</block>
+		<block name="SkillDamageRegionPacket">
+			<outputParam type="Networking.Packets.Server.SkillDamageRegionPacket" schema="packetData" />
+			<data type="long" name="skillSn" output="SkillSn" />
+			<data type="int" name="casterId" output="CasterId" />
+			<data type="int" name="regionSkillObjectId" output="RegionSkillObjectId" />
+			<data type="byte" name="attackPoint" output="AttackPoint" />
+			<data type="byte" name="count" />
+			<array data="count" output="DamagedTargets">
+				<data type="int" name="targetId" output="TargetId" />
+				<data type="byte" name="damageCount" />
+				<data type="Vector3Short" name="position" output="Position" />
+				<data type="Vector3S" name="direction" output="Direction" />
+				<array data="damageCount" output="Damages">
+					<data type="byte" name="hitType" output="HitType">
+						<enum name="Normal" value="0" />
+						<enum name="Critical" value="1" />
+						<enum name="Miss" value="2" />
+						<enum name="Block" value="3" />
+						<enum name="Unknown4" value="4" />
+						<enum name="Unknown8" value="8" />
+					</data>
+					<data type="long" name="damage" output="Damage" />
+				</array>
+			</array>
+		</block>
+		<block name="SkillDamageTilePacket">
+			<outputParam type="Networking.Packets.Server.SkillDamageTilePacket" schema="packetData" />
+			<data type="long" name="skillSn" output="SkillSn" />
+			<data type="uint" name="skillId" output="SkillId" />
+			<data type="ushort" name="skillLevel" output="SkillLevel" />
+			<data type="byte" name="count" />
+			<array data="count" output="DamagedTargets">
+				<data type="int" name="targetId" output="TargetId" />
+				<data type="byte" name="damageCount" />
+				<data type="Vector3Short" name="position" output="Position" />
+				<data type="Vector3S" name="direction" output="Direction" />
+				<array data="damageCount" output="Damages">
+					<data type="byte" name="hitType" output="HitType">
+						<enum name="Normal" value="0" />
+						<enum name="Critical" value="1" />
+						<enum name="Miss" value="2" />
+						<enum name="Block" value="3" />
+						<enum name="Unknown4" value="4" />
+						<enum name="Unknown8" value="8" />
+					</data>
+					<data type="long" name="damage" output="Damage" />
+				</array>
+			</array>
+		</block>
+		<block name="CharacterListEntry">
+			<outputParam type="Maple.Game.CharacterListEntry" schema="packetData" />
+			<useBlock name="CharacterData" version="12" output="Character" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="long" name="deleteTime" output="DeleteTime" />
+			<data type="byte" name="equipmentCount" />
+			<array data="equipmentCount" output="Equipment">
+				<data type="int" name="itemId" output="ItemId" />
+				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+				<data type="wstring" name="slot" output="SlotName" />
+				<data type="int" name="rarity" output="Rarity">
+					<enum name="None" value="0" />
+					<enum name="Common" value="1" />
+					<enum name="Rare" value="2" />
+					<enum name="Exceptional" value="3" />
+					<enum name="Epic" value="4" />
+					<enum name="Legendary" value="5" />
+					<enum name="Ascendant" value="6" />
+				</data>
+				<useBlock name="ItemData" version="12" output="Data" args="itemId" />
+			</array>
+			<data type="byte" name="badgeCount" />
+			<array data="badgeCount" output="Badges">
+				<data type="byte" name="slot" output="Slot" />
+				<data type="int" name="itemId" output="ItemId" />
+				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+				<data type="int" name="rarity" output="Rarity">
+					<enum name="None" value="0" />
+					<enum name="Common" value="1" />
+					<enum name="Rare" value="2" />
+					<enum name="Exceptional" value="3" />
+					<enum name="Epic" value="4" />
+					<enum name="Legendary" value="5" />
+					<enum name="Ascendant" value="6" />
+				</data>
+				<useBlock name="ItemData" version="12" output="Data" args="itemId" />
+			</array>
+			<data type="bool" name="hasSkin" output="HasSkin" />
+			<condition data="hasSkin" value="1" comparison="equal">
+				<data type="long" name="unknown" />
+				<data type="long" name="unknown" />
+				<data type="byte" name="skinCount" />
+				<array data="skinCount" output="Skins">
+					<data type="int" name="itemId" output="ItemId" />
+					<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+					<data type="wstring" name="slot" output="SlotName" />
+					<data type="int" name="rarity" output="Rarity">
+						<enum name="None" value="0" />
+						<enum name="Common" value="1" />
+						<enum name="Rare" value="2" />
+						<enum name="Exceptional" value="3" />
+						<enum name="Epic" value="4" />
+						<enum name="Legendary" value="5" />
+						<enum name="Ascendant" value="6" />
+					</data>
+					<useBlock name="ItemData" version="12" output="Data" args="itemId" />
+				</array>
+			</condition>
+		</block>
 	</blocks>
 	<source name="server">
 		<opcode name="Reconnect7" value="0x7">
@@ -356,100 +597,60 @@
 				<data type="int" name="unknown" />
 			</condition>
 		</opcode>
+		<opcode name="CharacterList" value="0xC">
+			<data type="byte" name="mode">
+				<enum name="Load" value="0" />
+				<enum name="AddItem" value="1" />
+				<enum name="DeleteItem" value="2" />
+				<enum name="Unknown3" value="3" />
+				<enum name="Unknown4" value="4" />
+				<enum name="DeletePending" value="5" />
+				<enum name="CancelDelete" value="6" />
+				<enum name="ChangeName" value="7" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListLoadPacket" schemaName="packetData" />
+				<data type="byte" name="count" />
+				<array data="count" output="Characters">
+					<useBlock name="CharacterListEntry" version="12" />
+				</array>
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListAddPacket" schemaName="packetData" />
+				<useBlock name="CharacterListEntry" version="12" output="Character" />
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListDeletePacket" schemaName="packetData" />
+				<data type="int" name="unknown" />
+				<data type="long" name="characterId" output="CharacterId" />
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<data type="byte" name="unknown" />
+			</condition>
+			<condition data="mode" value="5" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListDeletePendingPacket" schemaName="packetData" />
+				<data type="long" name="characterId" output="CharacterId" />
+				<data type="int" name="messageId" output="MessageId" />
+				<data type="long" name="deleteTime" output="DeleteTime" />
+			</condition>
+			<condition data="mode" value="6" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListCancelDeletePacket" schemaName="packetData" />
+				<data type="long" name="characterId" output="CharacterId" />
+				<data type="int" name="messageId" output="MessageId" />
+			</condition>
+			<condition data="mode" value="7" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListChangeNamePacket" schemaName="packetData" />
+				<data type="int" name="confirm" output="Confirm" />
+			</condition>
+		</opcode>
 		<!--
 		<opcode name="FieldAddPlayer" value="0x17">
 			<output type="Networking.Packets.Server.FieldAddPlayerPacket" schemaName="packetData" />
 			<outputMember output="Player">
 				<data type="int" name="actorId" output="ActorId" />
-				<data type="long" name="accountId" output="AccountId" />
-				<data type="long" name="characterId" output="CharacterId" />
-				<data type="wstring" name="name" output="Name" />
-				<data type="byte" name="gender" output="Gender">
-					<enum name="Male" value="0" />
-					<enum name="Female" value="1" />
-				</data>
-				<data type="byte" name="unknown" />
-				<data type="long" name="unknown" />
-				<data type="int" name="unknown" />
-				<data type="int" name="mapId" output="MapId" />
-				<data type="int" name="mapInstanceId" output="MapInstanceId" />
-				<data type="int" name="unknown" />
-				<data type="ushort" name="level" output="Level" />
-				<data type="ushort" name="channel" output="Channel" />
-				<data type="int" name="jobCode" output="JobCode" />
-				<data type="int" name="job" output="Job" />
-				<data type="int" name="currentHp" output="Hp.Current" />
-				<data type="int" name="maxHp" output="Hp.Max" />
-				<data type="short" name="unknown" />
-				<data type="long" name="unknown" />
-				<data type="long" name="storageCooldown" output="StorageCooldown" />
-				<data type="long" name="doctorCooldown" output="DoctorCooldown" />
-				<data type="int" name="returnMapId" output="ReturnMapId" />
-				<data type="Vector3S" name="returnPosition" output="ReturnPosition" />
-				<data type="int" name="gearScore" output="GearScore" />
-				<data type="Color4I" name="skinColorPrimary" output="SkinColor.Primary" />
-				<data type="Color4I" name="skinColorSecondary" output="SkinColor.Secondary" />
-				<data type="long" name="creationTime" output="CreationTime" />
-				<data type="int" name="combatTrophyCount" output="CombatTrophyCount" />
-				<data type="int" name="adventureTrophyCount" output="AdventureTrophyCount" />
-				<data type="int" name="lifestyleTrophyCount" output="LifestyleTrophyCount" />
-				<data type="long" name="guildId" output="GuildId" />
-				<data type="wstring" name="guildName" output="GuildName" />
-				<data type="wstring" name="guildMotto" output="GuildMotto" />
-				<data type="wstring" name="profileUrl" output="ProfileUrl" />
-				<data type="byte" name="clubCount" />
-				<array data="clubCount" output="Clubs">
-					<data type="bool" name="hasClub" output="HasClub" />
-					<condition data="hasClub" value="1" comparison="equal">
-						<data type="long" name="clubId" output="ClubId" />
-						<data type="wstring" name="clubName" output="ClubName" />
-					</condition>
-				</array>
-				<data type="byte" name="unknown" />
-				<data type="int" name="placeholderMastery">
-					<enum name="TheBest" value="0" />
-				</data>
-				<data type="int" name="fishingMastery" output="FishingMastery" />
-				<data type="int" name="performanceMastery" output="PerformanceMastery" />
-				<data type="int" name="miningMastery" output="MiningMastery" />
-				<data type="int" name="foragingMastery" output="ForagingMastery" />
-				<data type="int" name="ranchingMastery" output="RanchingMastery" />
-				<data type="int" name="farmingMastery" output="FarmingMastery" />
-				<data type="int" name="smithingMastery" output="SmithingMastery" />
-				<data type="int" name="handicraftMastery" output="HandicraftMastery" />
-				<data type="int" name="alchemyMastery" output="AlchemyMastery" />
-				<data type="int" name="cookingMastery" output="CookingMastery" />
-				<data type="int" name="petTamingMastery" output="PetTamingMastery" />
-				<data type="wstring" name="username" output="Username" />
-				<data type="long" name="sessionId" output="SessionId" />
-				<data type="long" name="unknown">
-					<enum name="Unknown" value="2000" />
-				</data>
-				<data type="long" name="unknown">
-					<enum name="Unknown" value="3000" />
-				</data>
-				<data type="int" name="unknownCount" />
-				<array data="unknownCount" output="UnknownItems">
-					<data type="long" name="unknown" />
-				</array>
-				<data type="byte" name="unknown" />
-				<data type="bool" name="unknown" />
-				<data type="long" name="birthday" output="Birthday" />
-				<data type="int" name="unknown" />
-				<data type="int" name="unknown" />
-				<data type="long" name="unknownTime" />
-				<data type="int" name="prestigeLevel" output="PrestigeLevel" />
-				<data type="long" name="unknownTime" />
-				<data type="int" name="unknownCount2" />
-				<array data="unknownCount2" output="UnknownItems2">
-					<data type="long" name="unknown" />
-				</array>
-				<data type="int" name="unknownCount3" />
-				<array data="unknownCount3" output="UnknownItems3">
-					<data type="long" name="unknown" />
-				</array>
-				<data type="short" name="unknown" />
-				<data type="long" name="unknown" />
+				useblock player
 			</outputMember>
 			<outputMember output="SkillTree">
 				<data type="int" name="job" output="Job" />
@@ -684,7 +885,7 @@
 			<data type="int" name="amount" output="Amount" />
 			<data type="bool" name="hasUid" />
 			<condition data="hasUid" value="1" comparison="equal">
-				<data type="long" name="uid" output="Uid" />
+				<data type="long" name="uid" output="ItemInstanceId" />
 			</condition>
 			<data type="Vector3S" name="position" output="Position" />
 			<data type="int" name="ownerId" output="OwnerId" />
@@ -711,7 +912,7 @@
 			<data type="int" name="objectId" output="ObjectId" />
 		</opcode>
 		<opcode name="SkillDamage" value="0x3E">
-			<data type="byte" name="mode" output="Mode">
+			<data type="byte" name="mode">
 				<enum name="SyncDamage" value="0" />
 				<enum name="Damage" value="1" />
 				<enum name="DotDamage" value="3" />
@@ -748,105 +949,24 @@
 			</condition>
 			<condition data="mode" value="1" comparison="equal">
 				<output type="Networking.Packets.Server.SkillDamagePacket" schemaName="packetData" />
-				<data type="long" name="skillSn" output="SkillSn" />
-				<data type="long" name="skillAttack" output="SkillAttack" />
-				<data type="int" name="casterId" output="CasterId" />
-				<data type="uint" name="skillId" output="SkillId" />
-				<data type="ushort" name="skillLevel" output="SkillLevel" />
-				<data type="byte" name="motionPoint" output="MotionPoint" />
-				<data type="byte" name="attackPoint" output="AttackPoint" />
-				<data type="Vector3Short" name="position" output="Position" />
-				<data type="Vector3Short" name="direction" output="Direction" />
-				<data type="byte" name="count" />
-				<array data="count" output="DamagedTargets">
-					<data type="int" name="targetId" output="TargetId" />
-					<data type="byte" name="damageCount" />
-					<array data="damageCount" output="Damages">
-						<data type="byte" name="hitType" output="HitType">
-							<enum name="Normal" value="0" />
-							<enum name="Critical" value="1" />
-							<enum name="Miss" value="2" />
-							<enum name="Block" value="3" />
-							<enum name="Unknown4" value="4" />
-							<enum name="Unknown8" value="8" />
-						</data>
-						<data type="long" name="damage" output="Damage" />
-					</array>
-				</array>
+				<useBlock name="SkillDamagePacket" version="12" />
 			</condition>
 			<condition data="mode" value="3" comparison="equal">
 				<output type="Networking.Packets.Server.SkillDamageDotPacket" schemaName="packetData" />
-				<data type="int" name="casterId" output="CasterId" />
-				<data type="int" name="targetId" output="TargetId" />
-				<data type="int" name="serverTick" output="ServerTick" />
-				<data type="byte" name="hitType" output="HitType">
-					<enum name="Normal" value="0" />
-					<enum name="Critical" value="1" />
-					<enum name="Miss" value="2" />
-					<enum name="Block" value="3" />
-					<enum name="Unknown4" value="4" />
-					<enum name="Unknown8" value="8" />
-				</data>
+				<useBlock name="SkillDamageDotPacket" version="12" />
 				<data type="int" name="damage" output="Damage" />
 			</condition>
 			<condition data="mode" value="4" comparison="equal">
 				<output type="Networking.Packets.Server.SkillDamageHealPacket" schemaName="packetData" />
-				<data type="int" name="casterId" output="CasterId" />
-				<data type="int" name="targetId" output="TargetId" />
-				<data type="int" name="serverTick" output="ServerTick" />
-				<data type="int" name="hpAmount" output="HpAmount" />
-				<data type="int" name="spAmount" output="SpAmount" />
-				<data type="int" name="epAmount" output="EpAmount" />
-				<data type="bool" name="isVisible" output="IsVisible" />
+				<useBlock name="SkillDamageHealPacket" version="12" />
 			</condition>
 			<condition data="mode" value="5" comparison="equal">
 				<output type="Networking.Packets.Server.SkillDamageRegionPacket" schemaName="packetData" />
-				<data type="long" name="skillSn" output="SkillSn" />
-				<data type="int" name="casterId" output="CasterId" />
-				<data type="int" name="regionSkillObjectId" output="RegionSkillObjectId" />
-				<data type="byte" name="attackPoint" output="AttackPoint" />
-				<data type="byte" name="count" />
-				<array data="count" output="DamagedTargets">
-					<data type="int" name="targetId" output="TargetId" />
-					<data type="byte" name="damageCount" />
-					<data type="Vector3Short" name="position" output="Position" />
-					<data type="Vector3S" name="direction" output="Direction" />
-					<array data="damageCount" output="Damages">
-						<data type="byte" name="hitType" output="HitType">
-							<enum name="Normal" value="0" />
-							<enum name="Critical" value="1" />
-							<enum name="Miss" value="2" />
-							<enum name="Block" value="3" />
-							<enum name="Unknown4" value="4" />
-							<enum name="Unknown8" value="8" />
-						</data>
-						<data type="long" name="damage" output="Damage" />
-					</array>
-				</array>
+				<useBlock name="SkillDamageRegionPacket" version="12" />
 			</condition>
 			<condition data="mode" value="6" comparison="equal">
 				<output type="Networking.Packets.Server.SkillDamageTilePacket" schemaName="packetData" />
-				<data type="long" name="skillSn" output="SkillSn" />
-				<data type="uint" name="skillId" output="SkillId" />
-				<data type="ushort" name="skillLevel" output="SkillLevel" />
-				<data type="byte" name="count" />
-				<array data="count" output="DamagedTargets">
-					<data type="int" name="targetId" output="TargetId" />
-					<data type="byte" name="damageCount" />
-					<data type="Vector3Short" name="position" output="Position" />
-					<data type="Vector3S" name="direction" output="Direction" />
-					<array data="damageCount" output="Damages">
-						<data type="byte" name="hitType" output="HitType">
-							<enum name="Normal" value="0" />
-							<enum name="Critical" value="1" />
-							<enum name="Miss" value="2" />
-							<enum name="Block" value="3" />
-							<enum name="Unknown4" value="4" />
-							<enum name="Unknown8" value="8" />
-						</data>
-						<data type="long" name="damage" output="Damage" />
-					</array>
-				</array>
+				<useBlock name="SkillDamageTilePacket" version="12" />
 			</condition>
 			<condition data="mode" value="7" comparison="equal">
 				<data type="int" name="unknown" />
@@ -856,11 +976,11 @@
 				</array>
 			</condition>
 			<condition data="mode" value="8" comparison="equal">
-				<data type="long" name="skillSn" output="SkillSn" />
+				<data type="long" name="skillSn" /> <!-- output="SkillSn"-->
 				<data type="bool" name="hasTarget" />
 				<condition data="hasTarget" value="1" comparison="equal">
-					<data type="uint" name="skillId" output="SkillId" />
-					<data type="ushort" name="skillLevel" output="SkillLevel" />
+					<data type="uint" name="skillId" /> <!-- output="SkillId"-->
+					<data type="ushort" name="skillLevel" /> <!-- output="SkillLevel"-->
 					<data type="int" name="unknown" />
 					<data type="int" name="npcId" />
 				</condition>
@@ -923,13 +1043,9 @@
 			<data type="ushort" name="effectCount" />
 			<array data="effectCount" output="AdditionalEffects">
 				<data type="int" name="ownerId" output="OwnerId" />
-				<data type="int" name="buffInstanceId" output="BuffInstanceId" />
+				<data type="int" name="effectInstanceId" output="InstanceId" />
 				<data type="int" name="casterId" output="CasterId" />
-				<data type="int" name="startTick" output="StartTick" />
-				<data type="int" name="endTick" output="EndTick" />
-				<data type="int" name="effectId" output="EffectId" />
-				<data type="short" name="effectLevel" output="EffectLevel" />
-				<data type="int" name="stacks" output="Stacks" />
+				<useBlock name="EffectStats" version="12" output="Stats" />
 				<data type="bool" name="enabled" output="Enabled" />
 				<data type="long" name="shieldHealth" output="ShieldHealth" />
 			</array>

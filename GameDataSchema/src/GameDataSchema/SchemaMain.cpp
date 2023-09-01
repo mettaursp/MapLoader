@@ -221,6 +221,7 @@ namespace ParserUtils
 						std::cout << "found unknown value in packet" << std::endl;
 					}
 
+					std::cout << path.string() << std::endl;
 					std::cout << "Version: " << build << "; Packet length: " << stream.Data.size() << "; Opcode: 0x" << std::hex << opcode << '\n';
 					
 					size_t size = stream.Data.size();
@@ -248,27 +249,65 @@ namespace ParserUtils
 						}
 					}
 
-					std::string values = handler.FoundValues.str();
-
-					if (values.size())
-					{
-						std::cout << values << std::endl;
-					}
-
 					std::cout << std::dec << std::endl;
 
-					if (stream.HasRecentlyFailed || stream.Index < stream.Data.size())
+					if (stream.HasRecentlyFailed || stream.Index < stream.Data.size() || stream.FoundUnknownValue)
 					{
 						//printedAlready.insert(build);
-						printedPacketAlready.insert(opcodeVersion);
+						if (stream.HasRecentlyFailed || stream.Index < stream.Data.size())
+						{
+							printedPacketAlready.insert(opcodeVersion);
+						}
 
 						handler.PacketStream = ParserUtils::DataStream{ { reinterpret_cast<char*>(buffer.data()), buffer.size() } };
 						handler.FoundValues = {};
 
 						handler.PacketStream.IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
+						handler.PacketStream.PrintOutput = true;
 
 						Networking::Packets::ParsePacket(handler, build, !outbound, opcode);
+
+						std::string values = handler.FoundValues.str();
+
+						if (values.size() && !ParserUtils::Packets::PrintOutput)
+						{
+							std::cout << values << std::endl;
+						}
+
+						if (stream.Index < stream.Data.size() && !stream.HasRecentlyFailed)
+						{
+							std::cout << "remaining: \n";
+
+							size_t printAmount = size - stream.Index;
+							size_t printCount = 16 * ((printAmount / 16) + (printAmount % 16 ? 1 : 0));
+						
+							for (size_t i = 0; i <= printCount; ++i)
+							{
+								size_t index = stream.Index + i;
+
+								if (i && (i % 16) == 0)
+								{
+									std::cout << " |  " << std::dec;
+
+									for (size_t j = 0; j < 16 && index - 16 + j < size; ++j)
+										std::cout << (buffer[index - 16 + j] >= 32 && buffer[index - 16 + j] <= 126 ? (char)buffer[index - 16 + j] : '.');
+
+									std::cout << "\n" << std::hex;
+								}
+
+								if (index < size)
+								{
+									std::cout << std::setw(2) << std::setfill('0') << (int)buffer[index] << " ";
+								}
+								else if (i < printCount)
+								{
+									std::cout << "   ";
+								}
+							}
+						}
 					}
+
+					std::cout << "\n----------------\n";
 				}
 			}
 
@@ -540,6 +579,7 @@ int main(int argc, char** argv)
 				if (systemAttribute)
 				{
 					item.BadgeType = (unsigned char)atoi(systemAttribute->Value());
+					item.IsBadge = item.BadgeType != 0;
 				}
 			}
 
@@ -627,7 +667,7 @@ int main(int argc, char** argv)
 
 			Enum::ItemId id = (Enum::ItemId)atoi(idAttribute->Value());
 
-			Networking::Packets::ItemData& item = gms2Data.Items[id];
+			Networking::Packets::ItemData& item = kms2Data.Items[id];
 
 			for (tinyxml2::XMLElement* environmentElement = itemElement->FirstChildElement(); environmentElement; environmentElement = environmentElement->NextSiblingElement())
 			{
@@ -658,16 +698,21 @@ int main(int argc, char** argv)
 						item.HasBlueprint = type == 22;
 					}
 
-					if (categoryAttribute && param1Attribute)
+					if (categoryAttribute)
 					{
-						if (strcmp(categoryAttribute->Value(), "Pet") == 0)
+						if (param1Attribute && strcmp(categoryAttribute->Value(), "Pet") == 0)
 						{
 							item.PetId = (unsigned int)atoi(param1Attribute->Value());
 						}
 
 						if (strcmp(categoryAttribute->Value(), "SYSTEM") == 0)
 						{
-							item.BadgeType = (unsigned char)atoi(param1Attribute->Value());
+							if (param1Attribute)
+							{
+								item.BadgeId = (unsigned int)atoi(param1Attribute->Value());
+							}
+
+							item.IsBadge = true;
 						}
 					}
 
@@ -920,7 +965,7 @@ int main(int argc, char** argv)
 		ParserUtils::Packets::parseMsb("A:/trevo/Downloads/SmitingAuraSniffVid.msb");
 	}
 
-	fs::path msbDir = "B:/Files/ms2sniffs";
+	fs::path msbDir = "B:/Files/ms2sniffs/";
 
 	std::unordered_set<unsigned int> versions;
 

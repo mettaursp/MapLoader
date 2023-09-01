@@ -1,0 +1,13 @@
+<outputSchema isGlobal="true">
+	<namespace name="Enum">
+		<enum name="Gender" parent="unsigned char" directory="Enums">
+			<value name="Male" value="0" />
+			<value name="Female" value="1" />
+			<value name="Both" value="2" />
+		</enum>
+		<enum name="JobCode" parent="unsigned short" directory="Enums">
+		</enum>
+		<enum name="JobId" parent="unsigned short" directory="Enums">
+		</enum>
+	</namespace>
+</outputSchema>

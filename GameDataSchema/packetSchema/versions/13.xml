@@ -1,6 +1,7 @@
 <packetSchema version="13" inheritPrevious="false">
 	<source name="server">
 		<opcodeReference value="0x7" version="12" opcode="0x7" />
+		<opcodeReference value="0xC" version="12" opcode="0xC" />
 		<opcodeReference value="0x16" version="12" opcode="0x16" />
 		<opcodeReference value="0x1D" version="12" opcode="0x1D" />
 		<opcodeReference value="0x18" version="12" opcode="0x18" />
@@ -14,15 +15,11 @@
 				<enum name="remove" value="1" />
 				<enum name="update" value="2" />
 			</data>
-			<data type="int" name="targetActor" output="TargetActor" />
+			<data type="int" name="targetId" output="TargetId" />
 			<data type="int" name="instanceId" output="InstanceId" />
-			<data type="int" name="sourceActor" output="SourceActor" />
+			<data type="int" name="sourceId" output="SourceId" />
 			<condition data="mode" value="0" comparison="equal">
-				<data type="int" name="startTime" output="StartTime" />
-				<data type="int" name="endTime" output="EndTime" />
-				<data type="int" name="effectId" output="EffectId" />
-				<data type="short" name="effectLevel" output="EffectLevel" />
-				<data type="int" name="stacks" output="Stacks" />
+						<useBlock name="EffectStats" version="12" output="Stats" />
 				<data type="bool" name="hasShield" output="UpdateShield" />
 				<data type="long" name="shieldHealth" output="ShieldHealth" />
 			</condition>
@@ -32,11 +29,7 @@
 					<bit name="shieldStats" bitIndex="1" output="UpdateShield" />
 				</data>
 				<condition data="flags" bitIndex="0" value="1" comparison="equal">
-					<data type="int" name="startTime" output="StartTime" />
-					<data type="int" name="endTime" output="EndTime" />
-					<data type="int" name="effectId" output="EffectId" />
-					<data type="short" name="effectLevel" output="EffectLevel" />
-					<data type="int" name="stacks" output="Stacks" />
+						<useBlock name="EffectStats" version="12" output="Stats" />
 					<data type="bool" name="enabled" output="Enabled" />
 				</condition>
 				<condition data="flags" bitIndex="1" value="1" comparison="equal">

@@ -69,6 +69,7 @@ namespace ParserUtils
 		bool FoundUnknownValue = false;
 		bool IgnoreUnknownValues = false;
 		bool SuppressErrors = false;
+		bool PrintOutput = false;
 
 		template <typename T>
 		bool Read(T& value);
@@ -77,6 +78,7 @@ namespace ParserUtils
 		bool Read(T& value);
 
 		bool Succeeded() const { return !HasRecentlyFailed; }
+		void Failed();
 	};
 
 	template <typename T>
@@ -97,7 +99,7 @@ namespace ParserUtils
 
 		if (Index + sizeof(T) > Data.size())
 		{
-			HasRecentlyFailed = true;
+			Failed();
 
 			return false;
 		}

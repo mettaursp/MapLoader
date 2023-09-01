@@ -1550,6 +1550,100 @@ namespace PacketSchema
 		return out << "output" << output.OutputIndex;
 	}
 
+	const PacketOpcode* currentOpcode = nullptr;
+	size_t currentIndex = 0;
+	unsigned short currentVersion = 0;
+
+	std::ostream& packetDebugInfo(std::ostream& out)
+	{
+		if (!currentOpcode)
+		{
+			return out << "[null]";
+		}
+
+		out << "[" << currentOpcode->Name << "; ";
+
+		if (currentOpcode->IsBlock)
+		{
+			out << "Block; ";
+		}
+		else if (currentOpcode->IsServer)
+		{
+			out << "Server 0x" << std::hex << currentOpcode->Value << std::dec << "; ";
+		}
+		else
+		{
+			out << "Client 0x" << std::hex << currentOpcode->Value << std::dec << "; ";
+		}
+
+		out << "Version " << currentVersion << "; ";
+
+		const auto& layout = currentOpcode->Layout[currentIndex];
+		size_t index = layout.Index;
+
+		switch (layout.Type)
+		{
+		case PacketInfoType::Data:
+			out << "Data " << currentIndex << " " << currentOpcode->Data[index].Name;
+			break;
+		case PacketInfoType::Condition:
+			out << "Condition " << currentIndex;
+			break;
+		case PacketInfoType::Output:
+			out << "Output " << currentIndex << " " << currentOpcode->Outputs[index].TypeName;
+			break;
+		case PacketInfoType::OutputMember:
+			out << "OutputMember " << currentIndex << " " << currentOpcode->OutputMembers[index].Output;
+			break;
+		case PacketInfoType::Array:
+			out << "Array " << currentIndex << " " << currentOpcode->Arrays[index].Output;
+			break;
+		case PacketInfoType::Function:
+			out << "Function " << currentIndex << " " << currentOpcode->Functions[index].Name;
+			break;
+		case PacketInfoType::Buffer:
+			out << "Buffer " << currentIndex;
+			break;
+		case PacketInfoType::BlockFunction:
+			out << "UseBlock " << currentIndex << " " << currentOpcode->BlockFunctions[index].Name;
+			break;
+		default:
+			out << "<unknown>";
+		}						  
+
+		return out << "]";
+	}
+
+	void validateOutput(const DataOutput& output)
+	{
+		if (!output.Output)
+		{
+			packetDebugInfo(std::cout) << ": failed to find output";
+		}
+	}
+
+	void validateOutput(const DataOutput& output, const std::string& name, const std::string& target)
+	{
+		if (!name.size() && !target.size())
+		{
+			return;
+		}
+
+		if (output.Member)
+		{
+			return;
+		}
+
+		packetDebugInfo(std::cout) << ": failed to find output '" << name;
+
+		if (target.size())
+		{
+			std::cout << "' with target'" << target;
+		}
+
+		std::cout << "'" << std::endl;
+	}
+
 	DataOutput findOutput(const std::string& name, const std::unordered_map<std::string, const PacketOutput*>& outputs, const PacketOutput* topOutput, const std::vector<StackEntry>& stack)
 	{
 		if (name.size())
@@ -1730,6 +1824,8 @@ namespace PacketSchema
 
 			if (indexValue.size())
 			{
+				validateOutput(nextOutput, std::string(name), "");
+
 				if (nextOutput.Member && nextOutput.Member->Type == "array")
 				{
 					nextOutput.Name += '[' + std::string(indexValue) + ']';
@@ -1757,6 +1853,8 @@ namespace PacketSchema
 				bool hasOutput = paramData.Output.size();
 
 				DataOutput paramOutput = hasOutput ? findOutput(opcode, index, paramData.Target, outputs, topOutput, stack, paramData.Output) : DataOutput{};
+
+				validateOutput(paramOutput, paramData.Output, paramData.Target);
 
 				bool memberTypeDoesntMatch = !canReadDirectly(paramOutput, paramData);
 				bool makeVariable = !paramData.Read || paramData.HasBitOutputs || (paramData.Referenced && !hasOutput) || paramData.Output.size() == 0 || memberTypeDoesntMatch;
@@ -1800,6 +1898,8 @@ namespace PacketSchema
 
 		DataOutput paramOutput = hasOutput ? findOutput(opcode, index, paramData.Target, outputs, topOutput, stack, paramData.Output) : DataOutput{};
 
+		validateOutput(paramOutput, paramData.Output, paramData.Target);
+
 		bool memberTypeDoesntMatch = !canReadDirectly(paramOutput, paramData);
 		bool makeVariable = !paramData.Read || paramData.HasBitOutputs || (paramData.Referenced && !hasOutput) || paramData.Output.size() == 0 || memberTypeDoesntMatch;
 		
@@ -1836,6 +1936,8 @@ namespace PacketSchema
 
 		PacketOutput blockOutputData;
 
+		currentOpcode = &opcode;
+
 		if (opcode.IsBlock)
 		{
 
@@ -1845,12 +1947,16 @@ namespace PacketSchema
 			{
 				std::cout << "failed to find type '" << opcode.BlockOutput.Type << "' in schema '" << opcode.BlockOutput.Schema << "'" << std::endl;
 
+				currentOpcode = nullptr;
+
 				return;
 			}
 
 			if (entry.Type != OutputSchema::SchemaEntryType::Class)
 			{
 				std::cout << "type '" << opcode.BlockOutput.Type << "' in schema '" << opcode.BlockOutput.Schema << "' isn't a class" << std::endl;
+
+				currentOpcode = nullptr;
 
 				return;
 			}
@@ -1864,6 +1970,8 @@ namespace PacketSchema
 
 		for (size_t i = 0; i < opcode.Layout.size(); ++i)
 		{
+			currentIndex = i;
+
 			while (stack.size() && i >= stack.back().EndIndex)
 			{
 				DataOutput& outputData = stack.back().Output;
@@ -1930,7 +2038,27 @@ namespace PacketSchema
 			{
 				const PacketBlockFunction& blockFunction = opcode.BlockFunctions[index];
 
-				DataOutput output = blockFunction.Output.size() ? findOutput(opcode, i, blockFunction.Target, outputs, topOutput, stack, blockFunction.Output) : findOutput(blockFunction.Target, outputs, topOutput, stack);
+				DataOutput output;
+				
+				if (blockFunction.Output.size())
+				{
+					output = findOutput(opcode, i, blockFunction.Target, outputs, topOutput, stack, blockFunction.Output);
+
+					validateOutput(output, blockFunction.Output, blockFunction.Target);
+				}
+				else
+				{
+					output = findOutput(blockFunction.Target, outputs, topOutput, stack);
+
+					validateOutput(output);
+				}
+
+				if (!output.Name.size() && output.Output)
+				{
+					std::stringstream out;
+					out << *output.Output;
+					output.Name = out.str();
+				}
 
 				out << tabs << "Parse" << blockFunction.Name << "_v" << blockFunction.Version << "(handler, " << output.Name;
 
@@ -1978,6 +2106,8 @@ namespace PacketSchema
 
 					DataOutput paramOutput = hasOutput ? findOutput(opcode, i, paramData.Target, outputs, topOutput, stack, paramData.Output) : DataOutput{};
 
+					validateOutput(paramOutput, paramData.Output, paramData.Target);
+
 					bool memberTypeDoesntMatch = !canReadDirectly(paramOutput, paramData);
 					bool makeVariable = !paramData.Read || paramData.HasBitOutputs || (paramData.Referenced && !hasOutput) || paramData.Output.size() == 0 || memberTypeDoesntMatch;
 
@@ -2024,6 +2154,8 @@ namespace PacketSchema
 				bool hasOutput = data.Output.size();
 
 				DataOutput output = hasOutput ? findOutput(opcode, i, data.Target, outputs, topOutput, stack, data.Output) : DataOutput{};
+
+				validateOutput(output, data.Output, data.Target);
 
 				bool memberTypeDoesntMatch = !canReadDirectly(output, data);
 				bool makeVariable = !data.Read || data.HasBitOutputs || (data.Referenced && !hasOutput) || data.Output.size() == 0 || memberTypeDoesntMatch;
@@ -2077,7 +2209,10 @@ namespace PacketSchema
 				{
 					const PacketFunction& function = opcode.Functions[functionIndex];
 
-					out << tabs;
+					out << tabs << "if (!handler.PacketStream.HasRecentlyFailed)\n";
+					out << tabs << "{\n";
+
+					out << tabs << '\t';
 
 					if (makeVariable || !output.Member)
 					{
@@ -2105,6 +2240,7 @@ namespace PacketSchema
 					}
 
 					out << ");\n";
+					out << tabs << "}\n";
 				}
 
 				bool isDataInitialization = opcode.Layout[i].Type == PacketInfoType::Data && opcode.Layout[i].Index == index;
@@ -2171,6 +2307,8 @@ namespace PacketSchema
 						{
 							DataOutput output = findOutput(opcode, i, bit.Target, outputs, topOutput, stack, bit.Output);
 
+							validateOutput(output, bit.Output, bit.Target);
+
 							out << tabs << output.Name << " = GetBit(" << data << ", " << i << ");\n";
 						}
 					}
@@ -2188,6 +2326,8 @@ namespace PacketSchema
 				const PacketOutputMember& outputMember = opcode.OutputMembers[index];
 
 				DataOutput output = outputMember.Output.size() ? findOutput(opcode, i, outputMember.Target, outputs, topOutput, stack, outputMember.Output) : DataOutput{};
+
+				validateOutput(output, outputMember.Output, outputMember.Target);
 
 				out << "\n" << tabs << "{\n";
 
@@ -2222,6 +2362,8 @@ namespace PacketSchema
 				std::string param = getReference(array.DataIndex, opcode, i, outputs, topOutput, stack);
 
 				DataOutput output = array.Output.size() ? findOutput(opcode, i, array.Target, outputs, topOutput, stack, array.Output) : DataOutput{};
+
+				validateOutput(output, array.Output, array.Target);
 
 				if (lastType != PacketInfoType::Condition && lastType != PacketInfoType::Array)
 				{
@@ -2454,13 +2596,16 @@ namespace PacketSchema
 			}
 		}
 
+		currentOpcode = nullptr;
+
 		generator.LoopIndex = 'i';
 	}
 
+	unsigned short minVersion = 0xFFFF;
+	unsigned short maxVersion = 0;
+
 	void generateParserOpcodeTable(std::ofstream& cppOut)
 	{
-		unsigned short minVersion = 0xFFFF;
-		unsigned short maxVersion = 0;
 
 		for (const auto& versionEntry : PacketVersions)
 		{
@@ -2792,6 +2937,14 @@ namespace PacketSchema
 
 	void generateParsers()
 	{
+		fs::path tableCppPath = packetProjDir / "src/PacketProcessing/PacketOpcodes.cpp";
+
+		{
+			std::ofstream cppOut(tableCppPath);
+
+			generateParserOpcodeTable(cppOut);
+		}
+
 		fs::path headerPath = packetProjDir / "src/PacketProcessing/PacketParser.h";
 
 		{
@@ -2804,6 +2957,9 @@ namespace PacketSchema
 			headerOut << "namespace Networking\n{\n";
 
 			headerOut << "\tnamespace Packets\n\t{\n";
+
+			headerOut << "\t\tconst size_t MinVersion = " << minVersion << ";\n";
+			headerOut << "\t\tconst size_t MaxVersion = " << maxVersion << ";\n\n";
 
 			for (const auto& versionEntry : PacketVersions)
 			{
@@ -2828,14 +2984,6 @@ namespace PacketSchema
 
 			headerOut << "\t}\n";
 			headerOut << "}\n";
-		}
-
-		fs::path tableCppPath = packetProjDir / "src/PacketProcessing/PacketOpcodes.cpp";
-
-		{
-			std::ofstream cppOut(tableCppPath);
-
-			generateParserOpcodeTable(cppOut);
 		}
 
 		fs::path cppPath = packetProjDir / "src/PacketProcessing/PacketParser.cpp";
@@ -2873,6 +3021,8 @@ namespace PacketSchema
 				unsigned int index = data & 0xFFFF;
 				const auto& version = *versionData[index];
 
+				currentVersion = version.Version;
+
 				for (size_t i = 0; i < version.Blocks.size(); ++i)
 				{
 					const auto& block = *version.Blocks[i];
@@ -2900,6 +3050,8 @@ namespace PacketSchema
 			for (const auto& versionEntry : PacketVersions)
 			{
 				short version = versionEntry.first;
+
+				currentVersion = version;
 
 				for (const auto& opcodeEntry : versionEntry.second.ClientOpcodes)
 				{

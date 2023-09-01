@@ -10,8 +10,21 @@
 			<value name="Ascendant" value="6" />
 		</enum>
 		<enum name="BadgeType" parent="unsigned char" directory="Enums">
+			<value name="None" value="0" />
 			<value name="Transparency" value="1" />
+			<value name="Damage" value="2" />
+			<value name="Chat" value="3" />
+			<value name="Name" value="4" />
+			<value name="Tombstone" value="5" />
+			<value name="Swim" value="6" />
+			<value name="Buddy" value="7" />
+			<value name="Fishing" value="8" />
+			<value name="Gather" value="9" />
+			<value name="Effect" value="10" />
 			<value name="Pet" value="11" />
+			<value name="Meta" value="12" />
+		</enum>
+		<enum name="SlotType" parent="unsigned char" directory="Enums">
 		</enum>
 	</namespace>
 </outputSchema>

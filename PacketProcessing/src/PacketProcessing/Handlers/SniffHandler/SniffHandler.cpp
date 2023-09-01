@@ -69,7 +69,7 @@ namespace Networking
 				return 3;
 			}
 
-			if (itemHandle->second.BadgeType != 0)
+			if (itemHandle->second.IsBadge)
 			{
 				return 4;
 			}
@@ -85,6 +85,13 @@ namespace Networking
 		unsigned short SniffHandler::GetItemCategory(unsigned int itemId) const
 		{
 			return (unsigned short)(itemId / 100000);
+		}
+
+		bool SniffHandler::StatIntToFloat(float& rate) const
+		{
+			rate /= 100;
+
+			return true;
 		}
 	}
 }

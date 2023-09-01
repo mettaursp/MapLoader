@@ -14,7 +14,7 @@ namespace ParserUtils
 
 		if (Index + sizeof(bool) > Data.size())
 		{
-			HasRecentlyFailed = true;
+			Failed();
 
 			return false;
 		}
@@ -36,7 +36,7 @@ namespace ParserUtils
 
 		if (Index + sizeof(unsigned short) > Data.size())
 		{
-			HasRecentlyFailed = true;
+			Failed();
 
 			return false;
 		}
@@ -72,7 +72,7 @@ namespace ParserUtils
 
 		if (Index + sizeof(unsigned short) > Data.size())
 		{
-			HasRecentlyFailed = true;
+			Failed();
 
 			return false;
 		}
@@ -112,7 +112,7 @@ namespace ParserUtils
 
 		if (Index + sizeof(Vector3S) > Data.size())
 		{
-			HasRecentlyFailed = true;
+			Failed();
 
 			return false;
 		}
@@ -134,7 +134,7 @@ namespace ParserUtils
 
 		if (Index + sizeof(Vector3Short) > Data.size())
 		{
-			HasRecentlyFailed = true;
+			Failed();
 
 			return false;
 		}
@@ -156,7 +156,7 @@ namespace ParserUtils
 
 		if (Index + sizeof(Vector3Short) > Data.size())
 		{
-			HasRecentlyFailed = true;
+			Failed();
 
 			return false;
 		}
@@ -167,6 +167,11 @@ namespace ParserUtils
 		Read<unsigned char>(value.A);
 
 		return true;
+	}
+
+	void DataStream::Failed()
+	{
+		HasRecentlyFailed = true;
 	}
 }
 

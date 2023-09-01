@@ -1,4 +1,5 @@
 #include "PacketParserBase.h"
+#include "PacketParser.h"
 
 #include <ParserUtils/PacketParsing.h>
 
@@ -11,7 +12,7 @@ namespace Networking
 
 		void ParsePacket(PacketHandler& handler, unsigned short version, bool isServer, unsigned short opcode)
 		{
-			size_t versionIndex = version == 12 ? 0 : VersionIndices[std::min(39, std::max(version, (unsigned short)2464) - 2464)];
+			size_t versionIndex = version == 12 ? 0 : VersionIndices[std::min(MaxVersion - MinVersion, std::max(version, (unsigned short)MinVersion) - MinVersion)];
 			const PacketVersionData& versionData = Versions[versionIndex];
 		
 			size_t minOpcode = isServer ? versionData.MinServerOpcode : versionData.MinClientOpcode;

@@ -63,7 +63,16 @@
 		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
+		<enum name="MapInstanceId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
 		<enum name="ClubId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="GuildId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="SessionId" parent="unsigned long long" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
 		<enum name="SkillAttackId" parent="unsigned long long" directory="Enums" file="Handles">

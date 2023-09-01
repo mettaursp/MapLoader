@@ -7,6 +7,7 @@
 #include <GameData/Packets\Server/FieldAddNpcPacket.h>
 #include <GameData/Data/StatLong.h>
 #include <GameData/Data/Stat.h>
+#include <GameData/Data/EffectStats.h>
 
 namespace Networking
 {
@@ -21,11 +22,7 @@ namespace Networking
 					Enum::ActorId OwnerId;
 					Enum::EffectInstanceId InstanceId;
 					Enum::ActorId CasterId;
-					int StartTick = 0;
-					int EndTick = 0;
-					Enum::EffectId EffectId;
-					Enum::EffectLevel EffectLevel;
-					int Stacks = 0;
+					Maple::Game::EffectStats Stats;
 					bool Enabled = false;
 					long long ShieldHealth = 0;
 				};
@@ -49,7 +46,7 @@ namespace Networking
 				};
 				bool IsDead = false;
 				std::vector<Effect> AdditionalEffects;
-				Enum::ItemInstanceId PetItemIstanceId;
+				Enum::ItemInstanceId PetItemInstanceId;
 				unsigned short Level = 0;
 				std::wstring SpawnEffect;
 				std::vector<Skill> Skills;

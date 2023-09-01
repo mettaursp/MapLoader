@@ -3,6 +3,7 @@
 #include <iostream>
 #include <source_location>
 #include <vector>
+#include <iomanip>
 
 #include "DataStream.h"
 
@@ -68,7 +69,7 @@ namespace ParserUtils
 			{
 				if (size < 0)
 				{
-					stream.HasRecentlyFailed = true;
+					stream.Failed();
 
 					if constexpr (PrintErrors)
 					{
@@ -86,7 +87,7 @@ namespace ParserUtils
 
 			if (size > remaining)
 			{
-				stream.HasRecentlyFailed = true;
+				stream.Failed();
 
 				if constexpr (PrintErrors)
 				{
@@ -130,11 +131,23 @@ namespace ParserUtils
 
 			if constexpr (PrintOutput || PrintErrors)
 			{
-				if (!(!PrintOutput && stream.SuppressErrors))
+				if (!(!PrintOutput && (stream.SuppressErrors || !stream.PrintOutput)))
 				{
 					std::ostream& out = PrintOutput ? std::cout : handler.FoundValues;
 
-					out << tabs << "[" << (stream.Index - lastIndex) << "] " << name << ": ";
+					out << tabs << "[" << (stream.Index - lastIndex) << "] " << std::hex;
+
+					if (stream.Index - lastIndex <= 8)
+					{
+						for (size_t i = lastIndex; i < stream.Index; ++i)
+						{
+							out << std::setw(2) << std::setfill('0') << (unsigned short)(unsigned char)stream.Data[i] << " ";
+						}
+
+						out << std::dec << " | ";
+					}
+
+					out << name << ": ";
 
 					if constexpr (std::is_same_v<T, char> || std::is_same_v<T, unsigned char> || std::is_same_v<T, signed char>)
 					{
@@ -146,6 +159,16 @@ namespace ParserUtils
 					}
 
 					out << std::endl;
+
+					if (stream.Index - lastIndex > 8)
+					{
+						for (size_t i = lastIndex; i < stream.Index; ++i)
+						{
+							out << std::setw(2) << std::setfill('0') << (unsigned short)(unsigned char)stream.Data[i] << " ";
+						}
+
+						out << std::dec << std::endl;
+					}
 				}
 			}
 		}

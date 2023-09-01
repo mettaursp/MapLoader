@@ -86,7 +86,19 @@ namespace Enum
 	{
 		Null = 0
 	};
+	enum class MapInstanceId : unsigned int
+	{
+		Null = 0
+	};
 	enum class ClubId : unsigned long long
+	{
+		Null = 0
+	};
+	enum class GuildId : unsigned long long
+	{
+		Null = 0
+	};
+	enum class SessionId : unsigned long long
 	{
 		Null = 0
 	};

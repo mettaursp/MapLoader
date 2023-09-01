@@ -32,6 +32,8 @@ namespace Networking
 			bool IsMusicScore = false;
 			bool IsCustomNote = false;
 			unsigned char BadgeType = 0;
+			unsigned int BadgeId = 0;
+			bool IsBadge = false;
 		};
 
 		struct Metadata
@@ -98,6 +100,7 @@ namespace Networking
 			unsigned char GetItemExtraDataType(unsigned int itemId) const;
 			unsigned short GetItemCategory(Enum::ItemId itemId) const;
 			unsigned short GetItemCategory(unsigned int itemId) const;
+			bool StatIntToFloat(float& rate) const;
 
 		private:
 

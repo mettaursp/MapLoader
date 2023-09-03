@@ -99,27 +99,31 @@
 			<data type="short" name="unknown" />
 			<data type="long" name="unknown" />
 		</block>
-		<block name="CharacterListEntry">
-			<outputParam type="Maple.Game.CharacterListEntry" schema="packetData" />
-			<useBlock name="CharacterData" version="2509" output="Character" />
-			<data type="wstring" name="profileUrl" output="ProfileUrl" />
-			<data type="long" name="deleteTime" output="DeleteTime" />
+		<block name="EquipmentData">
+			<outputParam type="Maple.Game.EquipmentData" schema="packetData" />
+			<data type="int" name="itemId" output="ItemId" />
+			<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+			<data type="byte" name="slot" output="Slot" />
+			<data type="int" name="rarity" output="Rarity">
+				<enum name="None" value="0" />
+				<enum name="Common" value="1" />
+				<enum name="Rare" value="2" />
+				<enum name="Exceptional" value="3" />
+				<enum name="Epic" value="4" />
+				<enum name="Legendary" value="5" />
+				<enum name="Ascendant" value="6" />
+			</data>
+			<useBlock name="ItemData" version="2497" output="Data" args="itemId" />
+		</block>
+		<block name="CharacterEquipmentItems">
+			<outputParam type="Maple.Game.CharacterEquipment" schema="packetData" />
 			<data type="byte" name="equipmentCount" />
 			<array data="equipmentCount" output="Equipment">
-				<data type="int" name="itemId" output="ItemId" />
-				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
-				<data type="byte" name="slot" output="Slot" />
-				<data type="int" name="rarity" output="Rarity">
-					<enum name="None" value="0" />
-					<enum name="Common" value="1" />
-					<enum name="Rare" value="2" />
-					<enum name="Exceptional" value="3" />
-					<enum name="Epic" value="4" />
-					<enum name="Legendary" value="5" />
-					<enum name="Ascendant" value="6" />
-				</data>
-				<useBlock name="ItemData" version="2497" output="Data" args="itemId" />
+				<useBlock name="EquipmentData" version="2509" />
 			</array>
+		</block>
+		<block name="CharacterEquipmentBadges">
+			<outputParam type="Maple.Game.CharacterEquipment" schema="packetData" />
 			<data type="byte" name="badgeCount" />
 			<array data="badgeCount" output="Badges">
 				<data type="byte" name="slot" output="Slot" />
@@ -136,27 +140,27 @@
 				</data>
 				<useBlock name="ItemData" version="2497" output="Data" args="itemId" />
 			</array>
+		</block>
+		<block name="CharacterEquipmentSkins">
+			<outputParam type="Maple.Game.CharacterEquipment" schema="packetData" />
 			<data type="bool" name="hasSkin" output="HasSkin" />
 			<condition data="hasSkin" value="1" comparison="equal">
 				<data type="long" name="unknown" />
 				<data type="long" name="unknown" />
 				<data type="byte" name="skinCount" />
 				<array data="skinCount" output="Skins">
-					<data type="int" name="itemId" output="ItemId" />
-					<data type="long" name="itemInstanceId" output="ItemInstanceId" />
-					<data type="byte" name="slot" output="Slot" />
-					<data type="int" name="rarity" output="Rarity">
-						<enum name="None" value="0" />
-						<enum name="Common" value="1" />
-						<enum name="Rare" value="2" />
-						<enum name="Exceptional" value="3" />
-						<enum name="Epic" value="4" />
-						<enum name="Legendary" value="5" />
-						<enum name="Ascendant" value="6" />
-					</data>
-					<useBlock name="ItemData" version="2497" output="Data" args="itemId" />
+					<useBlock name="EquipmentData" version="2509" />
 				</array>
 			</condition>
+		</block>
+		<block name="CharacterListEntry">
+			<outputParam type="Maple.Game.CharacterListEntry" schema="packetData" />
+			<useBlock name="CharacterData" version="2509" output="Character" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="long" name="deleteTime" output="DeleteTime" />
+			<useBlock name="CharacterEquipmentItems" version="2509" output="CharacterEquipment" />
+			<useBlock name="CharacterEquipmentBadges" version="2509" output="CharacterEquipment" />
+			<useBlock name="CharacterEquipmentSkins" version="2509" output="CharacterEquipment" />
 		</block>
 	</blocks>
 	<source name="server">
@@ -208,6 +212,50 @@
 				<data type="int" name="confirm" output="Confirm" />
 				<data type="long" name="characterId" output="CharacterId" />
 				<data type="wstring" name="name" output="Name" />
+			</condition>
+		</opcode>
+		<opcode name="CharacterInfo" value="0x78">
+			<output type="Networking.Packets.Server.CharacterInfoPacket" schemaName="packetData" />
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="bool" name="found" output="Found" />
+			<condition data="found" value="1" comparison="equal">
+				<data type="long" name="notAccountId" /> <!-- time? -->
+				<data type="long" name="characterId2" />
+				<data type="long" name="currentTime" output="CurrentTime" />
+				<!--data type="bool" name="isDeflated" /-->
+				<data type="int" name="bufferSize" />
+				<buffer sizeData="bufferSize" output="Details"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterDetailsHeader" version="12" />
+					<outputMember output="Stats">
+						<useBlock name="CharacterDetailsBasicStats" version="12" />
+						<useBlock name="CharacterDetailsSpecialStats" version="2497" />
+					</outputMember>
+					<useBlock name="CharacterDetailsBody" version="12" />
+					<data type="long" name="unknown" />
+				</buffer>
+				<!--data type="bool" name="isDeflated" /-->
+				<read name="bufferSize" />
+				<buffer sizeData="bufferSize" output="CharacterEquipment"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterEquipmentItems" version="2509" />
+					<!--useBlock name="CharacterEquipmentSkins" version="2509" /-->
+					<data type="byte" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="long" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="long" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="byte" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+				</buffer>
+				<!--data type="bool" name="isDeflated" /-->
+				<read name="bufferSize" />
+				<buffer sizeData="bufferSize" output="CharacterEquipment"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterEquipmentBadges" version="2509" />
+				</buffer>
 			</condition>
 		</opcode>
 	</source>

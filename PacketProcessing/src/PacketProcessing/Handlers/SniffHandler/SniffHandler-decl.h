@@ -86,7 +86,13 @@ namespace Networking
 		class SniffHandler
 		{
 		public:
-			ParserUtils::DataStream PacketStream;
+			struct StackEntry
+			{
+				ParserUtils::DataStream PacketStream;
+				std::string DeflatedData;
+			};
+
+			std::vector<StackEntry> StreamStack;
 			std::stringstream FoundValues;
 			Metadata* Data = nullptr;
 			bool HasReconnected = false;
@@ -94,6 +100,13 @@ namespace Networking
 
 			template <typename T>
 			void PacketParsed(const T& packet);
+
+			ParserUtils::DataStream& ResetPacketStream();
+			ParserUtils::DataStream& PacketStream() { return StreamStack.back().PacketStream; }
+			const ParserUtils::DataStream& PacketStream() const { return StreamStack.back().PacketStream; }
+			void PushStream(size_t size, bool isDeflated);
+			void PopStream();
+			void CheckStreamStatus();
 
 			bool IsNpcBoss(Enum::NpcId npcId) const;
 			bool NpcHasHiddenHp(Enum::NpcId npcId) const;

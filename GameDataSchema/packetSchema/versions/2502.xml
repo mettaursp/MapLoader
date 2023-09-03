@@ -1,0 +1,34 @@
+<packetSchema version="2502">
+	<blocks>
+		<block name="SkillTreeData">
+			<outputParam type="Maple.Game.SkillTreeData" schema="packetData" />
+			<data type="int" name="job" output="Job" />
+			<data type="byte" name="unknownCount">
+				<enum name="Unknown" value="1" />
+			</data>
+			<data type="int" name="jobCode" output="JobCode" />
+			<useBlock name="SkillTreePageData" version="12" output="Active" />
+		</block>
+	</blocks>
+	<source name="server">
+		<opcode name="Job" value="0x49">
+			<output type="Networking.Packets.Server.JobPacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<data type="byte" name="mode" output="Mode">
+				<enum name="Notify" value="0" />
+				<enum name="Basic" value="1" />
+				<enum name="Awakening" value="2" />
+				<enum name="Error" value="3" />
+				<enum name="Unknown" value="7" />
+				<enum name="Load" value="8" />
+				<enum name="Update" value="9" />
+				<enum name="Reset" value="10" />
+				<enum name="AutoDistribute" value="11" />
+			</data>
+			<useBlock name="SkillTreeData" version="2502" output="SkillTree" />
+			<!--data type="long" name="removeMe" /-->
+		</opcode>
+	</source>
+	<source name="client">
+	</source>
+</packetSchema>

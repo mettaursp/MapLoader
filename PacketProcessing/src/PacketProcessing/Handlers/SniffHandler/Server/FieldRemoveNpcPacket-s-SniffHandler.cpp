@@ -26,7 +26,7 @@ namespace Networking
 						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
 					}
 		
-					PacketStream.FoundUnknownValue = true;
+					PacketStream().FoundUnknownValue = true;
 		
 					std::cout << "removing unknown npc: " << (unsigned int)packet.ActorId << std::endl;
 				}
@@ -45,7 +45,7 @@ namespace Networking
 						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
 					}
 		
-					PacketStream.FoundUnknownValue = true;
+					PacketStream().FoundUnknownValue = true;
 		
 					std::cout << "removing npc with unknown id " << (unsigned int)entry->second.NpcId << "' as actor " << (unsigned int)packet.ActorId << std::endl;
 				}

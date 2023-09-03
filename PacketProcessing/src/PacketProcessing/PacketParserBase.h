@@ -44,5 +44,15 @@ namespace Networking
 
 		template <typename T>
 		void PacketParsed(const T& packet) {}
+
+		struct Buffer
+		{
+			PacketHandler& Handler;
+			size_t BufferSize = 0;
+			bool IsDeflated = true;
+
+			Buffer(PacketHandler& handler, size_t bufferSize, bool isDeflated);
+			~Buffer();
+		};
 	}
 }

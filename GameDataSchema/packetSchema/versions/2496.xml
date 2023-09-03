@@ -1,0 +1,101 @@
+<packetSchema version="2496">
+	<blocks>
+	</blocks>
+	<source name="server">
+		<opcode name="CharacterList" value="0xC">
+			<data type="byte" name="mode">
+				<enum name="Load" value="0" />
+				<enum name="AddItem" value="1" />
+				<enum name="DeleteItem" value="2" />
+				<enum name="Unknown3" value="3" />
+				<enum name="Unknown4" value="4" />
+				<enum name="DeletePending" value="5" />
+				<enum name="CancelDelete" value="6" />
+				<enum name="ChangeName" value="7" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListLoadPacket" schemaName="packetData" />
+				<data type="byte" name="count" />
+				<array data="count" output="Characters">
+					<useBlock name="CharacterListEntry" version="2486" />
+				</array>
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListAddPacket" schemaName="packetData" />
+				<useBlock name="CharacterListEntry" version="2486" output="Character" />
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListDeletePacket" schemaName="packetData" />
+				<data type="int" name="unknown" />
+				<data type="long" name="characterId" output="CharacterId" />
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<data type="byte" name="unknown" />
+			</condition>
+			<condition data="mode" value="5" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListDeletePendingPacket" schemaName="packetData" />
+				<data type="long" name="characterId" output="CharacterId" />
+				<data type="int" name="messageId" output="MessageId" />
+				<data type="long" name="deleteTime" output="DeleteTime" />
+			</condition>
+			<condition data="mode" value="6" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListCancelDeletePacket" schemaName="packetData" />
+				<data type="long" name="characterId" output="CharacterId" />
+				<data type="int" name="messageId" output="MessageId" />
+			</condition>
+			<condition data="mode" value="7" comparison="equal">
+				<output type="Networking.Packets.Server.CharacterListChangeNamePacket" schemaName="packetData" />
+				<data type="int" name="confirm" output="Confirm" />
+			</condition>
+		</opcode>
+		<opcode name="CharacterInfo" value="0x78">
+			<output type="Networking.Packets.Server.CharacterInfoPacket" schemaName="packetData" />
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="bool" name="found" output="Found" />
+			<condition data="found" value="1" comparison="equal">
+				<data type="long" name="notAccountId" /> <!-- time? -->
+				<data type="long" name="characterId2" />
+				<data type="long" name="currentTime" output="CurrentTime" />
+				<!--data type="bool" name="isDeflated" /-->
+				<data type="int" name="bufferSize" />
+				<buffer sizeData="bufferSize" output="Details"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterDetailsHeader" version="12" />
+					<outputMember output="Stats">
+						<useBlock name="CharacterDetailsBasicStats" version="12" />
+						<useBlock name="CharacterDetailsSpecialStats" version="12" />
+					</outputMember>
+					<useBlock name="CharacterDetailsBody" version="12" />
+					<data type="long" name="unknown" />
+				</buffer>
+				<!--data type="bool" name="isDeflated" /-->
+				<read name="bufferSize" />
+				<buffer sizeData="bufferSize" output="CharacterEquipment"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterEquipmentItems" version="2486" />
+					<useBlock name="CharacterEquipmentSkins" version="2486" />
+					<!--useBlock name="CharacterEquipmentSkins" version="2486" /
+					<data type="byte" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="long" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="long" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="byte" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>-->
+				</buffer>
+				<!--data type="bool" name="isDeflated" /-->
+				<read name="bufferSize" />
+				<buffer sizeData="bufferSize" output="CharacterEquipment"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterEquipmentBadges" version="2486" />
+				</buffer>
+			</condition>
+		</opcode>
+	</source>
+	<source name="client">
+	</source>
+</packetSchema>

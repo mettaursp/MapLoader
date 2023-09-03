@@ -67,6 +67,14 @@ namespace ParserUtils
 		std::unordered_set<unsigned short> printedAlready;
 		std::unordered_set<unsigned long long> printedPacketAlready;
 
+		struct VersionSuccesses
+		{
+			std::unordered_set<unsigned short> ClientPackets;
+			std::unordered_set<unsigned short> ServerPackets;
+		};
+
+		std::unordered_map<unsigned short, VersionSuccesses> successfulPackets;
+
 		unsigned short parseMsb(const fs::path& path)
 		{
 			Networking::Packets::SniffHandler handler;
@@ -174,21 +182,41 @@ namespace ParserUtils
 					read(file, val);
 				}
 
-				handler.PacketStream =  ParserUtils::DataStream { { reinterpret_cast<char*>(buffer.data()), buffer.size() } };
+				handler.ResetPacketStream() = ParserUtils::DataStream{{reinterpret_cast<char*>(buffer.data()), buffer.size()}};
 				handler.FoundValues = {};
-
-				ParserUtils::DataStream& stream = handler.PacketStream;
-
-				std::cout << std::dec;
 
 				unsigned long long opcodeVersion = ((((unsigned long long)opcode << 16) | (unsigned long long)build) << 32) | buffer.size();
 
-				stream.IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
-				stream.SuppressErrors = printedPacketAlready.contains(opcodeVersion);
+				{
+					ParserUtils::DataStream& stream = handler.PacketStream();
+
+					std::cout << std::dec;
+
+					stream.IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
+					stream.SuppressErrors = printedPacketAlready.contains(opcodeVersion);
+				}
 
 				Networking::Packets::ParsePacket(handler, build, !outbound, opcode);
 
+				ParserUtils::DataStream& stream = handler.PacketStream();
+
 				++readPackets;
+
+				if (outbound == false && opcode == 0x7A && build == 12)
+				{
+					opcode += 0;
+				}
+
+				if (stream.Index == stream.Data.size() && stream.Index && !stream.HasRecentlyFailed)
+				{
+					auto& versionSuccessses = successfulPackets[build];
+					auto& packetSet = !outbound ? versionSuccessses.ServerPackets : versionSuccessses.ClientPackets;
+
+					if (!packetSet.contains(opcode))
+					{
+						packetSet.insert(opcode);
+					}
+				}
 
 				if (stream.Index == 0 || (!ParserUtils::Packets::PrintErrors && !ParserUtils::Packets::PrintUnknownValues) || stream.SuppressErrors || printedAlready.contains(build))
 				{
@@ -259,11 +287,11 @@ namespace ParserUtils
 							printedPacketAlready.insert(opcodeVersion);
 						}
 
-						handler.PacketStream = ParserUtils::DataStream{ { reinterpret_cast<char*>(buffer.data()), buffer.size() } };
+						handler.ResetPacketStream() = ParserUtils::DataStream{{reinterpret_cast<char*>(buffer.data()), buffer.size()}};
 						handler.FoundValues = {};
 
-						handler.PacketStream.IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
-						handler.PacketStream.PrintOutput = true;
+						handler.PacketStream().IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
+						handler.PacketStream().PrintOutput = true;
 
 						Networking::Packets::ParsePacket(handler, build, !outbound, opcode);
 
@@ -729,6 +757,7 @@ int main(int argc, char** argv)
 	};
 
 	bool regenerate = !true;
+	bool showSuccesses = false;
 
 	if (!regenerate)
 	{
@@ -1023,7 +1052,68 @@ int main(int argc, char** argv)
 		std::cout << version << "[" << length << "]" << ", ";
 	}
 
-	std::cout << std::endl;
+	std::cout << std::endl << std::endl;
+
+	if (regenerate || !showSuccesses)
+	{
+		return 0;
+	}
+
+	std::vector<unsigned int> successVersions;
+	std::vector<const ParserUtils::Packets::VersionSuccesses*> successes;
+
+	for (const auto& successEntry : ParserUtils::Packets::successfulPackets)
+	{
+		unsigned int index = (unsigned int)successes.size();
+		successVersions.push_back(index | ((unsigned int)successEntry.first << 16));
+		successes.push_back(&successEntry.second);
+	}
+
+	std::sort(successVersions.begin(), successVersions.end());
+
+	std::cout << "successful parsed opcodes:" << std::endl;
+
+	for (unsigned int entry : successVersions)
+	{
+		unsigned short version = (unsigned short)(entry >> 16);
+		unsigned int index = entry & 0xFFFF;
+
+		std::cout << std::dec << "\t" << version << std::hex << ":\n\t\tClient: ";
+
+		std::vector<unsigned short> opcodes;
+
+		for (unsigned short opcode : successes[index]->ServerPackets)
+		{
+			opcodes.push_back(opcode | 0x8000);
+		}
+
+		for (unsigned short opcode : successes[index]->ClientPackets)
+		{
+			opcodes.push_back(opcode);
+		}
+
+		std::sort(opcodes.begin(), opcodes.end());
+
+		bool lastWasServer = false;
+
+		for (unsigned short opcode : opcodes)
+		{
+			bool isServer = (opcode & 0x8000) != 0;
+
+			opcode &= 0x7FFF;
+
+			if (lastWasServer != isServer)
+			{
+				std::cout << "\n\t\tServer: ";
+			}
+
+			lastWasServer = isServer;
+
+			std::cout << "0x" << opcode << ", ";
+		}
+
+		std::cout << std::dec << std::endl;
+	}
 
 	return 0;
 }

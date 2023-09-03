@@ -516,27 +516,31 @@
 				</array>
 			</array>
 		</block>
-		<block name="CharacterListEntry">
-			<outputParam type="Maple.Game.CharacterListEntry" schema="packetData" />
-			<useBlock name="CharacterData" version="12" output="Character" />
-			<data type="wstring" name="profileUrl" output="ProfileUrl" />
-			<data type="long" name="deleteTime" output="DeleteTime" />
+		<block name="EquipmentData">
+			<outputParam type="Maple.Game.EquipmentData" schema="packetData" />
+			<data type="int" name="itemId" output="ItemId" />
+			<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+			<data type="wstring" name="slot" output="SlotName" />
+			<data type="int" name="rarity" output="Rarity">
+				<enum name="None" value="0" />
+				<enum name="Common" value="1" />
+				<enum name="Rare" value="2" />
+				<enum name="Exceptional" value="3" />
+				<enum name="Epic" value="4" />
+				<enum name="Legendary" value="5" />
+				<enum name="Ascendant" value="6" />
+			</data>
+			<useBlock name="ItemData" version="12" output="Data" args="itemId" />
+		</block>
+		<block name="CharacterEquipmentItems">
+			<outputParam type="Maple.Game.CharacterEquipment" schema="packetData" />
 			<data type="byte" name="equipmentCount" />
 			<array data="equipmentCount" output="Equipment">
-				<data type="int" name="itemId" output="ItemId" />
-				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
-				<data type="wstring" name="slot" output="SlotName" />
-				<data type="int" name="rarity" output="Rarity">
-					<enum name="None" value="0" />
-					<enum name="Common" value="1" />
-					<enum name="Rare" value="2" />
-					<enum name="Exceptional" value="3" />
-					<enum name="Epic" value="4" />
-					<enum name="Legendary" value="5" />
-					<enum name="Ascendant" value="6" />
-				</data>
-				<useBlock name="ItemData" version="12" output="Data" args="itemId" />
+				<useBlock name="EquipmentData" version="12" />
 			</array>
+		</block>
+		<block name="CharacterEquipmentBadges">
+			<outputParam type="Maple.Game.CharacterEquipment" schema="packetData" />
 			<data type="byte" name="badgeCount" />
 			<array data="badgeCount" output="Badges">
 				<data type="byte" name="slot" output="Slot" />
@@ -553,27 +557,125 @@
 				</data>
 				<useBlock name="ItemData" version="12" output="Data" args="itemId" />
 			</array>
+		</block>
+		<block name="CharacterEquipmentSkins">
+			<outputParam type="Maple.Game.CharacterEquipment" schema="packetData" />
 			<data type="bool" name="hasSkin" output="HasSkin" />
 			<condition data="hasSkin" value="1" comparison="equal">
 				<data type="long" name="unknown" />
 				<data type="long" name="unknown" />
 				<data type="byte" name="skinCount" />
 				<array data="skinCount" output="Skins">
-					<data type="int" name="itemId" output="ItemId" />
-					<data type="long" name="itemInstanceId" output="ItemInstanceId" />
-					<data type="wstring" name="slot" output="SlotName" />
-					<data type="int" name="rarity" output="Rarity">
-						<enum name="None" value="0" />
-						<enum name="Common" value="1" />
-						<enum name="Rare" value="2" />
-						<enum name="Exceptional" value="3" />
-						<enum name="Epic" value="4" />
-						<enum name="Legendary" value="5" />
-						<enum name="Ascendant" value="6" />
-					</data>
-					<useBlock name="ItemData" version="12" output="Data" args="itemId" />
+					<useBlock name="EquipmentData" version="12" />
 				</array>
 			</condition>
+		</block>
+		<block name="CharacterListEntry">
+			<outputParam type="Maple.Game.CharacterListEntry" schema="packetData" />
+			<useBlock name="CharacterData" version="12" output="Character" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="long" name="deleteTime" output="DeleteTime" />
+			<useBlock name="CharacterEquipmentItems" version="12" output="CharacterEquipment" />
+			<useBlock name="CharacterEquipmentBadges" version="12" output="CharacterEquipment" />
+			<useBlock name="CharacterEquipmentSkins" version="12" output="CharacterEquipment" />
+		</block>
+		<block name="SkillTreePageData">
+			<outputParam type="Maple.Game.SkillTreePageData" schema="packetData" />
+			<data type="byte" name="count" />
+			<array data="count" output="Skills">
+				<data type="bool" name="notify" output="Notify" />
+				<data type="bool" name="enabled" output="Enabled" />
+				<data type="int" name="skillId" output="SkillId" />
+				<data type="int" name="skillLevel" output="SkillLevel" />
+				<data type="bool" name="unknown">
+					<enum name="Unknown" value="0" />
+				</data>
+			</array>
+		</block>
+		<block name="SkillTreeData">
+			<outputParam type="Maple.Game.SkillTreeData" schema="packetData" />
+			<data type="int" name="job" output="Job" />
+			<data type="byte" name="unknownCount">
+				<enum name="Unknown" value="1" />
+			</data>
+			<data type="int" name="jobCode" output="JobCode" />
+			<useBlock name="SkillTreePageData" version="12" output="Active" />
+			<useBlock name="SkillTreePageData" version="12" output="Passive" />
+			<useBlock name="SkillTreePageData" version="12" output="Special" />
+			<useBlock name="SkillTreePageData" version="12" output="Consumable" />
+		</block>
+		<block name="CharacterDetailsHeader">
+			<outputParam type="Networking.Packets.Server.CharacterInfoPacket.CharacterDetails" schema="packetData" />
+			<data type="long" name="accountId" output="AccountId" />
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="wstring" name="characterName" output="Name" />
+			<data type="short" name="level" output="Level" />
+			<data type="int" name="jobCode" output="JobCode" />
+			<data type="int" name="job" output="Job" />
+			<data type="int" name="gender" output="Gender">
+				<enum name="Male" value="0" />
+				<enum name="Female" value="1" />
+			</data>
+			<data type="int" name="prestigeLevel" output="PrestigeLevel" />
+			<data type="byte" name="unknown">
+				<enum name="Unknown" value="0" />
+			</data>
+		</block>
+		<block name="CharacterDetailsBody">
+			<outputParam type="Networking.Packets.Server.CharacterInfoPacket.CharacterDetails" schema="packetData" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="wstring" name="motto" output="Motto" />
+			<data type="wstring" name="guildName" output="GuildName" />
+			<data type="wstring" name="guildRank" output="GuildRank" />
+			<data type="wstring" name="houseName" output="HouseName" />
+			<data type="int" name="plotMapId" output="PlotMapId" />
+			<data type="int" name="plotNumber" output="PlotNumber" />
+			<data type="int" name="apartmentNumber" output="ApartmentNumber" />
+			<data type="int" name="characterTitle" output="CharacterTitle" />
+			<data type="int" name="unlockedTitles" />
+			<array data="unlockedTitles" output="UnlockedTitles">
+				<data type="int" name="titleId" output="TitleId" />
+			</array>
+			<data type="int" name="trophyCount" output="TrophyCount" />
+			<data type="int" name="gearScore" output="GearScore" />
+			<data type="long" name="lastLoggedIn" output="LastLoggedIn" />
+			<data type="long" name="unknown">
+				<enum name="Unknown" value="0" />
+				<enum name="Unknown" value="1" />
+				<enum name="Unknown" value="30" />
+			</data>
+			<data type="Color4I" name="skinColorPrimary" output="SkinColor.Primary" />
+			<data type="Color4I" name="skinColorSecondary" output="SkinColor.Secondary" />
+			<data type="short" name="maritalStatus" output="MaritalStatus" />
+			<data type="wstring" name="spouse1Name" output="Spouse1Name" />
+			<data type="wstring" name="spouse2Name" output="Spouse2Name" />
+			<data type="long" name="proposalTimestamp" output="ProposalTimestamp" />
+		</block>
+		<block name="CharacterDetailsBasicStats">
+			<outputParam type="Networking.Packets.Server.CharacterInfoPacket.CharacterStats" schema="packetData" />
+			<data type="byte" name="basicStatCount" doRead="false" value="35" />
+			<array data="basicStatCount" output="Basic">
+				<data type="long" name="max" output="Max" />
+			</array>
+			<array data="basicStatCount" output="Basic">
+				<data type="long" name="base" output="Base" />
+			</array>
+			<array data="basicStatCount" output="Basic">
+				<data type="long" name="current" output="Current" />
+			</array>
+			<array data="basicStatCount" output="Basic">
+				<data type="float" name="rate" output="Rate" />
+			</array>
+		</block>
+		<block name="CharacterDetailsSpecialStats">
+			<outputParam type="Networking.Packets.Server.CharacterInfoPacket.CharacterStats" schema="packetData" />
+			<data type="byte" name="specialStatCount" doRead="false" value="180" />
+			<array data="specialStatCount" output="Special">
+				<data type="float" name="rate" output="Rate" />
+			</array>
+			<array data="specialStatCount" output="Special">
+				<data type="float" name="value" output="Value" />
+			</array>
 		</block>
 	</blocks>
 	<source name="server">
@@ -998,7 +1100,7 @@
 			<data type="int" name="sourceId" output="SourceId" />
 			<condition data="instanceId" value="0" comparison="notEqual">
 				<condition data="mode" value="0" comparison="equal">
-						<useBlock name="EffectStats" version="12" output="Stats" />
+					<useBlock name="EffectStats" version="12" output="Stats" />
 					<data type="bool" name="hasShield" output="UpdateShield" />
 					<data type="long" name="shieldHealth" output="ShieldHealth" />
 				</condition>
@@ -1016,6 +1118,22 @@
 					</condition>
 				</condition>
 			</condition>
+		</opcode>
+		<opcode name="Job" value="0x4A">
+			<output type="Networking.Packets.Server.JobPacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<data type="byte" name="mode" output="Mode">
+				<enum name="Notify" value="0" />
+				<enum name="Basic" value="1" />
+				<enum name="Awakening" value="2" />
+				<enum name="Error" value="3" />
+				<enum name="Unknown" value="7" />
+				<enum name="Load" value="8" />
+				<enum name="Update" value="9" />
+				<enum name="Reset" value="10" />
+				<enum name="AutoDistribute" value="11" />
+			</data>
+			<useBlock name="SkillTreeData" version="12" output="SkillTree" />
 		</opcode>
 		<opcode name="FieldAddNpc" value="0x56">
 			<output type="Networking.Packets.Server.FieldAddNpcPacket" schemaName="packetData" />
@@ -1135,6 +1253,49 @@
 					<data type="int" name="index" output="Index" />
 					<data type="long" name="timestamp" output="Time" />
 				</array>
+			</condition>
+		</opcode>
+		<opcode name="CharacterInfo" value="0x7A">
+			<output type="Networking.Packets.Server.CharacterInfoPacket" schemaName="packetData" />
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="bool" name="found" output="Found" />
+			<condition data="found" value="1" comparison="equal">
+				<data type="long" name="notAccountId" /> <!-- time? -->
+				<data type="long" name="characterId2" />
+				<data type="long" name="currentTime" output="CurrentTime" />
+				<!--data type="bool" name="isDeflated" /-->
+				<data type="int" name="bufferSize" />
+				<buffer sizeData="bufferSize" output="Details"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterDetailsHeader" version="12" />
+					<outputMember output="Stats">
+						<useBlock name="CharacterDetailsBasicStats" version="12" />
+						<useBlock name="CharacterDetailsSpecialStats" version="12" />
+					</outputMember>
+					<useBlock name="CharacterDetailsBody" version="12" />
+				</buffer>
+				<!--data type="bool" name="isDeflated" /-->
+				<read name="bufferSize" />
+				<buffer sizeData="bufferSize" output="CharacterEquipment"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterEquipmentItems" version="12" />
+					<!--useBlock name="CharacterEquipmentSkins" version="12" /-->
+					<data type="byte" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="long" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="long" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+					<data type="byte" name="unknown">
+						<enum name="Unknown" value="0" />
+					</data>
+				</buffer>
+				<!--data type="bool" name="isDeflated" /-->
+				<read name="bufferSize" />
+				<buffer sizeData="bufferSize" output="CharacterEquipment"> <!-- deflatedData="isDeflated"-->
+					<useBlock name="CharacterEquipmentBadges" version="12" />
+				</buffer>
 			</condition>
 		</opcode>
 	</source>

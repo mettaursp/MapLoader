@@ -45,6 +45,7 @@ namespace PacketSchema
 		bool Read = true;
 		std::string Output;
 		std::string Target;
+		std::string Value;
 
 		std::vector<PacketDataBit> Flags;
 		std::unordered_map<size_t, std::string> EnumNames;
@@ -139,6 +140,8 @@ namespace PacketSchema
 		size_t BufferSizeDataIndex = (size_t)-1;
 		size_t IsDeflatedDataIndex = (size_t)-1;
 		size_t RegionEnd = 0;
+		std::string Output;
+		std::string Target;
 	};
 
 	struct PacketBlockFunction

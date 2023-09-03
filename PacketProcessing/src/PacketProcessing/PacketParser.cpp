@@ -12,7 +12,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<short>("type", handler, blockOutput.Type, "\t\t");
 			Read<int>("value", handler, blockOutput.Value, "\t\t");
@@ -23,7 +23,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<short>("type", handler, blockOutput.Type, "\t\t");
 			Read<int>("value", handler, blockOutput.Value, "\t\t");
@@ -34,14 +34,14 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			short statCount_var0 = 0;
 			Read<short>("statCount", handler, statCount_var0, "\t\t");
 
 			ResizeVector(handler, blockOutput.Basic, statCount_var0);
 
-			for (short i = 0; i < statCount_var0 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (short i = 0; i < statCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				ParseBasicStat_v12(handler, blockOutput.Basic[i]);
 			}
@@ -50,7 +50,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.Special, statCount_var0);
 
-			for (short i = 0; i < statCount_var0 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (short i = 0; i < statCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				ParseSpecialStat_v12(handler, blockOutput.Special[i]);
 			}
@@ -62,7 +62,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<long long>("characterId", handler, blockOutput.CharacterId, "\t\t");
 			Read<std::wstring>("name", handler, blockOutput.Name, "\t\t");
@@ -72,7 +72,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 
 			{
@@ -99,7 +99,7 @@ namespace Networking
 
 			short itemCategory_var5 = 0;
 
-			if (!handler.PacketStream.HasRecentlyFailed)
+			if (!handler.PacketStream().HasRecentlyFailed)
 			{
 				itemCategory_var5 = handler.GetItemCategory(itemId_param0);
 			}
@@ -154,7 +154,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("enchantLevel", handler, blockOutput.Level, "\t\t");
 			Read<int>("enchantExp", handler, blockOutput.EnchantExp, "\t\t");
@@ -179,7 +179,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			ParseItemEnchantmentHeader_v12(handler, blockOutput);
 
@@ -188,7 +188,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.Basic, basicStatCount_var0);
 
-			for (unsigned char i = 0; i < basicStatCount_var0 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (unsigned char i = 0; i < basicStatCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<int>("type", handler, blockOutput.Basic[i].Type, "\t\t\t");
 				Read<int>("value", handler, blockOutput.Basic[i].Value, "\t\t\t");
@@ -200,7 +200,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			long long unknown_var0 = 0;
 			Read<long long>("unknown", handler, unknown_var0, "\t\t");
@@ -226,7 +226,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			long long unknown_var0 = 0;
 			Read<long long>("unknown", handler, unknown_var0, "\t\t");
@@ -260,7 +260,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<std::wstring>("name", handler, blockOutput.Name, "\t\t");
 			Read<long long>("exp", handler, blockOutput.Exp, "\t\t");
@@ -275,7 +275,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("length", handler, blockOutput.Length, "\t\t");
 			Read<int>("instrument", handler, blockOutput.Instrument, "\t\t");
@@ -303,7 +303,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<bool>("transparency", handler, blockOutput.Transparency[0], "\t\t");
 
@@ -350,7 +350,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char unknown_var0 = 0;
 			Read<unsigned char>("unknown", handler, unknown_var0, "\t\t");
@@ -378,7 +378,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("transferFlags", handler, blockOutput.TransferFlags, "\t\t");
 
@@ -412,14 +412,14 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<unsigned char>("maxSlots", handler, blockOutput.MaxSlots, "\t\t");
 			Read<unsigned char>("unlockedSlots", handler, blockOutput.UnlockedSlots, "\t\t");
 
 			ResizeVector(handler, blockOutput.Sockets, blockOutput.UnlockedSlots);
 
-			for (unsigned char i = 0; i < blockOutput.UnlockedSlots && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (unsigned char i = 0; i < blockOutput.UnlockedSlots && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<bool>("hasGem", handler, blockOutput.Sockets[i].HasGem, "\t\t\t");
 
@@ -458,7 +458,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<long long>("characterId", handler, blockOutput.CharacterId, "\t\t");
 
@@ -475,7 +475,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<long long>("creationTime", handler, blockOutput.CreationTime, "\t\t");
 			Read<long long>("expirationTime", handler, blockOutput.ExpirationTime, "\t\t");
@@ -501,7 +501,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("amount", handler, blockOutput.Amount, "\t\t");
 
@@ -545,7 +545,7 @@ namespace Networking
 
 					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var6);
 
-					for (int i = 0; i < statCount_var6 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var6 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						ParseBasicStat_v12(handler, blockOutput.LimitBreak.Stats.Basic[i]);
 					}
@@ -554,7 +554,7 @@ namespace Networking
 
 					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var6);
 
-					for (int i = 0; i < statCount_var6 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var6 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						ParseSpecialStat_v12(handler, blockOutput.LimitBreak.Stats.Special[i]);
 					}
@@ -563,7 +563,7 @@ namespace Networking
 
 			unsigned char extraDataType_var7 = 0;
 
-			if (!handler.PacketStream.HasRecentlyFailed)
+			if (!handler.PacketStream().HasRecentlyFailed)
 			{
 				extraDataType_var7 = handler.GetItemExtraDataType(itemId_param0);
 			}
@@ -600,7 +600,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("startTime", handler, blockOutput.StartTime, "\t\t");
 			Read<int>("endTime", handler, blockOutput.EndTime, "\t\t");
@@ -613,7 +613,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<long long>("accountId", handler, blockOutput.AccountId, "\t\t");
 			Read<long long>("characterId", handler, blockOutput.CharacterId, "\t\t");
@@ -690,7 +690,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.Clubs, clubCount_var33);
 
-			for (unsigned char i = 0; i < clubCount_var33 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (unsigned char i = 0; i < clubCount_var33 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<bool>("hasClub", handler, blockOutput.Clubs[i].HasClub, "\t\t\t");
 
@@ -743,7 +743,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.UnknownItems, unknownCount_var54);
 
-			for (int i = 0; i < unknownCount_var54 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (int i = 0; i < unknownCount_var54 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				long long unknown_var55 = 0;
 				Read<long long>("unknown", handler, unknown_var55, "\t\t\t");
@@ -780,7 +780,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.UnknownItems2, unknownCount2_var64);
 
-			for (int i = 0; i < unknownCount2_var64 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (int i = 0; i < unknownCount2_var64 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				long long unknown_var65 = 0;
 				Read<long long>("unknown", handler, unknown_var65, "\t\t\t");
@@ -791,7 +791,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.UnknownItems3, unknownCount3_var66);
 
-			for (int i = 0; i < unknownCount3_var66 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (int i = 0; i < unknownCount3_var66 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				long long unknown_var67 = 0;
 				Read<long long>("unknown", handler, unknown_var67, "\t\t\t");
@@ -808,7 +808,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<long long>("skillSn", handler, blockOutput.SkillSn, "\t\t");
 			Read<long long>("skillAttack", handler, blockOutput.SkillAttack, "\t\t");
@@ -825,7 +825,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.DamagedTargets, count_var9);
 
-			for (unsigned char i = 0; i < count_var9 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (unsigned char i = 0; i < count_var9 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<int>("targetId", handler, blockOutput.DamagedTargets[i].TargetId, "\t\t\t");
 
@@ -834,7 +834,7 @@ namespace Networking
 
 				ResizeVector(handler, blockOutput.DamagedTargets[i].Damages, damageCount_var11);
 
-				for (unsigned char j = 0; j < damageCount_var11 && !handler.PacketStream.HasRecentlyFailed; ++j)
+				for (unsigned char j = 0; j < damageCount_var11 && !handler.PacketStream().HasRecentlyFailed; ++j)
 				{
 					Read<unsigned char>("hitType", handler, blockOutput.DamagedTargets[i].Damages[j].HitType, "\t\t\t\t");
 
@@ -849,7 +849,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("casterId", handler, blockOutput.CasterId, "\t\t");
 			Read<int>("targetId", handler, blockOutput.TargetId, "\t\t");
@@ -863,7 +863,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("casterId", handler, blockOutput.CasterId, "\t\t");
 			Read<int>("targetId", handler, blockOutput.TargetId, "\t\t");
@@ -880,7 +880,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<long long>("skillSn", handler, blockOutput.SkillSn, "\t\t");
 			Read<int>("casterId", handler, blockOutput.CasterId, "\t\t");
@@ -892,7 +892,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.DamagedTargets, count_var4);
 
-			for (unsigned char i = 0; i < count_var4 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (unsigned char i = 0; i < count_var4 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<int>("targetId", handler, blockOutput.DamagedTargets[i].TargetId, "\t\t\t");
 
@@ -903,7 +903,7 @@ namespace Networking
 
 				ResizeVector(handler, blockOutput.DamagedTargets[i].Damages, damageCount_var6);
 
-				for (unsigned char j = 0; j < damageCount_var6 && !handler.PacketStream.HasRecentlyFailed; ++j)
+				for (unsigned char j = 0; j < damageCount_var6 && !handler.PacketStream().HasRecentlyFailed; ++j)
 				{
 					Read<unsigned char>("hitType", handler, blockOutput.DamagedTargets[i].Damages[j].HitType, "\t\t\t\t");
 
@@ -918,7 +918,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<long long>("skillSn", handler, blockOutput.SkillSn, "\t\t");
 			Read<unsigned int>("skillId", handler, blockOutput.SkillId, "\t\t");
@@ -929,7 +929,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.DamagedTargets, count_var3);
 
-			for (unsigned char i = 0; i < count_var3 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (unsigned char i = 0; i < count_var3 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<int>("targetId", handler, blockOutput.DamagedTargets[i].TargetId, "\t\t\t");
 
@@ -940,7 +940,7 @@ namespace Networking
 
 				ResizeVector(handler, blockOutput.DamagedTargets[i].Damages, damageCount_var5);
 
-				for (unsigned char j = 0; j < damageCount_var5 && !handler.PacketStream.HasRecentlyFailed; ++j)
+				for (unsigned char j = 0; j < damageCount_var5 && !handler.PacketStream().HasRecentlyFailed; ++j)
 				{
 					Read<unsigned char>("hitType", handler, blockOutput.DamagedTargets[i].Damages[j].HitType, "\t\t\t\t");
 
@@ -951,39 +951,50 @@ namespace Networking
 			}
 		}
 
-		void ParseCharacterListEntry_v12(PacketHandler& handler, Maple::Game::CharacterListEntry& blockOutput)
+		void ParseEquipmentData_v12(PacketHandler& handler, Maple::Game::EquipmentData& blockOutput)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			ParseCharacterData_v12(handler, blockOutput.Character);
+			Read<int>("itemId", handler, blockOutput.ItemId, "\t\t");
+			Read<long long>("itemInstanceId", handler, blockOutput.ItemInstanceId, "\t\t");
+			Read<std::wstring>("slot", handler, blockOutput.SlotName, "\t\t");
+			Read<int>("rarity", handler, blockOutput.Rarity, "\t\t");
 
-			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
-			Read<long long>("deleteTime", handler, blockOutput.DeleteTime, "\t\t");
+			ValidateValues(stream, "rarity", "\t\t", blockOutput.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+			ParseItemData_v12(handler, blockOutput.Data, (unsigned int)blockOutput.ItemId);
+		}
 
-			unsigned char equipmentCount_var2 = 0;
-			Read<unsigned char>("equipmentCount", handler, equipmentCount_var2, "\t\t");
+		void ParseCharacterEquipmentItems_v12(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
 
-			ResizeVector(handler, blockOutput.Equipment, equipmentCount_var2);
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			for (unsigned char i = 0; i < equipmentCount_var2 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			unsigned char equipmentCount_var0 = 0;
+			Read<unsigned char>("equipmentCount", handler, equipmentCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Equipment, equipmentCount_var0);
+
+			for (unsigned char i = 0; i < equipmentCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
-				Read<int>("itemId", handler, blockOutput.Equipment[i].ItemId, "\t\t\t");
-				Read<long long>("itemInstanceId", handler, blockOutput.Equipment[i].ItemInstanceId, "\t\t\t");
-				Read<std::wstring>("slot", handler, blockOutput.Equipment[i].SlotName, "\t\t\t");
-				Read<int>("rarity", handler, blockOutput.Equipment[i].Rarity, "\t\t\t");
-
-				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Equipment[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
-				ParseItemData_v12(handler, blockOutput.Equipment[i].Data, (unsigned int)blockOutput.Equipment[i].ItemId);
+				ParseEquipmentData_v12(handler, blockOutput.Equipment[i]);
 			}
+		}
 
-			unsigned char badgeCount_var7 = 0;
-			Read<unsigned char>("badgeCount", handler, badgeCount_var7, "\t\t");
+		void ParseCharacterEquipmentBadges_v12(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
 
-			ResizeVector(handler, blockOutput.Badges, badgeCount_var7);
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			for (unsigned char i = 0; i < badgeCount_var7 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			unsigned char badgeCount_var0 = 0;
+			Read<unsigned char>("badgeCount", handler, badgeCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Badges, badgeCount_var0);
+
+			for (unsigned char i = 0; i < badgeCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<unsigned char>("slot", handler, blockOutput.Badges[i].Slot, "\t\t\t");
 				Read<int>("itemId", handler, blockOutput.Badges[i].ItemId, "\t\t\t");
@@ -993,6 +1004,13 @@ namespace Networking
 				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Badges[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 				ParseItemData_v12(handler, blockOutput.Badges[i].Data, (unsigned int)blockOutput.Badges[i].ItemId);
 			}
+		}
+
+		void ParseCharacterEquipmentSkins_v12(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<bool>("hasSkin", handler, blockOutput.HasSkin, "\t\t");
 
@@ -1000,27 +1018,221 @@ namespace Networking
 
 			if (blockOutput.HasSkin)
 			{
-				long long unknown_var13 = 0;
-				Read<long long>("unknown", handler, unknown_var13, "\t\t\t");
+				long long unknown_var1 = 0;
+				Read<long long>("unknown", handler, unknown_var1, "\t\t\t");
 
-				long long unknown_var14 = 0;
-				Read<long long>("unknown", handler, unknown_var14, "\t\t\t");
+				long long unknown_var2 = 0;
+				Read<long long>("unknown", handler, unknown_var2, "\t\t\t");
 
-				unsigned char skinCount_var15 = 0;
-				Read<unsigned char>("skinCount", handler, skinCount_var15, "\t\t\t");
+				unsigned char skinCount_var3 = 0;
+				Read<unsigned char>("skinCount", handler, skinCount_var3, "\t\t\t");
 
-				ResizeVector(handler, blockOutput.Skins, skinCount_var15);
+				ResizeVector(handler, blockOutput.Skins, skinCount_var3);
 
-				for (unsigned char i = 0; i < skinCount_var15 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < skinCount_var3 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					Read<int>("itemId", handler, blockOutput.Skins[i].ItemId, "\t\t\t\t");
-					Read<long long>("itemInstanceId", handler, blockOutput.Skins[i].ItemInstanceId, "\t\t\t\t");
-					Read<std::wstring>("slot", handler, blockOutput.Skins[i].SlotName, "\t\t\t\t");
-					Read<int>("rarity", handler, blockOutput.Skins[i].Rarity, "\t\t\t\t");
-
-					ValidateValues(stream, "rarity", "\t\t\t\t", blockOutput.Skins[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
-					ParseItemData_v12(handler, blockOutput.Skins[i].Data, (unsigned int)blockOutput.Skins[i].ItemId);
+					ParseEquipmentData_v12(handler, blockOutput.Skins[i]);
 				}
+			}
+		}
+
+		void ParseCharacterListEntry_v12(PacketHandler& handler, Maple::Game::CharacterListEntry& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			ParseCharacterData_v12(handler, blockOutput.Character);
+
+			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
+			Read<long long>("deleteTime", handler, blockOutput.DeleteTime, "\t\t");
+			ParseCharacterEquipmentItems_v12(handler, blockOutput.CharacterEquipment);
+			ParseCharacterEquipmentBadges_v12(handler, blockOutput.CharacterEquipment);
+			ParseCharacterEquipmentSkins_v12(handler, blockOutput.CharacterEquipment);
+		}
+
+		void ParseSkillTreePageData_v12(PacketHandler& handler, Maple::Game::SkillTreePageData& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char count_var0 = 0;
+			Read<unsigned char>("count", handler, count_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Skills, count_var0);
+
+			for (unsigned char i = 0; i < count_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<bool>("notify", handler, blockOutput.Skills[i].Notify, "\t\t\t");
+
+				ValidateValues(stream, "notify", "\t\t\t", blockOutput.Skills[i].Notify, (bool)0, (bool)1);
+
+				Read<bool>("enabled", handler, blockOutput.Skills[i].Enabled, "\t\t\t");
+
+				ValidateValues(stream, "enabled", "\t\t\t", blockOutput.Skills[i].Enabled, (bool)0, (bool)1);
+
+				Read<int>("skillId", handler, blockOutput.Skills[i].SkillId, "\t\t\t");
+				Read<int>("skillLevel", handler, blockOutput.Skills[i].SkillLevel, "\t\t\t");
+
+				bool unknown_var5 = false;
+				Read<bool>("unknown", handler, unknown_var5, "\t\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t\t", unknown_var5, (bool)0, (bool)1);
+			}
+		}
+
+		void ParseSkillTreeData_v12(PacketHandler& handler, Maple::Game::SkillTreeData& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<int>("job", handler, blockOutput.Job, "\t\t");
+
+			unsigned char unknownCount_var1 = 0;
+			Read<unsigned char>("unknownCount", handler, unknownCount_var1, "\t\t");
+
+			ValidateValues(stream, "unknownCount", "\t\t", unknownCount_var1, (unsigned char)1);
+
+			Read<int>("jobCode", handler, blockOutput.JobCode, "\t\t");
+			ParseSkillTreePageData_v12(handler, blockOutput.Active);
+			ParseSkillTreePageData_v12(handler, blockOutput.Passive);
+			ParseSkillTreePageData_v12(handler, blockOutput.Special);
+			ParseSkillTreePageData_v12(handler, blockOutput.Consumable);
+		}
+
+		void ParseCharacterDetailsHeader_v12(PacketHandler& handler, Server::CharacterInfoPacket::CharacterDetails& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<long long>("accountId", handler, blockOutput.AccountId, "\t\t");
+			Read<long long>("characterId", handler, blockOutput.CharacterId, "\t\t");
+			Read<std::wstring>("characterName", handler, blockOutput.Name, "\t\t");
+			Read<short>("level", handler, blockOutput.Level, "\t\t");
+			Read<int>("jobCode", handler, blockOutput.JobCode, "\t\t");
+			Read<int>("job", handler, blockOutput.Job, "\t\t");
+			Read<int>("gender", handler, blockOutput.Gender, "\t\t");
+
+			ValidateValues(stream, "gender", "\t\t", blockOutput.Gender, (int)0, (int)1);
+
+			Read<int>("prestigeLevel", handler, blockOutput.PrestigeLevel, "\t\t");
+
+			unsigned char unknown_var8 = 0;
+			Read<unsigned char>("unknown", handler, unknown_var8, "\t\t");
+
+			ValidateValues(stream, "unknown", "\t\t", unknown_var8, (unsigned char)0);
+		}
+
+		void ParseCharacterDetailsBody_v12(PacketHandler& handler, Server::CharacterInfoPacket::CharacterDetails& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
+			Read<std::wstring>("motto", handler, blockOutput.Motto, "\t\t");
+			Read<std::wstring>("guildName", handler, blockOutput.GuildName, "\t\t");
+			Read<std::wstring>("guildRank", handler, blockOutput.GuildRank, "\t\t");
+			Read<std::wstring>("houseName", handler, blockOutput.HouseName, "\t\t");
+			Read<int>("plotMapId", handler, blockOutput.PlotMapId, "\t\t");
+			Read<int>("plotNumber", handler, blockOutput.PlotNumber, "\t\t");
+			Read<int>("apartmentNumber", handler, blockOutput.ApartmentNumber, "\t\t");
+			Read<int>("characterTitle", handler, blockOutput.CharacterTitle, "\t\t");
+
+			int unlockedTitles_var9 = 0;
+			Read<int>("unlockedTitles", handler, unlockedTitles_var9, "\t\t");
+
+			ResizeVector(handler, blockOutput.UnlockedTitles, unlockedTitles_var9);
+
+			for (int i = 0; i < unlockedTitles_var9 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<int>("titleId", handler, blockOutput.UnlockedTitles[i].TitleId, "\t\t\t");
+			}
+			Read<int>("trophyCount", handler, blockOutput.TrophyCount, "\t\t");
+			Read<int>("gearScore", handler, blockOutput.GearScore, "\t\t");
+			Read<long long>("lastLoggedIn", handler, blockOutput.LastLoggedIn, "\t\t");
+
+			long long unknown_var14 = 0;
+			Read<long long>("unknown", handler, unknown_var14, "\t\t");
+
+			ValidateValues(stream, "unknown", "\t\t", unknown_var14, (long long)0, (long long)1);
+
+			Color4I_BGRA skinColorPrimary_var15;
+			Read<Color4I_BGRA>("skinColorPrimary", handler, skinColorPrimary_var15, "\t\t");
+
+			blockOutput.SkinColor.Primary = (Color4I)skinColorPrimary_var15;
+
+			Color4I_BGRA skinColorSecondary_var16;
+			Read<Color4I_BGRA>("skinColorSecondary", handler, skinColorSecondary_var16, "\t\t");
+
+			blockOutput.SkinColor.Secondary = (Color4I)skinColorSecondary_var16;
+
+			Read<short>("maritalStatus", handler, blockOutput.MaritalStatus, "\t\t");
+			Read<std::wstring>("spouse1Name", handler, blockOutput.Spouse1Name, "\t\t");
+			Read<std::wstring>("spouse2Name", handler, blockOutput.Spouse2Name, "\t\t");
+			Read<long long>("proposalTimestamp", handler, blockOutput.ProposalTimestamp, "\t\t");
+		}
+
+		void ParseCharacterDetailsBasicStats_v12(PacketHandler& handler, Server::CharacterInfoPacket::CharacterStats& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char basicStatCount_var0 = 35;
+
+			ResizeVector(handler, blockOutput.Basic, basicStatCount_var0);
+
+			for (unsigned char i = 0; i < basicStatCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<long long>("max", handler, blockOutput.Basic[i].Max, "\t\t\t");
+			}
+
+			ResizeVector(handler, blockOutput.Basic, basicStatCount_var0);
+
+			for (unsigned char i = 0; i < basicStatCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<long long>("base", handler, blockOutput.Basic[i].Base, "\t\t\t");
+			}
+
+			ResizeVector(handler, blockOutput.Basic, basicStatCount_var0);
+
+			for (unsigned char i = 0; i < basicStatCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<long long>("current", handler, blockOutput.Basic[i].Current, "\t\t\t");
+			}
+
+			ResizeVector(handler, blockOutput.Basic, basicStatCount_var0);
+
+			for (unsigned char i = 0; i < basicStatCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<float>("rate", handler, blockOutput.Basic[i].Rate, "\t\t\t");
+			}
+		}
+
+		void ParseCharacterDetailsSpecialStats_v12(PacketHandler& handler, Server::CharacterInfoPacket::CharacterStats& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char specialStatCount_var0 = 180;
+
+			ResizeVector(handler, blockOutput.Special, specialStatCount_var0);
+
+			for (unsigned char i = 0; i < specialStatCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<float>("rate", handler, blockOutput.Special[i].Rate, "\t\t\t");
+			}
+
+			ResizeVector(handler, blockOutput.Special, specialStatCount_var0);
+
+			for (unsigned char i = 0; i < specialStatCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<float>("value", handler, blockOutput.Special[i].Value, "\t\t\t");
 			}
 		}
 
@@ -1028,7 +1240,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char unknown_var0 = 0;
 			Read<unsigned char>("unknown", handler, unknown_var0, "\t\t");
@@ -1056,7 +1268,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("amount", handler, blockOutput.Amount, "\t\t");
 
@@ -1090,7 +1302,7 @@ namespace Networking
 
 					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var4);
 
-					for (int i = 0; i < statCount_var4 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var4 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						ParseBasicStat_v12(handler, blockOutput.LimitBreak.Stats.Basic[i]);
 					}
@@ -1099,7 +1311,7 @@ namespace Networking
 
 					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var4);
 
-					for (int i = 0; i < statCount_var4 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var4 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						ParseSpecialStat_v12(handler, blockOutput.LimitBreak.Stats.Special[i]);
 					}
@@ -1108,7 +1320,7 @@ namespace Networking
 
 			unsigned char extraDataType_var5 = 0;
 
-			if (!handler.PacketStream.HasRecentlyFailed)
+			if (!handler.PacketStream().HasRecentlyFailed)
 			{
 				extraDataType_var5 = handler.GetItemExtraDataType(itemId_param0);
 			}
@@ -1141,39 +1353,50 @@ namespace Networking
 			ParseItemBinding_v12(handler, blockOutput.Binding);
 		}
 
-		void ParseCharacterListEntry_v2486(PacketHandler& handler, Maple::Game::CharacterListEntry& blockOutput)
+		void ParseEquipmentData_v2486(PacketHandler& handler, Maple::Game::EquipmentData& blockOutput)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			ParseCharacterData_v12(handler, blockOutput.Character);
+			Read<int>("itemId", handler, blockOutput.ItemId, "\t\t");
+			Read<long long>("itemInstanceId", handler, blockOutput.ItemInstanceId, "\t\t");
+			Read<unsigned char>("slot", handler, blockOutput.Slot, "\t\t");
+			Read<int>("rarity", handler, blockOutput.Rarity, "\t\t");
 
-			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
-			Read<long long>("deleteTime", handler, blockOutput.DeleteTime, "\t\t");
+			ValidateValues(stream, "rarity", "\t\t", blockOutput.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+			ParseItemData_v2486(handler, blockOutput.Data, (unsigned int)blockOutput.ItemId);
+		}
 
-			unsigned char equipmentCount_var2 = 0;
-			Read<unsigned char>("equipmentCount", handler, equipmentCount_var2, "\t\t");
+		void ParseCharacterEquipmentItems_v2486(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
 
-			ResizeVector(handler, blockOutput.Equipment, equipmentCount_var2);
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			for (unsigned char i = 0; i < equipmentCount_var2 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			unsigned char equipmentCount_var0 = 0;
+			Read<unsigned char>("equipmentCount", handler, equipmentCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Equipment, equipmentCount_var0);
+
+			for (unsigned char i = 0; i < equipmentCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
-				Read<int>("itemId", handler, blockOutput.Equipment[i].ItemId, "\t\t\t");
-				Read<long long>("itemInstanceId", handler, blockOutput.Equipment[i].ItemInstanceId, "\t\t\t");
-				Read<std::wstring>("slot", handler, blockOutput.Equipment[i].SlotName, "\t\t\t");
-				Read<int>("rarity", handler, blockOutput.Equipment[i].Rarity, "\t\t\t");
-
-				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Equipment[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
-				ParseItemData_v2486(handler, blockOutput.Equipment[i].Data, (unsigned int)blockOutput.Equipment[i].ItemId);
+				ParseEquipmentData_v2486(handler, blockOutput.Equipment[i]);
 			}
+		}
 
-			unsigned char badgeCount_var7 = 0;
-			Read<unsigned char>("badgeCount", handler, badgeCount_var7, "\t\t");
+		void ParseCharacterEquipmentBadges_v2486(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
 
-			ResizeVector(handler, blockOutput.Badges, badgeCount_var7);
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			for (unsigned char i = 0; i < badgeCount_var7 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			unsigned char badgeCount_var0 = 0;
+			Read<unsigned char>("badgeCount", handler, badgeCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Badges, badgeCount_var0);
+
+			for (unsigned char i = 0; i < badgeCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<unsigned char>("slot", handler, blockOutput.Badges[i].Slot, "\t\t\t");
 				Read<int>("itemId", handler, blockOutput.Badges[i].ItemId, "\t\t\t");
@@ -1183,6 +1406,13 @@ namespace Networking
 				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Badges[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 				ParseItemData_v2486(handler, blockOutput.Badges[i].Data, (unsigned int)blockOutput.Badges[i].ItemId);
 			}
+		}
+
+		void ParseCharacterEquipmentSkins_v2486(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<bool>("hasSkin", handler, blockOutput.HasSkin, "\t\t");
 
@@ -1190,35 +1420,44 @@ namespace Networking
 
 			if (blockOutput.HasSkin)
 			{
-				long long unknown_var13 = 0;
-				Read<long long>("unknown", handler, unknown_var13, "\t\t\t");
+				long long unknown_var1 = 0;
+				Read<long long>("unknown", handler, unknown_var1, "\t\t\t");
 
-				long long unknown_var14 = 0;
-				Read<long long>("unknown", handler, unknown_var14, "\t\t\t");
+				long long unknown_var2 = 0;
+				Read<long long>("unknown", handler, unknown_var2, "\t\t\t");
 
-				unsigned char skinCount_var15 = 0;
-				Read<unsigned char>("skinCount", handler, skinCount_var15, "\t\t\t");
+				unsigned char skinCount_var3 = 0;
+				Read<unsigned char>("skinCount", handler, skinCount_var3, "\t\t\t");
 
-				ResizeVector(handler, blockOutput.Skins, skinCount_var15);
+				ResizeVector(handler, blockOutput.Skins, skinCount_var3);
 
-				for (unsigned char i = 0; i < skinCount_var15 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < skinCount_var3 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					Read<int>("itemId", handler, blockOutput.Skins[i].ItemId, "\t\t\t\t");
-					Read<long long>("itemInstanceId", handler, blockOutput.Skins[i].ItemInstanceId, "\t\t\t\t");
-					Read<std::wstring>("slot", handler, blockOutput.Skins[i].SlotName, "\t\t\t\t");
-					Read<int>("rarity", handler, blockOutput.Skins[i].Rarity, "\t\t\t\t");
-
-					ValidateValues(stream, "rarity", "\t\t\t\t", blockOutput.Skins[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
-					ParseItemData_v2486(handler, blockOutput.Skins[i].Data, (unsigned int)blockOutput.Skins[i].ItemId);
+					ParseEquipmentData_v2486(handler, blockOutput.Skins[i]);
 				}
 			}
+		}
+
+		void ParseCharacterListEntry_v2486(PacketHandler& handler, Maple::Game::CharacterListEntry& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			ParseCharacterData_v12(handler, blockOutput.Character);
+
+			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
+			Read<long long>("deleteTime", handler, blockOutput.DeleteTime, "\t\t");
+			ParseCharacterEquipmentItems_v2486(handler, blockOutput.CharacterEquipment);
+			ParseCharacterEquipmentBadges_v2486(handler, blockOutput.CharacterEquipment);
+			ParseCharacterEquipmentSkins_v2486(handler, blockOutput.CharacterEquipment);
 		}
 
 		void ParseBasicStat_v2497(PacketHandler& handler, Maple::Game::BasicStat& blockOutput)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<short>("type", handler, blockOutput.Type, "\t\t");
 			Read<int>("value", handler, blockOutput.Value, "\t\t");
@@ -1228,16 +1467,16 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<short>("type", handler, blockOutput.Type, "\t\t");
-			Read<int>("rate", handler, blockOutput.Rate, "\t\t");
+			Read<int>("value", handler, blockOutput.Value, "\t\t");
 
 			bool dummy_var2 = false;
 
-			if (!handler.PacketStream.HasRecentlyFailed)
+			if (!handler.PacketStream().HasRecentlyFailed)
 			{
-				dummy_var2 = handler.StatIntToFloat(blockOutput.Rate);
+				dummy_var2 = handler.StatIntToFloat(blockOutput.Value);
 			}
 
 			ValidateValues(stream, "dummy", "\t\t", dummy_var2, (bool)0, (bool)1);
@@ -1247,14 +1486,14 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			short statCount_var0 = 0;
 			Read<short>("statCount", handler, statCount_var0, "\t\t");
 
 			ResizeVector(handler, blockOutput.Basic, statCount_var0);
 
-			for (short i = 0; i < statCount_var0 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (short i = 0; i < statCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				ParseBasicStat_v2497(handler, blockOutput.Basic[i]);
 			}
@@ -1263,7 +1502,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.Special, statCount_var0);
 
-			for (short i = 0; i < statCount_var0 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (short i = 0; i < statCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				ParseSpecialStat_v2497(handler, blockOutput.Special[i]);
 			}
@@ -1275,7 +1514,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<int>("amount", handler, blockOutput.Amount, "\t\t");
 
@@ -1303,7 +1542,7 @@ namespace Networking
 
 				ResizeVector(handler, blockOutput.Enchantment.Basic, basicStatCount_var3);
 
-				for (unsigned char i = 0; i < basicStatCount_var3 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < basicStatCount_var3 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					Read<int>("type", handler, blockOutput.Enchantment.Basic[i].Type, "\t\t\t\t");
 					Read<int>("value", handler, blockOutput.Enchantment.Basic[i].Value, "\t\t\t\t");
@@ -1320,7 +1559,7 @@ namespace Networking
 
 					ResizeVector(handler, blockOutput.LimitBreak.Stats.Basic, statCount_var7);
 
-					for (int i = 0; i < statCount_var7 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var7 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						ParseBasicStat_v2497(handler, blockOutput.LimitBreak.Stats.Basic[i]);
 					}
@@ -1329,7 +1568,7 @@ namespace Networking
 
 					ResizeVector(handler, blockOutput.LimitBreak.Stats.Special, statCount_var7);
 
-					for (int i = 0; i < statCount_var7 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (int i = 0; i < statCount_var7 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						ParseSpecialStat_v2497(handler, blockOutput.LimitBreak.Stats.Special[i]);
 					}
@@ -1338,7 +1577,7 @@ namespace Networking
 
 			unsigned char extraDataType_var8 = 0;
 
-			if (!handler.PacketStream.HasRecentlyFailed)
+			if (!handler.PacketStream().HasRecentlyFailed)
 			{
 				extraDataType_var8 = handler.GetItemExtraDataType(itemId_param0);
 			}
@@ -1371,39 +1610,50 @@ namespace Networking
 			ParseItemBinding_v12(handler, blockOutput.Binding);
 		}
 
-		void ParseCharacterListEntry_v2497(PacketHandler& handler, Maple::Game::CharacterListEntry& blockOutput)
+		void ParseEquipmentData_v2497(PacketHandler& handler, Maple::Game::EquipmentData& blockOutput)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			ParseCharacterData_v12(handler, blockOutput.Character);
+			Read<int>("itemId", handler, blockOutput.ItemId, "\t\t");
+			Read<long long>("itemInstanceId", handler, blockOutput.ItemInstanceId, "\t\t");
+			Read<unsigned char>("slot", handler, blockOutput.Slot, "\t\t");
+			Read<int>("rarity", handler, blockOutput.Rarity, "\t\t");
 
-			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
-			Read<long long>("deleteTime", handler, blockOutput.DeleteTime, "\t\t");
+			ValidateValues(stream, "rarity", "\t\t", blockOutput.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+			ParseItemData_v2497(handler, blockOutput.Data, (unsigned int)blockOutput.ItemId);
+		}
 
-			unsigned char equipmentCount_var2 = 0;
-			Read<unsigned char>("equipmentCount", handler, equipmentCount_var2, "\t\t");
+		void ParseCharacterEquipmentItems_v2497(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
 
-			ResizeVector(handler, blockOutput.Equipment, equipmentCount_var2);
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			for (unsigned char i = 0; i < equipmentCount_var2 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			unsigned char equipmentCount_var0 = 0;
+			Read<unsigned char>("equipmentCount", handler, equipmentCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Equipment, equipmentCount_var0);
+
+			for (unsigned char i = 0; i < equipmentCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
-				Read<int>("itemId", handler, blockOutput.Equipment[i].ItemId, "\t\t\t");
-				Read<long long>("itemInstanceId", handler, blockOutput.Equipment[i].ItemInstanceId, "\t\t\t");
-				Read<std::wstring>("slot", handler, blockOutput.Equipment[i].SlotName, "\t\t\t");
-				Read<int>("rarity", handler, blockOutput.Equipment[i].Rarity, "\t\t\t");
-
-				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Equipment[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
-				ParseItemData_v2497(handler, blockOutput.Equipment[i].Data, (unsigned int)blockOutput.Equipment[i].ItemId);
+				ParseEquipmentData_v2497(handler, blockOutput.Equipment[i]);
 			}
+		}
 
-			unsigned char badgeCount_var7 = 0;
-			Read<unsigned char>("badgeCount", handler, badgeCount_var7, "\t\t");
+		void ParseCharacterEquipmentBadges_v2497(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
 
-			ResizeVector(handler, blockOutput.Badges, badgeCount_var7);
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			for (unsigned char i = 0; i < badgeCount_var7 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			unsigned char badgeCount_var0 = 0;
+			Read<unsigned char>("badgeCount", handler, badgeCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Badges, badgeCount_var0);
+
+			for (unsigned char i = 0; i < badgeCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<unsigned char>("slot", handler, blockOutput.Badges[i].Slot, "\t\t\t");
 				Read<int>("itemId", handler, blockOutput.Badges[i].ItemId, "\t\t\t");
@@ -1413,6 +1663,13 @@ namespace Networking
 				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Badges[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 				ParseItemData_v2497(handler, blockOutput.Badges[i].Data, (unsigned int)blockOutput.Badges[i].ItemId);
 			}
+		}
+
+		void ParseCharacterEquipmentSkins_v2497(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<bool>("hasSkin", handler, blockOutput.HasSkin, "\t\t");
 
@@ -1420,35 +1677,88 @@ namespace Networking
 
 			if (blockOutput.HasSkin)
 			{
-				long long unknown_var13 = 0;
-				Read<long long>("unknown", handler, unknown_var13, "\t\t\t");
+				long long unknown_var1 = 0;
+				Read<long long>("unknown", handler, unknown_var1, "\t\t\t");
 
-				long long unknown_var14 = 0;
-				Read<long long>("unknown", handler, unknown_var14, "\t\t\t");
+				long long unknown_var2 = 0;
+				Read<long long>("unknown", handler, unknown_var2, "\t\t\t");
 
-				unsigned char skinCount_var15 = 0;
-				Read<unsigned char>("skinCount", handler, skinCount_var15, "\t\t\t");
+				unsigned char skinCount_var3 = 0;
+				Read<unsigned char>("skinCount", handler, skinCount_var3, "\t\t\t");
 
-				ResizeVector(handler, blockOutput.Skins, skinCount_var15);
+				ResizeVector(handler, blockOutput.Skins, skinCount_var3);
 
-				for (unsigned char i = 0; i < skinCount_var15 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < skinCount_var3 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					Read<int>("itemId", handler, blockOutput.Skins[i].ItemId, "\t\t\t\t");
-					Read<long long>("itemInstanceId", handler, blockOutput.Skins[i].ItemInstanceId, "\t\t\t\t");
-					Read<std::wstring>("slot", handler, blockOutput.Skins[i].SlotName, "\t\t\t\t");
-					Read<int>("rarity", handler, blockOutput.Skins[i].Rarity, "\t\t\t\t");
-
-					ValidateValues(stream, "rarity", "\t\t\t\t", blockOutput.Skins[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
-					ParseItemData_v2497(handler, blockOutput.Skins[i].Data, (unsigned int)blockOutput.Skins[i].ItemId);
+					ParseEquipmentData_v2497(handler, blockOutput.Skins[i]);
 				}
 			}
+		}
+
+		void ParseCharacterListEntry_v2497(PacketHandler& handler, Maple::Game::CharacterListEntry& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			ParseCharacterData_v12(handler, blockOutput.Character);
+
+			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
+			Read<long long>("deleteTime", handler, blockOutput.DeleteTime, "\t\t");
+			ParseCharacterEquipmentItems_v2497(handler, blockOutput.CharacterEquipment);
+			ParseCharacterEquipmentBadges_v2497(handler, blockOutput.CharacterEquipment);
+			ParseCharacterEquipmentSkins_v2497(handler, blockOutput.CharacterEquipment);
+		}
+
+		void ParseCharacterDetailsSpecialStats_v2497(PacketHandler& handler, Server::CharacterInfoPacket::CharacterStats& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			int specialStatCount_var0 = 0;
+			Read<int>("specialStatCount", handler, specialStatCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Special, specialStatCount_var0);
+
+			for (int i = 0; i < specialStatCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<short>("type", handler, blockOutput.Special[i].Type, "\t\t\t");
+				Read<int>("value", handler, blockOutput.Special[i].Value, "\t\t\t");
+
+				bool dummy_var3 = false;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					dummy_var3 = handler.StatIntToFloat(blockOutput.Special[i].Value);
+				}
+
+				ValidateValues(stream, "dummy", "\t\t\t", dummy_var3, (bool)0, (bool)1);
+			}
+		}
+
+		void ParseSkillTreeData_v2502(PacketHandler& handler, Maple::Game::SkillTreeData& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<int>("job", handler, blockOutput.Job, "\t\t");
+
+			unsigned char unknownCount_var1 = 0;
+			Read<unsigned char>("unknownCount", handler, unknownCount_var1, "\t\t");
+
+			ValidateValues(stream, "unknownCount", "\t\t", unknownCount_var1, (unsigned char)1);
+
+			Read<int>("jobCode", handler, blockOutput.JobCode, "\t\t");
+			ParseSkillTreePageData_v12(handler, blockOutput.Active);
 		}
 
 		void ParseCharacterData_v2509(PacketHandler& handler, Maple::Game::CharacterData& blockOutput)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<long long>("accountId", handler, blockOutput.AccountId, "\t\t");
 			Read<long long>("characterId", handler, blockOutput.CharacterId, "\t\t");
@@ -1525,7 +1835,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.Clubs, clubCount_var33);
 
-			for (unsigned char i = 0; i < clubCount_var33 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (unsigned char i = 0; i < clubCount_var33 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<bool>("hasClub", handler, blockOutput.Clubs[i].HasClub, "\t\t\t");
 
@@ -1568,7 +1878,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.UnknownItems, unknownCount_var52);
 
-			for (int i = 0; i < unknownCount_var52 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (int i = 0; i < unknownCount_var52 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				long long unknown_var53 = 0;
 				Read<long long>("unknown", handler, unknown_var53, "\t\t\t");
@@ -1605,7 +1915,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.UnknownItems2, unknownCount2_var62);
 
-			for (int i = 0; i < unknownCount2_var62 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (int i = 0; i < unknownCount2_var62 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				long long unknown_var63 = 0;
 				Read<long long>("unknown", handler, unknown_var63, "\t\t\t");
@@ -1616,7 +1926,7 @@ namespace Networking
 
 			ResizeVector(handler, blockOutput.UnknownItems3, unknownCount3_var64);
 
-			for (int i = 0; i < unknownCount3_var64 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (int i = 0; i < unknownCount3_var64 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				long long unknown_var65 = 0;
 				Read<long long>("unknown", handler, unknown_var65, "\t\t\t");
@@ -1629,39 +1939,50 @@ namespace Networking
 			Read<long long>("unknown", handler, unknown_var67, "\t\t");
 		}
 
-		void ParseCharacterListEntry_v2509(PacketHandler& handler, Maple::Game::CharacterListEntry& blockOutput)
+		void ParseEquipmentData_v2509(PacketHandler& handler, Maple::Game::EquipmentData& blockOutput)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			ParseCharacterData_v2509(handler, blockOutput.Character);
+			Read<int>("itemId", handler, blockOutput.ItemId, "\t\t");
+			Read<long long>("itemInstanceId", handler, blockOutput.ItemInstanceId, "\t\t");
+			Read<unsigned char>("slot", handler, blockOutput.Slot, "\t\t");
+			Read<int>("rarity", handler, blockOutput.Rarity, "\t\t");
 
-			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
-			Read<long long>("deleteTime", handler, blockOutput.DeleteTime, "\t\t");
+			ValidateValues(stream, "rarity", "\t\t", blockOutput.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+			ParseItemData_v2497(handler, blockOutput.Data, (unsigned int)blockOutput.ItemId);
+		}
 
-			unsigned char equipmentCount_var2 = 0;
-			Read<unsigned char>("equipmentCount", handler, equipmentCount_var2, "\t\t");
+		void ParseCharacterEquipmentItems_v2509(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
 
-			ResizeVector(handler, blockOutput.Equipment, equipmentCount_var2);
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			for (unsigned char i = 0; i < equipmentCount_var2 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			unsigned char equipmentCount_var0 = 0;
+			Read<unsigned char>("equipmentCount", handler, equipmentCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Equipment, equipmentCount_var0);
+
+			for (unsigned char i = 0; i < equipmentCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
-				Read<int>("itemId", handler, blockOutput.Equipment[i].ItemId, "\t\t\t");
-				Read<long long>("itemInstanceId", handler, blockOutput.Equipment[i].ItemInstanceId, "\t\t\t");
-				Read<unsigned char>("slot", handler, blockOutput.Equipment[i].Slot, "\t\t\t");
-				Read<int>("rarity", handler, blockOutput.Equipment[i].Rarity, "\t\t\t");
-
-				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Equipment[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
-				ParseItemData_v2497(handler, blockOutput.Equipment[i].Data, (unsigned int)blockOutput.Equipment[i].ItemId);
+				ParseEquipmentData_v2509(handler, blockOutput.Equipment[i]);
 			}
+		}
 
-			unsigned char badgeCount_var7 = 0;
-			Read<unsigned char>("badgeCount", handler, badgeCount_var7, "\t\t");
+		void ParseCharacterEquipmentBadges_v2509(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
 
-			ResizeVector(handler, blockOutput.Badges, badgeCount_var7);
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
-			for (unsigned char i = 0; i < badgeCount_var7 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			unsigned char badgeCount_var0 = 0;
+			Read<unsigned char>("badgeCount", handler, badgeCount_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Badges, badgeCount_var0);
+
+			for (unsigned char i = 0; i < badgeCount_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<unsigned char>("slot", handler, blockOutput.Badges[i].Slot, "\t\t\t");
 				Read<int>("itemId", handler, blockOutput.Badges[i].ItemId, "\t\t\t");
@@ -1671,6 +1992,13 @@ namespace Networking
 				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Badges[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 				ParseItemData_v2497(handler, blockOutput.Badges[i].Data, (unsigned int)blockOutput.Badges[i].ItemId);
 			}
+		}
+
+		void ParseCharacterEquipmentSkins_v2509(PacketHandler& handler, Maple::Game::CharacterEquipment& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Read<bool>("hasSkin", handler, blockOutput.HasSkin, "\t\t");
 
@@ -1678,28 +2006,77 @@ namespace Networking
 
 			if (blockOutput.HasSkin)
 			{
-				long long unknown_var13 = 0;
-				Read<long long>("unknown", handler, unknown_var13, "\t\t\t");
+				long long unknown_var1 = 0;
+				Read<long long>("unknown", handler, unknown_var1, "\t\t\t");
 
-				long long unknown_var14 = 0;
-				Read<long long>("unknown", handler, unknown_var14, "\t\t\t");
+				long long unknown_var2 = 0;
+				Read<long long>("unknown", handler, unknown_var2, "\t\t\t");
 
-				unsigned char skinCount_var15 = 0;
-				Read<unsigned char>("skinCount", handler, skinCount_var15, "\t\t\t");
+				unsigned char skinCount_var3 = 0;
+				Read<unsigned char>("skinCount", handler, skinCount_var3, "\t\t\t");
 
-				ResizeVector(handler, blockOutput.Skins, skinCount_var15);
+				ResizeVector(handler, blockOutput.Skins, skinCount_var3);
 
-				for (unsigned char i = 0; i < skinCount_var15 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < skinCount_var3 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					Read<int>("itemId", handler, blockOutput.Skins[i].ItemId, "\t\t\t\t");
-					Read<long long>("itemInstanceId", handler, blockOutput.Skins[i].ItemInstanceId, "\t\t\t\t");
-					Read<unsigned char>("slot", handler, blockOutput.Skins[i].Slot, "\t\t\t\t");
-					Read<int>("rarity", handler, blockOutput.Skins[i].Rarity, "\t\t\t\t");
-
-					ValidateValues(stream, "rarity", "\t\t\t\t", blockOutput.Skins[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
-					ParseItemData_v2497(handler, blockOutput.Skins[i].Data, (unsigned int)blockOutput.Skins[i].ItemId);
+					ParseEquipmentData_v2509(handler, blockOutput.Skins[i]);
 				}
 			}
+		}
+
+		void ParseCharacterListEntry_v2509(PacketHandler& handler, Maple::Game::CharacterListEntry& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			ParseCharacterData_v2509(handler, blockOutput.Character);
+
+			Read<std::wstring>("profileUrl", handler, blockOutput.ProfileUrl, "\t\t");
+			Read<long long>("deleteTime", handler, blockOutput.DeleteTime, "\t\t");
+			ParseCharacterEquipmentItems_v2509(handler, blockOutput.CharacterEquipment);
+			ParseCharacterEquipmentBadges_v2509(handler, blockOutput.CharacterEquipment);
+			ParseCharacterEquipmentSkins_v2509(handler, blockOutput.CharacterEquipment);
+		}
+
+		void ParseSkillTreePageData_v2512(PacketHandler& handler, Maple::Game::SkillTreePageData& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char count_var0 = 0;
+			Read<unsigned char>("count", handler, count_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Skills, count_var0);
+
+			for (unsigned char i = 0; i < count_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<int>("skillId", handler, blockOutput.Skills[i].SkillId, "\t\t\t");
+				Read<int>("skillLevel", handler, blockOutput.Skills[i].SkillLevel, "\t\t\t");
+				Read<bool>("notify", handler, blockOutput.Skills[i].Notify, "\t\t\t");
+
+				ValidateValues(stream, "notify", "\t\t\t", blockOutput.Skills[i].Notify, (bool)0, (bool)1);
+
+				Read<bool>("enabled", handler, blockOutput.Skills[i].Enabled, "\t\t\t");
+
+				ValidateValues(stream, "enabled", "\t\t\t", blockOutput.Skills[i].Enabled, (bool)0, (bool)1);
+
+				Read<bool>("coreSkill", handler, blockOutput.Skills[i].CoreSkill, "\t\t\t");
+
+				ValidateValues(stream, "coreSkill", "\t\t\t", blockOutput.Skills[i].CoreSkill, (bool)0, (bool)1);
+			}
+		}
+
+		void ParseSkillTreeData_v2512(PacketHandler& handler, Maple::Game::SkillTreeData& blockOutput)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<int>("job", handler, blockOutput.Job, "\t\t");
+			Read<int>("jobCode", handler, blockOutput.JobCode, "\t\t");
+			ParseSkillTreePageData_v2512(handler, blockOutput.Active);
 		}
 
 		template <>
@@ -1707,7 +2084,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -1745,7 +2122,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Client::ResponseVersionPacket output0;
 
@@ -1770,7 +2147,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Client::ResponseHeartbeatPacket output0;
 
@@ -1790,7 +2167,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Client::HandshakePacket output0;
 
@@ -1801,7 +2178,7 @@ namespace Networking
 
 			ResizeVector(handler, output0.Data, count_var1);
 
-			for (int i = 0; i < count_var1 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (int i = 0; i < count_var1 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<std::wstring>("unknown", handler, output0.Data[i].String, "\t\t");
 
@@ -1822,7 +2199,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -1896,7 +2273,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Client::ResponseKeyPacket output0;
 
@@ -1923,7 +2300,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Client::RequestQuitPacket output0;
 
@@ -1944,7 +2321,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -2030,7 +2407,7 @@ namespace Networking
 
 					ResizeVector(handler, output1.Projectiles, count_var21);
 
-					for (unsigned char i = 0; i < count_var21 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (unsigned char i = 0; i < count_var21 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						auto& projectile_array0 = output1.Projectiles[i];
 
@@ -2045,7 +2422,7 @@ namespace Networking
 
 						size_t j = 0;
 
-						while (moreTargets_var26 && !handler.PacketStream.HasRecentlyFailed)
+						while (moreTargets_var26 && !handler.PacketStream().HasRecentlyFailed)
 						{
 							projectile_array0.ChainTargets.push_back({});
 
@@ -2095,7 +2472,7 @@ namespace Networking
 
 					ResizeVector(handler, output2.Hits, count_var37);
 
-					for (unsigned char i = 0; i < count_var37 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (unsigned char i = 0; i < count_var37 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						auto& hitActor_array2 = output2.Hits[i];
 
@@ -2212,7 +2589,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -2370,7 +2747,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Client::SystemInfoPacket output0;
 
@@ -2389,7 +2766,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::Reconnect7Packet output0;
 
@@ -2409,7 +2786,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -2448,7 +2825,7 @@ namespace Networking
 
 					ResizeVector(handler, output0.Hits, count_var12);
 
-					for (unsigned char i = 0; i < count_var12 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (unsigned char i = 0; i < count_var12 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						long long unknown_var13 = 0;
 						Read<long long>("unknown", handler, unknown_var13, "\t\t\t\t");
@@ -2541,7 +2918,7 @@ namespace Networking
 				int count_var19 = 0;
 				Read<int>("count", handler, count_var19, "\t\t");
 
-				for (int i = 0; i < count_var19 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (int i = 0; i < count_var19 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					int unknown_var20 = 0;
 					Read<int>("unknown", handler, unknown_var20, "\t\t\t");
@@ -2580,7 +2957,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::FieldAddNpcPacket output0;
 
@@ -2591,7 +2968,7 @@ namespace Networking
 
 			bool isBoss_var4 = false;
 
-			if (!handler.PacketStream.HasRecentlyFailed)
+			if (!handler.PacketStream().HasRecentlyFailed)
 			{
 				isBoss_var4 = handler.IsNpcBoss(output0.NpcId);
 			}
@@ -2626,7 +3003,7 @@ namespace Networking
 
 			ResizeVector(handler, output0.AdditionalEffects, effectCount_var14);
 
-			for (unsigned short i = 0; i < effectCount_var14 && !handler.PacketStream.HasRecentlyFailed; ++i)
+			for (unsigned short i = 0; i < effectCount_var14 && !handler.PacketStream().HasRecentlyFailed; ++i)
 			{
 				Read<int>("ownerId", handler, output0.AdditionalEffects[i].OwnerId, "\t\t");
 				Read<int>("effectInstanceId", handler, output0.AdditionalEffects[i].InstanceId, "\t\t");
@@ -2662,7 +3039,7 @@ namespace Networking
 
 				ResizeVector(handler, output0.Skills, skillCount_var26);
 
-				for (int i = 0; i < skillCount_var26 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (int i = 0; i < skillCount_var26 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					Read<int>("skillId", handler, output0.Skills[i].SkillId, "\t\t\t");
 					Read<short>("skillLevel", handler, output0.Skills[i].SkillLevel, "\t\t\t");
@@ -2674,7 +3051,7 @@ namespace Networking
 
 			bool hasHiddenHp_var30 = false;
 
-			if (!handler.PacketStream.HasRecentlyFailed)
+			if (!handler.PacketStream().HasRecentlyFailed)
 			{
 				hasHiddenHp_var30 = handler.NpcHasHiddenHp(output0.NpcId);
 			}
@@ -2704,7 +3081,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char message_var0 = 0;
 			Read<unsigned char>("message", handler, message_var0, "\t");
@@ -2748,7 +3125,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::FieldRemoveItemPacket output0;
 
@@ -2767,7 +3144,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -2783,7 +3160,7 @@ namespace Networking
 
 				ResizeVector(handler, output0.Characters, count_var1);
 
-				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					ParseCharacterListEntry_v12(handler, output0.Characters[i]);
 				}
@@ -2885,7 +3262,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::FieldRemovePlayerPacket output0;
 
@@ -2904,7 +3281,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::UserChatPacket output0;
 
@@ -2955,7 +3332,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::FieldAddItemPacket output0;
 
@@ -3015,7 +3392,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::BuffPacket output0;
 
@@ -3073,11 +3450,34 @@ namespace Networking
 		}
 
 		template <>
+		void ParsePacket<12, ServerPacket, 0x4a>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Server::JobPacket output0;
+
+			Read<int>("actorId", handler, output0.ActorId, "\t");
+			Read<unsigned char>("mode", handler, output0.Mode, "\t");
+
+			ValidateValues(stream, "mode", "\t", output0.Mode, (unsigned char)8, (unsigned char)0, (unsigned char)9, (unsigned char)1, (unsigned char)10, (unsigned char)2, (unsigned char)3, (unsigned char)7, (unsigned char)11);
+			ParseSkillTreeData_v12(handler, output0.SkillTree);
+
+			if (stream.Succeeded())
+			{
+				handler.PacketParsed<Server::JobPacket>(output0);
+
+				return;
+			}
+		}
+
+		template <>
 		void ParsePacket<12, ServerPacket, 0x57>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::FieldRemoveNpcPacket output0;
 
@@ -3096,7 +3496,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -3124,7 +3524,7 @@ namespace Networking
 
 				ResizeVector(handler, output1.Trophies, count_var1);
 
-				for (int i = 0; i < count_var1 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (int i = 0; i < count_var1 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					Read<int>("trophyId", handler, output1.Trophies[i].TrophyId, "\t\t\t");
 
@@ -3151,7 +3551,7 @@ namespace Networking
 
 					ResizeVector(handler, output1.Trophies[i].Timestamps, timestampsCount_var10);
 
-					for (int j = 0; j < timestampsCount_var10 && !handler.PacketStream.HasRecentlyFailed; ++j)
+					for (int j = 0; j < timestampsCount_var10 && !handler.PacketStream().HasRecentlyFailed; ++j)
 					{
 						Read<int>("index", handler, output1.Trophies[i].Timestamps[j].Index, "\t\t\t\t");
 						Read<long long>("timestamp", handler, output1.Trophies[i].Timestamps[j].Time, "\t\t\t\t");
@@ -3189,7 +3589,7 @@ namespace Networking
 
 				ResizeVector(handler, output2.Timestamps, timestampsCount_var20);
 
-				for (int i = 0; i < timestampsCount_var20 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (int i = 0; i < timestampsCount_var20 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					Read<int>("index", handler, output2.Timestamps[i].Index, "\t\t\t");
 					Read<long long>("timestamp", handler, output2.Timestamps[i].Time, "\t\t\t");
@@ -3205,11 +3605,114 @@ namespace Networking
 		}
 
 		template <>
+		void ParsePacket<12, ServerPacket, 0x7a>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Server::CharacterInfoPacket output0;
+
+			Read<long long>("characterId", handler, output0.CharacterId, "\t");
+			Read<bool>("found", handler, output0.Found, "\t");
+
+			ValidateValues(stream, "found", "\t", output0.Found, (bool)0, (bool)1);
+
+			if (output0.Found)
+			{
+				long long notAccountId_var2 = 0;
+				Read<long long>("notAccountId", handler, notAccountId_var2, "\t\t");
+
+				long long characterId2_var3 = 0;
+				Read<long long>("characterId2", handler, characterId2_var3, "\t\t");
+				Read<long long>("currentTime", handler, output0.CurrentTime, "\t\t");
+
+				int bufferSize_var5 = 0;
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer0(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterDetailsHeader_v12(handler, output0.Details);
+
+					{
+						ParseCharacterDetailsBasicStats_v12(handler, output0.Details.Stats);
+						ParseCharacterDetailsSpecialStats_v12(handler, output0.Details.Stats);
+					}
+					ParseCharacterDetailsBody_v12(handler, output0.Details);
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer1(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentItems_v12(handler, output0.CharacterEquipment);
+
+					unsigned char unknown_var6 = 0;
+					Read<unsigned char>("unknown", handler, unknown_var6, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var6, (unsigned char)0);
+
+					long long unknown_var7 = 0;
+					Read<long long>("unknown", handler, unknown_var7, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var7, (long long)0);
+
+					long long unknown_var8 = 0;
+					Read<long long>("unknown", handler, unknown_var8, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var8, (long long)0);
+
+					unsigned char unknown_var9 = 0;
+					Read<unsigned char>("unknown", handler, unknown_var9, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var9, (unsigned char)0);
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer2(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentBadges_v12(handler, output0.CharacterEquipment);
+				}
+			}
+
+			if (stream.Succeeded())
+			{
+				handler.PacketParsed<Server::CharacterInfoPacket>(output0);
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2502, ServerPacket, 0x49>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Server::JobPacket output0;
+
+			Read<int>("actorId", handler, output0.ActorId, "\t");
+			Read<unsigned char>("mode", handler, output0.Mode, "\t");
+
+			ValidateValues(stream, "mode", "\t", output0.Mode, (unsigned char)8, (unsigned char)0, (unsigned char)9, (unsigned char)1, (unsigned char)10, (unsigned char)2, (unsigned char)3, (unsigned char)7, (unsigned char)11);
+			ParseSkillTreeData_v2502(handler, output0.SkillTree);
+
+			if (stream.Succeeded())
+			{
+				handler.PacketParsed<Server::JobPacket>(output0);
+
+				return;
+			}
+		}
+
+		template <>
 		void ParsePacket<2486, ServerPacket, 0xc>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -3225,7 +3728,7 @@ namespace Networking
 
 				ResizeVector(handler, output0.Characters, count_var1);
 
-				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					ParseCharacterListEntry_v2486(handler, output0.Characters[i]);
 				}
@@ -3327,7 +3830,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::FieldAddItemPacket output0;
 
@@ -3375,7 +3878,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -3412,7 +3915,7 @@ namespace Networking
 
 					ResizeVector(handler, output0.Hits, count_var11);
 
-					for (unsigned char i = 0; i < count_var11 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (unsigned char i = 0; i < count_var11 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						long long unknown_var12 = 0;
 						Read<long long>("unknown", handler, unknown_var12, "\t\t\t\t");
@@ -3505,7 +4008,7 @@ namespace Networking
 				int count_var18 = 0;
 				Read<int>("count", handler, count_var18, "\t\t");
 
-				for (int i = 0; i < count_var18 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (int i = 0; i < count_var18 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					int unknown_var19 = 0;
 					Read<int>("unknown", handler, unknown_var19, "\t\t\t");
@@ -3540,11 +4043,91 @@ namespace Networking
 		}
 
 		template <>
+		void ParsePacket<2486, ServerPacket, 0x78>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Server::CharacterInfoPacket output0;
+
+			Read<long long>("characterId", handler, output0.CharacterId, "\t");
+			Read<bool>("found", handler, output0.Found, "\t");
+
+			ValidateValues(stream, "found", "\t", output0.Found, (bool)0, (bool)1);
+
+			if (output0.Found)
+			{
+				long long notAccountId_var2 = 0;
+				Read<long long>("notAccountId", handler, notAccountId_var2, "\t\t");
+
+				long long characterId2_var3 = 0;
+				Read<long long>("characterId2", handler, characterId2_var3, "\t\t");
+				Read<long long>("currentTime", handler, output0.CurrentTime, "\t\t");
+
+				int bufferSize_var5 = 0;
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer0(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterDetailsHeader_v12(handler, output0.Details);
+
+					{
+						ParseCharacterDetailsBasicStats_v12(handler, output0.Details.Stats);
+						ParseCharacterDetailsSpecialStats_v12(handler, output0.Details.Stats);
+					}
+					ParseCharacterDetailsBody_v12(handler, output0.Details);
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer1(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentItems_v2486(handler, output0.CharacterEquipment);
+
+					unsigned char unknown_var6 = 0;
+					Read<unsigned char>("unknown", handler, unknown_var6, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var6, (unsigned char)0);
+
+					long long unknown_var7 = 0;
+					Read<long long>("unknown", handler, unknown_var7, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var7, (long long)0);
+
+					long long unknown_var8 = 0;
+					Read<long long>("unknown", handler, unknown_var8, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var8, (long long)0);
+
+					unsigned char unknown_var9 = 0;
+					Read<unsigned char>("unknown", handler, unknown_var9, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var9, (unsigned char)0);
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer2(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentBadges_v2486(handler, output0.CharacterEquipment);
+				}
+			}
+
+			if (stream.Succeeded())
+			{
+				handler.PacketParsed<Server::CharacterInfoPacket>(output0);
+
+				return;
+			}
+		}
+
+		template <>
 		void ParsePacket<13, ClientPacket, 0x3>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -3581,7 +4164,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::BuffPacket output0;
 
@@ -3646,7 +4229,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -3662,7 +4245,7 @@ namespace Networking
 
 				ResizeVector(handler, output0.Characters, count_var1);
 
-				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					ParseCharacterListEntry_v2497(handler, output0.Characters[i]);
 				}
@@ -3764,7 +4347,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			Server::FieldAddItemPacket output0;
 
@@ -3808,11 +4391,257 @@ namespace Networking
 		}
 
 		template <>
+		void ParsePacket<2497, ServerPacket, 0x78>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Server::CharacterInfoPacket output0;
+
+			Read<long long>("characterId", handler, output0.CharacterId, "\t");
+			Read<bool>("found", handler, output0.Found, "\t");
+
+			ValidateValues(stream, "found", "\t", output0.Found, (bool)0, (bool)1);
+
+			if (output0.Found)
+			{
+				long long notAccountId_var2 = 0;
+				Read<long long>("notAccountId", handler, notAccountId_var2, "\t\t");
+
+				long long characterId2_var3 = 0;
+				Read<long long>("characterId2", handler, characterId2_var3, "\t\t");
+				Read<long long>("currentTime", handler, output0.CurrentTime, "\t\t");
+
+				int bufferSize_var5 = 0;
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer0(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterDetailsHeader_v12(handler, output0.Details);
+
+					{
+						ParseCharacterDetailsBasicStats_v12(handler, output0.Details.Stats);
+						ParseCharacterDetailsSpecialStats_v2497(handler, output0.Details.Stats);
+					}
+					ParseCharacterDetailsBody_v12(handler, output0.Details);
+
+					long long unknown_var6 = 0;
+					Read<long long>("unknown", handler, unknown_var6, "\t\t\t");
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer1(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentItems_v2497(handler, output0.CharacterEquipment);
+					ParseCharacterEquipmentSkins_v2497(handler, output0.CharacterEquipment);
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer2(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentBadges_v2497(handler, output0.CharacterEquipment);
+				}
+			}
+
+			if (stream.Succeeded())
+			{
+				handler.PacketParsed<Server::CharacterInfoPacket>(output0);
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2496, ServerPacket, 0xc>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)5, (unsigned char)6, (unsigned char)7);
+
+			if (mode_var0 == 0)
+			{
+				Server::CharacterListLoadPacket output0;
+
+				unsigned char count_var1 = 0;
+				Read<unsigned char>("count", handler, count_var1, "\t\t");
+
+				ResizeVector(handler, output0.Characters, count_var1);
+
+				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream().HasRecentlyFailed; ++i)
+				{
+					ParseCharacterListEntry_v2486(handler, output0.Characters[i]);
+				}
+
+				if (stream.Succeeded())
+				{
+					handler.PacketParsed<Server::CharacterListLoadPacket>(output0);
+
+					return;
+				}
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::CharacterListAddPacket output1;
+				ParseCharacterListEntry_v2486(handler, output1.Character);
+
+				if (stream.Succeeded())
+				{
+					handler.PacketParsed<Server::CharacterListAddPacket>(output1);
+
+					return;
+				}
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::CharacterListDeletePacket output2;
+
+				int unknown_var2 = 0;
+				Read<int>("unknown", handler, unknown_var2, "\t\t");
+				Read<long long>("characterId", handler, output2.CharacterId, "\t\t");
+
+				if (stream.Succeeded())
+				{
+					handler.PacketParsed<Server::CharacterListDeletePacket>(output2);
+
+					return;
+				}
+			}
+
+			if (mode_var0 == 3)
+			{
+			}
+			if (mode_var0 == 4)
+			{
+				unsigned char unknown_var4 = 0;
+				Read<unsigned char>("unknown", handler, unknown_var4, "\t\t");
+			}
+
+			if (mode_var0 == 5)
+			{
+				Server::CharacterListDeletePendingPacket output3;
+
+				Read<long long>("characterId", handler, output3.CharacterId, "\t\t");
+				Read<int>("messageId", handler, output3.MessageId, "\t\t");
+				Read<long long>("deleteTime", handler, output3.DeleteTime, "\t\t");
+
+				if (stream.Succeeded())
+				{
+					handler.PacketParsed<Server::CharacterListDeletePendingPacket>(output3);
+
+					return;
+				}
+			}
+
+			if (mode_var0 == 6)
+			{
+				Server::CharacterListCancelDeletePacket output4;
+
+				Read<long long>("characterId", handler, output4.CharacterId, "\t\t");
+				Read<int>("messageId", handler, output4.MessageId, "\t\t");
+
+				if (stream.Succeeded())
+				{
+					handler.PacketParsed<Server::CharacterListCancelDeletePacket>(output4);
+
+					return;
+				}
+			}
+
+			if (mode_var0 == 7)
+			{
+				Server::CharacterListChangeNamePacket output5;
+
+				Read<int>("confirm", handler, output5.Confirm, "\t\t");
+
+				if (stream.Succeeded())
+				{
+					handler.PacketParsed<Server::CharacterListChangeNamePacket>(output5);
+
+					return;
+				}
+			}
+		}
+
+		template <>
+		void ParsePacket<2496, ServerPacket, 0x78>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Server::CharacterInfoPacket output0;
+
+			Read<long long>("characterId", handler, output0.CharacterId, "\t");
+			Read<bool>("found", handler, output0.Found, "\t");
+
+			ValidateValues(stream, "found", "\t", output0.Found, (bool)0, (bool)1);
+
+			if (output0.Found)
+			{
+				long long notAccountId_var2 = 0;
+				Read<long long>("notAccountId", handler, notAccountId_var2, "\t\t");
+
+				long long characterId2_var3 = 0;
+				Read<long long>("characterId2", handler, characterId2_var3, "\t\t");
+				Read<long long>("currentTime", handler, output0.CurrentTime, "\t\t");
+
+				int bufferSize_var5 = 0;
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer0(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterDetailsHeader_v12(handler, output0.Details);
+
+					{
+						ParseCharacterDetailsBasicStats_v12(handler, output0.Details.Stats);
+						ParseCharacterDetailsSpecialStats_v12(handler, output0.Details.Stats);
+					}
+					ParseCharacterDetailsBody_v12(handler, output0.Details);
+
+					long long unknown_var6 = 0;
+					Read<long long>("unknown", handler, unknown_var6, "\t\t\t");
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer1(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentItems_v2486(handler, output0.CharacterEquipment);
+					ParseCharacterEquipmentSkins_v2486(handler, output0.CharacterEquipment);
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer2(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentBadges_v2486(handler, output0.CharacterEquipment);
+				}
+			}
+
+			if (stream.Succeeded())
+			{
+				handler.PacketParsed<Server::CharacterInfoPacket>(output0);
+
+				return;
+			}
+		}
+
+		template <>
 		void ParsePacket<2503, ClientPacket, 0x20>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -3900,7 +4729,7 @@ namespace Networking
 
 					ResizeVector(handler, output1.Projectiles, count_var22);
 
-					for (unsigned char i = 0; i < count_var22 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (unsigned char i = 0; i < count_var22 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						auto& projectile_array0 = output1.Projectiles[i];
 
@@ -3915,7 +4744,7 @@ namespace Networking
 
 						size_t j = 0;
 
-						while (moreTargets_var27 && !handler.PacketStream.HasRecentlyFailed)
+						while (moreTargets_var27 && !handler.PacketStream().HasRecentlyFailed)
 						{
 							projectile_array0.ChainTargets.push_back({});
 
@@ -3965,7 +4794,7 @@ namespace Networking
 
 					ResizeVector(handler, output2.Hits, count_var38);
 
-					for (unsigned char i = 0; i < count_var38 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (unsigned char i = 0; i < count_var38 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						auto& hitActor_array2 = output2.Hits[i];
 
@@ -4082,7 +4911,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -4119,7 +4948,7 @@ namespace Networking
 
 					ResizeVector(handler, output0.Hits, count_var11);
 
-					for (unsigned char i = 0; i < count_var11 && !handler.PacketStream.HasRecentlyFailed; ++i)
+					for (unsigned char i = 0; i < count_var11 && !handler.PacketStream().HasRecentlyFailed; ++i)
 					{
 						long long unknown_var12 = 0;
 						Read<long long>("unknown", handler, unknown_var12, "\t\t\t\t");
@@ -4212,7 +5041,7 @@ namespace Networking
 				int count_var18 = 0;
 				Read<int>("count", handler, count_var18, "\t\t");
 
-				for (int i = 0; i < count_var18 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (int i = 0; i < count_var18 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					int unknown_var19 = 0;
 					Read<int>("unknown", handler, unknown_var19, "\t\t\t");
@@ -4251,7 +5080,7 @@ namespace Networking
 		{
 			using namespace ParserUtils::Packets;
 
-			ParserUtils::DataStream& stream = handler.PacketStream;
+			ParserUtils::DataStream& stream = handler.PacketStream();
 
 			unsigned char mode_var0 = 0;
 			Read<unsigned char>("mode", handler, mode_var0, "\t");
@@ -4267,7 +5096,7 @@ namespace Networking
 
 				ResizeVector(handler, output0.Characters, count_var1);
 
-				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream.HasRecentlyFailed; ++i)
+				for (unsigned char i = 0; i < count_var1 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
 					ParseCharacterListEntry_v2509(handler, output0.Characters[i]);
 				}
@@ -4363,6 +5192,112 @@ namespace Networking
 
 					return;
 				}
+			}
+		}
+
+		template <>
+		void ParsePacket<2509, ServerPacket, 0x78>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Server::CharacterInfoPacket output0;
+
+			Read<long long>("characterId", handler, output0.CharacterId, "\t");
+			Read<bool>("found", handler, output0.Found, "\t");
+
+			ValidateValues(stream, "found", "\t", output0.Found, (bool)0, (bool)1);
+
+			if (output0.Found)
+			{
+				long long notAccountId_var2 = 0;
+				Read<long long>("notAccountId", handler, notAccountId_var2, "\t\t");
+
+				long long characterId2_var3 = 0;
+				Read<long long>("characterId2", handler, characterId2_var3, "\t\t");
+				Read<long long>("currentTime", handler, output0.CurrentTime, "\t\t");
+
+				int bufferSize_var5 = 0;
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer0(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterDetailsHeader_v12(handler, output0.Details);
+
+					{
+						ParseCharacterDetailsBasicStats_v12(handler, output0.Details.Stats);
+						ParseCharacterDetailsSpecialStats_v2497(handler, output0.Details.Stats);
+					}
+					ParseCharacterDetailsBody_v12(handler, output0.Details);
+
+					long long unknown_var6 = 0;
+					Read<long long>("unknown", handler, unknown_var6, "\t\t\t");
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer1(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentItems_v2509(handler, output0.CharacterEquipment);
+
+					unsigned char unknown_var7 = 0;
+					Read<unsigned char>("unknown", handler, unknown_var7, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var7, (unsigned char)0);
+
+					long long unknown_var8 = 0;
+					Read<long long>("unknown", handler, unknown_var8, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var8, (long long)0);
+
+					long long unknown_var9 = 0;
+					Read<long long>("unknown", handler, unknown_var9, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var9, (long long)0);
+
+					unsigned char unknown_var10 = 0;
+					Read<unsigned char>("unknown", handler, unknown_var10, "\t\t\t");
+
+					ValidateValues(stream, "unknown", "\t\t\t", unknown_var10, (unsigned char)0);
+				}
+
+				Read<int>("bufferSize", handler, bufferSize_var5, "\t\t");
+
+				{
+					Buffer buffer2(handler, (size_t)bufferSize_var5, true);
+					ParseCharacterEquipmentBadges_v2509(handler, output0.CharacterEquipment);
+				}
+			}
+
+			if (stream.Succeeded())
+			{
+				handler.PacketParsed<Server::CharacterInfoPacket>(output0);
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2512, ServerPacket, 0x49>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Server::JobPacket output0;
+
+			Read<int>("actorId", handler, output0.ActorId, "\t");
+			Read<unsigned char>("mode", handler, output0.Mode, "\t");
+
+			ValidateValues(stream, "mode", "\t", output0.Mode, (unsigned char)8, (unsigned char)0, (unsigned char)9, (unsigned char)1, (unsigned char)10, (unsigned char)2, (unsigned char)3, (unsigned char)7, (unsigned char)11);
+			ParseSkillTreeData_v2512(handler, output0.SkillTree);
+
+			if (stream.Succeeded())
+			{
+				handler.PacketParsed<Server::JobPacket>(output0);
+
+				return;
 			}
 		}
 

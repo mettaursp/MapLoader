@@ -254,14 +254,35 @@
 				<member name="Rarity" type="Enum.Rarity" />
 				<member name="Data" type="ItemData" />
 			</class>
-			<class name="CharacterListEntry">
-				<member name="Character" type="CharacterData" />
-				<member name="ProfileUrl" type="std::wstring" />
-				<member name="DeleteTime" type="unsigned long long" />
+			<class name="CharacterEquipment">
 				<member name="Equipment" type="std::vector" contains="EquipmentData" />
 				<member name="Badges" type="std::vector" contains="EquipmentData" />
 				<member name="HasSkin" type="bool" />
 				<member name="Skins" type="std::vector" contains="EquipmentData" />
+			</class>
+			<class name="CharacterListEntry">
+				<member name="Character" type="CharacterData" />
+				<member name="ProfileUrl" type="std::wstring" />
+				<member name="DeleteTime" type="unsigned long long" />
+				<member name="CharacterEquipment" type="CharacterEquipment" />
+			</class>
+			<class name="SkillTreePageData">
+				<class name="SkillEntry" isMember="false">
+					<member name="Notify" type="bool" />
+					<member name="Enabled" type="bool" />
+					<member name="CoreSkill" type="bool" /> <!-- potentially beginner update related -->
+					<member name="SkillId" type="Enum.SkillId" />
+					<member name="SkillLevel" type="Enum.SkillLevel" />
+				</class>
+				<member name="Skills" type="std::vector" contains="SkillEntry" />
+			</class>
+			<class name="SkillTreeData">
+				<member name="JobCode" type="Enum.JobCode" />
+				<member name="Job" type="Enum.JobId" />
+				<member name="Active" type="SkillTreePageData" />
+				<member name="Passive" type="SkillTreePageData" />
+				<member name="Special" type="SkillTreePageData" />
+				<member name="Consumable" type="SkillTreePageData" />
 			</class>
 		</namespace>
 	</namespace>
@@ -450,6 +471,22 @@
 					<member name="UpdateShield" type="bool" />
 					<member name="ShieldHealth" type="long long" />
 				</class>
+				<class name="JobPacket" directory="Packets\Server">
+					<enum name="ModeEnum">
+						<value name="Notify" value="0" />
+						<value name="Basic" value="1" />
+						<value name="Awakening" value="2" />
+						<value name="Error" value="3" />
+						<value name="Unknown" value="7" />
+						<value name="Load" value="8" />
+						<value name="Update" value="9" />
+						<value name="Reset" value="10" />
+						<value name="AutoDistribute" value="11" />
+					</enum>
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="Mode" type="ModeEnum" />
+					<member name="SkillTree" type="Maple.Game.SkillTreeData" />
+				</class>
 				<class name="FieldAddNpcPacket" directory="Packets\Server">
 					<class name="Effect" isMember="false">
 						<member name="OwnerId" type="Enum.ActorId" />
@@ -525,6 +562,60 @@
 					<member name="IsFavorited" type="bool" />
 					<member name="Counter" type="int" />
 					<member name="Timestamps" type="std::vector" contains="Timestamp" />
+				</class>
+				<class name="CharacterInfoPacket" directory="Packets\Server">
+					<class name="CharacterBasicStat" isMember="false">
+						<member name="Max" type="unsigned long long" />
+						<member name="Base" type="unsigned long long" />
+						<member name="Current" type="unsigned long long" />
+						<member name="Rate" type="float" />
+					</class>
+					<class name="CharacterSpecialStat" isMember="false">
+						<member name="Type" type="Enum.StatAttributeSpecial" />
+						<member name="Rate" type="float" />
+						<member name="Value" type="float" />
+					</class>
+					<class name="CharacterStats" isMember="false">
+						<member name="Basic" type="std::vector" contains="CharacterBasicStat" />
+						<member name="Special" type="std::vector" contains="CharacterSpecialStat" />
+					</class>
+					<class name="CharacterUnlockedTitle" isMember="false">
+						<member name="TitleId" type="unsigned int" />
+					</class>
+					<class name="CharacterDetails" isMember="false">
+						<member name="AccountId" type="Enum.AccountId" />
+						<member name="CharacterId" type="Enum.CharacterId" />
+						<member name="Name" type="std::wstring" />
+						<member name="Level" type="unsigned short" />
+						<member name="JobCode" type="Enum.JobCode" />
+						<member name="Job" type="Enum.JobId" />
+						<member name="Gender" type="Enum.Gender" />
+						<member name="PrestigeLevel" type="unsigned int" />
+						<member name="Stats" type="CharacterStats" />
+						<member name="ProfileUrl" type="std::wstring" />
+						<member name="Motto" type="std::wstring" />
+						<member name="GuildName" type="std::wstring" />
+						<member name="GuildRank" type="std::wstring" />
+						<member name="HouseName" type="std::wstring" />
+						<member name="PlotMapId" type="Enum.MapId" />
+						<member name="PlotNumber" type="unsigned int" />
+						<member name="ApartmentNumber" type="unsigned int" />
+						<member name="CharacterTitle" type="unsigned int" />
+						<member name="UnlockedTitles" type="std::vector" contains="CharacterUnlockedTitle" />
+						<member name="TrophyCount" type="unsigned int" />
+						<member name="GearScore" type="unsigned int" />
+						<member name="LastLoggedIn" type="unsigned long long" />
+						<member name="SkinColor" type="Maple.Game.DyeColor" />
+						<member name="MaritalStatus" type="unsigned short" />
+						<member name="Spouse1Name" type="std::wstring" />
+						<member name="Spouse2Name" type="std::wstring" />
+						<member name="ProposalTimestamp" type="unsigned long long" />
+					</class>
+					<member name="CharacterId" type="Enum.CharacterId" />
+					<member name="Found" type="bool" />
+					<member name="CurrentTime" type="unsigned long long" />
+					<member name="CharacterDetails" type="CharacterDetails" />
+					<member name="CharacterEquipment" type="Maple.Game.CharacterEquipment" />
 				</class>
 			</namespace>
 			<namespace name="Client">

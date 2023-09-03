@@ -40,9 +40,11 @@
 				<data type="int" name="unknown" />
 			</condition>
 		</opcode>
+		<opcodeReference value="0x4A" version="12" opcode="0x4A" />
 		<opcodeReference value="0x56" version="12" opcode="0x56" />
 		<opcodeReference value="0x57" version="12" opcode="0x57" />
 		<opcodeReference value="0x5E" version="12" opcode="0x5F" />
+		<opcodeReference value="0x79" version="12" opcode="0x7A" />
 	</source>
 	<source name="client">
 		<opcodeReference value="0x01" version="12" opcode="0x01" />

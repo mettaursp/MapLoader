@@ -58,7 +58,7 @@ namespace ParserUtils
 		template <typename T, typename Size, typename HandlerType>
 		void ResizeVector(HandlerType& handler, std::vector<T>& vector, Size size, const std::source_location location = std::source_location::current())
 		{
-			DataStream& stream = handler.PacketStream;
+			DataStream& stream = handler.PacketStream();
 
 			if (stream.HasRecentlyFailed)
 			{
@@ -106,7 +106,7 @@ namespace ParserUtils
 		template <typename T, typename HandlerType>
 		void ReadValue(const char* name, HandlerType& handler, T& value, const char* tabs, const std::source_location location = std::source_location::current())
 		{
-			DataStream& stream = handler.PacketStream;
+			DataStream& stream = handler.PacketStream();
 
 			if (stream.HasRecentlyFailed)
 			{
@@ -183,7 +183,7 @@ namespace ParserUtils
 				return;
 			}
 
-			if (handler.PacketStream.HasRecentlyFailed)
+			if (handler.PacketStream().HasRecentlyFailed)
 			{
 				return;
 			}

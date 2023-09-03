@@ -384,6 +384,20 @@ namespace PacketSchema
 				continue;
 			}
 
+			if (strcmp(name, "output") == 0)
+			{
+				buffer.Output = value;
+
+				continue;
+			}
+
+			if (strcmp(name, "target") == 0)
+			{
+				buffer.Target = value;
+
+				continue;
+			}
+
 			std::cout << FileName << ": unknown attribute '" << name << "' in read node" << std::endl;
 		}
 	}
@@ -534,6 +548,13 @@ namespace PacketSchema
 			if (strcmp(name, "target") == 0)
 			{
 				data.Target = value;
+
+				continue;
+			}
+
+			if (strcmp(name, "value") == 0)
+			{
+				data.Value = value;
 
 				continue;
 			}
@@ -1930,7 +1951,7 @@ namespace PacketSchema
 		std::unordered_map<std::string, const PacketOutput*> outputs;
 
 		out << tabs << "using namespace ParserUtils::Packets;\n\n";
-		out << tabs << "ParserUtils::DataStream& stream = handler.PacketStream;\n\n";
+		out << tabs << "ParserUtils::DataStream& stream = handler.PacketStream();\n\n";
 
 		const PacketOutput* topOutput = nullptr;
 
@@ -2175,7 +2196,7 @@ namespace PacketSchema
 
 							if (data.Type->DefaultValue.size())
 							{
-								out << " = " << data.Type->DefaultValue;
+								out << " = " << (data.Value.size() ? data.Value : data.Type->DefaultValue);
 							}
 
 							out << ";\n";
@@ -2209,7 +2230,7 @@ namespace PacketSchema
 				{
 					const PacketFunction& function = opcode.Functions[functionIndex];
 
-					out << tabs << "if (!handler.PacketStream.HasRecentlyFailed)\n";
+					out << tabs << "if (!handler.PacketStream().HasRecentlyFailed)\n";
 					out << tabs << "{\n";
 
 					out << tabs << '\t';
@@ -2341,15 +2362,19 @@ namespace PacketSchema
 			{
 				const PacketBuffer& buffer = opcode.Buffers[index];
 
+				DataOutput output = buffer.Output.size() ? findOutput(opcode, i, buffer.Target, outputs, topOutput, stack, buffer.Output) : DataOutput{};
+
+				validateOutput(output, buffer.Output, buffer.Target);
+
 				out << "\n" << tabs << "{\n";
 
-				stack.push_back({ i, buffer.RegionEnd });
+				stack.push_back({ i, buffer.RegionEnd, output });
 				generator.Push();
 
 				std::string sizeParam = getReference(buffer.BufferSizeDataIndex, opcode, i, outputs, topOutput, stack);
-				std::string isDeflatedParam = getReference(buffer.IsDeflatedDataIndex, opcode, i, outputs, topOutput, stack);
+				std::string isDeflatedParam = buffer.IsDeflatedDataIndex != (size_t)-1 ? getReference(buffer.IsDeflatedDataIndex, opcode, i, outputs, topOutput, stack) : "true";
 
-				out << tabs << "Buffer buffer" << index << "(handler, " << sizeParam << ", " << isDeflatedParam << ");\n";
+				out << tabs << "Buffer buffer" << index << "(handler, (size_t)" << sizeParam << ", " << isDeflatedParam << ");\n";
 
 				continue;
 			}
@@ -2381,7 +2406,7 @@ namespace PacketSchema
 						out << tabs << "ResizeVector(handler, " << containerName << ", " << param << ");\n\n";
 					}
 
-					out << tabs << "for (" << data.Type->TypeName << " " << generator.LoopIndex << " = 0; " << generator.LoopIndex << " < " << param << " && !handler.PacketStream.HasRecentlyFailed; ++" << generator.LoopIndex << ")\n";
+					out << tabs << "for (" << data.Type->TypeName << " " << generator.LoopIndex << " = 0; " << generator.LoopIndex << " < " << param << " && !handler.PacketStream().HasRecentlyFailed; ++" << generator.LoopIndex << ")\n";
 					out << tabs << "{\n";
 
 					stack.push_back({ i, array.RegionEnd, output, true });
@@ -2411,7 +2436,7 @@ namespace PacketSchema
 				{
 					out << tabs << "size_t " << generator.LoopIndex << " = 0;\n\n";
 
-					out << tabs << "while (" << data << " && !handler.PacketStream.HasRecentlyFailed)\n";
+					out << tabs << "while (" << data << " && !handler.PacketStream().HasRecentlyFailed)\n";
 					out << tabs << "{\n";
 
 					stack.push_back({ i, array.RegionEnd, output, true, true });

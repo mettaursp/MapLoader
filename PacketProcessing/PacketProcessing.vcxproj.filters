@@ -304,4 +304,14 @@
             <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
         </ClCompile>
     </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\JobPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterInfoPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
 </Project>

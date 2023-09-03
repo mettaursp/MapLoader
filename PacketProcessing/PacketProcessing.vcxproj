@@ -310,4 +310,10 @@
     <ItemGroup>
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListChangeNamePacket-s-SniffHandler.cpp"/>
     </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\JobPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterInfoPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
 </Project>

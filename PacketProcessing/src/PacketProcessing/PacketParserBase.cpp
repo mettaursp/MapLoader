@@ -30,6 +30,25 @@ namespace Networking
 			}
 		
 			opcodes[opcode - minOpcode].Callback(handler);
+
+			handler.CheckStreamStatus();
+		}
+
+		Buffer::Buffer(PacketHandler& handler, size_t bufferSize, bool isDeflated) : Handler(handler), BufferSize(bufferSize), IsDeflated(isDeflated)
+		{
+			handler.PushStream(bufferSize, isDeflated);
+		}
+
+		Buffer::~Buffer()
+		{
+			if (Handler.PacketStream().HasRecentlyFailed)
+			{
+				Handler.CheckStreamStatus();
+
+				return;
+			}
+
+			Handler.PopStream();
 		}
 	}
 }

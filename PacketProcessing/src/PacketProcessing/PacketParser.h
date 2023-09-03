@@ -7,7 +7,7 @@ namespace Networking
 	namespace Packets
 	{
 		const size_t MinVersion = 2464;
-		const size_t MaxVersion = 2509;
+		const size_t MaxVersion = 2512;
 
 		template <>
 		void ParsePacket<12, ClientPacket, 0x21>(PacketHandler& handler);
@@ -70,10 +70,19 @@ namespace Networking
 		void ParsePacket<12, ServerPacket, 0x48>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<12, ServerPacket, 0x4a>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<12, ServerPacket, 0x57>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<12, ServerPacket, 0x5f>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0x7a>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2502, ServerPacket, 0x49>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2486, ServerPacket, 0xc>(PacketHandler& handler);
@@ -83,6 +92,9 @@ namespace Networking
 
 		template <>
 		void ParsePacket<2486, ServerPacket, 0x3d>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2486, ServerPacket, 0x78>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<13, ClientPacket, 0x3>(PacketHandler& handler);
@@ -97,6 +109,15 @@ namespace Networking
 		void ParsePacket<2497, ServerPacket, 0x2b>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<2497, ServerPacket, 0x78>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2496, ServerPacket, 0xc>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2496, ServerPacket, 0x78>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<2503, ClientPacket, 0x20>(PacketHandler& handler);
 
 		template <>
@@ -104,6 +125,12 @@ namespace Networking
 
 		template <>
 		void ParsePacket<2509, ServerPacket, 0xc>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2509, ServerPacket, 0x78>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2512, ServerPacket, 0x49>(PacketHandler& handler);
 
 	}
 }

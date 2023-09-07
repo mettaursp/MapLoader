@@ -1,13 +1,29 @@
 <outputSchema isGlobal="true">
 	<namespace name="Enum">
-		<enum name="Gender" parent="unsigned char" directory="Enums">
+		<enum name="Gender" parent="unsigned char" directory="Enums" file="Player">
 			<value name="Male" value="0" />
 			<value name="Female" value="1" />
 			<value name="Both" value="2" />
 		</enum>
-		<enum name="JobCode" parent="unsigned short" directory="Enums">
+		<enum name="JobCode" parent="unsigned short" directory="Enums" file="Player">
+			<value name="None" value="0" />
+			<value name="Beginner" value="1" />
+			<value name="Knight" value="10" />
+			<value name="Berserker" value="20" />
+			<value name="Wizard" value="30" />
+			<value name="Archer" value="40" />
+			<value name="Priest" value="50" />
+			<value name="HeavyGunner" value="60" />
+			<value name="Thief" value="70" />
+			<value name="Assassin" value="80" />
+			<value name="Runeblade" value="90" />
+			<value name="Striker" value="100" />
+			<value name="Soulbinder" value="110" />
+			<value name="GameMaster" value="999" />
 		</enum>
-		<enum name="JobId" parent="unsigned short" directory="Enums">
+		<enum name="JobId" parent="unsigned short" directory="Enums" file="Player">
+		</enum>
+		<enum name="JobTier" parent="unsigned short" directory="Enums" file="Player">
 		</enum>
 	</namespace>
 </outputSchema>

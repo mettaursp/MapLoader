@@ -23,7 +23,7 @@ struct Endian
 			for (size_t i = 0; i < sizeof(T); ++i)
 				out[i] = bytes[i];
 
-		return *reinterpret_cast<const T*>(bytes);
+		return *reinterpret_cast<const T*>(out);
 	}
 
 	template <typename T>

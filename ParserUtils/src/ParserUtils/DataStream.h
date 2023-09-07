@@ -27,6 +27,27 @@ struct Vector3Short
 	}
 };
 
+struct Vector3Byte
+{
+	unsigned char X = 0;
+	unsigned char Y = 0;
+	unsigned char Z = 0;
+
+	Vector3Byte() {}
+
+	Vector3Byte(const Vector3S& vector)
+	{
+		X = (unsigned char)vector.X;
+		Y = (unsigned char)vector.Y;
+		Z = (unsigned char)vector.Z;
+	}
+
+	operator Vector3S()
+	{
+		return { (Float)X, (Float)Y, (Float)Z };
+	}
+};
+
 struct Color4I_BGRA
 {
 	unsigned char B = 0;
@@ -51,6 +72,7 @@ struct Color4I_BGRA
 };
 
 std::ostream& operator<<(std::ostream& out, const Vector3Short& vector);
+std::ostream& operator<<(std::ostream& out, const Vector3Byte& vector);
 std::ostream& operator<<(std::ostream& out, const Color4I_BGRA& vector);
 
 namespace ParserUtils
@@ -125,6 +147,9 @@ namespace ParserUtils
 
 	template <>
 	bool DataStream::Read<Vector3Short>(Vector3Short& value);
+
+	template <>
+	bool DataStream::Read<Vector3Byte>(Vector3Byte& value);
 
 	template <>
 	bool DataStream::Read<Color4I_BGRA>(Color4I_BGRA& value);

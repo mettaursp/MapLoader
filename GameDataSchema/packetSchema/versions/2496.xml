@@ -71,26 +71,13 @@
 				</buffer>
 				<!--data type="bool" name="isDeflated" /-->
 				<read name="bufferSize" />
-				<buffer sizeData="bufferSize" output="CharacterEquipment"> <!-- deflatedData="isDeflated"-->
+				<buffer sizeData="bufferSize" output="Equipment"> <!-- deflatedData="isDeflated"-->
 					<useBlock name="CharacterEquipmentItems" version="2486" />
-					<useBlock name="CharacterEquipmentSkins" version="2486" />
-					<!--useBlock name="CharacterEquipmentSkins" version="2486" /
-					<data type="byte" name="unknown">
-						<enum name="Unknown" value="0" />
-					</data>
-					<data type="long" name="unknown">
-						<enum name="Unknown" value="0" />
-					</data>
-					<data type="long" name="unknown">
-						<enum name="Unknown" value="0" />
-					</data>
-					<data type="byte" name="unknown">
-						<enum name="Unknown" value="0" />
-					</data>-->
+					<useBlock name="CharacterEquipmentSkinsMandatory" version="2486" />
 				</buffer>
 				<!--data type="bool" name="isDeflated" /-->
 				<read name="bufferSize" />
-				<buffer sizeData="bufferSize" output="CharacterEquipment"> <!-- deflatedData="isDeflated"-->
+				<buffer sizeData="bufferSize" output="Equipment"> <!-- deflatedData="isDeflated"-->
 					<useBlock name="CharacterEquipmentBadges" version="2486" />
 				</buffer>
 			</condition>

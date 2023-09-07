@@ -52,6 +52,7 @@ namespace ParserUtils
 	namespace Packets
 	{
 		const bool PrintOutput = false;
+		const bool PrintPacketOutput = true;
 		const bool PrintErrors = true;
 		const bool PrintUnknownValues = true;
 

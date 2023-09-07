@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GameData/Enums/Handles.h>
-#include <GameData/Enums/HitType.h>
+#include <GameData/Enums/Combat.h>
 
 namespace Networking
 {

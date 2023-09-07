@@ -1,0 +1,30 @@
+#pragma once
+
+#include <Engine/Math/Vector3S.h>
+#include <vector>
+#include <GameData/Packets\Server/LoadCubesPacket.h>
+#include <GameData/Enums/Handles.h>
+#include <GameData/Data/CubeItemData.h>
+
+namespace Networking
+{
+	namespace Packets
+	{
+		namespace Server
+		{
+			struct LoadCubesPacket
+			{
+				struct PlotCube
+				{
+					Vector3S Position;
+					Enum::ItemInstanceId ItemInstanceId;
+					Maple::Game::CubeItemData Data;
+					int PlotNumber = 0;
+					float RotationZ = 0;
+				};
+				
+				std::vector<PlotCube> CubeData;
+			};
+		}
+	}
+}

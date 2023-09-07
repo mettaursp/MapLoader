@@ -13,7 +13,7 @@ namespace Maple
 			CharacterData Character;
 			std::wstring ProfileUrl;
 			unsigned long long DeleteTime = 0;
-			CharacterEquipment CharacterEquipment;
+			CharacterEquipment Equipment;
 		};
 	}
 }

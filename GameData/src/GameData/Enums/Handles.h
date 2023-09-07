@@ -54,6 +54,18 @@ namespace Enum
 	{
 		Null = 0
 	};
+	enum class MountId : unsigned int
+	{
+		Null = 0
+	};
+	enum class TitleId : unsigned int
+	{
+		Null = 0
+	};
+	enum class InsigniaId : unsigned int
+	{
+		Null = 0
+	};
 	enum class ItemEntityId : unsigned int
 	{
 		Null = 0

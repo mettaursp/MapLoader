@@ -1,8 +1,8 @@
 #pragma once
 
 #include <GameData/Enums/Handles.h>
-#include <GameData/Enums/BadgeType.h>
 #include <string>
+#include <GameData/Enums/Item.h>
 
 namespace Maple
 {

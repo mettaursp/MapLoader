@@ -2,7 +2,7 @@
 	<namespace name="Enum">
 		<enum name="ItemExtraDataType" parent="unsigned char" directory="Enums">
 			<value name="None" value="0" />
-			<value name="TemplateBlueprint" value="1" />
+			<value name="UgcBlueprint" value="1" />
 			<value name="Pet" value="2" />
 			<value name="Music" value="3" />
 			<value name="Badge" value="4" />
@@ -10,17 +10,21 @@
 	</namespace>
 	<namespace name="Maple">
 		<namespace name="Game">
-			<class name="Stat" directory="Data">
-				<member name="Type" type="Enum.StatAttributeBasic" default="Enum.StatAttributeBasic.Hp" />
-				<member name="Max" type="unsigned int" />
-				<member name="Base" type="unsigned int" />
-				<member name="Current" type="unsigned int" />
-			</class>
-			<class name="StatLong" directory="Data">
+			<class name="ActorBasicStat">
 				<member name="Type" type="Enum.StatAttributeBasic" />
 				<member name="Max" type="unsigned long long" />
 				<member name="Base" type="unsigned long long" />
 				<member name="Current" type="unsigned long long" />
+				<member name="Rate" type="float" />
+			</class>
+			<class name="ActorSpecialStat">
+				<member name="Type" type="Enum.StatAttributeSpecial" />
+				<member name="Rate" type="float" />
+				<member name="Value" type="float" />
+			</class>
+			<class name="ActorStats">
+				<member name="Basic" type="std::vector" contains="ActorBasicStat" />
+				<member name="Special" type="std::vector" contains="ActorSpecialStat" />
 			</class>
 			<class name="DyeColor" directory="Data">
 				<member name="Primary" type="Color4I" />
@@ -92,7 +96,7 @@
 				<member name="Level" type="unsigned int" />
 				<member name="Stats" type="BonusStats" />
 			</class>
-			<class name="ItemTemplate">
+			<class name="ItemUgc">
 				<member name="FileName" type="std::wstring" />
 				<member name="Name" type="std::wstring" />
 				<member name="AccountId" type="Enum.AccountId" />
@@ -170,7 +174,7 @@
 				<member name="Stats" type="ItemStats" />
 				<member name="Enchantment" type="ItemEnchantment" />
 				<member name="LimitBreak" type="ItemLimitBreak" />
-				<member name="Template" type="ItemTemplate" />
+				<member name="Ugc" type="ItemUgc" />
 				<member name="Blueprint" type="ItemBlueprint" />
 				<member name="Pet" type="ItemPet" />
 				<member name="Music" type="ItemMusic" />
@@ -186,6 +190,14 @@
 				<member name="EffectId" type="Enum.EffectId" />
 				<member name="EffectLevel" type="Enum.EffectLevel" />
 				<member name="Stacks" type="unsigned int" />
+			</class>
+			<class name="AdditionalEffect">
+				<member name="TargetId" type="Enum.ActorId" />
+				<member name="InstanceId" type="Enum.EffectInstanceId" />
+				<member name="SourceId" type="Enum.ActorId" />
+				<member name="Stats" type="EffectStats" />
+				<member name="Enabled" type="bool" />
+				<member name="ShieldHealth" type="long long" />
 			</class>
 			<class name="MasteryData">
 				<member name="Fishing" type="int" />
@@ -219,7 +231,7 @@
 				<member name="Channel" type="Enum.ChannelId" />
 				<member name="JobCode" type="Enum.JobCode" />
 				<member name="Job" type="Enum.JobId" />
-				<member name="Hp" type="Maple.Game.StatLong">
+				<member name="Hp" type="Maple.Game.ActorBasicStat">
 					<default name="Type" value="Enum.StatAttributeBasic.Hp" />
 				</member>
 				<member name="StorageCooldown" type="long" />
@@ -258,13 +270,15 @@
 				<member name="Equipment" type="std::vector" contains="EquipmentData" />
 				<member name="Badges" type="std::vector" contains="EquipmentData" />
 				<member name="HasSkin" type="bool" />
+				<member name="HasFashion" type="bool" />
 				<member name="Skins" type="std::vector" contains="EquipmentData" />
+				<member name="Fashion" type="std::vector" contains="EquipmentData" />
 			</class>
 			<class name="CharacterListEntry">
 				<member name="Character" type="CharacterData" />
 				<member name="ProfileUrl" type="std::wstring" />
 				<member name="DeleteTime" type="unsigned long long" />
-				<member name="CharacterEquipment" type="CharacterEquipment" />
+				<member name="Equipment" type="CharacterEquipment" />
 			</class>
 			<class name="SkillTreePageData">
 				<class name="SkillEntry" isMember="false">
@@ -279,10 +293,37 @@
 			<class name="SkillTreeData">
 				<member name="JobCode" type="Enum.JobCode" />
 				<member name="Job" type="Enum.JobId" />
+				<member name="JobTier" type="Enum.JobTier" />
 				<member name="Active" type="SkillTreePageData" />
 				<member name="Passive" type="SkillTreePageData" />
 				<member name="Special" type="SkillTreePageData" />
 				<member name="Consumable" type="SkillTreePageData" />
+			</class>
+			<class name="CubeItemData">
+				<member name="ItemId" type="Enum.ItemId" />
+				<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				<member name="IsUgc" type="bool" />
+				<member name="Ugc" type="ItemUgc" />
+			</class>
+			<class name="MountData">
+				<class name="UnknownEntry" isMember="false">
+				</class>
+				<member name="RideMode" type="Enum.RideMode" />
+				<member name="MountId" type="Enum.MountId" />
+				<member name="MountObjectId" type="Enum.ActorId" />
+				<member name="ItemId" type="Enum.ItemId" />
+				<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				<member name="Ugc" type="ItemUgc" />
+				<member name="EffectId" type="Enum.EffectId" />
+				<member name="EffectLevel" type="Enum.EffectLevel" />
+				<member name="UnknownData" type="std::vector" contains="UnknownEntry" />
+			</class>
+			<class name="Pet">
+				<member name="ActorId" type="Enum.ActorId" />
+				<member name="ItemId" type="Enum.ItemId" />
+				<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				<member name="Rarity" type="Enum.Rarity" />
+				<member name="ItemData" type="ItemData" />
 			</class>
 		</namespace>
 	</namespace>
@@ -321,8 +362,36 @@
 					<member name="CharacterId" type="Enum.CharacterId" />
 					<member name="Name" type="std::wstring" />
 				</class>
+				<class name="FieldAddPlayerPacket" directory="Packets\Server">
+					<class name="UnknownEntry" isMember="false">
+					</class>
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="Character" type="Maple.Game.CharacterData" />
+					<member name="SkillTree" type="Maple.Game.SkillTreeData" />
+					<member name="Position" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+					<member name="Stats" type="Maple.Game.ActorStats" />
+					<member name="InBattle" type="bool" />
+					<member name="HeldCube" type="Maple.Game.CubeItemData" />
+					<member name="SkinColor" type="Maple.Game.DyeColor" />
+					<member name="ProfileUrl" type="std::wstring" />
+					<member name="OnMount" type="bool" />
+					<member name="Mount" type="Maple.Game.MountData" />
+					<member name="Timestamp" type="unsigned long long" />
+					<member name="WeeklyArchitectScore" type="unsigned int" />
+					<member name="ArchitectScore" type="unsigned int" />
+					<member name="Equipment" type="Maple.Game.CharacterEquipment" />
+					<member name="Effects" type="std::vector" contains="Maple.Game.AdditionalEffect" />
+					<member name="TitleId" type="Enum.TitleId" />
+					<member name="InsigniaId" type="Enum.InsigniaId" />
+					<member name="InsigniaValue" type="unsigned short" />
+					<member name="HasPet" type="bool" />
+					<member name="Pet" type="Maple.Game.Pet" />
+					<member name="PremiumExpirationTime" type="unsigned long long" />
+					<member name="UnknownData" type="std::vector" contains="UnknownEntry" />
+				</class>
 				<class name="FieldRemovePlayerPacket" directory="Packets\Server">
-					<member name="CharacterId" type="Enum.CharacterId" />
+					<member name="ActorId" type="Enum.ActorId" />
 				</class>
 				<class name="UserChatPacket" directory="Packets\Server">
 					<enum name="TypeEnum">
@@ -462,14 +531,9 @@
 						<value name="Update" value="2" />
 					</enum>
 					<member name="Mode" type="ModeEnum" default="ModeEnum.Add" />
-					<member name="TargetId" type="Enum.ActorId" />
-					<member name="InstanceId" type="Enum.EffectInstanceId" />
-					<member name="SourceId" type="Enum.ActorId" />
 					<member name="UpdateEffect" type="bool" />
-					<member name="Stats" type="Maple.Game.EffectStats" />
-					<member name="Enabled" type="bool" />
+					<member name="Effect" type="Maple.Game.AdditionalEffect" />
 					<member name="UpdateShield" type="bool" />
-					<member name="ShieldHealth" type="long long" />
 				</class>
 				<class name="JobPacket" directory="Packets\Server">
 					<enum name="ModeEnum">
@@ -488,14 +552,6 @@
 					<member name="SkillTree" type="Maple.Game.SkillTreeData" />
 				</class>
 				<class name="FieldAddNpcPacket" directory="Packets\Server">
-					<class name="Effect" isMember="false">
-						<member name="OwnerId" type="Enum.ActorId" />
-						<member name="InstanceId" type="Enum.EffectInstanceId" />
-						<member name="CasterId" type="Enum.ActorId" />
-						<member name="Stats" type="Maple.Game.EffectStats" />
-						<member name="Enabled" type="bool" />
-						<member name="ShieldHealth" type="long long" />
-					</class>
 					<class name="Skill" isMember="false">
 						<member name="SkillId" type="Enum.SkillId" />
 						<member name="SkillLevel" type="Enum.SkillLevel" />
@@ -505,14 +561,14 @@
 					<member name="Position" type="Vector3S" />
 					<member name="Rotation" type="Vector3S" />
 					<member name="KfmName" type="std::string" />
-					<member name="Hp" type="Maple.Game.StatLong">
+					<member name="Hp" type="Maple.Game.ActorBasicStat">
 						<default name="Type" value="Enum.StatAttributeBasic.Hp" />
 					</member>
-					<member name="MoveSpeed" type="Maple.Game.Stat">
+					<member name="MoveSpeed" type="Maple.Game.ActorBasicStat">
 						<default name="Type" value="Enum.StatAttributeBasic.MoveSpeed" />
 					</member>
 					<member name="IsDead" type="bool" />
-					<member name="AdditionalEffects" type="std::vector" contains="Effect" />
+					<member name="Effects" type="std::vector" contains="Maple.Game.AdditionalEffect" />
 					<member name="PetItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="Level" type="unsigned short" />
 					<member name="SpawnEffect" type="std::wstring" />
@@ -520,6 +576,28 @@
 					<member name="HiddenHpAdd" type="long long" />
 				</class>
 				<class name="FieldRemoveNpcPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+				</class>
+				<class name="FieldAddPetPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="PetSkinId" type="Enum.NpcId" />
+					<member name="PetNpcId" type="Enum.NpcId" />
+					<member name="Position" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+					<member name="Scale" type="float" />
+					<member name="OwnerActorId" type="Enum.ActorId" />
+					<member name="Hp" type="Maple.Game.ActorBasicStat">
+						<default name="Type" value="Enum.StatAttributeBasic.Hp" />
+					</member>
+					<member name="MoveSpeed" type="Maple.Game.ActorBasicStat">
+						<default name="Type" value="Enum.StatAttributeBasic.MoveSpeed" />
+					</member>
+					<member name="PetItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Level" type="unsigned short" />
+					<member name="PetTaming" type="unsigned short" />
+					<member name="Name" type="std::wstring" />
+				</class>
+				<class name="FieldRemovePetPacket" directory="Packets\Server">
 					<member name="ActorId" type="Enum.ActorId" />
 				</class>
 				<class name="TrophyStartPacket" directory="Packets\Server">
@@ -563,22 +641,48 @@
 					<member name="Counter" type="int" />
 					<member name="Timestamps" type="std::vector" contains="Timestamp" />
 				</class>
+				<class name="LoadCubesPacket" directory="Packets\Server">
+					<class name="PlotCube" isMember="false">
+						<member name="Position" type="Vector3S" />
+						<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+						<member name="Data" type="Maple.Game.CubeItemData" />
+						<member name="PlotNumber" type="int" />
+						<member name="RotationZ" type="float" />
+					</class>
+					<member name="CubeData" type="std::vector" contains="PlotCube" />
+				</class>
+				<class name="LoadCubesAvailabilityPacket" directory="Packets\Server">
+					<class name="PlotAvailability" isMember="false">
+						<member name="PlotId" type="unsigned int" />
+						<member name="IsTaken" type="bool" />
+					</class>
+					<member name="AvailabilityData" type="std::vector" contains="PlotAvailability" />
+				</class>
+				<class name="LoadCubesPlotsPacket" directory="Packets\Server">
+					<class name="PlotInfo" isMember="false">
+						<member name="PlotId" type="unsigned int" />
+						<member name="ApartmentNumber" type="unsigned int" />
+						<member name="PlotName" type="std::wstring" />
+						<member name="AccountId" type="Enum.AccountId" />
+					</class>
+					<member name="PlotData" type="std::vector" contains="PlotInfo" />
+				</class>
+				<class name="LoadCubesExpirationPacket" directory="Packets\Server">
+					<enum name="StateEnum">
+						<value name="Default" value="0" />
+						<value name="Taken" value="1" />
+						<value name="Unknown" value="2" />
+						<value name="Pending" value="4" />
+					</enum>
+					<class name="SaleState" isMember="false">
+						<member name="PlotId" type="unsigned int" />
+						<member name="ApartmentNumber" type="unsigned int" />
+						<member name="State" type="StateEnum" />
+						<member name="ExpirationTime" type="unsigned long long" />
+					</class>
+					<member name="SaleStateData" type="std::vector" contains="SaleState" />
+				</class>
 				<class name="CharacterInfoPacket" directory="Packets\Server">
-					<class name="CharacterBasicStat" isMember="false">
-						<member name="Max" type="unsigned long long" />
-						<member name="Base" type="unsigned long long" />
-						<member name="Current" type="unsigned long long" />
-						<member name="Rate" type="float" />
-					</class>
-					<class name="CharacterSpecialStat" isMember="false">
-						<member name="Type" type="Enum.StatAttributeSpecial" />
-						<member name="Rate" type="float" />
-						<member name="Value" type="float" />
-					</class>
-					<class name="CharacterStats" isMember="false">
-						<member name="Basic" type="std::vector" contains="CharacterBasicStat" />
-						<member name="Special" type="std::vector" contains="CharacterSpecialStat" />
-					</class>
 					<class name="CharacterUnlockedTitle" isMember="false">
 						<member name="TitleId" type="unsigned int" />
 					</class>
@@ -591,7 +695,7 @@
 						<member name="Job" type="Enum.JobId" />
 						<member name="Gender" type="Enum.Gender" />
 						<member name="PrestigeLevel" type="unsigned int" />
-						<member name="Stats" type="CharacterStats" />
+						<member name="Stats" type="Maple.Game.ActorStats" />
 						<member name="ProfileUrl" type="std::wstring" />
 						<member name="Motto" type="std::wstring" />
 						<member name="GuildName" type="std::wstring" />
@@ -614,8 +718,8 @@
 					<member name="CharacterId" type="Enum.CharacterId" />
 					<member name="Found" type="bool" />
 					<member name="CurrentTime" type="unsigned long long" />
-					<member name="CharacterDetails" type="CharacterDetails" />
-					<member name="CharacterEquipment" type="Maple.Game.CharacterEquipment" />
+					<member name="Details" type="CharacterDetails" />
+					<member name="Equipment" type="Maple.Game.CharacterEquipment" />
 				</class>
 			</namespace>
 			<namespace name="Client">

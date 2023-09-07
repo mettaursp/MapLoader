@@ -1,7 +1,6 @@
 #pragma once
 
-#include <GameData/Enums/JobId.h>
-#include <GameData/Enums/JobCode.h>
+#include <GameData/Enums/Player.h>
 #include <GameData/Data/SkillTreePageData.h>
 
 namespace Maple
@@ -12,6 +11,7 @@ namespace Maple
 		{
 			Enum::JobCode JobCode;
 			Enum::JobId Job;
+			Enum::JobTier JobTier;
 			SkillTreePageData Active;
 			SkillTreePageData Passive;
 			SkillTreePageData Special;

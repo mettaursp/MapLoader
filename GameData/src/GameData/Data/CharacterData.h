@@ -1,15 +1,13 @@
 #pragma once
 
-#include <GameData/Enums/Gender.h>
+#include <GameData/Data/ActorBasicStat.h>
 #include <GameData/Enums/Handles.h>
+#include <GameData/Enums/Player.h>
 #include <string>
 #include <Engine/Math/Vector3S.h>
-#include <GameData/Data/CharacterData.h>
-#include <GameData/Data/DyeColor.h>
 #include <vector>
-#include <GameData/Enums/JobId.h>
-#include <GameData/Enums/JobCode.h>
-#include <GameData/Data/StatLong.h>
+#include <GameData/Data/DyeColor.h>
+#include <GameData/Data/CharacterData.h>
 #include <GameData/Data/MasteryData.h>
 
 namespace Maple
@@ -40,7 +38,7 @@ namespace Maple
 			Enum::ChannelId Channel;
 			Enum::JobCode JobCode;
 			Enum::JobId Job;
-			StatLong Hp = {
+			ActorBasicStat Hp = {
 				.Type = Enum::StatAttributeBasic::Hp
 			};
 			long StorageCooldown;

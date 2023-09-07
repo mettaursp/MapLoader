@@ -1,0 +1,238 @@
+<outputSchema isGlobal="true">
+	<namespace name="Enum">
+		<enum name="StatAttributeBasic" parent="unsigned char" directory="Enums" file="Stats">
+			<value name="Str" value="0" />
+			<value name="Dex" value="1" />
+			<value name="Int" value="2" />
+			<value name="Luk" value="3" />
+			<value name="Hp" value="4" />
+			<value name="HpRegen" value="5" />
+			<value name="HpRegenInterval" value="6" />
+			<value name="Spirit" value="7" />
+			<value name="SpRegen" value="8" />
+			<value name="SpRegenInterval" value="9" />
+			<value name="Stamina" value="10" />
+			<value name="StaminaRegen" value="11" />
+			<value name="StaminaRegenInterval" value="12" />
+			<value name="AttackSpeed" value="13" />
+			<value name="MoveSpeed" value="14" />
+			<value name="Accuracy" value="15" />
+			<value name="Evasion" value="16" />
+			<value name="CritRate" value="17" />
+			<value name="CritDamage" value="18" />
+			<value name="CritEvasion" value="19" />
+			<value name="Defense" value="20" />
+			<value name="PerfectGuard" value="21" />
+			<value name="JumpHeight" value="22" />
+			<value name="PhysicalAtk" value="23" />
+			<value name="MagicAtk" value="24" />
+			<value name="PhysicalRes" value="25" />
+			<value name="MagicRes" value="26" />
+			<value name="MinWeaponAtk" value="27" />
+			<value name="MaxWeaponAtk" value="28" />
+			<value name="MinDamage" value="29" />
+			<value name="MaxDamage" value="30" />
+			<value name="Pierce" value="31" />
+			<value name="MountMoveSpeed" value="32" />
+			<value name="BonusAtk" value="33" />
+			<value name="PetBonusAtk" value="34" />
+		</enum>
+		<enum name="StatAttributeSpecial" parent="unsigned short" directory="Enums" file="Stats">
+			<value name="ExpBonus" value="1" />
+			<value name="MesoBonus" value="2" />
+			<value name="SwimSpeed" value="3" />
+			<value name="DashDistance" value="4" />
+			<value name="TonicDropRate" value="5" />
+			<value name="GearDropRate" value="6" />
+			<value name="TotalDamage" value="7" />
+			<value name="CriticalDamage" value="8" />
+			<value name="Damage" value="9" />
+			<value name="LeaderDamage" value="10" />
+			<value name="EliteDamage" value="11" />
+			<value name="BossDamage" value="12" /> <!-- This is actually used in conjunction with "sgi_target" in the XMLs. It's not boss damage, it's for a specified monster type. Currently ignoring it and just using it as boss damage, as nothing in the data uses it for non-boss mobs -->
+			<value name="HpOnKill" value="13" />
+			<value name="SpiritOnKill" value="14" />
+			<value name="StaminaOnKill" value="15" />
+			<value name="Heal" value="16" />
+			<value name="AllyRecovery" value="17" />
+			<value name="IceDamage" value="18" />
+			<value name="FireDamage" value="19" />
+			<value name="DarkDamage" value="20" />
+			<value name="HolyDamage" value="21" />
+			<value name="PoisonDamage" value="22" />
+			<value name="ElectricDamage" value="23" />
+			<value name="MeleeDamage" value="24" />
+			<value name="RangedDamage" value="25" />
+			<value name="PhysicalPiercing" value="26" />
+			<value name="MagicPiercing" value="27" />
+			<value name="IceDamageReduce" value="28" />
+			<value name="FireDamageReduce" value="29" />
+			<value name="DarkDamageReduce" value="30" />
+			<value name="HolyDamageReduce" value="31" />
+			<value name="PoisonDamageReduce" value="32" />
+			<value name="ElectricDamageReduce" value="33" />
+			<value name="StunReduce" value="34" />
+			<value name="CooldownReduce" value="35" />
+			<value name="DebuffDurationReduce" value="36" />
+			<value name="MeleeDamageReduce" value="37" />
+			<value name="RangedDamageReduce" value="38" />
+			<value name="KnockbackReduce" value="39" />
+			<value name="MeleeStun" value="40" /> <!-- melee chance to stun -->
+			<value name="RangedStun" value="41" /> <!-- melee chance to stun -->
+			<value name="MeeleeKnockback" value="42" /> <!-- chance of knockback after meele att -->
+			<value name="RangedKnockback" value="43" /> <!-- chance of knockback after ranged att -->
+			<value name="MeleeImmob" value="44" /> <!-- ranged chance to immob -->
+			<value name="RangedImmob" value="45" /> <!-- ranged chance to immob -->
+			<value name="MeleeAoeDamage" value="46" /> <!-- melee chance to do aoe damage -->
+			<value name="RangedAoeDamage" value="47" /> <!-- ranged chance to do aoe damage -->
+			<value name="DropRate" value="48" />
+			<value name="QuestExp" value="49" />
+			<value name="QuestMeso" value="50" />
+			<value name="InvokeEffect1" value="51" /> <!-- needs better name -->
+			<value name="InvokeEffect2" value="52" /> <!-- needs better name -->
+			<value name="InvokeEffect3" value="53" /> <!-- needs better name -->
+			<value name="PvPDamage" value="54" />
+			<value name="PvPDefense" value="55" />
+			<value name="GuildExp" value="56" />
+			<value name="GuildCoin" value="57" />
+			<value name="McKayXpOrb" value="58" /> <!-- mc-kay experience orb value bonus -->
+			<value name="FishingExp" value="59" />
+			<value name="ArcadeExp" value="60" />
+
+			<value name="PerformanceExp" value="63" />
+			<value name="BlackMarketReduce" value="64" />
+			<value name="EnchantCatalystDiscount" value="65" />
+			<value name="MeretReviveFee" value="66" />
+			<value name="MiningBonus" value="67" />
+			<value name="RanchingBonus" value="68" />
+			<value name="SmithingExp" value="69" />
+			<value name="HandicraftMastery" value="70" />
+			<value name="ForagingBonus" value="71" />
+			<value name="FarmingBonus" value="72" />
+			<value name="AlchemyMastery" value="73" />
+			<value name="CookingMastery" value="74" />
+			<value name="ForagingExp" value="75" />
+
+			<!-- techs -->
+			<value name="TECH" value="77" /> <!-- level 1 skill -->
+			<value name="TECH_2" value="78" /> <!-- 2nd level 1 skill -->
+			<value name="TECH_10" value="79" /> <!-- lv 10 skill -->
+			<value name="TECH_13" value="80" /> <!-- lv 13 skill -->
+			<value name="TECH_16" value="81" /> <!-- lv 16 skill -->
+			<value name="TECH_19" value="82" /> <!-- lv 19 skill -->
+			<value name="TECH_22" value="83" /> <!-- lv 22 skill -->
+			<value name="TECH_25" value="84" /> <!-- lv 25 skill -->
+			<value name="TECH_28" value="85" /> <!-- lv 28 skill -->
+			<value name="TECH_31" value="86" /> <!-- lv 31 skill -->
+			<value name="TECH_34" value="87" /> <!-- lv 34 skill -->
+			<value name="TECH_37" value="88" /> <!-- lv 37 skill -->
+			<value name="TECH_40" value="89" /> <!-- lv 40 skill -->
+			<value name="TECH_43" value="90" /> <!-- lv 43 skill -->
+
+			<value name="OXQuizExp" value="91" />
+			<value name="TrapMasterExp" value="92" />
+			<value name="SoleSurvivorExp" value="93" />
+			<value name="CrazyRunnerExp" value="94" />
+			<value name="LudiEscapeExp" value="95" />
+			<value name="SpringBeachExp" value="96" />
+			<value name="DanceDanceExp" value="97" />
+
+			<value name="OXMovementSpeed" value="98" />
+			<value name="TrapMasterMovementSpeed" value="99" />
+			<value name="SoleSurvivorMovementSpeed" value="100" />
+			<value name="CrazyRunnerMovementSpeed" value="101" />
+			<value name="LudiEscapeMovementSpeed" value="102" />
+			<value name="SpringBeachMovementSpeed" value="103" />
+			<value name="DanceDanceStopMovementSpeed" value="104" />
+
+			<value name="GenerateSpiritOrbs" value="105" />
+			<value name="GenerateStaminaOrbs" value="106" />
+			<value name="ValorTokens" value="107" />
+			<value name="PvPExp" value="108" />
+			<value name="DarkDescentDamageBonus" value="109" />
+			<value name="DarkDescentEvasion" value="110" />
+			<value name="DarkDescentDamageReduce" value="111" />
+
+			<value name="DoubleFishingMastery" value="112" />
+			<value name="DoublePerformanceMastery" value="113" />
+
+			<value name="ExploredAreasMovementSpeed" value="114" />
+			<value name="AirMountAscentSpeed" value="115" />
+			<value name="AdditionalEffect_95000018" value="116" />
+			<value name="EnemyDefenseDecreaseOnHit" value="117" />
+			<value name="EnemyAttackDecreaseOnHit" value="118" />
+
+			<value name="IncreaseTotalDamageIf1NearbyEnemy" value="119" /> <!-- Increases damage if there is an enemy within 5m -->
+			<value name="IncreaseTotalDamageIf3NearbyEnemies" value="120" /> <!-- Increases damage if there is at least 3 enemies within 5m -->
+			<value name="IncreaseTotalDamageIf80Spirit" value="121" /> <!-- Increase damage if you have 80 or more spirit -->
+			<value name="IncreaseTotalDamageIfFullStamina" value="122" />
+			<value name="IncreaseTotalDamageIfHerbEffectActive" value="123" /> <!-- Increase damage if you have a herb-like effect active -->
+			<value name="IncreaseTotalDamageToWorldBoss" value="124" />
+
+			<value name="Effect95000026" value="125" />
+			<value name="Effect95000027" value="126" />
+			<value name="Effect95000028" value="127" />
+			<value name="Effect95000029" value="128" />
+			<value name="StaminaRecoverySpeed" value="129" />
+			<value name="MaxWeaponAttack" value="130" />
+
+			<value name="DoubleMiningProduction" value="131" />
+			<value name="DoubleRanchingProduction" value="132" />
+			<value name="DoubleForagingProduction" value="133" />
+			<value name="DoubleFarmingProduction" value="134" />
+			<value name="DoubleSmithingProduction" value="135" />
+			<value name="DoubleHandicraftProduction" value="136" />
+			<value name="DoubleAlchemyProduction" value="137" />
+			<value name="DoubleCookingProduction" value="138" />
+
+			<value name="DoubleMiningMastery" value="139" />
+			<value name="DoubleRanchingMastery" value="140" />
+			<value name="DoubleForagingMastery" value="141" />
+			<value name="DoubleFarmingMastery" value="142" />
+			<value name="DoubleSmithingMastery" value="143" />
+			<value name="DoubleHandicraftMastery" value="144" />
+			<value name="DoubleAlchemyMastery" value="145" />
+			<value name="DoubleCookingMastery" value="146" />
+
+			<value name="ChaosRaidWeaponAttack" value="147" />
+			<value name="ChaosRaidAttackSpeed" value="148" />
+			<value name="ChaosRaidAccuracy" value="149" />
+			<value name="ChaosRaidHealth" value="150" />
+
+			<value name="StaminaAndSpiritFromOrbs" value="151" />
+
+			<value name="WorldBossExp" value="152" />
+			<value name="WorldBossDropRate" value="153" />
+			<value name="WorldBossDamageReduce" value="154" />
+
+			<value name="Effect9500016" value="155" />
+			<value name="PetCaptureRewards" value="156" />
+
+			<value name="MiningEfficency" value="157" />
+			<value name="RanchingEfficiency" value="158" />
+			<value name="ForagingEfficiency" value="159" />
+			<value name="FarmingEfficiency" value="160" />
+
+			<value name="ShanghaiCrazyRunnersExp" value="161" />
+			<value name="ShanghaiCrazyRunnersMovementSpeed" value="162" />
+
+			<value name="HealthBasedDamageReduce" value="163" />
+			<value name="ReduceMesoRevivalFee" value="164" />
+			<value name="ImproveRidingRunSpeed" value="165" />
+			<value name="ImproveDungeonRewardMeso" value="166" />
+			<value name="ImproveShopBuyingMeso" value="167" />
+			<value name="ImproveItemboxRewardMeso" value="168" />
+			<value name="ReduceRemakeOptionRee" value="169" />
+			<value name="ReduceAirTaxiFee" value="170" />
+			<value name="ImproveSocketUnlockProbability" value="171" />
+			<value name="ReduceGemstoneUpgradeFee" value="172" />
+			<value name="ReducePetRemakeOptionFee" value="173" />
+			<value name="ImproveRidingSpeed" value="174" />
+			<value name="ImproveSurvivalKill_exp" value="175" />
+			<value name="ImproveSurvivalTime_exp" value="176" />
+			<value name="OffensivePhysicalDamage" value="177" />
+			<value name="OffensiveMagicalDamage" value="178" />
+			<value name="ReduceGameitemSocketUnlockFee" value="179" />
+		</enum>
+	</namespace>
+</outputSchema>

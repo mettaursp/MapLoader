@@ -76,6 +76,7 @@ namespace PacketSchema
 		Function,
 		Buffer,
 		BlockFunction,
+		ArraySize,
 		ValueWrite,
 		Validation,
 		ArrayOutput,
@@ -114,6 +115,13 @@ namespace PacketSchema
 		std::string Name;
 		TypeEnum Type = TypeEnum::For;
 		size_t RegionEnd = 0;
+	};
+
+	struct PacketArraySize
+	{
+		size_t DataIndex = (size_t)-1;
+		std::string Output;
+		std::string Target;
 	};
 
 	struct PacketOutput
@@ -183,6 +191,7 @@ namespace PacketSchema
 		std::vector<PacketOutput> Outputs;
 		std::vector<PacketOutputMember> OutputMembers;
 		std::vector<PacketArray> Arrays;
+		std::vector<PacketArraySize> ArraySizes;
 		std::vector<PacketRead> Reads;
 		std::vector<PacketFunction> Functions;
 		std::vector<PacketBuffer> Buffers;
@@ -244,6 +253,7 @@ namespace PacketSchema
 		void ReadDataRead(tinyxml2::XMLElement* element);
 		void ReadCondition(tinyxml2::XMLElement* element);
 		void ReadArray(tinyxml2::XMLElement* element);
+		void ReadArraySize(tinyxml2::XMLElement* element);
 		void ReadFunction(tinyxml2::XMLElement* element);
 		void ReadOutput(tinyxml2::XMLElement* element);
 		void ReadOutputMember(tinyxml2::XMLElement* element);

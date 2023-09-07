@@ -5,7 +5,9 @@
 		<opcodeReference value="0x55" version="12" opcode="0x56" />
 		<opcodeReference value="0x56" version="12" opcode="0x57" />
 		<opcodeReference value="0x57" removeReference="true" />
-		<opcodeReference value="0x78" version="12" opcode="0x79" />
+		<opcodeReference value="0x6A" version="12" opcode="0x6C" />
+		<opcodeReference value="0x6C" removeReference="true" />
+		<opcodeReference value="0x78" version="12" opcode="0x7A" />
 		<opcodeReference value="0x79" removeReference="true" />
 	</source>
 	<source name="client">

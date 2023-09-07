@@ -46,6 +46,7 @@ namespace PacketSchema
 		{ "wstring", { "wstring", "std::wstring", "", 0 }},
 		{ "Vector3S", { "Vector3S", "Vector3S", "", 0 }},
 		{ "Vector3Short", { "Vector3Short", "Vector3Short", "", 0, { "Vector3S" }}},
+		{ "Vector3Byte", { "Vector3Byte", "Vector3Byte", "", 0, { "Vector3S" }}},
 		{ "vector", { "vector", "std::vector", "", 0 }},
 		{ "Color4I", { "Color4I", "Color4I_BGRA", "", 0, { "Color4I" }}}
 	};
@@ -58,6 +59,7 @@ namespace PacketSchema
 		const PacketOutput* Output = nullptr;
 		const OutputSchema::SchemaMember* Member = nullptr;
 		const OutputSchema::SchemaClass* Class = nullptr;
+		bool IsIndexed = false;
 	};
 
 	struct StackEntry
@@ -91,7 +93,8 @@ namespace PacketSchema
 				continue;
 			}
 
-			size_t startIndex = stack[info.StackDepth - 1].StartIndex;
+			size_t depthValue = info.StackDepth - (opcode.IsBlock ? 1 : 2);
+			size_t startIndex = depthValue > stack.size() ? 0 : stack[depthValue].StartIndex;
 
 			if (startIndex > i)
 			{
@@ -848,6 +851,66 @@ namespace PacketSchema
 		}
 	}
 
+	void OpcodeParser::ReadArraySize(tinyxml2::XMLElement* element)
+	{
+		PacketArraySize& arraySize = Opcode.ArraySizes.back();
+
+		DataResult result;
+
+		for (const tinyxml2::XMLAttribute* attribute = element->FirstAttribute(); attribute; attribute = attribute->Next())
+		{
+			const char* name = attribute->Name();
+			const char* value = attribute->Value();
+
+			if (strcmp(name, "data") == 0)
+			{
+				result = FindDataReference(value);
+
+				if (!result.Found)
+				{
+					std::cout << FileName << ": unknown referenced data '" << value << "' in array node" << std::endl;
+
+					FindDataReference(value);
+
+					continue;
+				}
+
+				if (result.DataIndex < Opcode.Layout.size())
+				{
+					const PacketInfo& info = Opcode.Layout[result.DataIndex];
+					PacketData& data = Opcode.Data[info.Index];
+
+					data.Referenced = true;
+				}
+
+				arraySize.DataIndex = result.DataIndex;
+
+				continue;
+			}
+
+			if (strcmp(name, "output") == 0)
+			{
+				arraySize.Output = value;
+
+				continue;
+			}
+
+			if (strcmp(name, "target") == 0)
+			{
+				arraySize.Target = value;
+
+				continue;
+			}
+
+			std::cout << FileName << ": unknown attribute '" << name << "' in data node" << std::endl;
+		}
+
+		if (!result.Found)
+		{
+			std::cout << FileName << ": condition data not found" << std::endl;
+		}
+	}
+
 	void OpcodeParser::Read(tinyxml2::XMLElement* element)
 	{
 		NodeStack.push_back({ element->FirstChildElement() });
@@ -903,6 +966,13 @@ namespace PacketSchema
 					NodeStack.back().StartIndex = Opcode.Layout.size();
 
 					continue;
+				}
+				else if (strcmp(name, "arraySize") == 0)
+				{
+					Opcode.Layout.push_back({ PacketInfoType::ArraySize, Opcode.ArraySizes.size(), NodeStack.size() });
+					Opcode.ArraySizes.push_back({});
+
+					ReadArraySize(node.Element);
 				}
 				else if (strcmp(name, "read") == 0)
 				{
@@ -1650,7 +1720,7 @@ namespace PacketSchema
 			return;
 		}
 
-		if (output.Member)
+		if (output.Member || output.IsIndexed)
 		{
 			return;
 		}
@@ -1845,20 +1915,33 @@ namespace PacketSchema
 
 			if (indexValue.size())
 			{
-				validateOutput(nextOutput, std::string(name), "");
-
-				if (nextOutput.Member && nextOutput.Member->Type == "array")
-				{
-					nextOutput.Name += '[' + std::string(indexValue) + ']';
-
-					return nextOutput;
-				}
-
 				if (!nextOutput.Member || !nextOutput.Member->ContainsType.size())
 				{
-					std::cout << "attempt to use subscript '" << indexValue << "' in output '" << path << "' that isn't an indexable type" << std::endl;
+					std::cout << "attempt to index nonindexable type '" << nextOutput.Member->ContainsType << "' in path '" << path << "' component '" << std::string_view{ path.data() + start, path.size() - start } << "'" << std::endl;
+				}
 
-					return {};
+				validateOutput(nextOutput, std::string(name), "");
+
+				OutputSchema::SchemaEntry entry = OutputSchema::findSchemaEntry(nextOutput.Member->ContainsType, nextOutput.Output->SchemaName);
+
+				nextOutput.Class = entry.Class;
+
+				if (entry.Class == nullptr)
+				{
+					if (start < path.size())
+					{
+						if (NumericTypes.contains(nextOutput.Member->ContainsType))
+						{
+							std::cout << "attempt to index nonindexable type '" << nextOutput.Member->ContainsType << "' in path '" << path << "' component '" << std::string_view{ path.data() + start, path.size() - start } << "'" << std::endl;
+						}
+						else
+						{
+							std::cout << "failed to find class: '" << nextOutput.Member->ContainsType << "' in path '" << path << "' component '" << name << "'" << std::endl;
+						}
+					}
+
+					start = path.size();
+					nextOutput.IsIndexed = start >= path.size();
 				}
 
 				DataResult result = findDataReference(opcode, stack, indexValue, index);
@@ -1866,6 +1949,9 @@ namespace PacketSchema
 				if (!result.Found)
 				{
 					nextOutput.Name += '[' + std::string(indexValue) + ']';
+					nextOutput.IsIndexed = true;
+
+					output = nextOutput;
 
 					continue;
 				}
@@ -1894,6 +1980,7 @@ namespace PacketSchema
 				}
 
 				nextOutput.Name += ']';
+				nextOutput.IsIndexed = true;
 			}
 
 			output = nextOutput;
@@ -2008,15 +2095,15 @@ namespace PacketSchema
 							outputsReferenced[output->Class] = opcode.IsServer;
 						}
 
-						out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
+						out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
 						out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking.Packets"), "::") << ">(" << *output << ");\n";
+
+						out << tabs << "}\n\n";
 
 						if (output->ReturnOnFinish)
 						{
-							out << "\n\t" << tabs << "return;\n";
+							out << "\n" << tabs << "return;\n";
 						}
-
-						out << tabs << "}\n";
 					}
 
 					if (outputs.contains(output->Name))
@@ -2372,9 +2459,35 @@ namespace PacketSchema
 				generator.Push();
 
 				std::string sizeParam = getReference(buffer.BufferSizeDataIndex, opcode, i, outputs, topOutput, stack);
-				std::string isDeflatedParam = buffer.IsDeflatedDataIndex != (size_t)-1 ? getReference(buffer.IsDeflatedDataIndex, opcode, i, outputs, topOutput, stack) : "true";
+				std::string isDeflatedParam = buffer.IsDeflatedDataIndex != (size_t)-1 ? getReference(buffer.IsDeflatedDataIndex, opcode, i, outputs, topOutput, stack) : "false";
 
 				out << tabs << "Buffer buffer" << index << "(handler, (size_t)" << sizeParam << ", " << isDeflatedParam << ");\n";
+
+				continue;
+			}
+
+			if (type == PacketInfoType::ArraySize)
+			{
+				const PacketArraySize& arraySize = opcode.ArraySizes[index];
+				const PacketData& data = opcode.Data[opcode.Layout[arraySize.DataIndex].Index];
+
+				std::string param = getReference(arraySize.DataIndex, opcode, i, outputs, topOutput, stack);
+
+				DataOutput output = arraySize.Output.size() ? findOutput(opcode, i, arraySize.Target, outputs, topOutput, stack, arraySize.Output) : DataOutput{};
+
+				validateOutput(output, arraySize.Output, arraySize.Target);
+
+				if (lastType != PacketInfoType::Condition && lastType != PacketInfoType::ArraySize)
+				{
+					out << "\n";
+				}
+
+				if (output.Output)
+				{
+					out << tabs << "ResizeVector(handler, " << output.Name << ", " << param << ");\n";
+				}
+
+				lastType = type;
 
 				continue;
 			}
@@ -2563,15 +2676,15 @@ namespace PacketSchema
 						outputsReferenced[output->Class] = opcode.IsServer;
 					}
 
-					out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
+					out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
 					out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking.Packets"), "::") << ">(" << *output << ");\n";
+
+					out << tabs << "}\n\n";
 
 					if (output->ReturnOnFinish)
 					{
-						out << "\n\t" << tabs << "return;\n";
+						out << "\n" << tabs << "return;\n";
 					}
-
-					out << tabs << "}\n";
 				}
 
 				if (outputs.contains(output->Name))
@@ -2609,15 +2722,15 @@ namespace PacketSchema
 					outputsReferenced[topOutput->Class] = opcode.IsServer;
 				}
 
-				out << "\n" << tabs << "if (stream.Succeeded())\n" << tabs << "{\n";
+				out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
 				out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(topOutput->Class->Scope, "Networking.Packets"), "::") << ">(" << *topOutput << ");\n";
+
+				out << tabs << "}\n\n";
 
 				if (topOutput->ReturnOnFinish)
 				{
-					out << "\n\t" << tabs << "return;\n";
+					out << "\n" << tabs << "return;\n";
 				}
-
-				out << tabs << "}\n";
 			}
 		}
 

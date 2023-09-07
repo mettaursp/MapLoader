@@ -147,6 +147,32 @@ namespace ParserUtils
 	}
 
 	template <>
+	bool DataStream::Read<Vector3Byte>(Vector3Byte& value)
+	{
+		if (HasRecentlyFailed)
+		{
+			return false;
+		}
+
+		if (Index + sizeof(Vector3Byte) > Data.size())
+		{
+			Failed();
+
+			return false;
+		}
+
+		Read<unsigned char>(value.X);
+		Read<unsigned char>(value.Y);
+		Read<unsigned char>(value.Z);
+
+		unsigned char data = 0;
+
+		Read<unsigned char>(data);
+
+		return true;
+	}
+
+	template <>
 	bool DataStream::Read<Color4I_BGRA>(Color4I_BGRA& value)
 	{
 		if (HasRecentlyFailed)
@@ -178,6 +204,11 @@ namespace ParserUtils
 std::ostream& operator<<(std::ostream& out, const Vector3Short& vector)
 {
 	return out << "< " << vector.X << ", " << vector.Y << ", " << vector.Z << " >";
+}
+
+std::ostream& operator<<(std::ostream& out, const Vector3Byte& vector)
+{
+	return out << "< " << (unsigned int)vector.X << ", " << (unsigned int)vector.Y << ", " << (unsigned int)vector.Z << " >";
 }
 
 std::ostream& operator<<(std::ostream& out, const Color4I_BGRA& vector)

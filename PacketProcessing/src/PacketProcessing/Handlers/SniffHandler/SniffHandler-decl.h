@@ -4,6 +4,7 @@
 
 #include <ParserUtils/DataStream.h>
 #include <GameData/Enums/Handles.h>
+#include <GameData/Enums/Player.h>
 
 namespace Networking
 {
@@ -45,42 +46,52 @@ namespace Networking
 
 		struct Actor
 		{
-			unsigned int ActorId = 0;
+			Enum::ActorId ActorId = Enum::ActorId::Null;
+			unsigned short Level = 0;
 		};
 
 		struct Npc
 		{
-			unsigned int NpcId = 0;
+			std::string Name;
+			Enum::NpcId NpcId = Enum::NpcId::Null;
 			const NpcData* Data = nullptr;
 			Actor* Actor = nullptr;
 		};
 
+		struct Pet;
+
 		struct Player
 		{
-			unsigned int NpcId = 0;
-			const NpcData* Data = nullptr;
+			std::wstring Name;
+			Enum::JobId Job = Enum::JobId(0);
+			Enum::JobCode JobCode = Enum::JobCode(0);
+			Pet* Pet = nullptr;
 			Actor* Actor = nullptr;
 		};
 
 		struct Pet
 		{
-			unsigned int OwnerId = 0;
+			std::wstring Name;
+			std::string NpcName;
+			Enum::ActorId OwnerId = Enum::ActorId::Null;
+			Enum::NpcId NpcId = Enum::NpcId::Null;
+			Enum::NpcId SkinNpcId = Enum::NpcId::Null;
 			Actor* Actor = nullptr;
 			Player* Owner = nullptr;
 			Npc* Npc = nullptr;
-			unsigned long long ItemId = 0;
+			Enum::ItemInstanceId ItemId = Enum::ItemInstanceId::Null;
 		};
 
 
 		struct FieldState
 		{
 			bool PrintedMap = false;
-			unsigned int MapId = 0;
+			Enum::MapId MapId = Enum::MapId::Null;
 			const MapData* CurrentMap = nullptr;
-			std::unordered_map<unsigned int, Npc> Npcs;
-			std::unordered_map<unsigned int, Actor> Actors;
-			std::unordered_map<unsigned int, Player> Players;
-			std::unordered_map<unsigned int, Pet> Pets;
+			std::unordered_map<Enum::ActorId, Npc> Npcs;
+			std::unordered_map<Enum::ActorId, Actor> Actors;
+			std::unordered_map<Enum::ActorId, Player> Players;
+			std::unordered_map<Enum::ActorId, Pet> Pets;
 		};
 
 		class SniffHandler
@@ -92,11 +103,15 @@ namespace Networking
 				std::string DeflatedData;
 			};
 
+			unsigned short Version = 0;
+			unsigned short Feature = 0;
+			std::string Locale;
 			std::vector<StackEntry> StreamStack;
 			std::stringstream FoundValues;
 			Metadata* Data = nullptr;
 			bool HasReconnected = false;
 			FieldState Field;
+			bool ReportPackets = true;
 
 			template <typename T>
 			void PacketParsed(const T& packet);
@@ -107,6 +122,7 @@ namespace Networking
 			void PushStream(size_t size, bool isDeflated);
 			void PopStream();
 			void CheckStreamStatus();
+			bool Succeeded() const;
 
 			bool IsNpcBoss(Enum::NpcId npcId) const;
 			bool NpcHasHiddenHp(Enum::NpcId npcId) const;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GameData/Data/ItemBinding.h>
+#include <GameData/Data/ItemUgc.h>
 #include <GameData/Data/ItemPet.h>
 #include <GameData/Data/ItemEnchantment.h>
 #include <GameData/Data/ItemCustomization.h>
@@ -10,7 +11,6 @@
 #include <GameData/Data/ItemBlueprint.h>
 #include <GameData/Data/ItemStats.h>
 #include <GameData/Data/ItemLimitBreak.h>
-#include <GameData/Data/ItemTemplate.h>
 #include <GameData/Data/ItemSocket.h>
 #include <GameData/Data/ItemCouple.h>
 
@@ -32,7 +32,7 @@ namespace Maple
 			ItemStats Stats;
 			ItemEnchantment Enchantment;
 			ItemLimitBreak LimitBreak;
-			ItemTemplate Template;
+			ItemUgc Ugc;
 			ItemBlueprint Blueprint;
 			ItemPet Pet;
 			ItemMusic Music;

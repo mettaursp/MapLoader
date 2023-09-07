@@ -3,8 +3,8 @@
 #include <Engine/Math/Vector3S.h>
 #include <vector>
 #include <GameData/Enums/Handles.h>
+#include <GameData/Enums/Combat.h>
 #include <GameData/Packets\Server/SkillDamageRegionPacket.h>
-#include <GameData/Enums/HitType.h>
 
 namespace Networking
 {

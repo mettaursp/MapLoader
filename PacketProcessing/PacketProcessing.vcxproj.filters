@@ -314,4 +314,39 @@
             <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
         </ClCompile>
     </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesAvailabilityPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesPlotsPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesExpirationPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddPlayerPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddPetPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemovePetPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
 </Project>

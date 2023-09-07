@@ -1,6 +1,10 @@
 #include "SniffHandler-decl.h"
 
+#include <zlib.h>
+
 #include <ParserUtils/PacketParsing.h>
+#include <ArchiveParser/ArchiveParser.h>
+#include <Engine/Assets/ParserUtils.h>
 
 namespace Networking
 {
@@ -12,6 +16,35 @@ namespace Networking
 			StreamStack.push_back({});
 
 			return PacketStream();
+		}
+
+		bool handleZlibResult(int result)
+		{
+			switch (result)
+			{
+			case Z_OK:
+				return true;
+			case Z_STREAM_ERROR:
+				std::cout << "unhandled zlib stream error" << std::endl;
+
+				break;
+			case Z_DATA_ERROR:
+				std::cout << "unhandled zlib data error" << std::endl;
+
+				break;
+			case Z_MEM_ERROR:
+				std::cout << "unhandled zlib memory error" << std::endl;
+
+				break;
+			case Z_BUF_ERROR:
+				std::cout << "unhandled zlib buffer error" << std::endl;
+
+				break;
+			default:
+				std::cout << "unhandled zlib error" << std::endl;
+			}
+
+			return false;
 		}
 
 		void SniffHandler::PushStream(size_t size, bool isDeflated)
@@ -38,16 +71,48 @@ namespace Networking
 
 			StackEntry& entry = StreamStack.back();
 
-			
 			ParserUtils::DataStream& oldTop = StreamStack[StreamStack.size() - 2].PacketStream;
 
-			if (isDeflated)
+			std::string_view bufferData = { oldTop.Data.data() + oldTop.Index, size };
+
+			if (!isDeflated)
 			{
-				entry.PacketStream = ParserUtils::DataStream{ { oldTop.Data.data() + oldTop.Index, size } };
+				entry.PacketStream = ParserUtils::DataStream{ bufferData };
 			}
 			else
 			{
+				if (size < sizeof(unsigned int))
+				{
+					entry.PacketStream.HasRecentlyFailed = true;
 
+					std::cout << "buffer too small to contain decompressed size" << std::endl;
+
+					return;
+				}
+
+				auto& deflated = entry.DeflatedData;
+
+				Endian endian(std::endian::big);
+
+				unsigned int length = endian.read<unsigned int>(bufferData.data());
+
+				bufferData = { bufferData.data() + sizeof(unsigned int), size - sizeof(unsigned int)};
+
+				uLongf sizeUncompressed = (uLongf)decompressionBufferSize((size_t)length);
+				int written = (int)size;
+				
+				deflated.resize(sizeUncompressed);
+				
+				int result = uncompress(reinterpret_cast<Bytef*>(deflated.data()), &sizeUncompressed, reinterpret_cast<const Bytef*>(bufferData.data()), written);
+
+				entry.PacketStream = ParserUtils::DataStream{ { deflated.data(), sizeUncompressed }};
+
+				if (!handleZlibResult(result))
+				{
+					entry.PacketStream.HasRecentlyFailed = true;
+				
+					return;
+				}
 			}
 
 			ParserUtils::DataStream& newTop = PacketStream();
@@ -145,6 +210,11 @@ namespace Networking
 			{
 				PopStream();
 			}
+		}
+
+		bool SniffHandler::Succeeded() const
+		{
+			return ReportPackets && PacketStream().Succeeded();
 		}
 
 		bool SniffHandler::IsNpcBoss(Enum::NpcId npcId) const

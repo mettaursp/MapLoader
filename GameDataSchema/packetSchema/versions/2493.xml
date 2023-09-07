@@ -1,0 +1,162 @@
+<packetSchema version="2493">
+	<blocks>
+		<block name="SkillTreeData">
+			<outputParam type="Maple.Game.SkillTreeData" schema="packetData" />
+			<data type="int" name="job" output="Job" />
+			<data type="byte" name="unknownCount">
+				<enum name="Unknown" value="1" />
+			</data>
+			<data type="int" name="jobCode" output="JobCode" />
+			<useBlock name="SkillTreePageData" version="12" output="Active" />
+		</block>
+	</blocks>
+	<source name="server">
+		<opcode name="FieldAddPlayer" value="0x17">
+			<output type="Networking.Packets.Server.FieldAddPlayerPacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<useBlock name="CharacterData" version="13" output="Character" />
+			<useBlock name="SkillTreeData" version="2493" output="SkillTree" />
+			<data type="Vector3S" name="position" output="Position" />
+			<data type="Vector3S" name="Rotation" output="Rotation" />
+			<data type="byte" name="unknown" />
+			<outputMember output="Stats">
+				<data type="byte" name="statCount" />
+				<condition data="statCount" value="35" comparison="equal">
+					<data type="byte" name="basicStatCount" doRead="false" value="5" />
+					<arraySize data="basicStatCount" output="Basic" />
+					<data type="short" name="health" doRead="false" value="4" output="Basic[0].Type" />
+					<data type="short" name="attackSpeed" doRead="false" value="13" output="Basic[1].Type" />
+					<data type="short" name="moveSpeed" doRead="false" value="14" output="Basic[2].Type" />
+					<data type="short" name="mountMoveSpeed" doRead="false" value="22" output="Basic[3].Type" />
+					<data type="short" name="jumpHeight" doRead="false" value="32" output="Basic[4].Type" />
+					<data type="ulong" name="health" output="Basic[0].Max" />
+					<data type="uint" name="attackSpeed" output="Basic[1].Max" />
+					<data type="uint" name="moveSpeed" output="Basic[2].Max" />
+					<data type="uint" name="mountMoveSpeed" output="Basic[3].Max" />
+					<data type="uint" name="jumpHeight" output="Basic[4].Max" />
+					<data type="ulong" name="health" output="Basic[0].Base" />
+					<data type="uint" name="attackSpeed" output="Basic[1].Base" />
+					<data type="uint" name="moveSpeed" output="Basic[2].Base" />
+					<data type="uint" name="mountMoveSpeed" output="Basic[3].Base" />
+					<data type="uint" name="jumpHeight" output="Basic[4].Base" />
+					<data type="ulong" name="health" output="Basic[0].Current" />
+					<data type="uint" name="attackSpeed" output="Basic[1].Current" />
+					<data type="uint" name="moveSpeed" output="Basic[2].Current" />
+					<data type="uint" name="mountMoveSpeed" output="Basic[3].Current" />
+					<data type="uint" name="jumpHeight" output="Basic[4].Current" />
+				</condition>
+				<condition data="statCount" value="35" comparison="notEqual">
+					<array data="statCount" output="Basic">
+						<data type="byte" name="statType" output="Type" />
+						<condition data="statType" value="4" comparison="equal">
+							<data type="ulong" name="max" output="Max" />
+							<data type="ulong" name="base" output="Base" />
+							<data type="ulong" name="current" output="Current" />
+						</condition>
+						<condition data="statType" value="4" comparison="notEqual">
+							<data type="uint" name="max" output="Max" />
+							<data type="uint" name="base" output="Base" />
+							<data type="uint" name="current" output="Current" />
+						</condition>
+					</array>
+				</condition>
+			</outputMember>
+			<data type="bool" name="inBattle" output="InBattle" />
+			<data type="byte" name="unknown" />
+			<useBlock name="CubeItemData" version="12" output="HeldCube" />
+			<data type="int" name="unknown" />
+			<data type="Color4I" name="skinColorPrimary" output="SkinColor.Primary" />
+			<data type="Color4I" name="skinColorSecondary" output="SkinColor.Secondary" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="bool" name="onMount" output="OnMount" />
+			<condition data="onMount" value="1" comparison="equal">
+				<useBlock name="MountData" version="13" output="Mount" />
+			</condition>
+			<data type="int" name="unknown" />
+			<data type="long" name="timestamp" output="Timestamp" />
+			<data type="int" name="weeklyArchitectScore" output="WeeklyArchitectScore" />
+			<data type="int" name="architectScore" output="ArchitectScore" />
+			<data type="bool" name="isDeflated" />
+			<data type="int" name="bufferSize" />
+			<buffer sizeData="bufferSize" deflatedData="isDeflated" output="Equipment">
+				<useBlock name="CharacterEquipmentItems" version="2486" />
+				<useBlock name="CharacterEquipmentSkins" version="2486" />
+			</buffer>
+			<read name="isDeflated" />
+			<read name="bufferSize" />
+			<buffer sizeData="bufferSize" deflatedData="isDeflated" output="Equipment">
+				<useBlock name="CharacterEquipmentFashion" version="2486" />
+			</buffer>
+			<read name="isDeflated" />
+			<read name="bufferSize" />
+			<buffer sizeData="bufferSize" deflatedData="isDeflated" output="Equipment">
+				<useBlock name="CharacterEquipmentBadges" version="2486" />
+			</buffer>
+			<data type="short" name="effectCount" />
+			<array data="effectCount" output="Effects">
+				<data type="int" name="targetId" output="TargetId" />
+				<data type="int" name="effectInstanceId" output="InstanceId" />
+				<data type="int" name="sourceId" output="SourceId" />
+				<useBlock name="EffectStats" version="12" output="Stats" />
+				<data type="bool" name="enabled" output="Enabled" />
+				<data type="long" name="shieldHealth" output="ShieldHealth" />
+			</array>
+			<data type="int" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="int" name="titleId" output="TitleId" />
+			<data type="short" name="insigniaId" output="InsigniaId" />
+			<data type="byte" name="insigniaValue" output="InsigniaValue" />
+			<data type="int" name="petActorId" output="Pet.ActorId" />
+			<data type="bool" name="hasPet" output="HasPet" />
+			<condition data="hasPet" value="1" comparison="equal">
+				<data type="int" name="petItemId" output="Pet.ItemId" />
+				<data type="long" name="petItemInstanceId" output="Pet.ItemInstanceId" />
+				<data type="int" name="petRarity" output="Pet.Rarity">
+					<enum name="None" value="0" />
+					<enum name="Common" value="1" />
+					<enum name="Rare" value="2" />
+					<enum name="Exceptional" value="3" />
+					<enum name="Epic" value="4" />
+					<enum name="Legendary" value="5" />
+					<enum name="Ascendant" value="6" />
+				</data>
+				<useBlock name="ItemData" version="2486" output="Pet.ItemData" args="petItemId" />
+			</condition>
+			<data type="long" name="premiumExpirationTime" output="PremiumExpirationTime" />
+			<data type="int" name="unknown" />
+			<data type="byte" name="unknown" />
+			<!--
+			<data type="int" name="mushkingTailKillCount" />
+			<data type="int" name="unknownCount" />
+			<array data="unknownCount" output="UnknownData">
+				<data type="int" name="unknown" />
+				<data type="wstring" name="unknown" />
+			</array>
+			-->
+			<data type="short" name="unknown" />
+		</opcode>
+		<opcode name="Job" value="0x49">
+			<output type="Networking.Packets.Server.JobPacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<data type="byte" name="mode" output="Mode">
+				<enum name="Notify" value="0" />
+				<enum name="Basic" value="1" />
+				<enum name="Awakening" value="2" />
+				<enum name="Error" value="3" />
+				<enum name="Unknown" value="7" />
+				<enum name="Load" value="8" />
+				<enum name="Update" value="9" />
+				<enum name="Reset" value="10" />
+				<enum name="AutoDistribute" value="11" />
+			</data>
+			<useBlock name="SkillTreeData" version="2493" output="SkillTree" />
+			<!--data type="long" name="removeMe" /-->
+		</opcode>
+	</source>
+	<source name="client">
+	</source>
+</packetSchema>

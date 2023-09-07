@@ -74,6 +74,8 @@ namespace ParserUtils
 		};
 
 		std::unordered_map<unsigned short, VersionSuccesses> successfulPackets;
+		std::unordered_map<unsigned short, VersionSuccesses> seenPackets;
+		std::unordered_map<unsigned short, VersionSuccesses> unparsedPackets;
 
 		unsigned short parseMsb(const fs::path& path)
 		{
@@ -137,6 +139,7 @@ namespace ParserUtils
 			}
 
 			handler.Data = build == 12 ? &gms2Data : &kms2Data;
+			handler.Version = build;
 
 			while (!file.eof())
 			{
@@ -184,6 +187,7 @@ namespace ParserUtils
 
 				handler.ResetPacketStream() = ParserUtils::DataStream{{reinterpret_cast<char*>(buffer.data()), buffer.size()}};
 				handler.FoundValues = {};
+				handler.ReportPackets = true;
 
 				unsigned long long opcodeVersion = ((((unsigned long long)opcode << 16) | (unsigned long long)build) << 32) | buffer.size();
 
@@ -207,10 +211,30 @@ namespace ParserUtils
 					opcode += 0;
 				}
 
-				if (stream.Index == stream.Data.size() && stream.Index && !stream.HasRecentlyFailed)
+				if (stream.Index && !stream.HasRecentlyFailed && stream.Index == stream.Data.size())
 				{
-					auto& versionSuccessses = successfulPackets[build];
-					auto& packetSet = !outbound ? versionSuccessses.ServerPackets : versionSuccessses.ClientPackets;
+					auto& versionSuccesses = successfulPackets[build];
+					auto & packetSet = !outbound ? versionSuccesses.ServerPackets : versionSuccesses.ClientPackets;
+
+					if (!packetSet.contains(opcode))
+					{
+						packetSet.insert(opcode);
+					}
+				}
+				else if (!stream.HasRecentlyFailed && stream.Index == 0)
+				{
+					auto& unparsed = unparsedPackets[build];
+					auto& packetSet = !outbound ? unparsed.ServerPackets : unparsed.ClientPackets;
+
+					if (!packetSet.contains(opcode))
+					{
+						packetSet.insert(opcode);
+					}
+				}
+
+				{
+					auto& seen = seenPackets[build];
+					auto& packetSet = !outbound ? seen.ServerPackets : seen.ClientPackets;
 
 					if (!packetSet.contains(opcode))
 					{
@@ -231,7 +255,14 @@ namespace ParserUtils
 					{
 						hasPrintedFile = true;
 
-						std::cout << "parsing [" << build << "] " << path.string() << std::endl;
+						std::cout << "parsing [" << build;
+
+						if (handler.Feature)
+						{
+							std::cout << ", Feature: " << handler.Feature << "; " << handler.Locale;
+						}
+
+						std::cout << "] " << path.string() << std::endl;
 					}
 
 					if (stream.HasRecentlyFailed)
@@ -289,6 +320,7 @@ namespace ParserUtils
 
 						handler.ResetPacketStream() = ParserUtils::DataStream{{reinterpret_cast<char*>(buffer.data()), buffer.size()}};
 						handler.FoundValues = {};
+						handler.ReportPackets = false;
 
 						handler.PacketStream().IgnoreUnknownValues = (!outbound ? ignoreServerPacketUnknownValues : ignoreClientPacketUnknownValues).contains(opcode);
 						handler.PacketStream().PrintOutput = true;
@@ -758,6 +790,11 @@ int main(int argc, char** argv)
 
 	bool regenerate = !true;
 	bool showSuccesses = false;
+	bool showSeen = false;
+	bool showUnparsed = false;
+	bool showUnused = false;
+
+	fs::path msbDir = "B:/Files/ms2sniffs/";
 
 	if (!regenerate)
 	{
@@ -800,6 +837,70 @@ int main(int argc, char** argv)
 		}
 		{
 			Archive::ArchivePath path = kms2Reader.GetPath("Xml/string/en/npcname.xml", true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+
+				if (!idAttribute || !nameAttribute) continue;
+
+				Enum::NpcId id = (Enum::NpcId)atoi(idAttribute->Value());
+
+				kms2Data.Npcs[id].Name = nameAttribute->Value();
+			}
+		}
+		{
+			Archive::ArchivePath path = gms2Reader.GetPath("Xml/string/en/petname.xml", true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+
+				if (!idAttribute || !nameAttribute) continue;
+
+				Enum::NpcId id = (Enum::NpcId)atoi(idAttribute->Value());
+				
+				gms2Data.Npcs[id].Name = nameAttribute->Value();
+			}
+		}
+		{
+			Archive::ArchivePath path = kms2Reader.GetPath("Xml/string/en/petname.xml", true);
 
 			output.clear();
 
@@ -994,8 +1095,6 @@ int main(int argc, char** argv)
 		ParserUtils::Packets::parseMsb("A:/trevo/Downloads/SmitingAuraSniffVid.msb");
 	}
 
-	fs::path msbDir = "B:/Files/ms2sniffs/";
-
 	std::unordered_set<unsigned int> versions;
 
 	for (const auto& entry : fs::recursive_directory_iterator(msbDir))
@@ -1054,65 +1153,186 @@ int main(int argc, char** argv)
 
 	std::cout << std::endl << std::endl;
 
-	if (regenerate || !showSuccesses)
+	if (regenerate || (!showSuccesses && !showSeen))
 	{
 		return 0;
 	}
 
-	std::vector<unsigned int> successVersions;
-	std::vector<const ParserUtils::Packets::VersionSuccesses*> successes;
-
-	for (const auto& successEntry : ParserUtils::Packets::successfulPackets)
+	if (showSuccesses)
 	{
-		unsigned int index = (unsigned int)successes.size();
-		successVersions.push_back(index | ((unsigned int)successEntry.first << 16));
-		successes.push_back(&successEntry.second);
-	}
+		std::vector<unsigned int> successVersions;
+		std::vector<const ParserUtils::Packets::VersionSuccesses*> successes;
 
-	std::sort(successVersions.begin(), successVersions.end());
-
-	std::cout << "successful parsed opcodes:" << std::endl;
-
-	for (unsigned int entry : successVersions)
-	{
-		unsigned short version = (unsigned short)(entry >> 16);
-		unsigned int index = entry & 0xFFFF;
-
-		std::cout << std::dec << "\t" << version << std::hex << ":\n\t\tClient: ";
-
-		std::vector<unsigned short> opcodes;
-
-		for (unsigned short opcode : successes[index]->ServerPackets)
+		for (const auto& successEntry : ParserUtils::Packets::successfulPackets)
 		{
-			opcodes.push_back(opcode | 0x8000);
+			unsigned int index = (unsigned int)successes.size();
+			successVersions.push_back(index | ((unsigned int)successEntry.first << 16));
+			successes.push_back(&successEntry.second);
 		}
 
-		for (unsigned short opcode : successes[index]->ClientPackets)
+		std::sort(successVersions.begin(), successVersions.end());
+
+		std::cout << "successful parsed opcodes:" << std::endl;
+
+		for (unsigned int entry : successVersions)
 		{
-			opcodes.push_back(opcode);
-		}
+			unsigned short version = (unsigned short)(entry >> 16);
+			unsigned int index = entry & 0xFFFF;
 
-		std::sort(opcodes.begin(), opcodes.end());
+			std::cout << std::dec << "\t" << version << std::hex << ":\n\t\tClient: ";
 
-		bool lastWasServer = false;
+			std::vector<unsigned short> opcodes;
 
-		for (unsigned short opcode : opcodes)
-		{
-			bool isServer = (opcode & 0x8000) != 0;
-
-			opcode &= 0x7FFF;
-
-			if (lastWasServer != isServer)
+			for (unsigned short opcode : successes[index]->ServerPackets)
 			{
-				std::cout << "\n\t\tServer: ";
+				opcodes.push_back(opcode | 0x8000);
 			}
 
-			lastWasServer = isServer;
+			for (unsigned short opcode : successes[index]->ClientPackets)
+			{
+				opcodes.push_back(opcode);
+			}
 
-			std::cout << "0x" << opcode << ", ";
+			std::sort(opcodes.begin(), opcodes.end());
+
+			bool lastWasServer = false;
+
+			for (unsigned short opcode : opcodes)
+			{
+				bool isServer = (opcode & 0x8000) != 0;
+
+				opcode &= 0x7FFF;
+
+				if (lastWasServer != isServer)
+				{
+					std::cout << "\n\t\tServer: ";
+				}
+
+				lastWasServer = isServer;
+
+				std::cout << "0x" << opcode << ", ";
+			}
+
+			std::cout << std::dec << std::endl;
+		}
+	}
+
+	if (showSeen)
+	{
+		std::vector<unsigned int> seenVersions;
+		std::vector<const ParserUtils::Packets::VersionSuccesses*> seen;
+
+		for (const auto& seenEntry : ParserUtils::Packets::seenPackets)
+		{
+			unsigned int index = (unsigned int)seen.size();
+			seenVersions.push_back(index | ((unsigned int)seenEntry.first << 16));
+			seen.push_back(&seenEntry.second);
 		}
 
-		std::cout << std::dec << std::endl;
+		std::sort(seenVersions.begin(), seenVersions.end());
+
+		std::cout << "seen opcodes:" << std::endl;
+
+		for (unsigned int entry : seenVersions)
+		{
+			unsigned short version = (unsigned short)(entry >> 16);
+			unsigned int index = entry & 0xFFFF;
+
+			std::cout << std::dec << "\t" << version << std::hex << ":\n\t\tClient: ";
+
+			std::vector<unsigned short> opcodes;
+
+			for (unsigned short opcode : seen[index]->ServerPackets)
+			{
+				opcodes.push_back(opcode | 0x8000);
+			}
+
+			for (unsigned short opcode : seen[index]->ClientPackets)
+			{
+				opcodes.push_back(opcode);
+			}
+
+			std::sort(opcodes.begin(), opcodes.end());
+
+			bool lastWasServer = false;
+
+			for (unsigned short opcode : opcodes)
+			{
+				bool isServer = (opcode & 0x8000) != 0;
+
+				opcode &= 0x7FFF;
+
+				if (lastWasServer != isServer)
+				{
+					std::cout << "\n\t\tServer: ";
+				}
+
+				lastWasServer = isServer;
+
+				std::cout << "0x" << opcode << ", ";
+			}
+
+			std::cout << std::dec << std::endl;
+		}
+	}
+
+	if (showUnparsed)
+	{
+		std::vector<unsigned int> unparsedVersions;
+		std::vector<const ParserUtils::Packets::VersionSuccesses*> unparsed;
+
+		for (const auto& unparsedEntry : ParserUtils::Packets::unparsedPackets)
+		{
+			unsigned int index = (unsigned int)unparsed.size();
+			unparsedVersions.push_back(index | ((unsigned int)unparsedEntry.first << 16));
+			unparsed.push_back(&unparsedEntry.second);
+		}
+
+		std::sort(unparsedVersions.begin(), unparsedVersions.end());
+
+		std::cout << "unparsed opcodes:" << std::endl;
+
+		for (unsigned int entry : unparsedVersions)
+		{
+			unsigned short version = (unsigned short)(entry >> 16);
+			unsigned int index = entry & 0xFFFF;
+
+			std::cout << std::dec << "\t" << version << std::hex << ":\n\t\tClient: ";
+
+			std::vector<unsigned short> opcodes;
+
+			for (unsigned short opcode : unparsed[index]->ServerPackets)
+			{
+				opcodes.push_back(opcode | 0x8000);
+			}
+
+			for (unsigned short opcode : unparsed[index]->ClientPackets)
+			{
+				opcodes.push_back(opcode);
+			}
+
+			std::sort(opcodes.begin(), opcodes.end());
+
+			bool lastWasServer = false;
+
+			for (unsigned short opcode : opcodes)
+			{
+				bool isServer = (opcode & 0x8000) != 0;
+
+				opcode &= 0x7FFF;
+
+				if (lastWasServer != isServer)
+				{
+					std::cout << "\n\t\tServer: ";
+				}
+
+				lastWasServer = isServer;
+
+				std::cout << "0x" << opcode << ", ";
+			}
+
+			std::cout << std::dec << std::endl;
+		}
 	}
 
 	return 0;

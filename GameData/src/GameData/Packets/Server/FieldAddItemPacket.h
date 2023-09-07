@@ -3,7 +3,7 @@
 #include <Engine/Math/Vector3S.h>
 #include <GameData/Data/ItemData.h>
 #include <GameData/Enums/Handles.h>
-#include <GameData/Enums/Rarity.h>
+#include <GameData/Enums/Item.h>
 
 namespace Networking
 {

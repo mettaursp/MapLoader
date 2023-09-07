@@ -36,6 +36,15 @@
 		<enum name="PetId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
+		<enum name="MountId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="TitleId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="InsigniaId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
 		<enum name="ItemEntityId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>

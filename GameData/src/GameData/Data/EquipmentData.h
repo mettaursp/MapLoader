@@ -3,8 +3,7 @@
 #include <GameData/Data/ItemData.h>
 #include <GameData/Enums/Handles.h>
 #include <string>
-#include <GameData/Enums/SlotType.h>
-#include <GameData/Enums/Rarity.h>
+#include <GameData/Enums/Item.h>
 
 namespace Maple
 {

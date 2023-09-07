@@ -1,5 +1,7 @@
 #include "./../SniffHandler.h"
 
+#include <ParserUtils/PacketParsing.h>
+
 namespace Networking
 {
 	namespace Packets
@@ -52,7 +54,7 @@ namespace Networking
 			default: break;
 			}
 		
-			std::cout << toString(packet.CharacterName) << ": " << toString(packet.Message) << std::endl;
+			std::cout << packet.CharacterName << ": " << packet.Message << std::endl;
 		}
 	}
 }

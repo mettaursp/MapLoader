@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct FieldRemovePlayerPacket
 			{
-				Enum::CharacterId CharacterId;
+				Enum::ActorId ActorId;
 			};
 		}
 	}

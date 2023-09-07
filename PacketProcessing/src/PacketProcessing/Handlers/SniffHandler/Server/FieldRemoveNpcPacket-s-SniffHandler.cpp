@@ -1,4 +1,5 @@
 #include "./../SniffHandler.h"
+
 #include <ParserUtils/PacketParsing.h>
 
 namespace Networking
@@ -13,7 +14,7 @@ namespace Networking
 				return;
 			}
 		
-			const auto entry = Field.Npcs.find((unsigned int)packet.ActorId);
+			const auto entry = Field.Npcs.find(packet.ActorId);
 		
 			if (entry == Field.Npcs.end())
 			{
@@ -47,18 +48,19 @@ namespace Networking
 		
 					PacketStream().FoundUnknownValue = true;
 		
-					std::cout << "removing npc with unknown id " << (unsigned int)entry->second.NpcId << "' as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << "removing npc with unknown id " << (unsigned int)entry->second.NpcId << " '" << entry->second.Name << "' Lv" << entry->second.Actor->Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
 				}
 			}
 			else
 			{
-				if constexpr (ParserUtils::Packets::PrintOutput)
+				if constexpr (ParserUtils::Packets::PrintPacketOutput)
 				{
-					std::cout << "removing npc [" << (unsigned int)entry->second.NpcId << "] '" << entry->second.Data->Name << "' as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << "removing npc [" << (unsigned int)entry->second.NpcId << "] '" << entry->second.Data->Name << "' Lv" << entry->second.Actor->Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
 				}
 			}
 		
 			Field.Npcs.erase(entry);
+			Field.Actors.erase(packet.ActorId);
 		}
 	}
 }

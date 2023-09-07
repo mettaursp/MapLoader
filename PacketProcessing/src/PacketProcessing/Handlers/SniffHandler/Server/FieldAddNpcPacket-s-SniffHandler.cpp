@@ -1,4 +1,5 @@
 #include "./../SniffHandler.h"
+
 #include <ParserUtils/PacketParsing.h>
 
 namespace Networking
@@ -13,9 +14,9 @@ namespace Networking
 				return;
 			}
 		
-			const auto actorEntry = Field.Npcs.find((unsigned int)packet.ActorId);
+			const auto actorEntry = Field.Actors.find(packet.ActorId);
 		
-			if (actorEntry != Field.Npcs.end())
+			if (actorEntry != Field.Actors.end())
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
@@ -49,27 +50,27 @@ namespace Networking
 		
 					PacketStream().FoundUnknownValue = true;
 		
-					std::cout << "adding npc with unknown id " << (unsigned int)packet.NpcId << "' as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << "adding npc with unknown id " << (unsigned int)packet.NpcId << "' Lv" << packet.Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
 				}
 			}
 			else
 			{
-				if constexpr (ParserUtils::Packets::PrintOutput)
+				if constexpr (ParserUtils::Packets::PrintPacketOutput)
 				{
-					std::cout << "adding npc [" << (unsigned int)packet.NpcId << "] '" << npcEntry->second.Name << "' as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << "adding npc [" << (unsigned int)packet.NpcId << "] '" << npcEntry->second.Name << "' Lv" << packet.Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
 				}
 			}
 		
-			unsigned int id = (unsigned int)packet.ActorId;
+			auto& actor = Field.Actors[packet.ActorId];
 		
-			auto& actor = Field.Actors[id];
+			actor.ActorId = packet.ActorId;
+			actor.Level = packet.Level;
 		
-			actor.ActorId = id;
+			auto& npc = Field.Npcs[packet.ActorId];
 		
-			auto& npc = Field.Npcs[id];
-		
+			npc.Name = npcEntry->second.Name;
 			npc.Data = &npcEntry->second;
-			npc.NpcId = (unsigned int)packet.NpcId;
+			npc.NpcId = packet.NpcId;
 			npc.Actor = &actor;
 		}
 	}

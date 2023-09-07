@@ -75,6 +75,8 @@
         <Import Project="PacketProcessingInclude.props"/>
         <Import Project="..\GameData\GameDataInclude.props"/>
         <Import Project="..\GameEngine\GameEngineInclude.props"/>
+        <Import Project="..\ArchiveParser\ParserInclude.props"/>
+        <Import Project="..\ZlibDebug.props"/>
     </ImportGroup>
     <ImportGroup Label="PropertySheets" Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
         <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" Label="LocalAppDataPlatform"/>
@@ -83,6 +85,8 @@
         <Import Project="PacketProcessingInclude.props"/>
         <Import Project="..\GameData\GameDataInclude.props"/>
         <Import Project="..\GameEngine\GameEngineInclude.props"/>
+        <Import Project="..\ArchiveParser\ParserInclude.props"/>
+        <Import Project="..\ZlibRelease.props"/>
     </ImportGroup>
     <PropertyGroup Label="UserMacros"/>
     <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">
@@ -154,6 +158,9 @@
         <ClCompile Include="src\PacketProcessing\PacketParserBase.cpp"/>
     </ItemGroup>
     <ItemGroup>
+        <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">
+            <Project>{01d10ca8-8e23-4880-b235-786919567bc4}</Project>
+        </ProjectReference>
         <ProjectReference Include="..\ParserUtils\ParserUtils.vcxproj">
             <Project>{d3fc3444-ffb5-48e5-97ed-f169efff7d6d}</Project>
         </ProjectReference>
@@ -315,5 +322,26 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterInfoPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesAvailabilityPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesPlotsPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesExpirationPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddPlayerPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddPetPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemovePetPacket-s-SniffHandler.cpp"/>
     </ItemGroup>
 </Project>

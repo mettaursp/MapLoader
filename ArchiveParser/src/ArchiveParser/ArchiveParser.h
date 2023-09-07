@@ -10,6 +10,8 @@ namespace fs = std::filesystem;
 
 struct evp_cipher_ctx_st;
 
+size_t decompressionBufferSize(size_t expectedSize);
+
 namespace Archive
 {
 	struct DecryptionContext

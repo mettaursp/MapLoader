@@ -12,7 +12,9 @@ namespace Maple
 			std::vector<EquipmentData> Equipment;
 			std::vector<EquipmentData> Badges;
 			bool HasSkin = false;
+			bool HasFashion = false;
 			std::vector<EquipmentData> Skins;
+			std::vector<EquipmentData> Fashion;
 		};
 	}
 }

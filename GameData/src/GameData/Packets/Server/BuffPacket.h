@@ -1,8 +1,7 @@
 #pragma once
 
 #include <GameData/Packets\Server/BuffPacket.h>
-#include <GameData/Enums/Handles.h>
-#include <GameData/Data/EffectStats.h>
+#include <GameData/Data/AdditionalEffect.h>
 
 namespace Networking
 {
@@ -20,14 +19,9 @@ namespace Networking
 				};
 				
 				ModeEnum Mode = ModeEnum::Add;
-				Enum::ActorId TargetId;
-				Enum::EffectInstanceId InstanceId;
-				Enum::ActorId SourceId;
 				bool UpdateEffect = false;
-				Maple::Game::EffectStats Stats;
-				bool Enabled = false;
+				Maple::Game::AdditionalEffect Effect;
 				bool UpdateShield = false;
-				long long ShieldHealth = 0;
 			};
 		}
 	}

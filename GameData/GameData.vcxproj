@@ -87,16 +87,22 @@
         <ClInclude Include="./../GameData\src/GameData\Enums\ItemExtraDataType.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\Stat.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Data\ActorBasicStat.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\Stat.cpp"/>
+        <ClCompile Include="./../GameData\src/GameData\Data\ActorBasicStat.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\StatLong.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Data\ActorSpecialStat.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\StatLong.cpp"/>
+        <ClCompile Include="./../GameData\src/GameData\Data\ActorSpecialStat.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\ActorStats.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\ActorStats.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\DyeColor.h"/>
@@ -165,10 +171,10 @@
         <ClCompile Include="./../GameData\src/GameData\Data\ItemLimitBreak.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemTemplate.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Data\ItemUgc.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemTemplate.cpp"/>
+        <ClCompile Include="./../GameData\src/GameData\Data\ItemUgc.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemBlueprint.h"/>
@@ -231,6 +237,12 @@
         <ClCompile Include="./../GameData\src/GameData\Data\EffectStats.cpp"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\AdditionalEffect.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\AdditionalEffect.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\MasteryData.h"/>
     </ItemGroup>
     <ItemGroup>
@@ -271,6 +283,24 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Data\SkillTreeData.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\CubeItemData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\CubeItemData.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\MountData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\MountData.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\Pet.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Data\Pet.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.h"/>
@@ -325,6 +355,12 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterListChangeNamePacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPlayerPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddPlayerPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePlayerPacket.h"/>
@@ -411,6 +447,18 @@
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPetPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddPetPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyStartPacket.h"/>
     </ItemGroup>
     <ItemGroup>
@@ -427,6 +475,30 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\TrophyUpdatePacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LoadCubesPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesAvailabilityPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LoadCubesAvailabilityPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesPlotsPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LoadCubesPlotsPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesExpirationPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LoadCubesExpirationPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterInfoPacket.h"/>
@@ -585,36 +657,18 @@
         <ClCompile Include="./../GameData\src/GameData\Packets\Client\SystemInfoPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\HitType.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Enums\Combat.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\NpcType.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Enums\Player.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeBasic.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\StatAttributeSpecial.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Gender.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\JobCode.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\JobId.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Rarity.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\BadgeType.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\SlotType.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Enums\Item.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\Handles.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\Stats.h"/>
     </ItemGroup>
 </Project>

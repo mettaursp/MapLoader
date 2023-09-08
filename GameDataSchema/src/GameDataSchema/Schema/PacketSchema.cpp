@@ -69,6 +69,8 @@ namespace PacketSchema
 		DataOutput Output;
 		bool IsLoop = false;
 		bool IncrementLoopCounter = false;
+		std::string LoopParamName;
+		char LoopIndex = 0;
 	};
 
 	DataResult findDataReference(const PacketOpcode& opcode, const std::vector<StackEntry>& stack, const std::string_view& name, size_t index)
@@ -562,6 +564,13 @@ namespace PacketSchema
 				continue;
 			}
 
+			if (strcmp(name, "iterator") == 0)
+			{
+				data.IteratorName = value;
+
+				continue;
+			}
+
 			if (strcmp(name, "doRead") == 0)
 			{
 				data.Read = strcmp(value, "true") == 0;
@@ -716,6 +725,13 @@ namespace PacketSchema
 				continue;
 			}
 
+			if (strcmp(name, "else") == 0)
+			{
+				condition.IsElse = strcmp(value, "true") == 0;
+
+				continue;
+			}
+
 			if (strcmp(name, "bitIndex") == 0)
 			{
 				if (result.Found)
@@ -756,6 +772,10 @@ namespace PacketSchema
 				else if (strcmp(value, "notBetween") == 0)
 				{
 					condition.Comparison = PacketInfoComparison::NotBetween;
+				}
+				else if (strcmp(value, "none") == 0)
+				{
+					condition.Comparison = PacketInfoComparison::None;
 				}
 				else
 				{
@@ -2118,7 +2138,16 @@ namespace PacketSchema
 
 					if (stack.back().IncrementLoopCounter)
 					{
-						out << "\n" << tabs << "++" << generator.LoopIndex << ";\n";
+						std::string iteratorName;
+
+						if (stack.back().LoopParamName.size())
+						{
+							iteratorName = stack.back().LoopParamName + '_';
+						}
+
+						iteratorName.push_back(generator.LoopIndex);
+
+						out << "\n" << tabs << "++" << iteratorName << ";\n";
 					}
 				}
 
@@ -2283,7 +2312,62 @@ namespace PacketSchema
 
 							if (data.Type->DefaultValue.size())
 							{
-								out << " = " << (data.Value.size() ? data.Value : data.Type->DefaultValue);
+								out << " = ";
+								if (data.Value.size())
+								{
+									out << data.Value;
+								}
+								else if (data.IteratorName.size())
+								{
+									std::string iteratorName = data.Type->DefaultValue;
+
+									for (size_t stackIndex = stack.size(); stackIndex > 0; --i)
+									{
+										const auto& stackEntry = stack[stackIndex - 1];
+
+										if (stackEntry.LoopParamName.size() && stackEntry.LoopParamName == data.IteratorName)
+										{
+											iteratorName = stackEntry.LoopParamName + '_';
+											iteratorName.push_back(stackEntry.LoopIndex);
+
+											const auto& loopInfo = opcode.Layout[stackEntry.StartIndex];
+
+											if (loopInfo.Type != PacketInfoType::Array)
+											{
+												std::cout << "referencing non loop iterator param '" << data.IteratorName << "'" << std::endl;
+											}
+											else
+											{
+												const auto& array = opcode.Arrays[loopInfo.Index];
+												const auto& arrayData = opcode.Data[opcode.Layout[array.DataIndex].Index];
+
+												std::string destinationType;
+
+												if (makeVariable)
+												{
+													destinationType = data.Type->TypeName;
+												}
+												else
+												{
+													destinationType = output.Member->ContainsType.size() ? output.Member->ContainsType : output.Member->Type;
+												}
+
+												if (destinationType != arrayData.Type->TypeName)
+												{
+													out << "(" << destinationType << ")";
+												}
+											}
+
+											break;
+										}
+									}
+
+									out << iteratorName;
+								}
+								else
+								{
+									out << data.Type->DefaultValue;
+								}
 							}
 
 							out << ";\n";
@@ -2509,8 +2593,16 @@ namespace PacketSchema
 				}
 
 				std::string containerName = output.Name;
+				std::string iteratorName;
 
-				output.Name = containerName + '[' + generator.LoopIndex + ']';
+				if (array.Name.size())
+				{
+					iteratorName = array.Name + '_';
+				}
+
+				iteratorName.push_back(generator.LoopIndex);
+
+				output.Name = containerName + '[' + iteratorName + ']';
 
 				if (array.Type == PacketArray::TypeEnum::For)
 				{
@@ -2519,10 +2611,10 @@ namespace PacketSchema
 						out << tabs << "ResizeVector(handler, " << containerName << ", " << param << ");\n\n";
 					}
 
-					out << tabs << "for (" << data.Type->TypeName << " " << generator.LoopIndex << " = 0; " << generator.LoopIndex << " < " << param << " && !handler.PacketStream().HasRecentlyFailed; ++" << generator.LoopIndex << ")\n";
+					out << tabs << "for (" << data.Type->TypeName << " " << iteratorName << " = 0; " << iteratorName << " < " << param << " && !handler.PacketStream().HasRecentlyFailed; ++" << iteratorName << ")\n";
 					out << tabs << "{\n";
 
-					stack.push_back({ i, array.RegionEnd, output, true });
+					stack.push_back({ i, array.RegionEnd, output, true, false, array.Name, generator.LoopIndex });
 					generator.Push();
 
 					lastType = PacketInfoType::Array;
@@ -2547,12 +2639,12 @@ namespace PacketSchema
 
 				if (array.Type == PacketArray::TypeEnum::While)
 				{
-					out << tabs << "size_t " << generator.LoopIndex << " = 0;\n\n";
+					out << tabs << "size_t " << iteratorName << " = 0;\n\n";
 
 					out << tabs << "while (" << data << " && !handler.PacketStream().HasRecentlyFailed)\n";
 					out << tabs << "{\n";
 
-					stack.push_back({ i, array.RegionEnd, output, true, true });
+					stack.push_back({ i, array.RegionEnd, output, true, true, array.Name, generator.LoopIndex });
 					generator.Push();
 
 					if (output.Output)
@@ -2585,49 +2677,57 @@ namespace PacketSchema
 			{
 				const PacketCondition& condition = opcode.Conditions[index];
 
-				size_t dataIndex = opcode.Layout[condition.DataIndex].Index;
-
-				const PacketData& data = opcode.Data[dataIndex];
-
 				if (lastType != PacketInfoType::Condition && lastType != PacketInfoType::Array)
 				{
 					out << "\n";
 				}
 
-				out << tabs << "if (";
-
-				std::string param = getReference(condition.DataIndex, opcode, i, outputs, topOutput, stack);
-
-				if (condition.BitIndex != 0xFF)
+				if (condition.Comparison == PacketInfoComparison::None && condition.IsElse)
 				{
-					out << "GetBit(" << param << ", " << (int)condition.BitIndex << ")";
+					out << tabs << "else\n";
 				}
 				else
 				{
-					out << param;
-				}
+					size_t dataIndex = opcode.Layout[condition.DataIndex].Index;
 
-				if (condition.Comparison == PacketInfoComparison::Equal)
-				{
-					if (condition.Value != 1 || data.Type->TypeName != "bool")
+					const PacketData& data = opcode.Data[dataIndex];
+
+					out << tabs << (condition.IsElse ? "else if (" : "if (");
+
+					std::string param = getReference(condition.DataIndex, opcode, i, outputs, topOutput, stack);
+
+					if (condition.BitIndex != 0xFF)
 					{
-						out << " == " << condition.Value;
+						out << "GetBit(" << param << ", " << (int)condition.BitIndex << ")";
 					}
-				}
-				else if (condition.Comparison == PacketInfoComparison::NotEqual)
-				{
-					out << " != " << condition.Value;
-				}
-				else if (condition.Comparison == PacketInfoComparison::Between)
-				{
-					out << " >= " << condition.Value << " && " << param << " <= " << condition.Value2;
-				}
-				else if (condition.Comparison == PacketInfoComparison::NotBetween)
-				{
-					out << " < " << condition.Value << " || " << param << " > " << condition.Value2;
+					else
+					{
+						out << param;
+					}
+
+					if (condition.Comparison == PacketInfoComparison::Equal)
+					{
+						if (condition.Value != 1 || data.Type->TypeName != "bool")
+						{
+							out << " == " << condition.Value;
+						}
+					}
+					else if (condition.Comparison == PacketInfoComparison::NotEqual)
+					{
+						out << " != " << condition.Value;
+					}
+					else if (condition.Comparison == PacketInfoComparison::Between)
+					{
+						out << " >= " << condition.Value << " && " << param << " <= " << condition.Value2;
+					}
+					else if (condition.Comparison == PacketInfoComparison::NotBetween)
+					{
+						out << " < " << condition.Value << " || " << param << " > " << condition.Value2;
+					}
+
+					out << ")\n";
 				}
 
-				out << ")\n";
 				out << tabs << "{\n";
 
 				stack.push_back({ i, condition.RegionEnd });
@@ -2699,7 +2799,16 @@ namespace PacketSchema
 
 				if (stack.back().IncrementLoopCounter)
 				{
-					out << "\n" << tabs << "++" << generator.LoopIndex << ";\n";
+					std::string iteratorName;
+
+					if (stack.back().LoopParamName.size())
+					{
+						iteratorName = stack.back().LoopParamName + '_';
+					}
+
+					iteratorName.push_back(generator.LoopIndex);
+
+					out << "\n" << tabs << "++" << iteratorName << ";\n";
 				}
 			}
 			

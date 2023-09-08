@@ -76,6 +76,8 @@ namespace Networking
 			player.JobCode = packet.Character.JobCode;
 			player.Actor = &actor;
 
+			CheckBaseStats(player.JobCode, actor.Level, packet.Stats, Version != 12);
+
 			if (packet.HasPet)
 			{
 				const auto petEntry = Field.Pets.find(packet.Pet.ActorId);

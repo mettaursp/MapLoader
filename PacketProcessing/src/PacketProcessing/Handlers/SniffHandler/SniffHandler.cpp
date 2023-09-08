@@ -10,6 +10,77 @@ namespace Networking
 {
 	namespace Packets
 	{
+		void AddStats(ActorStats& stats, const Maple::Game::ActorStats& packetStats)
+		{
+			for (const auto& packetStat : packetStats.Basic)
+			{
+				AddStat(stats, packetStat);
+			}
+
+			for (const auto& packetStat : packetStats.Special)
+			{
+				AddStat(stats, packetStat);
+			}
+		}
+
+		void AddStat(ActorStats& stats, const Maple::Game::ActorBasicStat& packetStat)
+		{
+			if (packetStat.Base || packetStat.Current || packetStat.Max)
+			{
+				stats.Basic[packetStat.Type] = packetStat;
+			}
+		}
+
+		void AddStat(ActorStats& stats, const Maple::Game::ActorSpecialStat& packetStat)
+		{
+			if (packetStat.Value || packetStat.Rate)
+			{
+				stats.Special[packetStat.Type] = packetStat;
+			}
+		}
+
+		std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Gms2JobBaseStats;
+		std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Kms2JobBaseStats;
+
+		void CheckBaseStats(Enum::JobCode jobCode, unsigned short level, const Maple::Game::ActorBasicStat& stat, bool isKms2)
+		{
+			auto& entry = (isKms2 ? Kms2JobBaseStats : Gms2JobBaseStats)[jobCode][level].Basic[stat.Type];
+
+			if (entry.Base && entry.Base != stat.Base)
+			{
+				std::cout << "mismatching base for stat " << (int)stat.Type << std::endl;
+			}
+
+			entry = stat;
+		}
+
+		void CheckBaseStats(Enum::JobCode jobCode, unsigned short level, const Maple::Game::ActorStats& stats, Enum::StatAttributeBasic attribute, bool isKms2)
+		{
+			for (const auto& stat : stats.Basic)
+			{
+				if (stat.Type == attribute && stat.Base)
+				{
+					CheckBaseStats(jobCode, level, stat, true);
+
+					return;
+				}
+			}
+		}
+
+		void CheckBaseStats(Enum::JobCode jobCode, unsigned short level, const Maple::Game::ActorStats& stats, bool isKms2)
+		{
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::Hp, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::Str, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::Dex, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::Int, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::Luk, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::PhysicalAtk, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::PhysicalRes, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::MagicAtk, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::MagicRes, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::Defense, isKms2);
+		}
+
 		ParserUtils::DataStream& SniffHandler::ResetPacketStream()
 		{
 			StreamStack.clear();
@@ -305,6 +376,38 @@ namespace Networking
 			rate /= 100;
 
 			return true;
+		}
+
+		unsigned char SniffHandler::GetActorType(Enum::ActorId actorId) const
+		{
+			const unsigned char Unknown = 0xFF;
+			const unsigned char Unidentified = 0;
+			const unsigned char Player = 1;
+			const unsigned char OtherPlayer = 2;
+			const unsigned char Pet = 3;
+			const unsigned char Npc = 4;
+
+			if (Field.Players.contains(actorId))
+			{
+				return Player;
+			}
+
+			if (Field.Pets.contains(actorId))
+			{
+				return Pet;
+			}
+
+			if (Field.Npcs.contains(actorId))
+			{
+				return Npc;
+			}
+
+			if (Field.Actors.contains(actorId))
+			{
+				return Unidentified;
+			}
+
+			return Unknown;
 		}
 	}
 }

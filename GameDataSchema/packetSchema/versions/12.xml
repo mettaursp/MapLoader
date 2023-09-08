@@ -24,6 +24,82 @@
 			</array>
 			<data type="int" name="empowermentItemId" output="EmpowermentItemId" />
 		</block>
+		<block name="AllStatsMyPlayer">
+			<outputParam type="Maple.Game.ActorStats" schema="packetData" />
+			<data type="byte" name="basicStatCount" doRead="false" value="5" />
+			<array data="statCount" name="statCount" output="Basic">
+				<data type="byte" name="statType" iterator="statCount" output="Type" />
+				<condition data="statType" value="4" comparison="equal">
+					<data type="ulong" name="max" output="Max" />
+					<data type="ulong" name="base" output="Base" />
+					<data type="ulong" name="current" output="Current" />
+				</condition>
+				<condition data="statType" value="4" comparison="notEqual">
+					<data type="uint" name="max" output="Max" />
+					<data type="uint" name="base" output="Base" />
+					<data type="uint" name="current" output="Current" />
+				</condition>
+			</array>
+		</block>
+		<block name="AllStatsOtherPlayers">
+			<outputParam type="Maple.Game.ActorStats" schema="packetData" />
+			<data type="byte" name="basicStatCount" doRead="false" value="5" />
+			<arraySize data="basicStatCount" output="Basic" />
+			<data type="short" name="health" doRead="false" value="4" output="Basic[0].Type" />
+			<data type="short" name="attackSpeed" doRead="false" value="13" output="Basic[1].Type" />
+			<data type="short" name="moveSpeed" doRead="false" value="14" output="Basic[2].Type" />
+			<data type="short" name="mountMoveSpeed" doRead="false" value="22" output="Basic[3].Type" />
+			<data type="short" name="jumpHeight" doRead="false" value="32" output="Basic[4].Type" />
+			<data type="ulong" name="health" output="Basic[0].Max" />
+			<data type="uint" name="attackSpeed" output="Basic[1].Max" />
+			<data type="uint" name="moveSpeed" output="Basic[2].Max" />
+			<data type="uint" name="mountMoveSpeed" output="Basic[3].Max" />
+			<data type="uint" name="jumpHeight" output="Basic[4].Max" />
+			<data type="ulong" name="health" output="Basic[0].Base" />
+			<data type="uint" name="attackSpeed" output="Basic[1].Base" />
+			<data type="uint" name="moveSpeed" output="Basic[2].Base" />
+			<data type="uint" name="mountMoveSpeed" output="Basic[3].Base" />
+			<data type="uint" name="jumpHeight" output="Basic[4].Base" />
+			<data type="ulong" name="health" output="Basic[0].Current" />
+			<data type="uint" name="attackSpeed" output="Basic[1].Current" />
+			<data type="uint" name="moveSpeed" output="Basic[2].Current" />
+			<data type="uint" name="mountMoveSpeed" output="Basic[3].Current" />
+			<data type="uint" name="jumpHeight" output="Basic[4].Current" />
+		</block>
+		<block name="AllStatsNpc">
+			<outputParam type="Maple.Game.ActorStats" schema="packetData" />
+			<data type="byte" name="basicStatCount" doRead="false" value="2" />
+			<arraySize data="basicStatCount" output="Basic" />
+			<data type="short" name="health" doRead="false" value="4" output="Basic[0].Type" />
+			<data type="short" name="attackSpeed" doRead="false" value="13" output="Basic[1].Type" />
+			<data type="ulong" name="health" output="Basic[0].Max" />
+			<data type="uint" name="attackSpeed" output="Basic[1].Max" />
+			<data type="ulong" name="health" output="Basic[0].Base" />
+			<data type="uint" name="attackSpeed" output="Basic[1].Base" />
+			<data type="ulong" name="health" output="Basic[0].Current" />
+			<data type="uint" name="attackSpeed" output="Basic[1].Current" />
+		</block>
+		<block name="SpecificStat">
+			<outputParam type="Maple.Game.ActorStats" schema="packetData" />
+			<data type="byte" name="statType" output="Type" />
+			<condition data="statType" value="4" comparison="equal">
+				<data type="ulong" name="max" output="Max" />
+				<data type="ulong" name="base" output="Base" />
+				<data type="ulong" name="current" output="Current" />
+			</condition>
+			<condition data="statType" value="4" comparison="notEqual">
+				<data type="uint" name="max" output="Max" />
+				<data type="uint" name="base" output="Base" />
+				<data type="uint" name="current" output="Current" />
+			</condition>
+		</block>
+		<block name="SpecificStats">
+			<outputParam type="Maple.Game.ActorStats" schema="packetData" />
+			<blockParam name="statCount" type="byte" />
+			<array data="statCount" output="Basic">
+				<useBlock name="SpecificStat" version="12" />
+			</array>
+		</block>
 		<block name="ItemBinding">
 			<outputParam type="Maple.Game.ItemBinding" schema="packetData" />
 			<data type="long" name="characterId" output="CharacterId" />
@@ -788,6 +864,44 @@
 				<data type="int" name="confirm" output="Confirm" />
 			</condition>
 		</opcode>
+		<opcode name="ServerEnter" value="0x15">
+			<output type="Networking.Packets.Server.ServerEnterPacket" schemaName="packetData" />
+			<data type="int" name="playerActorId" output="PlayerActorId" />
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="short" name="channelId" output="ChannelId" />
+			<data type="long" name="exp" output="Exp" />
+			<data type="long" name="restExp" output="RestExp" />
+			<data type="long" name="mesos" output="Mesos" />
+			<data type="long" name="totalMerets" output="TotalMerets" />
+			<data type="long" name="merets" output="Merets" />
+			<data type="long" name="gameMerets" output="GameMerets" />
+			<data type="long" name="eventMerets" output="EventMerets" />
+			<data type="long" name="valorTokens" output="ValorTokens" />
+			<data type="long" name="treva" output="Treva" />
+			<data type="long" name="rue" output="Rue" />
+			<data type="long" name="haviFruit" output="HaviFruit" />
+			<data type="long" name="reverseCoin" output="ReverseCoin" />
+			<data type="long" name="mentorToken" output="MentorToken" />
+			<data type="long" name="starPoint" output="StarPoint" />
+			<data type="long" name="mesoToken" output="MesoToken" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="byte" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="int" name="unlockedMaps" />
+			<array data="unlockedMaps" output="UnlockedMaps">
+				<data type="int" name="mapId" output="MapId" />
+			</array>
+			<data type="int" name="unlockedTaxis" />
+			<array data="unlockedTaxis" output="UnlockedTaxis">
+				<data type="int" name="mapId" output="MapId" />
+			</array>
+			<data type="long" name="unknown" />
+			<data type="wstring" name="unknown" />
+			<data type="wstring" name="mapleNewsUrl" output="MapleNewsUrl" />
+			<data type="wstring" name="unknown" />
+			<data type="wstring" name="nxCacheUrl" />
+			<data type="wstring" name="unknown" />
+		</opcode>
 		<opcode name="RequestFieldEnter" value="0x16">
 			<data type="byte" name="message">
 				<enum name="Okay" value="0" />
@@ -815,43 +929,10 @@
 			<outputMember output="Stats">
 				<data type="byte" name="statCount" />
 				<condition data="statCount" value="35" comparison="equal">
-					<data type="byte" name="basicStatCount" doRead="false" value="5" />
-					<arraySize data="basicStatCount" output="Basic" />
-					<data type="short" name="health" doRead="false" value="4" output="Basic[0].Type" />
-					<data type="short" name="attackSpeed" doRead="false" value="13" output="Basic[1].Type" />
-					<data type="short" name="moveSpeed" doRead="false" value="14" output="Basic[2].Type" />
-					<data type="short" name="mountMoveSpeed" doRead="false" value="22" output="Basic[3].Type" />
-					<data type="short" name="jumpHeight" doRead="false" value="32" output="Basic[4].Type" />
-					<data type="ulong" name="health" output="Basic[0].Max" />
-					<data type="uint" name="attackSpeed" output="Basic[1].Max" />
-					<data type="uint" name="moveSpeed" output="Basic[2].Max" />
-					<data type="uint" name="mountMoveSpeed" output="Basic[3].Max" />
-					<data type="uint" name="jumpHeight" output="Basic[4].Max" />
-					<data type="ulong" name="health" output="Basic[0].Base" />
-					<data type="uint" name="attackSpeed" output="Basic[1].Base" />
-					<data type="uint" name="moveSpeed" output="Basic[2].Base" />
-					<data type="uint" name="mountMoveSpeed" output="Basic[3].Base" />
-					<data type="uint" name="jumpHeight" output="Basic[4].Base" />
-					<data type="ulong" name="health" output="Basic[0].Current" />
-					<data type="uint" name="attackSpeed" output="Basic[1].Current" />
-					<data type="uint" name="moveSpeed" output="Basic[2].Current" />
-					<data type="uint" name="mountMoveSpeed" output="Basic[3].Current" />
-					<data type="uint" name="jumpHeight" output="Basic[4].Current" />
+					<useBlock name="AllStatsOtherPlayers" version="12" />
 				</condition>
 				<condition data="statCount" value="35" comparison="notEqual">
-					<array data="statCount" output="Basic">
-						<data type="byte" name="statType" output="Type" />
-						<condition data="statType" value="4" comparison="equal">
-							<data type="ulong" name="max" output="Max" />
-							<data type="ulong" name="base" output="Base" />
-							<data type="ulong" name="current" output="Current" />
-						</condition>
-						<condition data="statType" value="4" comparison="notEqual">
-							<data type="uint" name="max" output="Max" />
-							<data type="uint" name="base" output="Base" />
-							<data type="uint" name="current" output="Current" />
-						</condition>
-					</array>
+					<useBlock name="SpecificStats" version="12" args="statCount" />
 				</condition>
 			</outputMember>
 			<data type="bool" name="inBattle" output="InBattle" />
@@ -1007,6 +1088,73 @@
 			<output type="Networking.Packets.Server.FieldRemoveItemPacket" schemaName="packetData" />
 			<data type="int" name="objectId" output="ObjectId" />
 		</opcode>
+		<opcode name="Stat" value="0x2F">
+			<output type="Networking.Packets.Server.StatPacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<data type="bool" name="unknown" />
+			<data type="byte" name="statCount" />
+			<data type="byte" name="actorType" doRead="false">
+				<enum name="Player" value="1" />
+				<enum name="OtherPlayer" value="2" />
+				<enum name="Pet" value="3" />
+				<enum name="Npc" value="4" />
+			</data>
+			<function data="actorType" name="GetActorType" params="actorId" />
+			<condition data="statCount" value="1" comparison="equal">
+				<useBlock name="SpecificStat" version="12" output="Stats" />
+			</condition>
+			<condition data="actorType" value="3" comparison="equal" else="true">
+				<useBlock name="AllStatsNpc" version="12" output="Stats" />
+			</condition>
+			<condition data="actorType" value="4" comparison="equal" else="true">
+				<useBlock name="AllStatsNpc" version="12" output="Stats" />
+			</condition>
+			<condition data="statCount" value="35" comparison="equal" else="true">
+				<condition data="actorType" value="1" comparison="equal">
+					<useBlock name="AllStatsMyPlayer" version="12" output="Stats" />
+				</condition>
+				<condition else="true" comparison="none">
+					<useBlock name="AllStatsOtherPlayers" version="12" output="Stats" />
+				</condition>
+			</condition>
+			<condition else="true" comparison="none">
+				<useBlock name="SpecificStats" version="12" output="Stats" />
+			</condition>
+		</opcode>
+		<opcode name="ExpUp" value="0x38">
+			<output type="Networking.Packets.Server.ExpUpPacket" schemaName="packetData" />
+			<data type="bool" name="isRestExp" output="IsRestExp" />
+			<condition data="isRestExp" value="0" comparison="equal">
+				<data type="long" name="npcExp" output="NpcExp" />
+				<data type="short" name="level" output="Level" />
+				<data type="long" name="playerExp" output="PlayerExp" />
+				<data type="long" name="restExp" output="RestExp" />
+				<data type="int" name="message" output="Message">
+					<enum name="TaxiMapExp" value="3000" />
+					<enum name="MapExp" value="3001" />
+					<enum name="MapExp" value="3002" />
+					<enum name="TelescopeMapExp" value="3003" />
+					<enum name="TakeExp" value="3004" />
+					<enum name="TakeExp" value="3007" />
+					<enum name="FishingExp" value="1059" />
+					<enum name="InstrumentExp" value="1063" />
+					<enum name="ArcadeExp" value="1071" />
+					<enum name="NormalChestExp" value="1091" />
+					<enum name="RareChestExp" value="1092" />
+					<enum name="RareFirstChestExp" value="1093" />
+					<enum name="AssistBonusExp" value="60002" />
+				</data>
+				<data type="bool" name="additional" output="Additional" />
+			</condition>
+			<condition data="isRestExp" value="1" comparison="equal">
+				<data type="long" name="restExp" output="RestExp" />
+			</condition>
+		</opcode>
+		<opcode name="LevelUp" value="0x39">
+			<output type="Networking.Packets.Server.LevelUpPacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<data type="int" name="level" output="Level" />
+		</opcode>
 		<opcode name="SkillDamage" value="0x3E">
 			<data type="byte" name="mode">
 				<enum name="SyncDamage" value="0" />
@@ -1145,11 +1293,11 @@
 			</data>
 			<condition data="defaultStatsMode" value="0x23" comparison="equal">
 				<data type="ulong" name="hpMax" output="Hp.Max" />
-				<data type="uint" name="moveSpeedMax" output="MoveSpeed.Max" />
+				<data type="uint" name="attackSpeedMax" output="AttackSpeed.Max" />
 				<data type="ulong" name="hpBase" output="Hp.Base" />
-				<data type="uint" name="moveSpeedBase" output="MoveSpeed.Base" />
+				<data type="uint" name="attackSpeedBase" output="AttackSpeed.Base" />
 				<data type="ulong" name="hpCurrent" output="Hp.Current" />
-				<data type="uint" name="moveSpeedCurrent" output="MoveSpeed.Current" />
+				<data type="uint" name="attackSpeedCurrent" output="AttackSpeed.Current" />
 			</condition>
 			<data type="bool" name="isDead" output="IsDead" />
 			<data type="ushort" name="effectCount" />
@@ -1202,11 +1350,11 @@
 			</data>
 			<condition data="defaultStatsMode" value="0x23" comparison="equal">
 				<data type="ulong" name="hpMax" output="Hp.Max" />
-				<data type="uint" name="moveSpeedMax" output="MoveSpeed.Max" />
+				<data type="uint" name="attackSpeedMax" output="AttackSpeed.Max" />
 				<data type="ulong" name="hpBase" output="Hp.Base" />
-				<data type="uint" name="moveSpeedBase" output="MoveSpeed.Base" />
+				<data type="uint" name="attackSpeedBase" output="AttackSpeed.Base" />
 				<data type="ulong" name="hpCurrent" output="Hp.Current" />
-				<data type="uint" name="moveSpeedCurrent" output="MoveSpeed.Current" />
+				<data type="uint" name="attackSpeedCurrent" output="AttackSpeed.Current" />
 			</condition>
 			<data type="long" name="petItemInstanceId" output="PetItemInstanceId" />
 			<data type="byte" name="unknown" />

@@ -140,6 +140,7 @@ namespace ParserUtils
 
 			handler.Data = build == 12 ? &gms2Data : &kms2Data;
 			handler.Version = build;
+			handler.MsbPath = path.string();
 
 			while (!file.eof())
 			{
@@ -789,10 +790,11 @@ int main(int argc, char** argv)
 	};
 
 	bool regenerate = !true;
-	bool showSuccesses = false;
-	bool showSeen = false;
-	bool showUnparsed = false;
+	bool showSuccesses = !false;
+	bool showSeen = !false;
+	bool showUnparsed = !false;
 	bool showUnused = false;
+	bool printBaseStats = !false;
 
 	fs::path msbDir = "B:/Files/ms2sniffs/";
 
@@ -1152,6 +1154,92 @@ int main(int argc, char** argv)
 	}
 
 	std::cout << std::endl << std::endl;
+
+	if (printBaseStats)
+	{
+		static const std::unordered_map<unsigned short, std::string> jobNames = {
+			{ 1, "Beginner" },
+			{ 10, "Knight" },
+			{ 20, "Berserker" },
+			{ 30, "Wizard" },
+			{ 40, "Priest" },
+			{ 50, "Archer" },
+			{ 60, "HeavyGunner" },
+			{ 70, "Thief" },
+			{ 80, "Assassin" },
+			{ 90, "Runeblade" },
+			{ 100, "Striker" },
+			{ 110, "Soulbinder" },
+			{ 999, "GameMaster" },
+		};
+		static const std::unordered_map<Enum::StatAttributeBasic, std::string> statNames = {
+			{ Enum::StatAttributeBasic::Hp, "Hp" },
+			{ Enum::StatAttributeBasic::Str, "Str" },
+			{ Enum::StatAttributeBasic::Dex, "Dex" },
+			{ Enum::StatAttributeBasic::Int, "Int" },
+			{ Enum::StatAttributeBasic::Luk, "Luk" },
+			{ Enum::StatAttributeBasic::PhysicalAtk, "PhysicalAtk" },
+			{ Enum::StatAttributeBasic::PhysicalRes, "PhysicalRes" },
+			{ Enum::StatAttributeBasic::MagicAtk, "MagicAtk" },
+			{ Enum::StatAttributeBasic::MagicRes, "MagicRes" },
+			{ Enum::StatAttributeBasic::Defense, "Defense" }
+		};
+
+		const auto printStats = [](const decltype(Networking::Packets::Gms2JobBaseStats)& data, const char* text)
+		{
+			if (!data.size()) return;
+
+			std::cout << text << std::endl;
+
+			typedef std::unordered_map<unsigned short, Networking::Packets::ActorStats> ActorVec;
+
+			std::vector<unsigned int> jobEntries;
+			std::vector<const ActorVec*> jobData;
+
+			for (const auto& jobEntry : data)
+			{
+				jobEntries.push_back((((unsigned int)jobEntry.first) << 16) | (unsigned int)jobData.size());
+				jobData.push_back(&jobEntry.second);
+			}
+
+			std::sort(jobEntries.begin(), jobEntries.end());
+
+			for (unsigned int index : jobEntries)
+			{
+				Enum::JobCode code = (Enum::JobCode)(index >> 16);
+				const auto& jobEntry = *jobData[index & 0xFFFF];
+
+				std::cout << "\t" << jobNames.find((unsigned short)code)->second << ":" << std::endl;
+
+				std::vector<unsigned int> levelEntries;
+				std::vector<const Networking::Packets::ActorStats*> levelData;
+
+				for (const auto& levelEntry : jobEntry)
+				{
+					levelEntries.push_back((((unsigned int)levelEntry.first) << 16) | (unsigned int)levelData.size());
+					levelData.push_back(&levelEntry.second);
+				}
+
+				std::sort(levelEntries.begin(), levelEntries.end());
+
+				for (unsigned int index : levelEntries)
+				{
+					unsigned short level = (unsigned short)(index >> 16);
+					const auto&  levelEntry = *levelData[index & 0xFFFF];
+
+					std::cout << "\t\t" << level << ":" << std::endl;
+
+					for (const auto& stat : levelEntry.Basic)
+					{
+						std::cout << "\t\t\t" << statNames.find(stat.first)->second << ": " << stat.second.Base << std::endl;
+					}
+				}
+			}
+		};
+
+		printStats(Networking::Packets::Gms2JobBaseStats, "\ngms2:");
+		printStats(Networking::Packets::Kms2JobBaseStats, "\nkms2:");
+	}
 
 	if (regenerate || (!showSuccesses && !showSeen))
 	{

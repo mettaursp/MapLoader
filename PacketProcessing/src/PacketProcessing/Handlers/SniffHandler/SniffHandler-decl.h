@@ -5,6 +5,7 @@
 #include <ParserUtils/DataStream.h>
 #include <GameData/Enums/Handles.h>
 #include <GameData/Enums/Player.h>
+#include <GameData/Data/ActorStats.h>
 
 namespace Networking
 {
@@ -44,10 +45,17 @@ namespace Networking
 			std::unordered_map<Enum::ItemId, ItemData> Items;
 		};
 
+		struct ActorStats
+		{
+			std::unordered_map<Enum::StatAttributeBasic, Maple::Game::ActorBasicStat> Basic;
+			std::unordered_map<Enum::StatAttributeSpecial, Maple::Game::ActorSpecialStat> Special;
+		};
+
 		struct Actor
 		{
 			Enum::ActorId ActorId = Enum::ActorId::Null;
 			unsigned short Level = 0;
+			ActorStats Stats;
 		};
 
 		struct Npc
@@ -94,6 +102,14 @@ namespace Networking
 			std::unordered_map<Enum::ActorId, Pet> Pets;
 		};
 
+		extern std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Gms2JobBaseStats;
+		extern std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Kms2JobBaseStats;
+
+		void AddStats(ActorStats& stats, const Maple::Game::ActorStats& packetStats);
+		void AddStat(ActorStats& stats, const Maple::Game::ActorBasicStat& packetStat);
+		void AddStat(ActorStats& stats, const Maple::Game::ActorSpecialStat& packetStat);
+		void CheckBaseStats(Enum::JobCode jobCode, unsigned short level, const Maple::Game::ActorStats& stats, bool isKms2);
+
 		class SniffHandler
 		{
 		public:
@@ -106,12 +122,17 @@ namespace Networking
 			unsigned short Version = 0;
 			unsigned short Feature = 0;
 			std::string Locale;
+
+			Enum::ActorId PlayerId = Enum::ActorId::Null;
+			Enum::CharacterId CharacterId = Enum::CharacterId::Null;
+
 			std::vector<StackEntry> StreamStack;
 			std::stringstream FoundValues;
 			Metadata* Data = nullptr;
 			bool HasReconnected = false;
 			FieldState Field;
 			bool ReportPackets = true;
+			std::string MsbPath;
 
 			template <typename T>
 			void PacketParsed(const T& packet);
@@ -130,6 +151,7 @@ namespace Networking
 			unsigned short GetItemCategory(Enum::ItemId itemId) const;
 			unsigned short GetItemCategory(unsigned int itemId) const;
 			bool StatIntToFloat(float& rate) const;
+			unsigned char GetActorType(Enum::ActorId actorId) const;
 
 		private:
 

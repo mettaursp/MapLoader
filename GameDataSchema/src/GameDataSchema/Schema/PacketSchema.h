@@ -46,6 +46,7 @@ namespace PacketSchema
 		std::string Output;
 		std::string Target;
 		std::string Value;
+		std::string IteratorName;
 
 		std::vector<PacketDataBit> Flags;
 		std::unordered_map<size_t, std::string> EnumNames;
@@ -88,7 +89,8 @@ namespace PacketSchema
 		Equal,
 		NotEqual,
 		Between,
-		NotBetween
+		NotBetween,
+		None
 	};
 
 	struct PacketCondition
@@ -98,6 +100,7 @@ namespace PacketSchema
 		size_t Value = 0;
 		size_t Value2 = 0;
 		PacketInfoComparison Comparison = PacketInfoComparison::Equal;
+		bool IsElse = false;
 		size_t RegionEnd = 0;
 	};
 

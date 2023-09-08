@@ -334,6 +334,33 @@
 				</class>
 				<class name="Reconnect7Packet" directory="Packets\Server">
 				</class>
+				<class name="ServerEnterPacket" directory="Packets\Server">
+					<class name="MapEntry" isMember="false">
+						<member name="MapId" type="Enum.MapId" />
+					</class>
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="CharacterId" type="Enum.CharacterId" />
+					<member name="ChannelId" type="Enum.ChannelId" />
+					<member name="Exp" type="unsigned long long" />
+					<member name="RestExp" type="unsigned long long" />
+					<member name="Mesos" type="unsigned long long" />
+					<member name="TotalMerets" type="unsigned long long" />
+					<member name="Merets" type="unsigned long long" />
+					<member name="GameMerets" type="unsigned long long" />
+					<member name="EventMerets" type="unsigned long long" />
+					<member name="ValorTokens" type="unsigned long long" />
+					<member name="Treva" type="unsigned long long" />
+					<member name="Rue" type="unsigned long long" />
+					<member name="HaviFruit" type="unsigned long long" />
+					<member name="ReverseCoin" type="unsigned long long" />
+					<member name="MentorToken" type="unsigned long long" />
+					<member name="StarPoint" type="unsigned long long" />
+					<member name="MesoToken" type="unsigned long long" />
+					<member name="ProfileUrl" type="std::wstring" />
+					<member name="UnlockedMaps" type="std::vector" contains="MapEntry" />
+					<member name="UnlockedTaxis" type="std::vector" contains="MapEntry" />
+					<member name="MapleNewsUrl" type="std::wstring" />
+				</class>
 				<class name="RequestFieldEnterPacket" directory="Packets\Server">
 					<member name="MapId" type="Enum.MapId" />
 					<member name="Position" type="Vector3S" />
@@ -435,6 +462,22 @@
 				</class>
 				<class name="FieldRemoveItemPacket" directory="Packets\Server">
 					<member name="ObjectId" type="Enum.ItemEntityId" />
+				</class>
+				<class name="StatPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="Stats" type="Maple.Game.ActorStats" />
+				</class>
+				<class name="ExpUpPacket" directory="Packets\Server">
+					<member name="NpcExp" type="unsigned long long" />
+					<member name="Level" type="unsigned short" />
+					<member name="PlayerExp" type="unsigned long long" />
+					<member name="RestExp" type="unsigned long long" />
+					<member name="Message" type="unsigned int" />
+					<member name="Additional" type="bool" />
+				</class>
+				<class name="LevelUpPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="Level" type="unsigned int" />
 				</class>
 				<class name="SkillDamageSyncPacket" directory="Packets\Server">
 					<class name="HitEntity" isMember="false">
@@ -564,8 +607,8 @@
 					<member name="Hp" type="Maple.Game.ActorBasicStat">
 						<default name="Type" value="Enum.StatAttributeBasic.Hp" />
 					</member>
-					<member name="MoveSpeed" type="Maple.Game.ActorBasicStat">
-						<default name="Type" value="Enum.StatAttributeBasic.MoveSpeed" />
+					<member name="AttackSpeed" type="Maple.Game.ActorBasicStat">
+						<default name="Type" value="Enum.StatAttributeBasic.AttackSpeed" />
 					</member>
 					<member name="IsDead" type="bool" />
 					<member name="Effects" type="std::vector" contains="Maple.Game.AdditionalEffect" />
@@ -589,8 +632,8 @@
 					<member name="Hp" type="Maple.Game.ActorBasicStat">
 						<default name="Type" value="Enum.StatAttributeBasic.Hp" />
 					</member>
-					<member name="MoveSpeed" type="Maple.Game.ActorBasicStat">
-						<default name="Type" value="Enum.StatAttributeBasic.MoveSpeed" />
+					<member name="AttackSpeed" type="Maple.Game.ActorBasicStat">
+						<default name="Type" value="Enum.StatAttributeBasic.AttackSpeed" />
 					</member>
 					<member name="PetItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="Level" type="unsigned short" />

@@ -10,6 +10,38 @@ namespace Networking
 {
 	namespace Packets
 	{
+		const std::string JobSuffixes[3] = { "", " II" };
+		const std::unordered_map<unsigned short, std::string> JobNames = {
+			{ 1, "Beginner" },
+			{ 10, "Knight" },
+			{ 20, "Berserker" },
+			{ 30, "Wizard" },
+			{ 40, "Priest" },
+			{ 50, "Archer" },
+			{ 60, "HeavyGunner" },
+			{ 70, "Thief" },
+			{ 80, "Assassin" },
+			{ 90, "Runeblade" },
+			{ 100, "Striker" },
+			{ 110, "Soulbinder" },
+			{ 999, "GameMaster" },
+		};
+
+		const std::unordered_map<Enum::StatAttributeBasic, std::string> StatNames = {
+			{ Enum::StatAttributeBasic::Hp, "Hp" },
+			{ Enum::StatAttributeBasic::Str, "Str" },
+			{ Enum::StatAttributeBasic::Dex, "Dex" },
+			{ Enum::StatAttributeBasic::Int, "Int" },
+			{ Enum::StatAttributeBasic::Luk, "Luk" },
+			{ Enum::StatAttributeBasic::PhysicalAtk, "PhysicalAtk" },
+			{ Enum::StatAttributeBasic::PhysicalRes, "PhysicalRes" },
+			{ Enum::StatAttributeBasic::MagicAtk, "MagicAtk" },
+			{ Enum::StatAttributeBasic::MagicRes, "MagicRes" },
+			{ Enum::StatAttributeBasic::Defense, "Defense" },
+			{ Enum::StatAttributeBasic::SpRegen, "SpRegen" },
+			{ Enum::StatAttributeBasic::SpRegenInterval, "SpRegenInterval" }
+		};
+
 		void AddStats(ActorStats& stats, const Maple::Game::ActorStats& packetStats)
 		{
 			for (const auto& packetStat : packetStats.Basic)
@@ -48,7 +80,7 @@ namespace Networking
 
 			if (entry.Base && entry.Base != stat.Base)
 			{
-				std::cout << "mismatching base for stat " << (int)stat.Type << std::endl;
+				//std::cout << "mismatching base for stat " << (int)stat.Type << std::endl;
 			}
 
 			entry = stat;
@@ -79,6 +111,8 @@ namespace Networking
 			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::MagicAtk, isKms2);
 			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::MagicRes, isKms2);
 			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::Defense, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::SpRegenInterval, isKms2);
+			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::SpRegen, isKms2);
 		}
 
 		ParserUtils::DataStream& SniffHandler::ResetPacketStream()
@@ -130,7 +164,7 @@ namespace Networking
 
 				if (oldTop.Index + size > oldTop.Data.size())
 				{
-					oldTop.HasRecentlyFailed = true;
+					oldTop.Failed();
 
 					std::cout << "attempt to read buffer of size " << size << " when only " << (oldTop.Data.size() - oldTop.Index) << " bytes are left" << std::endl;
 
@@ -154,7 +188,7 @@ namespace Networking
 			{
 				if (size < sizeof(unsigned int))
 				{
-					entry.PacketStream.HasRecentlyFailed = true;
+					entry.PacketStream.Failed();
 
 					std::cout << "buffer too small to contain decompressed size" << std::endl;
 
@@ -180,7 +214,7 @@ namespace Networking
 
 				if (!handleZlibResult(result))
 				{
-					entry.PacketStream.HasRecentlyFailed = true;
+					entry.PacketStream.Failed();
 				
 					return;
 				}
@@ -190,6 +224,7 @@ namespace Networking
 
 			newTop.IgnoreUnknownValues = oldTop.IgnoreUnknownValues;
 			newTop.SuppressErrors = oldTop.SuppressErrors;
+			newTop.DiscardErrors = oldTop.DiscardErrors;
 			newTop.PrintOutput = oldTop.PrintOutput;
 
 			oldTop.Index += size;
@@ -199,7 +234,7 @@ namespace Networking
 		{
 			if (StreamStack.size() == 1)
 			{
-				PacketStream().HasRecentlyFailed = true;
+				PacketStream().Failed();
 
 				std::cout << "attempt to pop packet stream buffer when no buffers are left to pop" << std::endl;
 
@@ -215,7 +250,7 @@ namespace Networking
 
 				if constexpr (ParserUtils::Packets::PrintOutput || ParserUtils::Packets::PrintErrors)
 				{
-					if (!(!ParserUtils::Packets::PrintOutput && (PacketStream().SuppressErrors || !PacketStream().PrintOutput)))
+					if (!(!ParserUtils::Packets::PrintOutput && !PacketStream().DiscardErrors && (PacketStream().SuppressErrors || !PacketStream().PrintOutput)))
 					{
 						std::ostream& out = ParserUtils::Packets::PrintOutput ? std::cout : FoundValues;
 						const ParserUtils::DataStream& stream = PacketStream();
@@ -378,7 +413,7 @@ namespace Networking
 			return true;
 		}
 
-		unsigned char SniffHandler::GetActorType(Enum::ActorId actorId) const
+		unsigned char SniffHandler::GetActorType(Enum::ActorId actorId)
 		{
 			const unsigned char Unknown = 0xFF;
 			const unsigned char Unidentified = 0;
@@ -387,9 +422,26 @@ namespace Networking
 			const unsigned char Pet = 3;
 			const unsigned char Npc = 4;
 
-			if (Field.Players.contains(actorId))
+			if (actorId == Enum::ActorId::Null)
+			{
+				return Unknown;
+			}
+
+			if (actorId == PlayerId)
 			{
 				return Player;
+			}
+
+			if (Field.Players.contains(actorId))
+			{
+				if (CharacterId == Enum::ActorId::Null)
+				{
+					// Bad sniff, character was never sent so player type is ambiguous
+
+					DiscardPacket();
+				}
+
+				return OtherPlayer;
 			}
 
 			if (Field.Pets.contains(actorId))
@@ -407,7 +459,20 @@ namespace Networking
 				return Unidentified;
 			}
 
+			if (Field.MapId == Enum::MapId::Null)
+			{
+				// Read in from reconnect based sniff where uninitialized actors are found before the next map load
+				DiscardPacket();
+			}
+
 			return Unknown;
+		}
+
+		void SniffHandler::DiscardPacket()
+		{
+			PacketStream().SuppressErrors = true;
+			PacketStream().DiscardErrors = true;
+			PacketStream().HasRecentlyFailed = true;
 		}
 	}
 }

@@ -6,26 +6,15 @@ namespace Networking
 {
 	namespace Packets
 	{
-		const std::string jobSuffixes[3] = { "", " II" };
-		const std::unordered_map<unsigned short, std::string> jobNames = {
-			{ 1, "Beginner" },
-			{ 10, "Knight" },
-			{ 20, "Berserker" },
-			{ 30, "Wizard" },
-			{ 40, "Priest" },
-			{ 50, "Archer" },
-			{ 60, "HeavyGunner" },
-			{ 70, "Thief" },
-			{ 80, "Assassin" },
-			{ 90, "Runeblade" },
-			{ 100, "Striker" },
-			{ 110, "Soulbinder" },
-			{ 999, "GameMaster" },
-		};
-
 		template <>
 		void SniffHandler::PacketParsed<Server::FieldAddPlayerPacket>(const Server::FieldAddPlayerPacket& packet)
 		{
+			if (packet.Character.AccountId == AccountId)
+			{
+				CharacterId = packet.Character.CharacterId;
+				PlayerId = packet.ActorId;
+			}
+
 			if (!Field.CurrentMap)
 			{
 				return;
@@ -57,11 +46,11 @@ namespace Networking
 
 			if constexpr (ParserUtils::Packets::PrintPacketOutput)
 			{
-				const auto jobEntry = jobNames.find(jobId);
+				const auto jobEntry = JobNames.find(jobId);
 
-				std::string jobName = jobEntry != jobNames.end() ? jobEntry->second : "<unknown>";
+				std::string jobName = jobEntry != JobNames.end() ? jobEntry->second : "<unknown>";
 
-				std::cout << "adding player '" << packet.Character.Name << "' [" << jobName << jobSuffixes[jobRank] << "] Lv" << packet.Character.Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
+				std::cout << "adding player '" << packet.Character.Name << "' [" << jobName << JobSuffixes[jobRank] << "] Lv" << packet.Character.Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
 			}
 
 			auto& actor = Field.Actors[packet.ActorId];

@@ -132,7 +132,7 @@ namespace ParserUtils
 
 			if constexpr (PrintOutput || PrintErrors)
 			{
-				if (!(!PrintOutput && (stream.SuppressErrors || !stream.PrintOutput)))
+				if (!(!PrintOutput && !stream.DiscardErrors && (stream.SuppressErrors || !stream.PrintOutput)))
 				{
 					std::ostream& out = PrintOutput ? std::cout : handler.FoundValues;
 
@@ -213,7 +213,7 @@ namespace ParserUtils
 		{
 			if constexpr (PrintUnknownValues)
 			{
-				bool found = stream.SuppressErrors || stream.IgnoreUnknownValues || ((value == expected) || ...);
+				bool found = stream.SuppressErrors || stream.DiscardErrors || stream.IgnoreUnknownValues || ((value == expected) || ...);
 
 				if (!found)
 				{

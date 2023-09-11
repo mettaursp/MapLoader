@@ -11,6 +11,10 @@ namespace Networking
 {
 	namespace Packets
 	{
+		extern const std::string JobSuffixes[3];
+		extern const std::unordered_map<unsigned short, std::string> JobNames;
+		extern const std::unordered_map<Enum::StatAttributeBasic, std::string> StatNames;
+
 		struct NpcData
 		{
 			std::string Name;
@@ -124,6 +128,7 @@ namespace Networking
 			std::string Locale;
 
 			Enum::ActorId PlayerId = Enum::ActorId::Null;
+			Enum::AccountId AccountId = Enum::AccountId::Null;
 			Enum::CharacterId CharacterId = Enum::CharacterId::Null;
 
 			std::vector<StackEntry> StreamStack;
@@ -144,6 +149,7 @@ namespace Networking
 			void PopStream();
 			void CheckStreamStatus();
 			bool Succeeded() const;
+			void DiscardPacket();
 
 			bool IsNpcBoss(Enum::NpcId npcId) const;
 			bool NpcHasHiddenHp(Enum::NpcId npcId) const;
@@ -151,7 +157,7 @@ namespace Networking
 			unsigned short GetItemCategory(Enum::ItemId itemId) const;
 			unsigned short GetItemCategory(unsigned int itemId) const;
 			bool StatIntToFloat(float& rate) const;
-			unsigned char GetActorType(Enum::ActorId actorId) const;
+			unsigned char GetActorType(Enum::ActorId actorId);
 
 		private:
 

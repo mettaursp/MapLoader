@@ -26,15 +26,15 @@
 		</block>
 		<block name="AllStatsMyPlayer">
 			<outputParam type="Maple.Game.ActorStats" schema="packetData" />
-			<data type="byte" name="basicStatCount" doRead="false" value="5" />
-			<array data="statCount" name="statCount" output="Basic">
-				<data type="byte" name="statType" iterator="statCount" output="Type" />
+			<data type="byte" name="basicStatCount" doRead="false" value="35" />
+			<array data="basicStatCount" name="statCount" output="Basic">
+				<data type="byte" name="statType" iterator="statCount" doRead="false" output="Type" />
 				<condition data="statType" value="4" comparison="equal">
 					<data type="ulong" name="max" output="Max" />
 					<data type="ulong" name="base" output="Base" />
 					<data type="ulong" name="current" output="Current" />
 				</condition>
-				<condition data="statType" value="4" comparison="notEqual">
+				<condition else="true" comparison="none">
 					<data type="uint" name="max" output="Max" />
 					<data type="uint" name="base" output="Base" />
 					<data type="uint" name="current" output="Current" />
@@ -80,7 +80,7 @@
 			<data type="uint" name="attackSpeed" output="Basic[1].Current" />
 		</block>
 		<block name="SpecificStat">
-			<outputParam type="Maple.Game.ActorStats" schema="packetData" />
+			<outputParam type="Maple.Game.ActorBasicStat" schema="packetData" />
 			<data type="byte" name="statType" output="Type" />
 			<condition data="statType" value="4" comparison="equal">
 				<data type="ulong" name="max" output="Max" />
@@ -95,7 +95,7 @@
 		</block>
 		<block name="SpecificStats">
 			<outputParam type="Maple.Game.ActorStats" schema="packetData" />
-			<blockParam name="statCount" type="byte" />
+			<blockParam name="statCount" type="unsigned char" />
 			<array data="statCount" output="Basic">
 				<useBlock name="SpecificStat" version="12" />
 			</array>
@@ -874,6 +874,7 @@
 			<data type="long" name="mesos" output="Mesos" />
 			<data type="long" name="totalMerets" output="TotalMerets" />
 			<data type="long" name="merets" output="Merets" />
+			<data type="long" name="totalGameMerets" output="TotalGameMerets" />
 			<data type="long" name="gameMerets" output="GameMerets" />
 			<data type="long" name="eventMerets" output="EventMerets" />
 			<data type="long" name="valorTokens" output="ValorTokens" />
@@ -882,16 +883,17 @@
 			<data type="long" name="haviFruit" output="HaviFruit" />
 			<data type="long" name="reverseCoin" output="ReverseCoin" />
 			<data type="long" name="mentorToken" output="MentorToken" />
+			<data type="long" name="menteeToken" output="MenteeToken" />
 			<data type="long" name="starPoint" output="StarPoint" />
 			<data type="long" name="mesoToken" output="MesoToken" />
 			<data type="wstring" name="profileUrl" output="ProfileUrl" />
 			<data type="byte" name="unknown" />
 			<data type="byte" name="unknown" />
-			<data type="int" name="unlockedMaps" />
+			<data type="ushort" name="unlockedMaps" />
 			<array data="unlockedMaps" output="UnlockedMaps">
 				<data type="int" name="mapId" output="MapId" />
 			</array>
-			<data type="int" name="unlockedTaxis" />
+			<data type="ushort" name="unlockedTaxis" />
 			<array data="unlockedTaxis" output="UnlockedTaxis">
 				<data type="int" name="mapId" output="MapId" />
 			</array>
@@ -1098,10 +1100,16 @@
 				<enum name="OtherPlayer" value="2" />
 				<enum name="Pet" value="3" />
 				<enum name="Npc" value="4" />
+				<enum name="Uninitialized" value="255" />
 			</data>
 			<function data="actorType" name="GetActorType" params="actorId" />
+			<condition data="actorType" value="255" comparison="equal">
+				<discard />
+			</condition>
 			<condition data="statCount" value="1" comparison="equal">
-				<useBlock name="SpecificStat" version="12" output="Stats" />
+				<data type="byte" name="basicStatCount" doRead="false" value="1" />
+				<arraySize data="basicStatCount" output="Stats.Basic" />
+				<useBlock name="SpecificStat" version="12" output="Stats.Basic[0]" />
 			</condition>
 			<condition data="actorType" value="3" comparison="equal" else="true">
 				<useBlock name="AllStatsNpc" version="12" output="Stats" />
@@ -1117,34 +1125,42 @@
 					<useBlock name="AllStatsOtherPlayers" version="12" output="Stats" />
 				</condition>
 			</condition>
+			<condition data="statCount" value="255" comparison="equal" else="true">
+				<data type="byte" name="basicStatCount" doRead="false" value="35" />
+				<useBlock name="SpecificStats" version="12" output="Stats" args="basicStatCount" />
+			</condition>
 			<condition else="true" comparison="none">
-				<useBlock name="SpecificStats" version="12" output="Stats" />
+				<useBlock name="SpecificStats" version="12" output="Stats" args="statCount" />
 			</condition>
 		</opcode>
 		<opcode name="ExpUp" value="0x38">
 			<output type="Networking.Packets.Server.ExpUpPacket" schemaName="packetData" />
 			<data type="bool" name="isRestExp" output="IsRestExp" />
 			<condition data="isRestExp" value="0" comparison="equal">
-				<data type="long" name="npcExp" output="NpcExp" />
-				<data type="short" name="level" output="Level" />
-				<data type="long" name="playerExp" output="PlayerExp" />
-				<data type="long" name="restExp" output="RestExp" />
-				<data type="int" name="message" output="Message">
-					<enum name="TaxiMapExp" value="3000" />
-					<enum name="MapExp" value="3001" />
-					<enum name="MapExp" value="3002" />
-					<enum name="TelescopeMapExp" value="3003" />
-					<enum name="TakeExp" value="3004" />
-					<enum name="TakeExp" value="3007" />
-					<enum name="FishingExp" value="1059" />
-					<enum name="InstrumentExp" value="1063" />
-					<enum name="ArcadeExp" value="1071" />
-					<enum name="NormalChestExp" value="1091" />
-					<enum name="RareChestExp" value="1092" />
-					<enum name="RareFirstChestExp" value="1093" />
-					<enum name="AssistBonusExp" value="60002" />
-				</data>
-				<data type="bool" name="additional" output="Additional" />
+				<data type="long" name="expGained" output="ExpGained" />
+				<condition data="expGained" value="0" comparison="notEqual">
+					<data type="short" name="unknown" />
+					<data type="long" name="totalExp" output="TotalExp" />
+					<data type="long" name="restExp" output="RestExp" />
+					<data type="int" name="message" output="Message">
+						<!--
+						<enum name="TaxiMapExp" value="3000" />
+						<enum name="MapExp" value="3001" />
+						<enum name="MapExp" value="3002" />
+						<enum name="TelescopeMapExp" value="3003" />
+						<enum name="TakeExp" value="3004" />
+						<enum name="TakeExp" value="3007" />
+						<enum name="FishingExp" value="1059" />
+						<enum name="InstrumentExp" value="1063" />
+						<enum name="ArcadeExp" value="1071" />
+						<enum name="NormalChestExp" value="1091" />
+						<enum name="RareChestExp" value="1092" />
+						<enum name="RareFirstChestExp" value="1093" />
+						<enum name="AssistBonusExp" value="60002" />
+						-->
+					</data>
+					<data type="bool" name="additional" output="Additional" />
+				</condition>
 			</condition>
 			<condition data="isRestExp" value="1" comparison="equal">
 				<data type="long" name="restExp" output="RestExp" />
@@ -1579,6 +1595,20 @@
 				<data type="ulong" name="machineHigh" output="MachineHigh" />
 				<data type="ulong" name="machineLow" output="MachineLow" />
 			</condition>
+		</opcode>
+		<opcode name="Reconnect" value="0x05">
+			<output type="Networking.Packets.Client.ReconnectPacket" schemaName="packetData" />
+			<data type="byte" name="mode">
+				<enum name="Unknown" value="1" />
+			</data>
+			<data type="long" name="accountId" output="AccountId" />
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="int" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="wstring" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="string" name="unknown" />
+			<data type="int" name="unknown" />
 		</opcode>
 		<opcode name="ResponseHeartbeat" value="0x0A">
 			<output type="Networking.Packets.Client.ResponseHeartbeatPacket" schemaName="packetData" />

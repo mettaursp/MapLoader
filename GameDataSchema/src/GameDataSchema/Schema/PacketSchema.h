@@ -78,6 +78,7 @@ namespace PacketSchema
 		Buffer,
 		BlockFunction,
 		ArraySize,
+		Discard,
 		ValueWrite,
 		Validation,
 		ArrayOutput,

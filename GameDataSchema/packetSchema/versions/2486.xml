@@ -220,6 +220,44 @@
 				<data type="int" name="confirm" output="Confirm" />
 			</condition>
 		</opcode>
+		<opcode name="ServerEnter" value="0x15">
+			<output type="Networking.Packets.Server.ServerEnterPacket" schemaName="packetData" />
+			<data type="int" name="playerActorId" output="PlayerActorId" />
+			<data type="long" name="characterId" output="CharacterId" />
+			<data type="short" name="channelId" output="ChannelId" />
+			<data type="long" name="exp" output="Exp" />
+			<data type="long" name="restExp" output="RestExp" />
+			<data type="long" name="mesos" output="Mesos" />
+			<data type="long" name="totalMerets" output="TotalMerets" />
+			<data type="long" name="merets" output="Merets" />
+			<data type="long" name="totalGameMerets" output="TotalGameMerets" />
+			<data type="long" name="gameMerets" output="GameMerets" />
+			<data type="long" name="eventMerets" output="EventMerets" />
+			<data type="long" name="valorTokens" output="ValorTokens" />
+			<data type="long" name="treva" output="Treva" />
+			<data type="long" name="rue" output="Rue" />
+			<data type="long" name="haviFruit" output="HaviFruit" />
+			<data type="long" name="reverseCoin" output="ReverseCoin" />
+			<data type="long" name="mentorToken" output="MentorToken" />
+			<data type="long" name="menteeToken" output="MenteeToken" />
+			<data type="long" name="starPoint" output="StarPoint" />
+			<data type="long" name="mesoToken" output="MesoToken" />
+			<data type="wstring" name="profileUrl" output="ProfileUrl" />
+			<data type="byte" name="unknown" />
+			<data type="ushort" name="unlockedMaps" />
+			<array data="unlockedMaps" output="UnlockedMaps">
+				<data type="int" name="mapId" output="MapId" />
+			</array>
+			<data type="ushort" name="unlockedTaxis" />
+			<array data="unlockedTaxis" output="UnlockedTaxis">
+				<data type="int" name="mapId" output="MapId" />
+			</array>
+			<data type="long" name="unknown" />
+			<data type="wstring" name="unknown" />
+			<data type="wstring" name="mapleNewsUrl" output="MapleNewsUrl" />
+			<data type="wstring" name="unknown" />
+			<data type="wstring" name="nxCacheUrl" />
+		</opcode>
 		<opcode name="FieldAddPlayer" value="0x17">
 			<output type="Networking.Packets.Server.FieldAddPlayerPacket" schemaName="packetData" />
 			<data type="int" name="actorId" output="ActorId" />
@@ -447,6 +485,39 @@
 				</condition>
 			</condition>
 		</opcode>
+		<opcode name="ExpUp" value="0x37">
+			<output type="Networking.Packets.Server.ExpUpPacket" schemaName="packetData" />
+			<data type="bool" name="isRestExp" output="IsRestExp" />
+			<condition data="isRestExp" value="0" comparison="equal">
+				<data type="long" name="expGained" output="ExpGained" />
+				<data type="short" name="unknown" />
+				<data type="long" name="totalExp" output="TotalExp" />
+				<data type="long" name="restExp" output="RestExp" />
+				<data type="int" name="message" output="Message">
+					<!--
+					<enum name="TaxiMapExp" value="3000" />
+					<enum name="MapExp" value="3001" />
+					<enum name="MapExp" value="3002" />
+					<enum name="TelescopeMapExp" value="3003" />
+					<enum name="TakeExp" value="3004" />
+					<enum name="TakeExp" value="3007" />
+					<enum name="FishingExp" value="1059" />
+					<enum name="InstrumentExp" value="1063" />
+					<enum name="ArcadeExp" value="1071" />
+					<enum name="NormalChestExp" value="1091" />
+					<enum name="RareChestExp" value="1092" />
+					<enum name="RareFirstChestExp" value="1093" />
+					<enum name="AssistBonusExp" value="60002" />
+					-->
+				</data>
+				<data type="bool" name="additional" output="Additional" />
+			</condition>
+			<condition data="isRestExp" value="1" comparison="equal">
+				<data type="long" name="restExp" output="RestExp" />
+			</condition>
+		</opcode>
+		<opcodeReference value="0x38" version="12" opcode="0x39" />
+		<opcodeReference value="0x39" removeReference="true" />
 		<opcode name="CharacterInfo" value="0x78">
 			<output type="Networking.Packets.Server.CharacterInfoPacket" schemaName="packetData" />
 			<data type="long" name="characterId" output="CharacterId" />

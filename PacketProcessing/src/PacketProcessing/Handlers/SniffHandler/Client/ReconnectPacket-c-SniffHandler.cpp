@@ -5,8 +5,9 @@ namespace Networking
 	namespace Packets
 	{
 		template <>
-		void SniffHandler::PacketParsed<Client::ResponseKeyPacket>(const Client::ResponseKeyPacket& packet)
+		void SniffHandler::PacketParsed<Client::ReconnectPacket>(const Client::ReconnectPacket& packet)
 		{
+			CharacterId = packet.CharacterId;
 			AccountId = packet.AccountId;
 		}
 	}

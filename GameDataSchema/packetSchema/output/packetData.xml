@@ -346,6 +346,7 @@
 					<member name="Mesos" type="unsigned long long" />
 					<member name="TotalMerets" type="unsigned long long" />
 					<member name="Merets" type="unsigned long long" />
+					<member name="TotalGameMerets" type="unsigned long long" />
 					<member name="GameMerets" type="unsigned long long" />
 					<member name="EventMerets" type="unsigned long long" />
 					<member name="ValorTokens" type="unsigned long long" />
@@ -354,6 +355,7 @@
 					<member name="HaviFruit" type="unsigned long long" />
 					<member name="ReverseCoin" type="unsigned long long" />
 					<member name="MentorToken" type="unsigned long long" />
+					<member name="MenteeToken" type="unsigned long long" />
 					<member name="StarPoint" type="unsigned long long" />
 					<member name="MesoToken" type="unsigned long long" />
 					<member name="ProfileUrl" type="std::wstring" />
@@ -468,9 +470,9 @@
 					<member name="Stats" type="Maple.Game.ActorStats" />
 				</class>
 				<class name="ExpUpPacket" directory="Packets\Server">
-					<member name="NpcExp" type="unsigned long long" />
-					<member name="Level" type="unsigned short" />
-					<member name="PlayerExp" type="unsigned long long" />
+					<member name="IsRestExp" type="bool" />
+					<member name="ExpGained" type="unsigned long long" />
+					<member name="TotalExp" type="unsigned long long" />
 					<member name="RestExp" type="unsigned long long" />
 					<member name="Message" type="unsigned int" />
 					<member name="Additional" type="bool" />
@@ -802,6 +804,10 @@
 					<member name="MachineLow" type="unsigned long long" />
 					<member name="MachineHigh" type="unsigned long long" />
 					<member name="Locale" type="std::string" />
+				</class>
+				<class name="ReconnectPacket" directory="Packets\Client">
+					<member name="AccountId" type="Enum.AccountId" />
+					<member name="CharacterId" type="Enum.CharacterId" />
 				</class>
 				<class name="ResponseKeyPacket" directory="Packets\Client">
 					<member name="AccountId" type="Enum.AccountId" />

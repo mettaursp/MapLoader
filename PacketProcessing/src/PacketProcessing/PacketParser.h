@@ -10,9 +10,6 @@ namespace Networking
 		const size_t MaxVersion = 2509;
 
 		template <>
-		void ParsePacket<12, ClientPacket, 0x21>(PacketHandler& handler);
-
-		template <>
 		void ParsePacket<12, ClientPacket, 0x1>(PacketHandler& handler);
 
 		template <>
@@ -31,7 +28,13 @@ namespace Networking
 		void ParsePacket<12, ClientPacket, 0xd>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<12, ClientPacket, 0x5>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<12, ClientPacket, 0x20>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<12, ClientPacket, 0x21>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<12, ClientPacket, 0x22>(PacketHandler& handler);
@@ -49,10 +52,25 @@ namespace Networking
 		void ParsePacket<12, ServerPacket, 0x7>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<12, ServerPacket, 0xc>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0x1d>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0x15>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<12, ServerPacket, 0x56>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<12, ServerPacket, 0x16>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0x18>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0x2b>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<12, ServerPacket, 0x6c>(PacketHandler& handler);
@@ -61,16 +79,13 @@ namespace Networking
 		void ParsePacket<12, ServerPacket, 0x2c>(PacketHandler& handler);
 
 		template <>
-		void ParsePacket<12, ServerPacket, 0xc>(PacketHandler& handler);
+		void ParsePacket<12, ServerPacket, 0x2f>(PacketHandler& handler);
 
 		template <>
-		void ParsePacket<12, ServerPacket, 0x18>(PacketHandler& handler);
+		void ParsePacket<12, ServerPacket, 0x38>(PacketHandler& handler);
 
 		template <>
-		void ParsePacket<12, ServerPacket, 0x1d>(PacketHandler& handler);
-
-		template <>
-		void ParsePacket<12, ServerPacket, 0x2b>(PacketHandler& handler);
+		void ParsePacket<12, ServerPacket, 0x39>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<12, ServerPacket, 0x3e>(PacketHandler& handler);
@@ -97,13 +112,19 @@ namespace Networking
 		void ParsePacket<2486, ServerPacket, 0xc>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<2486, ServerPacket, 0x3d>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2486, ServerPacket, 0x15>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2486, ServerPacket, 0x37>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<2486, ServerPacket, 0x17>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2486, ServerPacket, 0x2b>(PacketHandler& handler);
-
-		template <>
-		void ParsePacket<2486, ServerPacket, 0x3d>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2486, ServerPacket, 0x78>(PacketHandler& handler);
@@ -116,6 +137,9 @@ namespace Networking
 
 		template <>
 		void ParsePacket<13, ServerPacket, 0x17>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<13, ServerPacket, 0x2e>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2497, ServerPacket, 0xc>(PacketHandler& handler);

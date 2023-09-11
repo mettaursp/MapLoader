@@ -212,6 +212,11 @@ namespace ParserUtils
 					opcode += 0;
 				}
 
+				if (stream.DiscardErrors)
+				{
+					continue;
+				}
+
 				if (stream.Index && !stream.HasRecentlyFailed && stream.Index == stream.Data.size())
 				{
 					auto& versionSuccesses = successfulPackets[build];
@@ -337,7 +342,7 @@ namespace ParserUtils
 
 						if (stream.Index < stream.Data.size() && !stream.HasRecentlyFailed)
 						{
-							std::cout << "remaining: \n";
+							std::cout << "remaining: \n" << std::hex;
 
 							size_t printAmount = size - stream.Index;
 							size_t printCount = 16 * ((printAmount / 16) + (printAmount % 16 ? 1 : 0));
@@ -358,7 +363,7 @@ namespace ParserUtils
 
 								if (index < size)
 								{
-									std::cout << std::setw(2) << std::setfill('0') << (int)buffer[index] << " ";
+									std::cout << std::setw(2) << std::setfill('0') << (unsigned int)buffer[index] << " ";
 								}
 								else if (i < printCount)
 								{
@@ -791,7 +796,7 @@ int main(int argc, char** argv)
 
 	bool regenerate = !true;
 	bool showSuccesses = !false;
-	bool showSeen = !false;
+	bool showSeen = false;
 	bool showUnparsed = !false;
 	bool showUnused = false;
 	bool printBaseStats = !false;
@@ -1157,34 +1162,6 @@ int main(int argc, char** argv)
 
 	if (printBaseStats)
 	{
-		static const std::unordered_map<unsigned short, std::string> jobNames = {
-			{ 1, "Beginner" },
-			{ 10, "Knight" },
-			{ 20, "Berserker" },
-			{ 30, "Wizard" },
-			{ 40, "Priest" },
-			{ 50, "Archer" },
-			{ 60, "HeavyGunner" },
-			{ 70, "Thief" },
-			{ 80, "Assassin" },
-			{ 90, "Runeblade" },
-			{ 100, "Striker" },
-			{ 110, "Soulbinder" },
-			{ 999, "GameMaster" },
-		};
-		static const std::unordered_map<Enum::StatAttributeBasic, std::string> statNames = {
-			{ Enum::StatAttributeBasic::Hp, "Hp" },
-			{ Enum::StatAttributeBasic::Str, "Str" },
-			{ Enum::StatAttributeBasic::Dex, "Dex" },
-			{ Enum::StatAttributeBasic::Int, "Int" },
-			{ Enum::StatAttributeBasic::Luk, "Luk" },
-			{ Enum::StatAttributeBasic::PhysicalAtk, "PhysicalAtk" },
-			{ Enum::StatAttributeBasic::PhysicalRes, "PhysicalRes" },
-			{ Enum::StatAttributeBasic::MagicAtk, "MagicAtk" },
-			{ Enum::StatAttributeBasic::MagicRes, "MagicRes" },
-			{ Enum::StatAttributeBasic::Defense, "Defense" }
-		};
-
 		const auto printStats = [](const decltype(Networking::Packets::Gms2JobBaseStats)& data, const char* text)
 		{
 			if (!data.size()) return;
@@ -1209,7 +1186,7 @@ int main(int argc, char** argv)
 				Enum::JobCode code = (Enum::JobCode)(index >> 16);
 				const auto& jobEntry = *jobData[index & 0xFFFF];
 
-				std::cout << "\t" << jobNames.find((unsigned short)code)->second << ":" << std::endl;
+				std::cout << "\t" << Networking::Packets::JobNames.find((unsigned short)code)->second << ":" << std::endl;
 
 				std::vector<unsigned int> levelEntries;
 				std::vector<const Networking::Packets::ActorStats*> levelData;
@@ -1231,7 +1208,13 @@ int main(int argc, char** argv)
 
 					for (const auto& stat : levelEntry.Basic)
 					{
-						std::cout << "\t\t\t" << statNames.find(stat.first)->second << ": " << stat.second.Base << std::endl;
+						std::cout << "\t\t\t" << Networking::Packets::StatNames.find(stat.first)->second << ": " << stat.second.Base << std::endl;
+
+						if (stat.first == Enum::StatAttributeBasic::SpRegen || stat.first == Enum::StatAttributeBasic::SpRegenInterval)
+						{
+							std::cout << "\t\t\t" << Networking::Packets::StatNames.find(stat.first)->second << " Max: " << stat.second.Max << std::endl;
+							std::cout << "\t\t\t" << Networking::Packets::StatNames.find(stat.first)->second << " Current: " << stat.second.Current << std::endl;
+						}
 					}
 				}
 			}

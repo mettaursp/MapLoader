@@ -349,4 +349,29 @@
             <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
         </ClCompile>
     </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ServerEnterPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\StatPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ExpUpPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LevelUpPacket-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ReconnectPacket-c-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Client</Filter>
+        </ClCompile>
+    </ItemGroup>
 </Project>

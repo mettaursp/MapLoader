@@ -30,8 +30,8 @@ namespace Networking
 				Maple::Game::ActorBasicStat Hp = {
 					.Type = Enum::StatAttributeBasic::Hp
 				};
-				Maple::Game::ActorBasicStat MoveSpeed = {
-					.Type = Enum::StatAttributeBasic::MoveSpeed
+				Maple::Game::ActorBasicStat AttackSpeed = {
+					.Type = Enum::StatAttributeBasic::AttackSpeed
 				};
 				bool IsDead = false;
 				std::vector<Maple::Game::AdditionalEffect> Effects;

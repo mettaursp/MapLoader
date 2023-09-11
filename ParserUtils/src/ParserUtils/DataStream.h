@@ -91,6 +91,7 @@ namespace ParserUtils
 		bool FoundUnknownValue = false;
 		bool IgnoreUnknownValues = false;
 		bool SuppressErrors = false;
+		bool DiscardErrors = false;
 		bool PrintOutput = false;
 
 		template <typename T>

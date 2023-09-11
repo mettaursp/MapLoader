@@ -23,8 +23,8 @@ namespace Networking
 				Maple::Game::ActorBasicStat Hp = {
 					.Type = Enum::StatAttributeBasic::Hp
 				};
-				Maple::Game::ActorBasicStat MoveSpeed = {
-					.Type = Enum::StatAttributeBasic::MoveSpeed
+				Maple::Game::ActorBasicStat AttackSpeed = {
+					.Type = Enum::StatAttributeBasic::AttackSpeed
 				};
 				Enum::ItemInstanceId PetItemInstanceId;
 				unsigned short Level = 0;

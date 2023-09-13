@@ -10,10 +10,10 @@ namespace Maple
 	{
 		struct Pet
 		{
-			Enum::ActorId ActorId;
-			Enum::ItemId ItemId;
-			Enum::ItemInstanceId ItemInstanceId;
-			Enum::Rarity Rarity;
+			Enum::ActorId ActorId = (Enum::ActorId)0;
+			Enum::ItemId ItemId = (Enum::ItemId)0;
+			Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
+			Enum::Rarity Rarity = (Enum::Rarity)0;
 			ItemData ItemData;
 		};
 	}

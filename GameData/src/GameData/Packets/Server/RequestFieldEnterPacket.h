@@ -11,7 +11,7 @@ namespace Networking
 		{
 			struct RequestFieldEnterPacket
 			{
-				Enum::MapId MapId;
+				Enum::MapId MapId = (Enum::MapId)0;
 				Vector3S Position;
 				Vector3S Rotation;
 			};

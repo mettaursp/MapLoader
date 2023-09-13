@@ -10,8 +10,8 @@ namespace Maple
 		{
 			unsigned int StartTime = 0;
 			unsigned int EndTime = 0;
-			Enum::EffectId EffectId;
-			Enum::EffectLevel EffectLevel;
+			Enum::EffectId EffectId = (Enum::EffectId)0;
+			Enum::EffectLevel EffectLevel = (Enum::EffectLevel)0;
 			unsigned int Stacks = 0;
 		};
 	}

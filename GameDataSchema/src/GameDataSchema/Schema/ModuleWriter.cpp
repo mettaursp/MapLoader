@@ -439,14 +439,18 @@ namespace OutputSchema
 
 					std::string defaultValue = member.DefaultValue;
 
+					SchemaEntry entry = findSchemaEntry(member.Type, pickSchema(member.SchemaName, member.ParentSchemaName));
+
 					if (member.DefaultValue.size())
 					{
-						SchemaEntry entry = findSchemaEntry(member.Type, pickSchema(member.SchemaName, member.ParentSchemaName));
-
 						if (entry.Type != SchemaEntryType::None)
 						{
 							defaultValue = swapSeparator(member.DefaultValue, "::");
 						}
+					}
+					else if (entry.Enum)
+					{
+						defaultValue = "(" + typeName + ")0";
 					}
 
 					module.PushMember(typeName, member.Name, defaultValue);

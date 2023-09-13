@@ -20,16 +20,9 @@ namespace Networking
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
+					FoundUnknownValue();
 
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-
-					PacketStream().FoundUnknownValue = true;
-
-					std::cout << "adding pet with id thats already in use: " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "adding pet with id thats already in use: " << (unsigned int)packet.ActorId << std::endl;
 				}
 
 				return;
@@ -58,17 +51,20 @@ namespace Networking
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
+					FoundUnknownValue();
 
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-
-					PacketStream().FoundUnknownValue = true;
-
-					std::cout << "adding pet with unknown npc id " << npcId << "' as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "adding pet with unknown npc id " << npcId << "' as actor " << (unsigned int)packet.ActorId << std::endl;
 				}
+
+				std::stringstream name;
+				name << npcId;
+				npcName = name.str();
+			}
+			else if (npcEntry->second.Name.size() == 0)
+			{
+				std::stringstream name;
+				name << npcId;
+				npcName = name.str();
 			}
 			else
 			{
@@ -79,17 +75,20 @@ namespace Networking
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
+					FoundUnknownValue();
 
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-
-					PacketStream().FoundUnknownValue = true;
-
-					std::cout << "adding pet with unknown skin id " << skinId << "' as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "adding pet with unknown skin id " << skinId << "' as actor " << (unsigned int)packet.ActorId << std::endl;
 				}
+
+				std::stringstream name;
+				name << skinId;
+				skinName = name.str();
+			}
+			else if (skinEntry->second.Name.size() == 0)
+			{
+				std::stringstream name;
+				name << npcId;
+				skinName = name.str();
 			}
 			else
 			{
@@ -103,53 +102,12 @@ namespace Networking
 				ownerName = ownerEntry->second.Name;
 			}
 
-			if constexpr (ParserUtils::Packets::PrintPacketOutput)
-			{
-				std::cout << (packet.PetItemInstanceId == Enum::ItemInstanceId::Null ? "adding hungry '" : "adding pet '");
-
-				if (packet.Name.size())
-					std::cout << packet.Name;
-				else
-					std::cout << npcName;
-
-				std::cout << "' '";
-
-				if (npcName.size())
-					std::cout << npcName;
-				else
-					std::cout << skinId;
-
-				if (hasSkin && skinEntry != Data->Npcs.end())
-				{
-					std::cout << "' (Skin: '";
-
-					if (skinName.size())
-						std::cout << skinName;
-					else
-						std::cout << skinId;
-
-					std::cout << "')";
-				}
-				else
-				{
-					std::cout << "'";
-				}
-
-				std::cout << " Lv" << packet.Level << " as actor " << (unsigned int)packet.ActorId;
-
-				if (ownerEntry != Field.Players.end())
-				{
-					std::cout << " belonging to player '" << ownerName << "' (" << ownerId << ")";
-				}
-
-				std::cout << std::endl;
-			}
-
-
 			auto& actor = Field.Actors[packet.ActorId];
 
+			actor.Field = &Field;
 			actor.ActorId = packet.ActorId;
 			actor.Level = packet.Level;
+			actor.Type = ActorType::Pet;
 
 			auto& npc = Field.Npcs[packet.ActorId];
 
@@ -177,6 +135,11 @@ namespace Networking
 				}
 
 				pet.Owner->Pet = &pet;
+			}
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << TimeStamp << "adding " << PrintActor{ Field, packet.ActorId, ActorType::Pet } << std::endl;
 			}
 		}
 	}

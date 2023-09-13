@@ -27,7 +27,7 @@ namespace Networking
 				{
 				};
 				
-				Enum::ActorId ActorId;
+				Enum::ActorId ActorId = (Enum::ActorId)0;
 				Maple::Game::CharacterData Character;
 				Maple::Game::SkillTreeData SkillTree;
 				Vector3S Position;
@@ -44,8 +44,8 @@ namespace Networking
 				unsigned int ArchitectScore = 0;
 				Maple::Game::CharacterEquipment Equipment;
 				std::vector<Maple::Game::AdditionalEffect> Effects;
-				Enum::TitleId TitleId;
-				Enum::InsigniaId InsigniaId;
+				Enum::TitleId TitleId = (Enum::TitleId)0;
+				Enum::InsigniaId InsigniaId = (Enum::InsigniaId)0;
 				unsigned short InsigniaValue = 0;
 				bool HasPet = false;
 				Maple::Game::Pet Pet;

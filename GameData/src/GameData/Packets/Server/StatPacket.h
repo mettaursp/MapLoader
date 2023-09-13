@@ -11,7 +11,7 @@ namespace Networking
 		{
 			struct StatPacket
 			{
-				Enum::ActorId ActorId;
+				Enum::ActorId ActorId = (Enum::ActorId)0;
 				Maple::Game::ActorStats Stats;
 			};
 		}

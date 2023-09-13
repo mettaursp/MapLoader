@@ -17,7 +17,7 @@ namespace Networking
 				struct PlotCube
 				{
 					Vector3S Position;
-					Enum::ItemInstanceId ItemInstanceId;
+					Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
 					Maple::Game::CubeItemData Data;
 					int PlotNumber = 0;
 					float RotationZ = 0;

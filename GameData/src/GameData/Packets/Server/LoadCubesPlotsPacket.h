@@ -18,7 +18,7 @@ namespace Networking
 					unsigned int PlotId = 0;
 					unsigned int ApartmentNumber = 0;
 					std::wstring PlotName;
-					Enum::AccountId AccountId;
+					Enum::AccountId AccountId = (Enum::AccountId)0;
 				};
 				
 				std::vector<PlotInfo> PlotData;

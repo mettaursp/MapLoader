@@ -11,7 +11,7 @@ namespace Networking
 		{
 			struct SkillRegionSkillPacket
 			{
-				Enum::SkillSn SkillSn;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
 				unsigned char AttackPoint = 0;
 				int AttackCounter = 0;
 				Vector3S Position;

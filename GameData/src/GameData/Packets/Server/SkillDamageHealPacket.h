@@ -10,8 +10,8 @@ namespace Networking
 		{
 			struct SkillDamageHealPacket
 			{
-				Enum::ActorId CasterId;
-				Enum::ActorId TargetId;
+				Enum::ActorId CasterId = (Enum::ActorId)0;
+				Enum::ActorId TargetId = (Enum::ActorId)0;
 				int ServerTick = 0;
 				int HpAmount = 0;
 				int SpAmount = 0;

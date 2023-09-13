@@ -405,3 +405,4 @@ log_*
 spv/
 screenshot.png
 screenshots/
+GameDataSchema/log

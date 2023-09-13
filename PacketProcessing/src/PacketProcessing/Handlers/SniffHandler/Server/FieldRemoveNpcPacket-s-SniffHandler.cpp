@@ -20,16 +20,9 @@ namespace Networking
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
+					FoundUnknownValue();
 		
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-		
-					PacketStream().FoundUnknownValue = true;
-		
-					std::cout << "removing unknown npc: " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "removing unknown npc: " << (unsigned int)packet.ActorId << std::endl;
 				}
 		
 				return;
@@ -39,23 +32,16 @@ namespace Networking
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
+					FoundUnknownValue();
 		
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-		
-					PacketStream().FoundUnknownValue = true;
-		
-					std::cout << "removing npc with unknown id " << (unsigned int)entry->second.NpcId << " '" << entry->second.Name << "' Lv" << entry->second.Actor->Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "removing npc with unknown id " << PrintActor{ Field, packet.ActorId, ActorType::Npc } << std::endl;
 				}
 			}
 			else
 			{
 				if constexpr (ParserUtils::Packets::PrintPacketOutput)
 				{
-					std::cout << "removing npc [" << (unsigned int)entry->second.NpcId << "] '" << entry->second.Data->Name << "' Lv" << entry->second.Actor->Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "removing " << PrintActor{ Field, packet.ActorId, ActorType::Npc } << std::endl;
 				}
 			}
 		

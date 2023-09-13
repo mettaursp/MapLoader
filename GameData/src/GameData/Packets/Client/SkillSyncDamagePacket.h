@@ -17,18 +17,18 @@ namespace Networking
 				{
 					struct ChainTarget
 					{
-						Enum::SkillAttackId SkillAttack;
-						Enum::ActorId TargetId;
+						Enum::SkillAttackId SkillAttack = (Enum::SkillAttackId)0;
+						Enum::ActorId TargetId = (Enum::ActorId)0;
 						unsigned char Index = 0;
 					};
 					
-					Enum::SkillAttackId SkillAttack;
-					Enum::ActorId TargetId;
+					Enum::SkillAttackId SkillAttack = (Enum::SkillAttackId)0;
+					Enum::ActorId TargetId = (Enum::ActorId)0;
 					unsigned char Index = 0;
 					std::vector<ChainTarget> ChainTargets;
 				};
 				
-				Enum::SkillSn SkillSn;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
 				unsigned char AttackPoint = 0;
 				Vector3S Position;
 				Vector3S Rotation;

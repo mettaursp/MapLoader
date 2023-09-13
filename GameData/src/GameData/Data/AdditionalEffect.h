@@ -9,9 +9,9 @@ namespace Maple
 	{
 		struct AdditionalEffect
 		{
-			Enum::ActorId TargetId;
-			Enum::EffectInstanceId InstanceId;
-			Enum::ActorId SourceId;
+			Enum::ActorId TargetId = (Enum::ActorId)0;
+			Enum::EffectInstanceId InstanceId = (Enum::EffectInstanceId)0;
+			Enum::ActorId SourceId = (Enum::ActorId)0;
 			EffectStats Stats;
 			bool Enabled = false;
 			long long ShieldHealth = 0;

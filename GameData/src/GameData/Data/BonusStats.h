@@ -13,7 +13,7 @@ namespace Maple
 		{
 			std::vector<BasicStat> Basic;
 			std::vector<SpecialStat> Special;
-			Enum::ItemId EmpowermentItemId;
+			Enum::ItemId EmpowermentItemId = (Enum::ItemId)0;
 		};
 	}
 }

@@ -15,8 +15,8 @@ namespace Maple
 				bool Notify = false;
 				bool Enabled = false;
 				bool CoreSkill = false;
-				Enum::SkillId SkillId;
-				Enum::SkillLevel SkillLevel;
+				Enum::SkillId SkillId = (Enum::SkillId)0;
+				Enum::SkillLevel SkillLevel = (Enum::SkillLevel)0;
 			};
 			
 			std::vector<SkillEntry> Skills;

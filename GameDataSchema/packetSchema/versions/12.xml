@@ -1259,7 +1259,7 @@
 			<condition data="instanceId" value="0" comparison="notEqual">
 				<condition data="mode" value="0" comparison="equal">
 					<useBlock name="EffectStats" version="12" output="Effect.Stats" />
-					<data type="bool" name="hasShield" output="UpdateShield" />
+					<data type="bool" name="enabled" output="Effect.Enabled" />
 					<data type="long" name="shieldHealth" output="Effect.ShieldHealth" />
 				</condition>
 				<condition data="mode" value="2" comparison="equal">

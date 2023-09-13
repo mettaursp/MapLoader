@@ -34,14 +34,14 @@ namespace Networking
 					ChatBubble = 23
 				};
 				
-				Enum::AccountId AccountId;
-				Enum::CharacterId CharacterId;
+				Enum::AccountId AccountId = (Enum::AccountId)0;
+				Enum::CharacterId CharacterId = (Enum::CharacterId)0;
 				std::wstring CharacterName;
 				std::wstring Message;
 				TypeEnum Type = TypeEnum::All;
-				Enum::ChannelId ChannelId;
-				Enum::SuperChatId SuperChatId;
-				Enum::ClubId ClubId;
+				Enum::ChannelId ChannelId = (Enum::ChannelId)0;
+				Enum::SuperChatId SuperChatId = (Enum::SuperChatId)0;
+				Enum::ClubId ClubId = (Enum::ClubId)0;
 			};
 		}
 	}

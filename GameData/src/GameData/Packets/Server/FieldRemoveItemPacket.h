@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct FieldRemoveItemPacket
 			{
-				Enum::ItemEntityId ObjectId;
+				Enum::ItemEntityId ObjectId = (Enum::ItemEntityId)0;
 			};
 		}
 	}

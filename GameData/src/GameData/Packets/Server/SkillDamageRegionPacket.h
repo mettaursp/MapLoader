@@ -22,15 +22,15 @@ namespace Networking
 						long long Damage = 0;
 					};
 					
-					Enum::ActorId TargetId;
+					Enum::ActorId TargetId = (Enum::ActorId)0;
 					Vector3S Position;
 					Vector3S Direction;
 					std::vector<DamageInstance> Damages;
 				};
 				
-				Enum::SkillSn SkillSn;
-				Enum::ActorId CasterId;
-				Enum::ActorId RegionSkillObjectId;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
+				Enum::ActorId CasterId = (Enum::ActorId)0;
+				Enum::ActorId RegionSkillObjectId = (Enum::ActorId)0;
 				unsigned char AttackPoint = 0;
 				std::vector<DamagedTarget> DamagedTargets;
 			};

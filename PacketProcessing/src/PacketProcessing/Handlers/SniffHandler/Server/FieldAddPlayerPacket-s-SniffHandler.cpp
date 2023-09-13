@@ -26,37 +26,20 @@ namespace Networking
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
+					FoundUnknownValue();
 
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-
-					PacketStream().FoundUnknownValue = true;
-
-					std::cout << "adding player with id thats already in use: " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "adding player with id thats already in use: " << PrintActor{ Field, packet.ActorId, ActorType::Player } << std::endl;
 				}
 
 				return;
 			}
 
-			unsigned short jobId = (unsigned short)packet.Character.JobCode;
-			unsigned short jobRank = (jobId >= 10 && jobId <= 110) ? ((unsigned short)packet.Character.Job % 10) : 0;
-
-			if constexpr (ParserUtils::Packets::PrintPacketOutput)
-			{
-				const auto jobEntry = JobNames.find(jobId);
-
-				std::string jobName = jobEntry != JobNames.end() ? jobEntry->second : "<unknown>";
-
-				std::cout << "adding player '" << packet.Character.Name << "' [" << jobName << JobSuffixes[jobRank] << "] Lv" << packet.Character.Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
-			}
-
 			auto& actor = Field.Actors[packet.ActorId];
 
+			actor.Field = &Field;
 			actor.ActorId = packet.ActorId;
 			actor.Level = packet.Character.Level;
+			actor.Type = ActorType::Player;
 
 			auto& player = Field.Players[packet.ActorId];
 
@@ -64,8 +47,17 @@ namespace Networking
 			player.Job = packet.Character.Job;
 			player.JobCode = packet.Character.JobCode;
 			player.Actor = &actor;
+			player.IsCurrentPlayer = PlayerId == packet.ActorId;
 
 			CheckBaseStats(player.JobCode, actor.Level, packet.Stats, Version != 12);
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << TimeStamp << "adding " << PrintActor{ Field, packet.ActorId, ActorType::Player } << std::endl;
+			}
+
+			actor.AddEffects(*this, packet.Effects);
+			player.AddSkills(*this, packet.SkillTree);
 
 			if (packet.HasPet)
 			{
@@ -88,42 +80,7 @@ namespace Networking
 
 						bool hasSkin = pet.SkinNpcId != Enum::NpcId::Null && pet.SkinNpcId != pet.NpcId;
 
-						std::cout << "with pet '";
-
-						if (pet.Name.size())
-							std::cout << pet.Name;
-						else
-							std::cout << pet.NpcName;
-
-						if (pet.NpcName.size())
-							std::cout << pet.NpcName;
-						else
-							std::cout << (unsigned int)pet.NpcId;
-
-						if (hasSkin && pet.Npc)
-						{
-							std::cout << "' (Skin: '";
-
-							if (pet.Npc->Name.size())
-								std::cout << pet.Npc->Name;
-							else
-								std::cout << (unsigned int)pet.SkinNpcId;
-
-							std::cout << "')";
-						}
-						else
-						{
-							std::cout << "'";
-						}
-
-						std::cout << " Lv" << pet.Actor->Level << " as actor " << (unsigned int)packet.ActorId;
-
-						if (pet.Owner)
-						{
-							std::cout << " belonging to player '" << pet.Owner->Name << "' (" << (unsigned int)pet.Owner->Actor->ActorId << ")";
-						}
-
-						std::cout << std::endl;
+						std::cout << "with " << PrintActor{ Field, pet.Actor->ActorId, ActorType::Pet } << std::endl;
 					}
 				}
 			}

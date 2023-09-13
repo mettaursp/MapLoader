@@ -20,16 +20,9 @@ namespace Networking
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
+					FoundUnknownValue();
 
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-
-					PacketStream().FoundUnknownValue = true;
-
-					std::cout << "removing unknown player: " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "removing " << PrintActor{ Field, packet.ActorId, ActorType::Player } << std::endl;
 				}
 
 				return;
@@ -37,16 +30,9 @@ namespace Networking
 
 			const auto& player = entry->second;
 
-			unsigned short jobId = (unsigned short)player.JobCode;
-			unsigned short jobRank = (jobId >= 10 && jobId <= 110) ? ((unsigned short)player.Job % 10) : 0;
-
 			if constexpr (ParserUtils::Packets::PrintPacketOutput)
 			{
-				const auto jobEntry = JobNames.find(jobId);
-
-				std::string jobName = jobEntry != JobNames.end() ? jobEntry->second : "<unknown>";
-
-				std::cout << "removing player '" << player.Name << "' [" << jobName << JobSuffixes[jobRank] << "] Lv" << player.Actor->Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
+				std::cout << TimeStamp << "removing " << PrintActor{ Field, packet.ActorId, ActorType::Player } << std::endl;
 			}
 
 			if (player.Pet)

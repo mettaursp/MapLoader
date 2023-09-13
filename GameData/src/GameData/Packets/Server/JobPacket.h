@@ -25,8 +25,8 @@ namespace Networking
 					AutoDistribute = 11
 				};
 				
-				Enum::ActorId ActorId;
-				ModeEnum Mode;
+				Enum::ActorId ActorId = (Enum::ActorId)0;
+				ModeEnum Mode = (ModeEnum)0;
 				Maple::Game::SkillTreeData SkillTree;
 			};
 		}

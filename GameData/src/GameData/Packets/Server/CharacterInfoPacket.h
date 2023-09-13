@@ -24,13 +24,13 @@ namespace Networking
 				
 				struct CharacterDetails
 				{
-					Enum::AccountId AccountId;
-					Enum::CharacterId CharacterId;
+					Enum::AccountId AccountId = (Enum::AccountId)0;
+					Enum::CharacterId CharacterId = (Enum::CharacterId)0;
 					std::wstring Name;
 					unsigned short Level = 0;
-					Enum::JobCode JobCode;
-					Enum::JobId Job;
-					Enum::Gender Gender;
+					Enum::JobCode JobCode = (Enum::JobCode)0;
+					Enum::JobId Job = (Enum::JobId)0;
+					Enum::Gender Gender = (Enum::Gender)0;
 					unsigned int PrestigeLevel = 0;
 					Maple::Game::ActorStats Stats;
 					std::wstring ProfileUrl;
@@ -38,7 +38,7 @@ namespace Networking
 					std::wstring GuildName;
 					std::wstring GuildRank;
 					std::wstring HouseName;
-					Enum::MapId PlotMapId;
+					Enum::MapId PlotMapId = (Enum::MapId)0;
 					unsigned int PlotNumber = 0;
 					unsigned int ApartmentNumber = 0;
 					unsigned int CharacterTitle = 0;
@@ -53,7 +53,7 @@ namespace Networking
 					unsigned long long ProposalTimestamp = 0;
 				};
 				
-				Enum::CharacterId CharacterId;
+				Enum::CharacterId CharacterId = (Enum::CharacterId)0;
 				bool Found = false;
 				unsigned long long CurrentTime = 0;
 				CharacterDetails Details;

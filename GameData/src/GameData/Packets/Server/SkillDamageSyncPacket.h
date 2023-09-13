@@ -15,15 +15,15 @@ namespace Networking
 			{
 				struct HitEntity
 				{
-					Enum::SkillAttackId SkillAttack;
-					Enum::ActorId TargetId;
+					Enum::SkillAttackId SkillAttack = (Enum::SkillAttackId)0;
+					Enum::ActorId TargetId = (Enum::ActorId)0;
 					short Animation = 0;
 				};
 				
-				Enum::SkillSn SkillSn;
-				Enum::ActorId CasterId;
-				Enum::SkillId SkillId;
-				Enum::SkillLevel SkillLevel;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
+				Enum::ActorId CasterId = (Enum::ActorId)0;
+				Enum::SkillId SkillId = (Enum::SkillId)0;
+				Enum::SkillLevel SkillLevel = (Enum::SkillLevel)0;
 				unsigned char MotionPoint = 0;
 				unsigned char AttackPoint = 0;
 				Vector3S Position;

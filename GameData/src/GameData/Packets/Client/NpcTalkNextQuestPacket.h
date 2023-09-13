@@ -17,7 +17,7 @@ namespace Networking
 					Start = 2
 				};
 				
-				Enum::QuestId QuestId;
+				Enum::QuestId QuestId = (Enum::QuestId)0;
 				EventTypeEnum EventType = EventTypeEnum::Start;
 			};
 		}

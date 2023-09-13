@@ -9,8 +9,8 @@ namespace Maple
 	{
 		struct CubeItemData
 		{
-			Enum::ItemId ItemId;
-			Enum::ItemInstanceId ItemInstanceId;
+			Enum::ItemId ItemId = (Enum::ItemId)0;
+			Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
 			bool IsUgc = false;
 			ItemUgc Ugc;
 		};

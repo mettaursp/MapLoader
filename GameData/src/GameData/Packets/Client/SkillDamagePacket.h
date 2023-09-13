@@ -15,11 +15,11 @@ namespace Networking
 			{
 				struct HitEntity
 				{
-					Enum::ActorId EntityId;
+					Enum::ActorId EntityId = (Enum::ActorId)0;
 				};
 				
-				Enum::SkillSn SkillSn;
-				Enum::SkillAttackId SkillAttack;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
+				Enum::SkillAttackId SkillAttack = (Enum::SkillAttackId)0;
 				Vector3S Position;
 				Vector3S HitPoint;
 				Vector3S Rotation;

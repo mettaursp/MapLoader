@@ -115,6 +115,337 @@ namespace Networking
 			CheckBaseStats(jobCode, level, stats, Enum::StatAttributeBasic::SpRegen, isKms2);
 		}
 
+		void Actor::AddEffect(SniffHandler& handler, const Maple::Game::AdditionalEffect& effect)
+		{
+			if (EffectIndices.contains(effect.InstanceId))
+			{
+				if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				{
+					handler.FoundUnknownValue();
+
+					std::cout << handler.TimeStamp << "adding " << PrintEffect{ *Field, effect, ActorId } << " on " << PrintActor{ *Field, ActorId } << " with instance id that already is in use" << std::endl;
+				}
+
+				return;
+			}
+
+			EffectIndices[effect.InstanceId] = Effects.size();
+			Effects.push_back(effect);
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << handler.TimeStamp << "adding " << PrintEffect{ *Field, effect, ActorId } << " on " << PrintActor{ *Field, ActorId } << std::endl;
+			}
+		}
+
+		void Actor::AddEffects(SniffHandler& handler, const std::vector<Maple::Game::AdditionalEffect>& effects)
+		{
+			for (const Maple::Game::AdditionalEffect& effect : effects)
+			{
+				AddEffect(handler, effect);
+			}
+		}
+
+		void Actor::RemoveEffect(SniffHandler& handler, const Maple::Game::AdditionalEffect& effect)
+		{
+			const auto entry = EffectIndices.find(effect.InstanceId);
+
+			if (entry == EffectIndices.end())
+			{
+				if constexpr (ParserUtils::Packets::PrintPacketOutput)
+				//if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				{
+					//handler.FoundUnknownValue();
+					
+					std::cout << handler.TimeStamp << "removing unregistered " << PrintEffect{ *Field, effect, ActorId } << " from " << PrintActor{ *Field, ActorId } << std::endl;
+				}
+
+				return;
+			}
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << handler.TimeStamp << "removed " << PrintEffect{ *Field, Effects[entry->second], ActorId } << " from " << PrintActor{ *Field, ActorId } << std::endl;
+			}
+
+			size_t index = entry->second;
+
+			EffectIndices[Effects.back().InstanceId] = index;
+			EffectIndices.erase(entry);
+
+			Effects[index] = Effects.back();
+			Effects.pop_back();
+		}
+
+		void Actor::UpdateEffect(SniffHandler& handler, const Maple::Game::AdditionalEffect& effect)
+		{
+			const auto entry = EffectIndices.find(effect.InstanceId);
+
+			if (entry == EffectIndices.end())
+			{
+				if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				{
+					handler.FoundUnknownValue();
+
+					std::cout << handler.TimeStamp << "updating unregistered " << PrintEffect{ *Field, effect, ActorId } << " stats on " << PrintActor{ *Field, ActorId } << std::endl;
+				}
+
+				return;
+			}
+
+			Maple::Game::AdditionalEffect& oldEffect = Effects[entry->second];
+
+			if (oldEffect.SourceId != effect.SourceId && (effect.SourceId != Enum::ActorId::Null))
+			{
+				std::cout << "mismatching " << PrintEffect{ *Field, oldEffect, ActorId } << " source " << PrintActor{ *Field, effect.SourceId } << std::endl;
+			}
+
+			UpdateEffect(handler, effect.InstanceId, effect.Stats, effect.Enabled);
+			UpdateEffect(handler, effect.InstanceId, effect.ShieldHealth);
+		}
+
+		void Actor::UpdateEffect(SniffHandler& handler, Enum::EffectInstanceId effectHandle, const Maple::Game::EffectStats& stats, bool enabled)
+		{
+			const auto entry = EffectIndices.find(effectHandle);
+
+			if (entry == EffectIndices.end())
+			{
+				if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				{
+					handler.FoundUnknownValue();
+
+					Maple::Game::AdditionalEffect effect{
+						.TargetId = ActorId,
+						.InstanceId = effectHandle,
+						.SourceId = Enum::ActorId::Null,
+						.Stats = stats
+					};
+
+					std::cout << handler.TimeStamp << "updating unregistered " << PrintEffect{ *Field, effect, ActorId } << " stats on " << PrintActor{ *Field, ActorId } << std::endl;
+				}
+
+				return;
+			}
+
+			Maple::Game::AdditionalEffect& effect = Effects[entry->second];
+
+			bool wasEnabled = effect.Enabled;
+			Maple::Game::EffectStats oldStats = effect.Stats;
+
+			effect.Stats = stats;
+			effect.Enabled = enabled;
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << handler.TimeStamp << "updated stats ";
+
+				if (wasEnabled != enabled)
+				{
+					std::cout << (enabled ? "and enabled " : "and disabled ");
+				}
+
+				if (oldStats.EffectLevel != stats.EffectLevel)
+				{
+					unsigned short level1 = (unsigned short)oldStats.EffectLevel;
+					unsigned short level2 = (unsigned short)stats.EffectLevel;
+
+					std::cout << (level1 < level2 ? "and increased level from " : "and decreased level from ") << level1 << " to " << level2 << " ";
+				}
+
+				if (oldStats.Stacks != stats.Stacks)
+				{
+					std::cout << (oldStats.Stacks < stats.Stacks ? "and increased stacks from " : "and decreased stacks from ") << oldStats.Stacks << " to " << stats.Stacks << " ";
+				}
+
+				unsigned int oldDuration = oldStats.EndTime - oldStats.StartTime;
+				unsigned int duration = stats.EndTime - stats.StartTime;
+				int durationChange = (int)(stats.EndTime - oldStats.EndTime);
+				bool hadDuration = (oldDuration & 0x80000000) == 0;
+				bool hasDuration = (duration & 0x80000000) == 0;
+
+				if (duration != 0 || oldDuration != 0)
+				{
+					if (hadDuration != hasDuration)
+					{
+						if (hadDuration)
+						{
+							std::cout << "and removed duration ";
+						}
+						else
+						{
+							std::cout << "and added duration lasting " << duration << " ms ";
+						}
+					}
+					else if (hasDuration && durationChange != 0)
+					{
+						if (durationChange > 0)
+						{
+							std::cout << "and extended duration by " << durationChange << " ms ";
+						}
+						else
+						{
+							std::cout << "and decreased duration by " << durationChange << " ms ";
+						}
+					}
+				}
+
+				std::cout << "on " << PrintEffect{*Field, effect, ActorId} << " on " << PrintActor{*Field, ActorId} << std::endl;
+			}
+		}
+
+		void Actor::UpdateEffect(SniffHandler& handler, Enum::EffectInstanceId effectHandle, long long shieldHealth)
+		{
+			const auto entry = EffectIndices.find(effectHandle);
+
+			if (entry == EffectIndices.end())
+			{
+				if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				{
+					handler.FoundUnknownValue();
+
+					Maple::Game::AdditionalEffect effect{
+						.TargetId = ActorId,
+						.InstanceId = effectHandle,
+						.SourceId = Enum::ActorId::Null,
+						.ShieldHealth = shieldHealth
+					};
+
+					std::cout << handler.TimeStamp << "updating unregistered " << PrintEffect{ *Field, effect, ActorId } << " shield health on " << PrintActor{ *Field, ActorId } << std::endl;
+				}
+
+				return;
+			}
+
+			Maple::Game::AdditionalEffect& effect = Effects[entry->second];
+
+			effect.ShieldHealth = shieldHealth;
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << handler.TimeStamp << "updated " << PrintEffect{ *Field, effect, ActorId } << " shield health on " << PrintActor{ *Field, ActorId } << std::endl;
+			}
+		}
+
+		void Player::AddSkills(SniffHandler& handler, const Maple::Game::SkillTreeData& skillTree)
+		{
+			AddSkills(handler, Skills.Active, skillTree.Active);
+			AddSkills(handler, Skills.Passive, skillTree.Passive);
+			AddSkills(handler, Skills.Consumable, skillTree.Consumable);
+			AddSkills(handler, Skills.Special, skillTree.Special);
+		}
+
+		void Player::AddSkills(SniffHandler& handler, SkillTreePage& tree, const Maple::Game::SkillTreePageData& skillTree)
+		{
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << handler.TimeStamp << "adjusting skill tree of " << PrintActor{ *Actor->Field, Actor->ActorId } << std::endl;
+			}
+
+			for (const Maple::Game::SkillTreePageData::SkillEntry& entry : skillTree.Skills)
+			{
+				//if (!entry.Notify)
+				//{
+				//	continue;
+				//}
+
+				bool hasSkill = tree.Skills.contains(entry.SkillId);
+
+				if (hasSkill && !entry.Enabled)
+				{
+					if constexpr (ParserUtils::Packets::PrintPacketOutput)
+					{
+						std::cout << "\tremoving skill " << PrintSkill{ *Actor->Field, entry.SkillId, tree.Skills[entry.SkillId] } << std::endl;
+					}
+
+					tree.Skills.erase(entry.SkillId);
+
+					continue;
+				}
+
+				if (!entry.Enabled)
+				{
+					continue;
+				}
+
+				auto& skillLevel = tree.Skills[entry.SkillId];
+
+				if (skillLevel == entry.SkillLevel)
+				{
+					continue;
+				}
+
+				if constexpr (ParserUtils::Packets::PrintPacketOutput)
+				{
+					std::cout << (hasSkill ? "\tchanging skill to " : "\tadding skill ") << PrintSkill{ *Actor->Field, entry.SkillId, entry.SkillLevel };
+					
+					if (hasSkill)
+					{
+						std::cout << " from Lv" << (unsigned short)skillLevel;
+					}
+
+					std::cout << std::endl;
+				}
+
+				skillLevel = entry.SkillLevel;
+			}
+		}
+
+		Actor* FieldState::GetActor(Enum::ActorId actor)
+		{
+			auto entry = Actors.find(actor);
+
+			return entry != Actors.end() ? &entry->second : nullptr;
+		}
+
+		const Actor* FieldState::GetActor(Enum::ActorId actor) const
+		{
+			auto entry = Actors.find(actor);
+
+			return entry != Actors.end() ? &entry->second : nullptr;
+		}
+
+		Pet* FieldState::GetPet(Enum::ActorId actor)
+		{
+			auto entry = Pets.find(actor);
+
+			return entry != Pets.end() ? &entry->second : nullptr;
+		}
+
+		const Pet* FieldState::GetPet(Enum::ActorId actor) const
+		{
+			auto entry = Pets.find(actor);
+
+			return entry != Pets.end() ? &entry->second : nullptr;
+		}
+
+		Npc* FieldState::GetNpc(Enum::ActorId actor)
+		{
+			auto entry = Npcs.find(actor);
+
+			return entry != Npcs.end() ? &entry->second : nullptr;
+		}
+
+		const Npc* FieldState::GetNpc(Enum::ActorId actor) const
+		{
+			auto entry = Npcs.find(actor);
+
+			return entry != Npcs.end() ? &entry->second : nullptr;
+		}
+
+		Player* FieldState::GetPlayer(Enum::ActorId actor)
+		{
+			auto entry = Players.find(actor);
+
+			return entry != Players.end() ? &entry->second : nullptr;
+		}
+
+		const Player* FieldState::GetPlayer(Enum::ActorId actor) const
+		{
+			auto entry = Players.find(actor);
+
+			return entry != Players.end() ? &entry->second : nullptr;
+		}
+
 		ParserUtils::DataStream& SniffHandler::ResetPacketStream()
 		{
 			StreamStack.clear();
@@ -474,5 +805,213 @@ namespace Networking
 			PacketStream().DiscardErrors = true;
 			PacketStream().HasRecentlyFailed = true;
 		}
+
+		void SniffHandler::FoundUnknownValue()
+		{
+			if constexpr (ParserUtils::Packets::PrintUnknownValues)
+			{
+				if (!Field.PrintedMap)
+				{
+					Field.PrintedMap = true;
+
+					std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
+				}
+
+				PacketStream().FoundUnknownValue = true;
+			}
+		}
+
+		std::string GetJobName(Enum::JobCode jobCode, Enum::JobId job)
+		{
+			return GetJobName(jobCode, (jobCode >= 10 && jobCode <= 110) ? ((unsigned short)job % 10) : 0);
+		}
+
+		std::string GetJobName(Enum::JobCode jobCode, unsigned int rank)
+		{
+			const auto jobEntry = JobNames.find((unsigned short)jobCode);
+
+			std::string jobName = jobEntry != JobNames.end() ? jobEntry->second : "<unknown>";
+
+			if (rank >= JobSuffixes->size())
+			{
+				return jobName;
+			}
+
+			return jobName + JobSuffixes[rank];
+		}
 	}
+}
+
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintActor& actorRef)
+{
+	using namespace Networking::Packets;
+
+	if (actorRef.Actor == Enum::ActorId::Null)
+	{
+		return out << "actor <null>";
+	}
+
+	const Actor* actor = actorRef.Field.GetActor(actorRef.Actor);
+	const Npc* npc = actorRef.Field.GetNpc(actorRef.Actor);
+	const Pet* pet = actorRef.Field.GetPet(actorRef.Actor);
+	const Player* player = actorRef.Field.GetPlayer(actorRef.Actor);
+
+	if (!actor)
+	{
+		const char* messages[] = {
+			"unregistored actor ",
+			"unregistored player ",
+			"unregistored pet ",
+			"unregistored npc ",
+		};
+
+		return out << messages[unsigned int(actorRef.Type)] << (unsigned int)actorRef.Actor;
+	}
+
+	if (actor->Type != actorRef.Type && actorRef.Type != ActorType::Actor)
+	{
+		const char* messages[] = {
+			"actor",
+			"player",
+			"pet",
+			"npc",
+		};
+
+		out << "expected " << messages[unsigned int(actorRef.Type)] << " got ";
+	}
+
+	if (player)
+	{
+		return out << (actorRef.Actor == player->IsCurrentPlayer ? "current player '" : "player '") << player->Name << "' [" << GetJobName(player->JobCode, player->Job) << "] Lv" << actor->Level << " as actor " << (unsigned int)actorRef.Actor;
+	}
+
+	if (pet)
+	{
+		bool hasSkin = pet->SkinNpcId != Enum::NpcId::Null && pet->SkinNpcId != pet->NpcId;
+
+		std::cout << (pet->ItemId != Enum::ItemInstanceId::Null ? "pet '" : "hungry '");
+
+		if (pet->Name.size())
+			std::cout << pet->Name;
+		else
+			std::cout << pet->NpcName;
+
+		std::cout << "' '";
+
+		if (pet->NpcName.size())
+			std::cout << pet->NpcName;
+		else
+			std::cout << (unsigned int)pet->NpcId;
+
+		if (hasSkin && pet->Npc)
+		{
+			std::cout << "' (Skin: '";
+
+			if (pet->Npc->Name.size())
+				std::cout << pet->Npc->Name;
+			else
+				std::cout << (unsigned int)pet->SkinNpcId;
+
+			std::cout << "')";
+		}
+		else
+		{
+			std::cout << "'";
+		}
+
+		std::cout << " Lv" << pet->Actor->Level << " as actor " << (unsigned int)actorRef.Actor;
+
+		if (pet->Owner)
+		{
+			std::cout << " belonging to player '" << pet->Owner->Name << "' (" << (unsigned int)pet->Owner->Actor->ActorId << ")";
+		}
+
+		return out;
+	}
+
+	if (npc)
+	{
+		if (npc->Data)
+		{
+			return out << "npc [" << (unsigned int)npc->NpcId << "] '" << npc->Data->Name << "' Lv" << npc->Actor->Level << " as actor " << (unsigned int)actorRef.Actor;
+		}
+
+		return out << "npc with unknown id " << (unsigned int)npc->NpcId << " '" << npc->Name << "' Lv" << npc->Actor->Level << " as actor " << (unsigned int)actorRef.Actor;
+	}
+
+	return out << "unknown actor " << (unsigned int)actorRef.Actor;
+}
+
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintEffect& effectRef)
+{
+	bool statsSpecified = effectRef.Effect.Stats.EffectId != Enum::EffectId::Null;
+
+	out << (effectRef.Effect.Enabled ? "" : "[disabled] ") << (statsSpecified ? "effect " : "unknown effect");
+
+	if (statsSpecified)
+	{
+		out << "[" << (unsigned int)effectRef.Effect.Stats.EffectId << "]";
+
+		const auto entry = effectRef.Field.GameData->Effects.find(effectRef.Effect.Stats.EffectId);
+
+		if (entry != effectRef.Field.GameData->Effects.end())
+		{
+			const auto levelEntry = entry->second.Names.find(effectRef.Effect.Stats.EffectLevel);
+
+			if (levelEntry != entry->second.Names.end())
+			{
+				out << " '" << levelEntry->second << "'";
+			}
+			else
+			{
+				out << " '" << entry->second.Name << "'";
+			}
+		}
+
+		out << " Lv" << (unsigned int)effectRef.Effect.Stats.EffectLevel;
+
+		if (effectRef.Effect.Stats.Stacks != 1)
+		{
+			out << " x" << effectRef.Effect.Stats.Stacks;
+		}
+	}
+
+	if (effectRef.Effect.ShieldHealth)
+	{
+		out << " (Shield: " << effectRef.Effect.ShieldHealth << ")";
+	}
+
+	unsigned int duration = effectRef.Effect.Stats.EndTime - effectRef.Effect.Stats.StartTime;
+
+	if (duration && (duration & 0x80000000) == 0)
+	{
+		out << " lasting " << duration << " ms";
+	}
+
+	out << " with instance id " << (unsigned int)effectRef.Effect.InstanceId;
+
+	if (effectRef.Effect.SourceId == effectRef.OwnerId)
+	{
+		out << " from self";
+	}
+	else if (effectRef.Effect.SourceId != Enum::ActorId::Null)
+	{
+		out << " from caster " << Networking::Packets::PrintActor{ effectRef.Field, effectRef.Effect.SourceId };
+	}
+
+	return out;
+}
+
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintSkill& effect)
+{
+	out << "[" << (unsigned int)effect.SkillId << "] ";
+
+	const auto entry = effect.Field.GameData->Skills.find(effect.SkillId);
+
+	if (entry != effect.Field.GameData->Skills.end())
+	{
+		out << "'" << entry->second.Name << "' ";
+	}
+
+	return out << "Lv" << (unsigned short)effect.SkillLevel;
 }

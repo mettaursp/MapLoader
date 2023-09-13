@@ -95,9 +95,9 @@
 			<array data="count" output="Skills">
 				<data type="int" name="skillId" output="SkillId" />
 				<data type="int" name="skillLevel" output="SkillLevel" />
-				<data type="bool" name="notify" output="Notify" />
+				<data type="bool" name="beginnerSkill" output="BeginnerSkill" /> <!-- potentially beginner update related -->
 				<data type="bool" name="enabled" output="Enabled" />
-				<data type="bool" name="coreSkill" output="CoreSkill" /> <!-- potentially beginner update related -->
+				<data type="bool" name="notify" output="Notify" />
 			</array>
 		</block>
 		<block name="SkillTreeData">

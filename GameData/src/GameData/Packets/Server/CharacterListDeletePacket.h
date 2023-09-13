@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct CharacterListDeletePacket
 			{
-				Enum::CharacterId CharacterId;
+				Enum::CharacterId CharacterId = (Enum::CharacterId)0;
 			};
 		}
 	}

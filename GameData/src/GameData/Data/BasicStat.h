@@ -8,7 +8,7 @@ namespace Maple
 	{
 		struct BasicStat
 		{
-			Enum::StatAttributeBasic Type;
+			Enum::StatAttributeBasic Type = (Enum::StatAttributeBasic)0;
 			int Value = 0;
 			float Rate = 0;
 		};

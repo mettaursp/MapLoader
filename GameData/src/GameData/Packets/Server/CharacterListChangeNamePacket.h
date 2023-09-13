@@ -12,7 +12,7 @@ namespace Networking
 			struct CharacterListChangeNamePacket
 			{
 				unsigned int Confirm = 0;
-				Enum::CharacterId CharacterId;
+				Enum::CharacterId CharacterId = (Enum::CharacterId)0;
 				std::wstring Name;
 			};
 		}

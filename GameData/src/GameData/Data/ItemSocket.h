@@ -15,7 +15,7 @@ namespace Maple
 			{
 				struct GemData
 				{
-					Enum::ItemId ItemId;
+					Enum::ItemId ItemId = (Enum::ItemId)0;
 					bool IsBound = false;
 					ItemBinding Binding;
 					bool IsLocked = false;

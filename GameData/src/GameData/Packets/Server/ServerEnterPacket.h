@@ -15,12 +15,12 @@ namespace Networking
 			{
 				struct MapEntry
 				{
-					Enum::MapId MapId;
+					Enum::MapId MapId = (Enum::MapId)0;
 				};
 				
-				Enum::ActorId PlayerActorId;
-				Enum::CharacterId CharacterId;
-				Enum::ChannelId ChannelId;
+				Enum::ActorId PlayerActorId = (Enum::ActorId)0;
+				Enum::CharacterId CharacterId = (Enum::CharacterId)0;
+				Enum::ChannelId ChannelId = (Enum::ChannelId)0;
 				unsigned long long Exp = 0;
 				unsigned long long RestExp = 0;
 				unsigned long long Mesos = 0;

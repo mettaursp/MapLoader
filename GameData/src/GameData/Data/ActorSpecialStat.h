@@ -8,7 +8,7 @@ namespace Maple
 	{
 		struct ActorSpecialStat
 		{
-			Enum::StatAttributeSpecial Type;
+			Enum::StatAttributeSpecial Type = (Enum::StatAttributeSpecial)0;
 			float Rate = 0;
 			float Value = 0;
 		};

@@ -10,10 +10,10 @@ namespace Networking
 		{
 			struct StateSkillPacket
 			{
-				Enum::SkillSn SkillSn;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
 				unsigned int ServerTick = 0;
-				Enum::SkillId SkillId;
-				Enum::SkillLevel SkillLevel;
+				Enum::SkillId SkillId = (Enum::SkillId)0;
+				Enum::SkillLevel SkillLevel = (Enum::SkillLevel)0;
 				int Animation = 0;
 				int ClientTick = 0;
 			};

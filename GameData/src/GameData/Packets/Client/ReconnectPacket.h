@@ -10,8 +10,8 @@ namespace Networking
 		{
 			struct ReconnectPacket
 			{
-				Enum::AccountId AccountId;
-				Enum::CharacterId CharacterId;
+				Enum::AccountId AccountId = (Enum::AccountId)0;
+				Enum::CharacterId CharacterId = (Enum::CharacterId)0;
 			};
 		}
 	}

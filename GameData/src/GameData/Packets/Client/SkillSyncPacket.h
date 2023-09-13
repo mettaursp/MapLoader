@@ -11,9 +11,9 @@ namespace Networking
 		{
 			struct SkillSyncPacket
 			{
-				Enum::SkillSn SkillSn;
-				Enum::SkillId SkillId;
-				Enum::SkillLevel SkillLevel;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
+				Enum::SkillId SkillId = (Enum::SkillId)0;
+				Enum::SkillLevel SkillLevel = (Enum::SkillLevel)0;
 				unsigned char MotionPoint = 0;
 				Vector3S Position;
 				Vector3S Rotation;

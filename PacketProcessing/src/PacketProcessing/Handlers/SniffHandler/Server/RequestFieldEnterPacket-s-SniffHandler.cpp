@@ -13,6 +13,7 @@ namespace Networking
 			const auto& entry = Data->Maps.find(packet.MapId);
 		
 			Field.MapId = packet.MapId;
+			Field.GameData = Data;
 		
 			if (entry != Data->Maps.end())
 			{
@@ -22,7 +23,7 @@ namespace Networking
 				{
 					Field.PrintedMap = true;
 		
-					std::cout << "entered map [" << (unsigned int)packet.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
+					std::cout << TimeStamp << "entered map [" << (unsigned int)packet.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
 				}
 			}
 			else
@@ -31,7 +32,7 @@ namespace Networking
 				{
 					Field.PrintedMap = true;
 		
-					std::cout << "entered map [" << (unsigned int)packet.MapId << "]" << std::endl;
+					std::cout << TimeStamp << "entered map [" << (unsigned int)packet.MapId << "]" << std::endl;
 				}
 			}
 		}

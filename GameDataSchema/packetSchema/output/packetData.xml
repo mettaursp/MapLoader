@@ -284,7 +284,7 @@
 				<class name="SkillEntry" isMember="false">
 					<member name="Notify" type="bool" />
 					<member name="Enabled" type="bool" />
-					<member name="CoreSkill" type="bool" /> <!-- potentially beginner update related -->
+					<member name="BeginnerSkill" type="bool" /> <!-- potentially beginner update related -->
 					<member name="SkillId" type="Enum.SkillId" />
 					<member name="SkillLevel" type="Enum.SkillLevel" />
 				</class>

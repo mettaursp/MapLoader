@@ -77,6 +77,44 @@ namespace ParserUtils
 		std::unordered_map<unsigned short, VersionSuccesses> seenPackets;
 		std::unordered_map<unsigned short, VersionSuccesses> unparsedPackets;
 
+		std::string printTimeStamp(long long timeStamp)
+		{
+			if (timeStamp == 0)
+			{
+				return "";
+			}
+
+			long long epoch = 0x089f7ff5f7b58000;
+			timeStamp -= epoch;
+			long long ns = timeStamp % 10000000;
+			timeStamp /= 10000000;
+
+			std::time_t time(timeStamp);
+
+			const int buffSize = 32;
+			char buffer[buffSize] = { 0 };
+
+			auto err = ctime_s(buffer, buffSize, &time);
+
+			for (int i = 0; i < buffSize; ++i)
+				if (buffer[i] == '\n' || buffer[i] == '\r')
+					buffer[i] = 0;
+
+			int size = 0;
+
+			while (buffer[size])
+				++size;
+
+			buffer[size - 5] = 0;
+
+			int ms = ns / 10000;
+
+			std::stringstream out;
+			out << "[" << buffer << "." << ms << " " << (buffer + size - 4) << "] ";
+
+			return out.str();
+		}
+
 		unsigned short parseMsb(const fs::path& path)
 		{
 			Networking::Packets::SniffHandler handler;
@@ -142,6 +180,23 @@ namespace ParserUtils
 			handler.Version = build;
 			handler.MsbPath = path.string();
 
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				if (!hasPrintedFile)
+				{
+					hasPrintedFile = true;
+
+					std::cout << "parsing [" << build;
+
+					if (handler.Feature)
+					{
+						std::cout << ", Feature: " << handler.Feature << "; " << handler.Locale;
+					}
+
+					std::cout << "] " << path.string() << std::endl;
+				}
+			}
+
 			while (!file.eof())
 			{
 				long long timeStamp;
@@ -189,6 +244,7 @@ namespace ParserUtils
 				handler.ResetPacketStream() = ParserUtils::DataStream{{reinterpret_cast<char*>(buffer.data()), buffer.size()}};
 				handler.FoundValues = {};
 				handler.ReportPackets = true;
+				handler.TimeStamp = printTimeStamp(timeStamp);
 
 				unsigned long long opcodeVersion = ((((unsigned long long)opcode << 16) | (unsigned long long)build) << 32) | buffer.size();
 
@@ -799,7 +855,7 @@ int main(int argc, char** argv)
 	bool showSeen = false;
 	bool showUnparsed = !false;
 	bool showUnused = false;
-	bool printBaseStats = !false;
+	bool printBaseStats = false;
 
 	fs::path msbDir = "B:/Files/ms2sniffs/";
 
@@ -1079,6 +1135,190 @@ int main(int argc, char** argv)
 			}
 		}
 	}
+	{
+		const char* paths[] = {
+			"Xml/string/en/koradditionaldescription.xml",
+			"Xml/string/en/koradditionaldescription_1.xml",
+			"Xml/string/en/koradditionaldescription_10.xml",
+			"Xml/string/en/koradditionaldescription_20.xml",
+			"Xml/string/en/koradditionaldescription_30.xml",
+			"Xml/string/en/koradditionaldescription_40.xml",
+			"Xml/string/en/koradditionaldescription_50.xml",
+			"Xml/string/en/koradditionaldescription_60.xml",
+			"Xml/string/en/koradditionaldescription_70.xml",
+			"Xml/string/en/koradditionaldescription_80.xml",
+			"Xml/string/en/koradditionaldescription_90.xml",
+			"Xml/string/en/koradditionaldescription_100.xml",
+			"Xml/string/en/koradditionaldescription_110.xml"
+		};
+		
+		for (const char* current : paths)
+		{
+			Archive::ArchivePath path = gms2Reader.GetPath(current, true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+				const tinyxml2::XMLAttribute* levelAttribute = keyElement->FindAttribute("level");
+
+				if (!idAttribute || !nameAttribute || !levelAttribute) continue;
+
+				Enum::EffectId id = (Enum::EffectId)atoi(idAttribute->Value());
+				Enum::EffectLevel level = (Enum::EffectLevel)atoi(levelAttribute->Value());
+
+				auto& effect = gms2Data.Effects[id];
+
+				effect.Name = nameAttribute->Value();
+				effect.Names[level] = nameAttribute->Value();
+			}
+		}
+	}
+	{
+		const char* paths[] = {
+			"Xml/string/en/koradditionaldescription.xml",
+			"Xml/string/en/koradditionaldescription_1.xml",
+			"Xml/string/en/koradditionaldescription_10.xml",
+			"Xml/string/en/koradditionaldescription_20.xml",
+			"Xml/string/en/koradditionaldescription_30.xml",
+			"Xml/string/en/koradditionaldescription_40.xml",
+			"Xml/string/en/koradditionaldescription_50.xml",
+			"Xml/string/en/koradditionaldescription_60.xml",
+			"Xml/string/en/koradditionaldescription_70.xml",
+			"Xml/string/en/koradditionaldescription_80.xml",
+			"Xml/string/en/koradditionaldescription_90.xml",
+			"Xml/string/en/koradditionaldescription_100.xml",
+			"Xml/string/en/koradditionaldescription_110.xml"
+		};
+
+		for (const char* current : paths)
+		{
+			Archive::ArchivePath path = kms2Reader.GetPath(current, true);
+
+			output.clear();
+
+			path.Read(output);
+
+			if (output.size() == 0)
+			{
+				std::cout << "failed to read " << path.GetPath() << std::endl;
+
+				return false;
+			}
+
+			tinyxml2::XMLDocument document;
+
+			document.Parse(output.data(), output.size());
+
+			tinyxml2::XMLElement* rootElement = document.RootElement();
+
+			for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+			{
+				const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+				const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+				const tinyxml2::XMLAttribute* levelAttribute = keyElement->FindAttribute("level");
+
+				if (!idAttribute || !nameAttribute || !levelAttribute) continue;
+
+				Enum::EffectId id = (Enum::EffectId)atoi(idAttribute->Value());
+				Enum::EffectLevel level = (Enum::EffectLevel)atoi(levelAttribute->Value());
+
+				auto& effect = kms2Data.Effects[id];
+
+				effect.Name = nameAttribute->Value();
+				effect.Names[level] = nameAttribute->Value();
+			}
+		}
+	}
+	{
+		Archive::ArchivePath path = gms2Reader.GetPath("Xml/string/en/skillname.xml", true);
+
+		output.clear();
+
+		path.Read(output);
+
+		if (output.size() == 0)
+		{
+			std::cout << "failed to read " << path.GetPath() << std::endl;
+
+			return false;
+		}
+
+		tinyxml2::XMLDocument document;
+
+		document.Parse(output.data(), output.size());
+
+		tinyxml2::XMLElement* rootElement = document.RootElement();
+
+		for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+		{
+			const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+			const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+
+			if (!idAttribute || !nameAttribute) continue;
+
+			Enum::SkillId id = (Enum::SkillId)atoi(idAttribute->Value());
+
+			gms2Data.Skills[id].Name = nameAttribute->Value();
+		}
+	}
+	{
+		Archive::ArchivePath path = kms2Reader.GetPath("Xml/string/en/skillname.xml", true);
+
+		output.clear();
+
+		path.Read(output);
+
+		if (output.size() == 0)
+		{
+			std::cout << "failed to read " << path.GetPath() << std::endl;
+
+			return false;
+		}
+
+		tinyxml2::XMLDocument document;
+
+		document.Parse(output.data(), output.size());
+
+		tinyxml2::XMLElement* rootElement = document.RootElement();
+
+		for (tinyxml2::XMLElement* keyElement = rootElement ? rootElement->FirstChildElement() : nullptr; keyElement; keyElement = keyElement->NextSiblingElement())
+		{
+			const tinyxml2::XMLAttribute* idAttribute = keyElement->FindAttribute("id");
+			const tinyxml2::XMLAttribute* nameAttribute = keyElement->FindAttribute("name");
+
+			if (!idAttribute || !nameAttribute) continue;
+
+			Enum::SkillId id = (Enum::SkillId)atoi(idAttribute->Value());
+
+			kms2Data.Skills[id].Name = nameAttribute->Value();
+		}
+	}
+
+	printBaseStats |= ParserUtils::Packets::PrintPacketOutput;
+
+	showSuccesses &= !regenerate;
+	showSeen &= !regenerate;
+	showUnparsed &= !regenerate;
+	showUnused &= !regenerate;
+	printBaseStats &= !regenerate;
 
 	OutputSchema::readSchemas(schemaDir / "shared");
 	GameSchema::readSchemas(schemaDir / "gms2", true);

@@ -9,7 +9,7 @@ namespace Maple
 	{
 		struct ItemBinding
 		{
-			Enum::CharacterId CharacterId;
+			Enum::CharacterId CharacterId = (Enum::CharacterId)0;
 			std::wstring Name;
 		};
 	}

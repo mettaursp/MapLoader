@@ -23,7 +23,7 @@ namespace Networking
 				{
 					unsigned int PlotId = 0;
 					unsigned int ApartmentNumber = 0;
-					StateEnum State;
+					StateEnum State = (StateEnum)0;
 					unsigned long long ExpirationTime = 0;
 				};
 				

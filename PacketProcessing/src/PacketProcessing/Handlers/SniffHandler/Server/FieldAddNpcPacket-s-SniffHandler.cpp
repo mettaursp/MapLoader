@@ -24,12 +24,12 @@ namespace Networking
 					{
 						Field.PrintedMap = true;
 		
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
+						std::cout << TimeStamp << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
 					}
 		
 					PacketStream().FoundUnknownValue = true;
 		
-					std::cout << "adding npc with id thats already in use: " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "adding npc with id thats already in use: " << (unsigned int)packet.ActorId << std::endl;
 				}
 		
 				return;
@@ -37,41 +37,46 @@ namespace Networking
 		
 			const auto npcEntry = Data->Npcs.find(packet.NpcId);
 		
+			auto& actor = Field.Actors[packet.ActorId];
+
+			actor.Field = &Field;
+			actor.ActorId = packet.ActorId;
+			actor.Level = packet.Level;
+			actor.Type = ActorType::Npc;
+		
+			auto& npc = Field.Npcs[packet.ActorId];
+		
+			if (npcEntry != Data->Npcs.end())
+			{
+				npc.Name = npcEntry->second.Name;
+				npc.Data = &npcEntry->second;
+			}
+
+			npc.NpcId = packet.NpcId;
+			npc.Actor = &actor;
+
+			actor.AddEffects(*this, packet.Effects);
+		
 			if (npcEntry == Data->Npcs.end())
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
+					FoundUnknownValue();
 		
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-		
-					PacketStream().FoundUnknownValue = true;
-		
-					std::cout << "adding npc with unknown id " << (unsigned int)packet.NpcId << "' Lv" << packet.Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "adding npc with unknown id " << (unsigned int)packet.NpcId << "' Lv" << packet.Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
 				}
+
+				std::stringstream name;
+				name << (unsigned int)packet.NpcId;
+				npc.Name = name.str();
 			}
 			else
 			{
 				if constexpr (ParserUtils::Packets::PrintPacketOutput)
 				{
-					std::cout << "adding npc [" << (unsigned int)packet.NpcId << "] '" << npcEntry->second.Name << "' Lv" << packet.Level << " as actor " << (unsigned int)packet.ActorId << std::endl;
+					std::cout << TimeStamp << "adding " << PrintActor{ Field, packet.ActorId, ActorType::Npc } << std::endl;
 				}
 			}
-		
-			auto& actor = Field.Actors[packet.ActorId];
-		
-			actor.ActorId = packet.ActorId;
-			actor.Level = packet.Level;
-		
-			auto& npc = Field.Npcs[packet.ActorId];
-		
-			npc.Name = npcEntry->second.Name;
-			npc.Data = &npcEntry->second;
-			npc.NpcId = packet.NpcId;
-			npc.Actor = &actor;
 		}
 	}
 }

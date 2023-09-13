@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct ResponseKeyPacket
 			{
-				Enum::AccountId AccountId;
+				Enum::AccountId AccountId = (Enum::AccountId)0;
 				int TokenA = 0;
 				int TokenB = 0;
 				unsigned long long MachineHigh = 0;

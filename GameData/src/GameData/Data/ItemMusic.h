@@ -13,7 +13,7 @@ namespace Maple
 			unsigned int Instrument = 0;
 			std::wstring Title;
 			std::wstring Author;
-			Enum::CharacterId AuthorId;
+			Enum::CharacterId AuthorId = (Enum::CharacterId)0;
 			bool IsLocked = false;
 		};
 	}

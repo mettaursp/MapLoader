@@ -24,7 +24,7 @@ namespace Networking
 					long long Time = 0;
 				};
 				
-				Enum::TrophyId TrophyId;
+				Enum::TrophyId TrophyId = (Enum::TrophyId)0;
 				StatusEnum Status = StatusEnum::InProgress;
 				bool IsDone = false;
 				int NextGrade = 0;

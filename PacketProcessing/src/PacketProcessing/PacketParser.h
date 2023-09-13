@@ -139,9 +139,6 @@ namespace Networking
 		void ParsePacket<13, ServerPacket, 0x17>(PacketHandler& handler);
 
 		template <>
-		void ParsePacket<13, ServerPacket, 0x2e>(PacketHandler& handler);
-
-		template <>
 		void ParsePacket<2497, ServerPacket, 0xc>(PacketHandler& handler);
 
 		template <>

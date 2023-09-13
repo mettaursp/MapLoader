@@ -18,10 +18,10 @@ namespace Networking
 					Result = 3
 				};
 				
-				Enum::NpcId NpcId;
-				Enum::ScriptId ScriptId;
+				Enum::NpcId NpcId = (Enum::NpcId)0;
+				Enum::ScriptId ScriptId = (Enum::ScriptId)0;
 				EventTypeEnum EventType = EventTypeEnum::Begin;
-				Enum::ItemInstanceId ItemInstanceId;
+				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
 			};
 		}
 	}

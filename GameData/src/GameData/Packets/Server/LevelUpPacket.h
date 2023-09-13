@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct LevelUpPacket
 			{
-				Enum::ActorId ActorId;
+				Enum::ActorId ActorId = (Enum::ActorId)0;
 				unsigned int Level = 0;
 			};
 		}

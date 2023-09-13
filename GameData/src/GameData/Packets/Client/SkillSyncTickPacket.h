@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct SkillSyncTickPacket
 			{
-				Enum::SkillSn SkillSn;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
 				int ServerTick = 0;
 			};
 		}

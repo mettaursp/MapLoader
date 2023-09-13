@@ -13,13 +13,13 @@ namespace Networking
 		{
 			struct FieldAddItemPacket
 			{
-				Enum::ItemEntityId ObjectId;
-				Enum::ItemId ItemId;
+				Enum::ItemEntityId ObjectId = (Enum::ItemEntityId)0;
+				Enum::ItemId ItemId = (Enum::ItemId)0;
 				unsigned int Amount = 0;
-				Enum::ItemInstanceId ItemInstanceId;
+				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
 				Vector3S Position;
-				Enum::CharacterId OwnerId;
-				Enum::Rarity Rarity;
+				Enum::CharacterId OwnerId = (Enum::CharacterId)0;
+				Enum::Rarity Rarity = (Enum::Rarity)0;
 				Maple::Game::ItemData ItemData;
 			};
 		}

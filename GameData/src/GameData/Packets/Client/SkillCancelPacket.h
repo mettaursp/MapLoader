@@ -10,7 +10,7 @@ namespace Networking
 		{
 			struct SkillCancelPacket
 			{
-				Enum::SkillSn SkillSn;
+				Enum::SkillSn SkillSn = (Enum::SkillSn)0;
 			};
 		}
 	}

@@ -5266,9 +5266,9 @@ namespace Networking
 				{
 					ParseEffectStats_v12(handler, output0.Effect.Stats);
 
-					Read<bool>("hasShield", handler, output0.UpdateShield, "\t\t\t");
+					Read<bool>("enabled", handler, output0.Effect.Enabled, "\t\t\t");
 
-					ValidateValues(stream, "hasShield", "\t\t\t", output0.UpdateShield, (bool)0, (bool)1);
+					ValidateValues(stream, "enabled", "\t\t\t", output0.Effect.Enabled, (bool)0, (bool)1);
 
 					Read<long long>("shieldHealth", handler, output0.Effect.ShieldHealth, "\t\t\t");
 				}
@@ -6443,9 +6443,9 @@ namespace Networking
 			{
 				ParseEffectStats_v12(handler, output0.Effect.Stats);
 
-				Read<bool>("hasShield", handler, output0.UpdateShield, "\t\t");
+				Read<bool>("enabled", handler, output0.Effect.Enabled, "\t\t");
 
-				ValidateValues(stream, "hasShield", "\t\t", output0.UpdateShield, (bool)0, (bool)1);
+				ValidateValues(stream, "enabled", "\t\t", output0.Effect.Enabled, (bool)0, (bool)1);
 
 				Read<long long>("shieldHealth", handler, output0.Effect.ShieldHealth, "\t\t");
 			}
@@ -6754,98 +6754,6 @@ namespace Networking
 			if (handler.Succeeded())
 			{
 				handler.PacketParsed<Server::FieldAddPlayerPacket>(output0);
-			}
-
-
-			return;
-		}
-
-		template <>
-		void ParsePacket<13, ServerPacket, 0x2e>(PacketHandler& handler)
-		{
-			using namespace ParserUtils::Packets;
-
-			ParserUtils::DataStream& stream = handler.PacketStream();
-
-			Server::StatPacket output0;
-
-			Read<int>("actorId", handler, output0.ActorId, "\t");
-
-			bool unknown_var1 = false;
-			Read<bool>("unknown", handler, unknown_var1, "\t");
-
-			ValidateValues(stream, "unknown", "\t", unknown_var1, (bool)0, (bool)1);
-
-			unsigned char statCount_var2 = 0;
-			Read<unsigned char>("statCount", handler, statCount_var2, "\t");
-
-			unsigned char actorType_var3 = 0;
-
-			if (!handler.PacketStream().HasRecentlyFailed)
-			{
-				actorType_var3 = handler.GetActorType(output0.ActorId);
-			}
-
-			ValidateValues(stream, "actorType", "\t", actorType_var3, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)255);
-
-			if (actorType_var3 == 255)
-			{
-				handler.DiscardPacket();
-
-				return;
-
-			}
-
-			if (statCount_var2 == 1)
-			{
-				unsigned char basicStatCount_var4 = 1;
-
-				ResizeVector(handler, output0.Stats.Basic, basicStatCount_var4);
-
-				if (handler.PacketStream().HasRecentlyFailed)
-				{
-					return;
-				}
-				ParseSpecificStat_v12(handler, output0.Stats.Basic[0]);
-			}
-
-			else if (actorType_var3 == 3)
-			{
-				ParseAllStatsNpc_v12(handler, output0.Stats);
-			}
-
-			else if (actorType_var3 == 4)
-			{
-				ParseAllStatsNpc_v12(handler, output0.Stats);
-			}
-
-			else if (statCount_var2 == 35)
-			{
-				if (actorType_var3 == 1)
-				{
-					ParseAllStatsMyPlayer_v12(handler, output0.Stats);
-				}
-
-				else
-				{
-					ParseAllStatsOtherPlayers_v12(handler, output0.Stats);
-				}
-			}
-
-			else if (statCount_var2 == 255)
-			{
-				unsigned char basicStatCount_var5 = 35;
-				ParseSpecificStats_v12(handler, output0.Stats, basicStatCount_var5);
-			}
-
-			else
-			{
-				ParseSpecificStats_v12(handler, output0.Stats, statCount_var2);
-			}
-
-			if (handler.Succeeded())
-			{
-				handler.PacketParsed<Server::StatPacket>(output0);
 			}
 
 

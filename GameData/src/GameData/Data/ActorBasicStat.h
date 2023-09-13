@@ -8,7 +8,7 @@ namespace Maple
 	{
 		struct ActorBasicStat
 		{
-			Enum::StatAttributeBasic Type;
+			Enum::StatAttributeBasic Type = (Enum::StatAttributeBasic)0;
 			unsigned long long Max = 0;
 			unsigned long long Base = 0;
 			unsigned long long Current = 0;

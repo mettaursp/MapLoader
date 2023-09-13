@@ -10,11 +10,11 @@ namespace Maple
 	{
 		struct ItemBadge
 		{
-			Enum::BadgeType Type;
+			Enum::BadgeType Type = (Enum::BadgeType)0;
 			std::wstring Id;
-			Enum::BadgeId BadgeId;
+			Enum::BadgeId BadgeId = (Enum::BadgeId)0;
 			bool Transparency[10] = {};
-			Enum::PetId PetSkinId;
+			Enum::PetId PetSkinId = (Enum::PetId)0;
 		};
 	}
 }

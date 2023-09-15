@@ -2,6 +2,9 @@
 
 namespace Enum
 {
+	enum class EquipTab : unsigned char
+	{
+	};
 	enum class Rarity
 	{
 		None = 0,
@@ -36,6 +39,9 @@ namespace Enum
 		Meta = 12
 	};
 	enum class SlotType : unsigned char
+	{
+	};
+	enum class ItemType : unsigned char
 	{
 	};
 }

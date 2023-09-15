@@ -9,6 +9,7 @@
 #include <GameData/Data/ActorStats.h>
 #include <GameData/Data/AdditionalEffect.h>
 #include <GameData/Data/SkillTreeData.h>
+#include <GameData/Enums/Item.h>
 
 namespace Networking
 {
@@ -152,6 +153,23 @@ namespace Networking
 			Enum::ItemInstanceId ItemId = Enum::ItemInstanceId::Null;
 		};
 
+		struct ItemStats
+		{
+
+		};
+
+		struct Item
+		{
+			Enum::ItemId ItemId = Enum::ItemId::Null;
+			Enum::ItemInstanceId InstanceId = Enum::ItemInstanceId::Null;
+			Enum::Rarity Rarity = Enum::Rarity::None;
+			Enum::SlotType Slot = Enum::SlotType(0);
+			Enum::BadgeType BadgeType = Enum::BadgeType::None;
+			unsigned int Quantity = 0;
+			const ItemData* Meta = nullptr;
+			ItemStats Data;
+		};
+
 		struct FieldState
 		{
 			const Metadata* GameData = nullptr;
@@ -162,6 +180,7 @@ namespace Networking
 			std::unordered_map<Enum::ActorId, Actor> Actors;
 			std::unordered_map<Enum::ActorId, Player> Players;
 			std::unordered_map<Enum::ActorId, Pet> Pets;
+			std::unordered_map<Enum::ItemInstanceId, Item> Items;
 
 			Actor* GetActor(Enum::ActorId actor);
 			const Actor* GetActor(Enum::ActorId actor) const;
@@ -248,6 +267,10 @@ namespace Networking
 			unsigned short GetItemCategory(unsigned int itemId) const;
 			bool StatIntToFloat(float& rate) const;
 			unsigned char GetActorType(Enum::ActorId actorId);
+			int GetItemIdFromInstance(Enum::ItemInstanceId instanceId) const;
+
+			template <typename T>
+			const T& Copy(const T& value) { return value; }
 
 		private:
 

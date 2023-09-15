@@ -18,16 +18,10 @@ namespace Networking
 
 			if (entry == Field.Actors.end())
 			{
-				if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				if constexpr (ParserUtils::Packets::PrintPacketOutput)
+				//if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					if (!Field.PrintedMap)
-					{
-						Field.PrintedMap = true;
-
-						std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
-					}
-
-					PacketStream().FoundUnknownValue = true;
+					//FoundUnknownValue();
 
 					std::cout << "changing stats of unknown actor: " << (unsigned int)packet.ActorId << std::endl;
 				}

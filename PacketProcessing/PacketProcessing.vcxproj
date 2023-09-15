@@ -1,362 +1,419 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <ItemGroup Label="ProjectConfigurations">
-        <ProjectConfiguration Include="Debug|Win32">
-            <Configuration>Debug</Configuration>
-            <Platform>Win32</Platform>
-        </ProjectConfiguration>
-        <ProjectConfiguration Include="Release|Win32">
-            <Configuration>Release</Configuration>
-            <Platform>Win32</Platform>
-        </ProjectConfiguration>
-        <ProjectConfiguration Include="Debug|x64">
-            <Configuration>Debug</Configuration>
-            <Platform>x64</Platform>
-        </ProjectConfiguration>
-        <ProjectConfiguration Include="Release|x64">
-            <Configuration>Release</Configuration>
-            <Platform>x64</Platform>
-        </ProjectConfiguration>
-    </ItemGroup>
-    <PropertyGroup Label="Globals">
-        <VCProjectVersion>16.0</VCProjectVersion>
-        <Keyword>Win32Proj</Keyword>
-        <ProjectGuid>{b2bd6ad0-602e-46e5-aa20-9426af655145}</ProjectGuid>
-        <RootNamespace>Networking</RootNamespace>
-        <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-        <ProjectName>PacketProcessing</ProjectName>
-    </PropertyGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props"/>
-    <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;" Label="Configuration">
-        <ConfigurationType>StaticLibrary</ConfigurationType>
-        <UseDebugLibraries>true</UseDebugLibraries>
-        <PlatformToolset>v143</PlatformToolset>
-        <CharacterSet>Unicode</CharacterSet>
-    </PropertyGroup>
-    <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;" Label="Configuration">
-        <ConfigurationType>StaticLibrary</ConfigurationType>
-        <UseDebugLibraries>false</UseDebugLibraries>
-        <PlatformToolset>v143</PlatformToolset>
-        <WholeProgramOptimization>true</WholeProgramOptimization>
-        <CharacterSet>Unicode</CharacterSet>
-    </PropertyGroup>
-    <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;" Label="Configuration">
-        <ConfigurationType>StaticLibrary</ConfigurationType>
-        <UseDebugLibraries>true</UseDebugLibraries>
-        <PlatformToolset>v143</PlatformToolset>
-        <CharacterSet>Unicode</CharacterSet>
-    </PropertyGroup>
-    <PropertyGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;" Label="Configuration">
-        <ConfigurationType>StaticLibrary</ConfigurationType>
-        <UseDebugLibraries>false</UseDebugLibraries>
-        <PlatformToolset>v143</PlatformToolset>
-        <WholeProgramOptimization>true</WholeProgramOptimization>
-        <CharacterSet>Unicode</CharacterSet>
-    </PropertyGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props"/>
-    <ImportGroup Label="ExtensionSettings"/>
-    <ImportGroup Label="Shared"/>
-    <ImportGroup Label="PropertySheets" Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" Label="LocalAppDataPlatform"/>
-        <Import Project="PacketProcessingInclude.props"/>
-        <Import Project="..\GameData\GameDataInclude.props"/>
-        <Import Project="..\GameEngine\GameEngineInclude.props"/>
-    </ImportGroup>
-    <ImportGroup Label="PropertySheets" Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" Label="LocalAppDataPlatform"/>
-        <Import Project="PacketProcessingInclude.props"/>
-        <Import Project="..\GameData\GameDataInclude.props"/>
-        <Import Project="..\GameEngine\GameEngineInclude.props"/>
-    </ImportGroup>
-    <ImportGroup Label="PropertySheets" Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" Label="LocalAppDataPlatform"/>
-        <Import Project="..\ParserUtils\ParserUtilsInclude.props"/>
-        <Import Project="..\CppGlobalConfig.props"/>
-        <Import Project="PacketProcessingInclude.props"/>
-        <Import Project="..\GameData\GameDataInclude.props"/>
-        <Import Project="..\GameEngine\GameEngineInclude.props"/>
-        <Import Project="..\ArchiveParser\ParserInclude.props"/>
-        <Import Project="..\ZlibDebug.props"/>
-    </ImportGroup>
-    <ImportGroup Label="PropertySheets" Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
-        <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(&apos;$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props&apos;)" Label="LocalAppDataPlatform"/>
-        <Import Project="..\ParserUtils\ParserUtilsInclude.props"/>
-        <Import Project="..\CppGlobalConfig.props"/>
-        <Import Project="PacketProcessingInclude.props"/>
-        <Import Project="..\GameData\GameDataInclude.props"/>
-        <Import Project="..\GameEngine\GameEngineInclude.props"/>
-        <Import Project="..\ArchiveParser\ParserInclude.props"/>
-        <Import Project="..\ZlibRelease.props"/>
-    </ImportGroup>
-    <PropertyGroup Label="UserMacros"/>
-    <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|Win32&apos;">
-        <ClCompile>
-            <WarningLevel>Level3</WarningLevel>
-            <SDLCheck>true</SDLCheck>
-            <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <ConformanceMode>true</ConformanceMode>
-        </ClCompile>
-        <Link>
-            <SubSystem>Console</SubSystem>
-            <GenerateDebugInformation>true</GenerateDebugInformation>
-        </Link>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|Win32&apos;">
-        <ClCompile>
-            <WarningLevel>Level3</WarningLevel>
-            <FunctionLevelLinking>true</FunctionLevelLinking>
-            <IntrinsicFunctions>true</IntrinsicFunctions>
-            <SDLCheck>true</SDLCheck>
-            <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <ConformanceMode>true</ConformanceMode>
-        </ClCompile>
-        <Link>
-            <SubSystem>Console</SubSystem>
-            <EnableCOMDATFolding>true</EnableCOMDATFolding>
-            <OptimizeReferences>true</OptimizeReferences>
-            <GenerateDebugInformation>true</GenerateDebugInformation>
-        </Link>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
-        <ClCompile>
-            <WarningLevel>Level3</WarningLevel>
-            <SDLCheck>true</SDLCheck>
-            <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <ConformanceMode>true</ConformanceMode>
-        </ClCompile>
-        <Link>
-            <SubSystem>Console</SubSystem>
-            <GenerateDebugInformation>true</GenerateDebugInformation>
-        </Link>
-    </ItemDefinitionGroup>
-    <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
-        <ClCompile>
-            <WarningLevel>Level3</WarningLevel>
-            <FunctionLevelLinking>true</FunctionLevelLinking>
-            <IntrinsicFunctions>true</IntrinsicFunctions>
-            <SDLCheck>true</SDLCheck>
-            <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-            <ConformanceMode>true</ConformanceMode>
-        </ClCompile>
-        <Link>
-            <SubSystem>Console</SubSystem>
-            <EnableCOMDATFolding>true</EnableCOMDATFolding>
-            <OptimizeReferences>true</OptimizeReferences>
-            <GenerateDebugInformation>true</GenerateDebugInformation>
-        </Link>
-    </ItemDefinitionGroup>
-    <ItemGroup>
-        <ClInclude Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler-decl.h"/>
-        <ClInclude Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler.h"/>
-        <ClInclude Include="src\PacketProcessing\PacketParser.h"/>
-        <ClInclude Include="src\PacketProcessing\PacketParserBase.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler.cpp"/>
-        <ClCompile Include="src\PacketProcessing\PacketOpcodes.cpp"/>
-        <ClCompile Include="src\PacketProcessing\PacketParser.cpp"/>
-        <ClCompile Include="src\PacketProcessing\PacketParserBase.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">
-            <Project>{01d10ca8-8e23-4880-b235-786919567bc4}</Project>
-        </ProjectReference>
-        <ProjectReference Include="..\ParserUtils\ParserUtils.vcxproj">
-            <Project>{d3fc3444-ffb5-48e5-97ed-f169efff7d6d}</Project>
-        </ProjectReference>
-    </ItemGroup>
-    <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets"/>
-    <ImportGroup Label="ExtensionTargets"/>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserChatPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\Server\FieldAddNpcPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\Server\FieldRemoveNpcPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RequestFieldEnterPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemovePlayerPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\RequestQuitPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\LogInPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageRegionPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\StateSkillPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ResponseKeyPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ResponseVersionPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\HandshakePacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ResponseHeartbeatPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\LogInAuthTokenPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageHealPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillCastPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillSyncDamagePacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillDamagePacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillRegionSkillPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillSyncPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\Reconnect7Packet-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillSyncTickPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamagePacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillCancelPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkClosePacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddItemPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkBeginPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageTilePacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkContinuePacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkEnchantUnknownPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemoveItemPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkEnchantPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageDotPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkNextQuestPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TrophyStartPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkAllianceQuestAcceptPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkAllianceQuestTalkPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkCinematicPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\BuffPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SystemInfoPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageSyncPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TrophyContentPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TrophyUpdatePacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SpecialStat-c-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListLoadPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListAddPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListDeletePacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListDeletePendingPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListCancelDeletePacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListChangeNamePacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\JobPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterInfoPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesAvailabilityPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesPlotsPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesExpirationPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddPlayerPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddPetPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemovePetPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ServerEnterPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\StatPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ExpUpPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LevelUpPacket-s-SniffHandler.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ReconnectPacket-c-SniffHandler.cpp"/>
-    </ItemGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>16.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{b2bd6ad0-602e-46e5-aa20-9426af655145}</ProjectGuid>
+    <RootNamespace>Networking</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>PacketProcessing</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings" />
+  <ImportGroup Label="Shared" />
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PacketProcessingInclude.props" />
+    <Import Project="..\GameData\GameDataInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="PacketProcessingInclude.props" />
+    <Import Project="..\GameData\GameDataInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\ParserUtils\ParserUtilsInclude.props" />
+    <Import Project="..\CppGlobalConfig.props" />
+    <Import Project="PacketProcessingInclude.props" />
+    <Import Project="..\GameData\GameDataInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
+    <Import Project="..\ArchiveParser\ParserInclude.props" />
+    <Import Project="..\ZlibDebug.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\ParserUtils\ParserUtilsInclude.props" />
+    <Import Project="..\CppGlobalConfig.props" />
+    <Import Project="PacketProcessingInclude.props" />
+    <Import Project="..\GameData\GameDataInclude.props" />
+    <Import Project="..\GameEngine\GameEngineInclude.props" />
+    <Import Project="..\ArchiveParser\ParserInclude.props" />
+    <Import Project="..\ZlibRelease.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler-decl.h" />
+    <ClInclude Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler.h" />
+    <ClInclude Include="src\PacketProcessing\PacketParser.h" />
+    <ClInclude Include="src\PacketProcessing\PacketParserBase.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler.cpp" />
+    <ClCompile Include="src\PacketProcessing\PacketOpcodes.cpp" />
+    <ClCompile Include="src\PacketProcessing\PacketParser.cpp" />
+    <ClCompile Include="src\PacketProcessing\PacketParserBase.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">
+      <Project>{01d10ca8-8e23-4880-b235-786919567bc4}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ParserUtils\ParserUtils.vcxproj">
+      <Project>{d3fc3444-ffb5-48e5-97ed-f169efff7d6d}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets" />
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserChatPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\Server\FieldAddNpcPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\Server\FieldRemoveNpcPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RequestFieldEnterPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemovePlayerPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\RequestQuitPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\LogInPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageRegionPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\StateSkillPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ResponseKeyPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ResponseVersionPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\HandshakePacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ResponseHeartbeatPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\LogInAuthTokenPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageHealPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillCastPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillSyncDamagePacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillDamagePacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillRegionSkillPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillSyncPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\Reconnect7Packet-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillSyncTickPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamagePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SkillCancelPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkClosePacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddItemPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkBeginPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageTilePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkContinuePacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkEnchantUnknownPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemoveItemPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkEnchantPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageDotPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkNextQuestPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TrophyStartPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkAllianceQuestAcceptPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkAllianceQuestTalkPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\NpcTalkCinematicPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\BuffPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SystemInfoPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillDamageSyncPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TrophyContentPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TrophyUpdatePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\SpecialStat-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListLoadPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListAddPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListDeletePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListDeletePendingPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListCancelDeletePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterListChangeNamePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\JobPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CharacterInfoPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesAvailabilityPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesPlotsPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoadCubesExpirationPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddPlayerPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldAddPetPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldRemovePetPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ServerEnterPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\StatPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ExpUpPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LevelUpPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Client\ReconnectPacket-c-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\EnchantScrollEnchantUiPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\EnchantScrollSuccessPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\EnchantScrollStatUiPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\EnchantScrollResultPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\EnchantScrollRewardPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ItemPutOffPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FurnishingStorageCountPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FurnishingStorageAddPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ItemPutOnPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ItemSkinPutOnPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FurnishingStorageStartListPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FurnishingStorageRemovePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FurnishingStoragePurchasePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FurnishingStorageUpdatePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FurnishingStorageEndListPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ItemSkinPutOffPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ItemUpdatePacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\BindItemPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserChatItemLinkPacket-s-SniffHandler.cpp" />
+  </ItemGroup>
 </Project>

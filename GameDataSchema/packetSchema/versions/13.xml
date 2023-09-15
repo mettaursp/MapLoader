@@ -260,6 +260,13 @@
 		</opcode>
 		<opcodeReference value="0x18" version="12" opcode="0x18" />
 		<opcodeReference value="0x1D" version="12" opcode="0x1D" />
+		<opcodeReference value="0x1E" version="12" opcode="0x1E" />
+		<opcodeReference value="0x23" version="12" opcode="0x23" />
+		<opcodeReference value="0x25" version="12" opcode="0x25" />
+		<opcodeReference value="0x26" version="12" opcode="0x26" />
+		<opcodeReference value="0x27" version="12" opcode="0x27" />
+		<opcodeReference value="0x28" version="12" opcode="0x28" />
+		<opcodeReference value="0x2A" version="12" opcode="0x2A" />
 		<opcodeReference value="0x2B" version="12" opcode="0x2B" />
 		<opcodeReference value="0x2C" version="12" opcode="0x2C" />
 		<opcodeReference value="0x2E" version="12" opcode="0x2F" />
@@ -305,7 +312,9 @@
 		<opcodeReference value="0x5B" version="12" opcode="0x5C" />
 		<opcodeReference value="0x5E" version="12" opcode="0x5F" />
 		<opcodeReference value="0x6C" version="12" opcode="0x6C" />
-		<opcodeReference value="0x79" version="12" opcode="0x7A" />
+		<opcodeReference value="0x7A" version="12" opcode="0x7A" />
+		<opcodeReference value="0xC1" version="12" opcode="0xC1" />
+		<opcodeReference value="0x105" version="12" opcode="0x105" />
 	</source>
 	<source name="client">
 		<opcodeReference value="0x01" version="12" opcode="0x01" />

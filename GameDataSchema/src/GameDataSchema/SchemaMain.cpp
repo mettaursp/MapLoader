@@ -16,7 +16,8 @@ namespace fs = std::filesystem;
 
 fs::path ms2Root = "B:/Files/Maplstory 2 Client/appdata";
 fs::path ms2RootExtracted = "B:/Files/ms2export/export/";
-fs::path kms2Root = "B:/Files/ms2export/kms2export";
+//fs::path kms2Root = "B:/Files/ms2export/kms2export";
+fs::path kms2Root = "B:/Files/ms2export/kms2export_new_xml";
 const fs::path schemaDir = "./schema";
 const fs::path packetSchemaDir = "./packetSchema";
 Archive::ArchiveReader gms2Reader;
@@ -105,12 +106,23 @@ namespace ParserUtils
 			while (buffer[size])
 				++size;
 
-			buffer[size - 5] = 0;
+			buffer[std::max(0, size - 5)] = 0;
 
-			int ms = ns / 10000;
+			int ms = (int)(ns / 10000);
 
 			std::stringstream out;
-			out << "[" << buffer << "." << ms << " " << (buffer + size - 4) << "] ";
+			out << "[" << buffer << "." << ms;
+
+			if ((ms % 100) == 0)
+			{
+				out << "00";
+			}
+			else if ((ms % 10) == 0)
+			{
+				out << "0";
+			}
+
+			out << " " << (buffer + size - 4) << "] ";
 
 			return out.str();
 		}

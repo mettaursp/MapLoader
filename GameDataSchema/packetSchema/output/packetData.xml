@@ -447,10 +447,79 @@
 					<member name="CharacterId" type="Enum.CharacterId" />
 					<member name="CharacterName" type="std::wstring" />
 					<member name="Message" type="std::wstring" />
+					<member name="StringId" type="unsigned int" />
 					<member name="Type" type="TypeEnum" default="TypeEnum.All" />
 					<member name="ChannelId" type="Enum.ChannelId" />
 					<member name="SuperChatId" type="Enum.SuperChatId" />
 					<member name="ClubId" type="Enum.ClubId" />
+				</class>
+				<class name="UserChatItemLinkPacket" directory="Packets\Server">
+					<class name="UnknownEntry" isMember="false">
+					</class>
+					<class name="ItemEntry" isMember="false">
+						<member name="ItemId" type="Enum.ItemId" />
+						<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+						<member name="Rarity" type="Enum.Rarity" />
+						<member name="ItemData" type="Maple.Game.ItemData" />
+					</class>
+					<member name="Items" type="std::vector" contains="ItemEntry" />
+					<member name="Unknown" type="std::vector" contains="UnknownEntry" />
+				</class>
+				<class name="FurnishingStorageStartListPacket" directory="Packets\Server">
+				</class>
+				<class name="FurnishingStorageCountPacket" directory="Packets\Server">
+					<member name="Count" type="unsigned int" />
+				</class>
+				<class name="FurnishingStorageAddPacket" directory="Packets\Server">
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="Slot" type="Enum.SlotType" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="FurnishingStorageRemovePacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="FurnishingStoragePurchasePacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Count" type="unsigned int" />
+				</class>
+				<class name="FurnishingStorageUpdatePacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Count" type="unsigned int" />
+				</class>
+				<class name="FurnishingStorageEndListPacket" directory="Packets\Server">
+				</class>
+				<class name="ItemPutOnPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="SlotName" type="std::wstring" />
+					<member name="Slot" type="Enum.SlotType" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="EquipTab" type="Enum.EquipTab" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="ItemPutOffPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="ItemSkinPutOnPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Slot" type="Enum.SlotType" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="ItemSkinPutOffPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="ItemUpdatePacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
 				<class name="FieldAddItemPacket" directory="Packets\Server">
 					<member name="ObjectId" type="Enum.ItemEntityId" />
@@ -729,7 +798,7 @@
 				</class>
 				<class name="CharacterInfoPacket" directory="Packets\Server">
 					<class name="CharacterUnlockedTitle" isMember="false">
-						<member name="TitleId" type="unsigned int" />
+						<member name="TitleId" type="Enum.TitleId" />
 					</class>
 					<class name="CharacterDetails" isMember="false">
 						<member name="AccountId" type="Enum.AccountId" />
@@ -765,6 +834,72 @@
 					<member name="CurrentTime" type="unsigned long long" />
 					<member name="Details" type="CharacterDetails" />
 					<member name="Equipment" type="Maple.Game.CharacterEquipment" />
+				</class>
+				<class name="EnchantScrollEnchantUiPacket" directory="Packets\Server">
+					<class name="ItemTypeEntry" isMember="false">
+						<member name="ItemType" type="Enum.ItemType" />
+					</class>
+					<class name="ItemRarityEntry" isMember="false">
+						<member name="ItemRarity" type="Enum.Rarity" />
+					</class>
+					<enum name="ScrollTypeEnum">
+						<value name="EnchantLevel" value="1" />
+						<value name="StatReroller" value="2" />
+						<value name="RandomEnchant" value="3" />
+						<value name="Rune" value="4" />
+					</enum>
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ScrollType" type="ScrollTypeEnum" />
+					<member name="UntradeableReminder" type="bool" />
+					<member name="EnchantLevel" type="unsigned int" />
+					<member name="EnchantRate" type="unsigned int" />
+					<member name="MinLevel" type="unsigned short" />
+					<member name="MaxLevel" type="unsigned short" />
+					<member name="ItemTypes" type="std::vector" contains="ItemTypeEntry" />
+					<member name="ItemRarities" type="std::vector" contains="ItemRarityEntry" />
+					<member name="MinEnchant" type="unsigned int" />
+					<member name="MaxEnchant" type="unsigned int" />
+				</class>
+				<class name="EnchantScrollStatUiPacket" directory="Packets\Server">
+					<enum name="ScrollTypeEnum">
+						<value name="EnchantLevel" value="1" />
+						<value name="StatReroller" value="2" />
+						<value name="RandomEnchant" value="3" />
+						<value name="Rune" value="4" />
+					</enum>
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ScrollType" type="ScrollTypeEnum" />
+					<member name="MinStats" type="std::vector" contains="Maple.Game.BasicStat" />
+					<member name="MaxStats" type="std::vector" contains="Maple.Game.BasicStat" />
+					<member name="Stats" type="std::vector" contains="Maple.Game.BasicStat" />
+				</class>
+				<class name="EnchantScrollSuccessPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="EnchantScrollResultPacket" directory="Packets\Server">
+					<enum name="ResultTypeEnum">
+						<value name="Success" value="0" />
+						<value name="InvalidScroll" value="1" />
+						<value name="InvalidItem" value="2" />
+						<value name="BreakingItem" value="3" />
+						<value name="InvalidLevel" value="4" />
+						<value name="InvalidSlot" value="5" />
+						<value name="InvalidRank" value="6" />
+						<value name="InvalidGrade" value="7" />
+						<value name="NotBreaking" value="8" />
+					</enum>
+					<member name="Result" type="ResultTypeEnum" />
+				</class>
+				<class name="EnchantScrollRewardPacket" directory="Packets\Server">
+					<class name="DataEntry" isMember="false">
+						<member name="ItemId" type="Enum.ItemId" />
+					</class>
+					<member name="Data" type="std::vector" contains="DataEntry" />
+				</class>
+				<class name="BindItemPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
 			</namespace>
 			<namespace name="Client">

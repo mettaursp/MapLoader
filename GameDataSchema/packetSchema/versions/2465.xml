@@ -8,7 +8,11 @@
 		<opcodeReference value="0x6A" version="12" opcode="0x6C" />
 		<opcodeReference value="0x6C" removeReference="true" />
 		<opcodeReference value="0x78" version="12" opcode="0x7A" />
-		<opcodeReference value="0x79" removeReference="true" />
+		<opcodeReference value="0x7A" removeReference="true" />
+		<opcodeReference value="0xBF" version="12" opcode="0xC1" />
+		<opcodeReference value="0xC1" removeReference="true" />
+		<opcodeReference value="0x103" version="12" opcode="0x105" />
+		<opcodeReference value="0x105" removeReference="true" />
 	</source>
 	<source name="client">
 	</source>

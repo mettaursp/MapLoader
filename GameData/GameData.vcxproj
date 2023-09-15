@@ -381,6 +381,84 @@
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\UserChatPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageStartListPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageStartListPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageCountPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageCountPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageAddPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageAddPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageRemovePacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageRemovePacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStoragePurchasePacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStoragePurchasePacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageUpdatePacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageUpdatePacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageEndListPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageEndListPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemPutOnPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemPutOffPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOnPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOnPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdatePacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemUpdatePacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
@@ -529,6 +607,42 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterInfoPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollEnchantUiPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollEnchantUiPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollStatUiPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollStatUiPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollSuccessPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollSuccessPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollResultPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollResultPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollRewardPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollRewardPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BindItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseVersionPacket.h"/>

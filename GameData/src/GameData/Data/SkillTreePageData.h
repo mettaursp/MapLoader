@@ -14,7 +14,7 @@ namespace Maple
 			{
 				bool Notify = false;
 				bool Enabled = false;
-				bool CoreSkill = false;
+				bool BeginnerSkill = false;
 				Enum::SkillId SkillId = (Enum::SkillId)0;
 				Enum::SkillLevel SkillLevel = (Enum::SkillLevel)0;
 			};

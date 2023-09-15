@@ -531,6 +531,136 @@
         </ClCompile>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageStartListPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageStartListPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageCountPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageCountPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageAddPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageAddPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageRemovePacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageRemovePacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStoragePurchasePacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStoragePurchasePacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageUpdatePacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageUpdatePacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageEndListPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageEndListPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemPutOnPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemPutOffPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOnPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOnPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdatePacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemUpdatePacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemPacket.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
@@ -777,6 +907,66 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterInfoPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollEnchantUiPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollEnchantUiPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollStatUiPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollStatUiPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollSuccessPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollSuccessPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollResultPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollResultPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollRewardPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollRewardPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BindItemPacket.cpp">
             <Filter>Source Files\Packets\Server</Filter>
         </ClCompile>
     </ItemGroup>

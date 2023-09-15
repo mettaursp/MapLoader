@@ -19,7 +19,7 @@ namespace Networking
 			{
 				struct CharacterUnlockedTitle
 				{
-					unsigned int TitleId = 0;
+					Enum::TitleId TitleId = (Enum::TitleId)0;
 				};
 				
 				struct CharacterDetails

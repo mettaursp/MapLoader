@@ -26,6 +26,10 @@
 		</enum>
 		<enum name="SlotType" parent="unsigned char" directory="Enums" file="Item">
 		</enum>
+		<enum name="ItemType" parent="unsigned char" directory="Enums" file="Item">
+		</enum>
+		<enum name="EquipTab" parent="unsigned char" directory="Enums" file="Item">
+		</enum>
 		<enum name="RideMode" parent="unsigned char" directory="Enums" file="Item">
 			<value name="Default" value="0" />
 			<value name="UseItem" value="1" />

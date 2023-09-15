@@ -38,6 +38,7 @@ namespace Networking
 				Enum::CharacterId CharacterId = (Enum::CharacterId)0;
 				std::wstring CharacterName;
 				std::wstring Message;
+				unsigned int StringId = 0;
 				TypeEnum Type = TypeEnum::All;
 				Enum::ChannelId ChannelId = (Enum::ChannelId)0;
 				Enum::SuperChatId SuperChatId = (Enum::SuperChatId)0;

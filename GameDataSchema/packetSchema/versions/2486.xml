@@ -386,6 +386,89 @@
 			-->
 			<data type="short" name="unknown" />
 		</opcode>
+		<opcode name="UserChatItemLink" value="0x1E">
+			<output type="Networking.Packets.Server.UserChatItemLinkPacket" schemaName="packetData" />
+			<data type="int" name="count" />
+			<array data="count" output="Items">
+				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+				<data type="int" name="itemId" output="ItemId" />
+				<data type="int" name="rarity" output="Rarity" />
+				<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
+			</array>
+		</opcode>
+		<opcode name="FurnishingStorage" value="0x23">
+			<data type="byte" name="mode">
+				<enum name="StartList" value="1" />
+				<enum name="Count" value="2" />
+				<enum name="Add" value="3" />
+				<enum name="Remove" value="4" />
+				<enum name="Purchase" value="5" />
+				<enum name="Update" value="7" />
+				<enum name="EndList" value="8" />
+			</data>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.FurnishingStorageStartListPacket" schemaName="packetData" />
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<output type="Networking.Packets.Server.FurnishingStorageCountPacket" schemaName="packetData" />
+				<data type="int" name="count" output="Count" />
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<output type="Networking.Packets.Server.FurnishingStorageAddPacket" schemaName="packetData" />
+				<data type="int" name="itemId" output="ItemId" />
+				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+				<data type="byte" name="rarity" output="Rarity" />
+				<data type="int" name="slot" output="Slot" />
+				<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<output type="Networking.Packets.Server.FurnishingStorageRemovePacket" schemaName="packetData" />
+				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+			</condition>
+			<condition data="mode" value="5" comparison="equal">
+				<output type="Networking.Packets.Server.FurnishingStoragePurchasePacket" schemaName="packetData" />
+				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+				<data type="int" name="count" output="Count" />
+			</condition>
+			<condition data="mode" value="7" comparison="equal">
+				<output type="Networking.Packets.Server.FurnishingStorageUpdatePacket" schemaName="packetData" />
+				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+				<data type="int" name="count" output="Count" />
+			</condition>
+			<condition data="mode" value="8" comparison="equal">
+				<output type="Networking.Packets.Server.FurnishingStorageEndListPacket" schemaName="packetData" />
+			</condition>
+		</opcode>
+		<opcode name="ItemPutOn" value="0x25">
+			<output type="Networking.Packets.Server.ItemPutOnPacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<data type="int" name="itemId" output="ItemId" />
+			<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+			<data type="byte" name="slot" output="Slot" />
+			<data type="int" name="rarity" output="Rarity" />
+			<data type="byte" name="equipTab" output="EquipTab" />
+			<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
+		</opcode>
+		<opcode name="ItemSkinPutOn" value="0x27">
+			<output type="Networking.Packets.Server.ItemSkinPutOnPacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<data type="int" name="itemId" output="ItemId" />
+			<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+			<data type="long" name="rarity" output="Rarity" />
+			<data type="long" name="slot" output="Slot" />
+			<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
+		</opcode>
+		<opcode name="ItemUpdate" value="0x2A">
+			<output type="Networking.Packets.Server.ItemUpdatePacket" schemaName="packetData" />
+			<data type="int" name="actorId" output="ActorId" />
+			<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+			<data type="int" name="itemId" doRead="false" />
+			<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />
+			<condition data="itemId" value="0" comparison="equal">
+				<discard />
+			</condition>
+			<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
+		</opcode>
 		<opcode name="FieldAddItem" value="0x2B">
 			<output type="Networking.Packets.Server.FieldAddItemPacket" schemaName="packetData" />
 			<data type="int" name="objectId" output="ObjectId" />
@@ -548,6 +631,68 @@
 					<useBlock name="CharacterEquipmentBadges" version="2486" />
 				</buffer>
 			</condition>
+		</opcode>
+		<opcode name="EnchantScroll" value="0xBF">
+			<data type="byte" name="mode">
+				<enum name="EnchantUi" value="0" />
+				<enum name="StatUi" value="1" />
+				<enum name="Results" value="3" />
+				<enum name="Reward" value="4" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.EnchantScrollEnchantUiPacket" schemaName="packetData" />
+				<useBlock name="EnchantScrollEnchantUi" version="12" />
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.EnchantScrollStatUiPacket" schemaName="packetData" />
+				<useBlock name="EnchantScrollStatUi" version="12" />
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<data type="short" name="result">
+					<enum name="Success" value="0" />
+					<enum name="InvalidScroll" value="1" />
+					<enum name="InvalidItem" value="2" />
+					<enum name="BreakingItem" value="3" />
+					<enum name="InvalidLevel" value="4" />
+					<enum name="InvalidSlot" value="5" />
+					<enum name="InvalidRank" value="6" />
+					<enum name="InvalidGrade" value="7" />
+					<enum name="NotBreaking" value="8" />
+				</data>
+				<condition data="result" value="0" comparison="equal">
+					<output type="Networking.Packets.Server.EnchantScrollSuccessPacket" schemaName="packetData" />
+					<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+					<data type="int" name="itemId" doRead="false" />
+					<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />
+					<condition data="itemId" value="0" comparison="equal">
+						<discard />
+					</condition>
+					<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
+				</condition>
+				<condition else="true" comparison="none">
+					<output type="Networking.Packets.Server.EnchantScrollResultPacket" schemaName="packetData" />
+					<data type="short" name="resultData" output="Result" doRead="false" />
+					<function data="resultData" name="Copy" params="result" />
+				</condition>
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<output type="Networking.Packets.Server.EnchantScrollRewardPacket" schemaName="packetData" />
+				<data type="uint" name="count" />
+				<array data="count" output="Data">
+					<data type="int" name="itemId" output="ItemId" />
+					<data type="short" name="unknown" />
+				</array>
+			</condition>
+		</opcode>
+		<opcode name="BindItem" value="0x103">
+			<output type="Networking.Packets.Server.BindItemPacket" schemaName="packetData" />
+			<data type="long" name="itemInstanceId" output="ItemInstanceId" />
+			<data type="int" name="itemId" doRead="false" />
+			<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />
+			<condition data="itemId" value="0" comparison="equal">
+				<discard />
+			</condition>
+			<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
 		</opcode>
 	</source>
 	<source name="client">

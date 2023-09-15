@@ -799,6 +799,18 @@ namespace Networking
 			return Unknown;
 		}
 
+		int SniffHandler::GetItemIdFromInstance(Enum::ItemInstanceId instanceId) const
+		{
+			const auto entry = Field.Items.find(instanceId);
+
+			if (entry == Field.Items.end())
+			{
+				return 0;
+			}
+
+			return (int)entry->second.ItemId;
+		}
+
 		void SniffHandler::DiscardPacket()
 		{
 			PacketStream().SuppressErrors = true;
@@ -810,7 +822,7 @@ namespace Networking
 		{
 			if constexpr (ParserUtils::Packets::PrintUnknownValues)
 			{
-				if (!Field.PrintedMap)
+				if (Field.MapId != Enum::MapId::Null && !Field.PrintedMap)
 				{
 					Field.PrintedMap = true;
 

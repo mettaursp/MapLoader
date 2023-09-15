@@ -172,7 +172,15 @@ namespace Archive
 				{
 					subPath.resize(i);
 
-					if (DirectoryMap.find(subPath) != DirectoryMap.end()) continue;
+					if (DirectoryMap.find(subPath) != DirectoryMap.end())
+					{
+						subPath.resize(parentDir + 1);
+						subPath[i] = '/'; // this case was added last night, looks like files arent being added to their directories properly now, or directories arent having their parents set properly
+
+						++level;
+
+						continue;
+					}
 
 					Directories.push_back({});
 
@@ -542,6 +550,11 @@ namespace Archive
 		}
 
 		ArchiveFile.open(ArchivePath, std::ios::binary);
+
+		if (!ArchiveFile.is_open())
+		{
+			std::cout << "failed to open archive file '" << ArchivePath.string() << "'" << std::endl;
+		}
 
 		if (!cacheHeaderBuffer)
 		{

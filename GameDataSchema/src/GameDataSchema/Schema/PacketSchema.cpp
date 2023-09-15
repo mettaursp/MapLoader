@@ -2473,7 +2473,7 @@ namespace PacketSchema
 
 					out << tabs << '\t';
 
-					if (makeVariable || !output.Member)
+					if (/*makeVariable ||*/ !output.Member)
 					{
 						out << data;
 					}
@@ -2482,7 +2482,18 @@ namespace PacketSchema
 						out << output.Name;
 					}
 
-					out << " = handler." << function.Name << "(";
+					out << " = ";
+
+					if (/*!makeVariable &&*/ output.Member)
+					{
+						const std::string& typeName = output.Member->ContainsType.size() ? output.Member->ContainsType : output.Member->Type;
+
+						std::string castTo = OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(typeName, "Networking.Packets"), "::");
+
+						out << "(" << castTo << ")";
+					}
+
+					out << "handler." << function.Name << "(";
 
 					for (size_t j = 0; j < function.ParamDataIndices.size(); ++j)
 					{

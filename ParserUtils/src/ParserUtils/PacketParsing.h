@@ -259,7 +259,7 @@ namespace ParserUtils
 			StackWatch(HandlerType& handler, const char* name, const T1& arg1, const T&... args) : Handler(handler)
 			{
 				std::stringstream out;
-				(out << name << arg1 << args << ...);
+				((out << name << arg1) << ... << args);
 
 				Push(out.str().c_str());
 			}
@@ -270,6 +270,8 @@ namespace ParserUtils
 
 				if constexpr (PrintOutput || PrintErrors)
 				{
+					DataStream& stream = Handler.PacketStream();
+
 					if (!(!PrintOutput && !stream.DiscardErrors && (stream.SuppressErrors || !stream.PrintOutput)))
 					{
 						std::ostream& out = PrintOutput ? std::cout : Handler.FoundValues;

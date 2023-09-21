@@ -2136,6 +2136,26 @@ namespace PacketSchema
 		out << tabs << "using namespace ParserUtils::Packets;\n\n";
 		out << tabs << "ParserUtils::DataStream& stream = handler.PacketStream();\n\n";
 
+		out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_block" << "(handler, \"";
+		
+		if (opcode.IsBlock)
+		{
+			out << opcode.Name << "(\"";
+			
+			for (size_t i = 0; i < opcode.Parameters.size(); ++i)
+			{
+				const auto& parameter = opcode.Parameters[i];
+
+				out << (i == 0 ? ", \"" : ", \", ") << parameter.Name << ": \", " << parameter.Name << "_param" << i;
+			}
+		}
+		else
+		{
+			out << (opcode.IsServer ? "[Server] 0x" : "[Client] 0x") << std::hex << opcode.Value << std::dec << " '" << opcode.Name << "'\"";
+		}
+
+		out << ");\n\n";
+
 		const PacketOutput* topOutput = nullptr;
 
 		PacketOutput blockOutputData;
@@ -2519,7 +2539,7 @@ namespace PacketSchema
 				{
 					type = PacketInfoType::Validation;
 
-					out << "\n" << tabs << "ValidateValues(stream, \"" << data.Name << "\", \"";
+					out << "\n" << tabs << "ValidateValues(handler, \"" << data.Name << "\", \"";
 
 					for (size_t i = 0; i <= stack.size(); ++i)
 					{

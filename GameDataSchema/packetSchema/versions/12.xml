@@ -906,6 +906,7 @@
 				<enum name="BlackMarketSale" value="102" />
 				<enum name="BlackMarketCancel" value="104" />
 				<enum name="Unknown" value="107" />
+				<enum name="NexonNews" value="112" />
 				<enum name="Ad" value="200" />
 			</data>
 			<data type="long" name="mailInstanceId" output="MailInstanceId" />

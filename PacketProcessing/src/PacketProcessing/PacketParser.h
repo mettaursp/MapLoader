@@ -178,9 +178,6 @@ namespace Networking
 		void ParsePacket<2486, ServerPacket, 0xcc>(PacketHandler& handler);
 
 		template <>
-		void ParsePacket<2486, ServerPacket, 0x4c>(PacketHandler& handler);
-
-		template <>
 		void ParsePacket<2486, ServerPacket, 0xc>(PacketHandler& handler);
 
 		template <>
@@ -191,6 +188,9 @@ namespace Networking
 
 		template <>
 		void ParsePacket<2486, ServerPacket, 0x27>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2486, ServerPacket, 0x97>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2486, ServerPacket, 0x17>(PacketHandler& handler);
@@ -214,6 +214,9 @@ namespace Networking
 		void ParsePacket<2486, ServerPacket, 0x37>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<2486, ServerPacket, 0x4b>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<2486, ServerPacket, 0x51>(PacketHandler& handler);
 
 		template <>
@@ -226,13 +229,7 @@ namespace Networking
 		void ParsePacket<2486, ServerPacket, 0x7b>(PacketHandler& handler);
 
 		template <>
-		void ParsePacket<2486, ServerPacket, 0x103>(PacketHandler& handler);
-
-		template <>
-		void ParsePacket<2486, ServerPacket, 0x84>(PacketHandler& handler);
-
-		template <>
-		void ParsePacket<2486, ServerPacket, 0x99>(PacketHandler& handler);
+		void ParsePacket<2486, ServerPacket, 0x82>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2486, ServerPacket, 0x98>(PacketHandler& handler);
@@ -259,6 +256,9 @@ namespace Networking
 		void ParsePacket<2486, ServerPacket, 0x105>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<2486, ServerPacket, 0x103>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<13, ClientPacket, 0x3>(PacketHandler& handler);
 
 		template <>
@@ -271,13 +271,13 @@ namespace Networking
 		void ParsePacket<2497, ServerPacket, 0xcc>(PacketHandler& handler);
 
 		template <>
-		void ParsePacket<2497, ServerPacket, 0x4c>(PacketHandler& handler);
-
-		template <>
 		void ParsePacket<2497, ServerPacket, 0xc>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2497, ServerPacket, 0x27>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2497, ServerPacket, 0x97>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2497, ServerPacket, 0x17>(PacketHandler& handler);
@@ -298,6 +298,9 @@ namespace Networking
 		void ParsePacket<2497, ServerPacket, 0x2a>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<2497, ServerPacket, 0x4b>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<2497, ServerPacket, 0x51>(PacketHandler& handler);
 
 		template <>
@@ -310,13 +313,7 @@ namespace Networking
 		void ParsePacket<2497, ServerPacket, 0x7b>(PacketHandler& handler);
 
 		template <>
-		void ParsePacket<2497, ServerPacket, 0x103>(PacketHandler& handler);
-
-		template <>
-		void ParsePacket<2497, ServerPacket, 0x84>(PacketHandler& handler);
-
-		template <>
-		void ParsePacket<2497, ServerPacket, 0x99>(PacketHandler& handler);
+		void ParsePacket<2497, ServerPacket, 0x82>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2497, ServerPacket, 0x98>(PacketHandler& handler);
@@ -343,6 +340,9 @@ namespace Networking
 		void ParsePacket<2497, ServerPacket, 0x105>(PacketHandler& handler);
 
 		template <>
+		void ParsePacket<2497, ServerPacket, 0x103>(PacketHandler& handler);
+
+		template <>
 		void ParsePacket<2493, ServerPacket, 0x17>(PacketHandler& handler);
 
 		template <>
@@ -350,6 +350,9 @@ namespace Networking
 
 		template <>
 		void ParsePacket<2496, ServerPacket, 0xc>(PacketHandler& handler);
+
+		template <>
+		void ParsePacket<2496, ServerPacket, 0x51>(PacketHandler& handler);
 
 		template <>
 		void ParsePacket<2496, ServerPacket, 0x78>(PacketHandler& handler);

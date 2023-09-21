@@ -234,6 +234,9 @@ namespace Networking
 			unsigned short Feature = 0;
 			std::string Locale;
 			std::string LastPacketName;
+			size_t StackDepth = 0;
+
+			const char* Tabs() const;
 
 			Enum::ActorId PlayerId = Enum::ActorId::Null;
 			Enum::AccountId AccountId = Enum::AccountId::Null;

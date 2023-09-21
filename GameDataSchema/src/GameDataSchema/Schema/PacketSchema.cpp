@@ -2600,6 +2600,7 @@ namespace PacketSchema
 				validateOutput(output, outputMember.Output, outputMember.Target);
 
 				out << "\n" << tabs << "{\n";
+				out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"" << output.Name << "\");\n";
 
 				stack.push_back({ i, outputMember.RegionEnd, output });
 				generator.Push();
@@ -2616,12 +2617,15 @@ namespace PacketSchema
 				validateOutput(output, buffer.Output, buffer.Target);
 
 				out << "\n" << tabs << "{\n";
+				out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"buffer[\", ";
 
 				stack.push_back({ i, buffer.RegionEnd, output });
 				generator.Push();
 
 				std::string sizeParam = getReference(buffer.BufferSizeDataIndex, opcode, i, outputs, topOutput, stack).Name;
 				std::string isDeflatedParam = buffer.IsDeflatedDataIndex != (size_t)-1 ? getReference(buffer.IsDeflatedDataIndex, opcode, i, outputs, topOutput, stack).Name : "false";
+
+				out << "sizeParam, ']');\n";
 
 				out << tabs << "Buffer buffer" << index << "(handler, (size_t)" << sizeParam << ", " << isDeflatedParam << ");\n";
 
@@ -2700,6 +2704,22 @@ namespace PacketSchema
 
 					out << tabs << "for (" << param.TypeName << " " << iteratorName << " = 0; " << iteratorName << " < " << param.Name << " && !handler.PacketStream().HasRecentlyFailed; ++" << iteratorName << ")\n";
 					out << tabs << "{\n";
+					out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"";
+					
+					if (output.Output)
+					{
+						out << containerName << "[\", ";
+					}
+					else if (array.Name.size())
+					{
+						out << array.Name << "_array" << index << "[\", ";
+					}
+					else
+					{
+						out << "array" << index << "[\", ";
+					}
+
+					out << iteratorName << ", ']'); \n";
 
 					stack.push_back({ i, array.RegionEnd, output, true, false, array.Name, generator.LoopIndex });
 					generator.Push();
@@ -2730,6 +2750,22 @@ namespace PacketSchema
 
 					out << tabs << "while (" << param.Name << " && !handler.PacketStream().HasRecentlyFailed)\n";
 					out << tabs << "{\n";
+					out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"";
+
+					if (output.Output)
+					{
+						out << containerName << "[\", ";
+					}
+					else if (array.Name.size())
+					{
+						out << array.Name << "_array" << index << "[\", ";
+					}
+					else
+					{
+						out << "array" << index << "[\", ";
+					}
+
+					out << iteratorName << ", ']'); \n";
 
 					stack.push_back({ i, array.RegionEnd, output, true, true, array.Name, generator.LoopIndex });
 					generator.Push();
@@ -2774,9 +2810,14 @@ namespace PacketSchema
 					out << "\n";
 				}
 
+				std::stringstream conditionOut;
+				std::string conditionType;
+
 				if (condition.Comparison == PacketInfoComparison::None && condition.IsElse)
 				{
 					out << tabs << "else\n";
+
+					conditionType = "else";
 				}
 				else
 				{
@@ -2785,6 +2826,8 @@ namespace PacketSchema
 					const PacketData& data = opcode.Data[dataIndex];
 
 					out << tabs << (condition.IsElse ? "else if (" : "if (");
+
+					conditionType = condition.IsElse ? "else if " : "if ";
 
 					ReferenceInfo param = getReference(condition.DataIndex, opcode, i, outputs, topOutput, stack);
 
@@ -2803,37 +2846,38 @@ namespace PacketSchema
 
 					if (condition.BitIndex != 0xFF)
 					{
-						out << "GetBit(" << param.Name << ", " << (int)condition.BitIndex << ")";
+						conditionOut << "GetBit(" << param.Name << ", " << (int)condition.BitIndex << ")";
 					}
 					else
 					{
-						out << param.Name;
+						conditionOut << param.Name;
 					}
 
 					if (condition.Comparison == PacketInfoComparison::Equal)
 					{
 						if (condition.Value != 1 || data.Type->TypeName != "bool")
 						{
-							out << " == " << cast << condition.Value;
+							conditionOut << " == " << cast << condition.Value;
 						}
 					}
 					else if (condition.Comparison == PacketInfoComparison::NotEqual)
 					{
-						out << " != " << cast << condition.Value;
+						conditionOut << " != " << cast << condition.Value;
 					}
 					else if (condition.Comparison == PacketInfoComparison::Between)
 					{
-						out << " >= " << condition.Value << " && " << param.Name << " <= " << condition.Value2;
+						conditionOut << " >= " << condition.Value << " && " << param.Name << " <= " << condition.Value2;
 					}
 					else if (condition.Comparison == PacketInfoComparison::NotBetween)
 					{
-						out << " < " << condition.Value << " || " << param.Name << " > " << condition.Value2;
+						conditionOut << " < " << condition.Value << " || " << param.Name << " > " << condition.Value2;
 					}
 
-					out << ")\n";
+					out << conditionOut.str() << ")\n";
 				}
 
 				out << tabs << "{\n";
+				out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"" << conditionType << conditionOut.str() << "\");\n";
 
 				stack.push_back({ i, condition.RegionEnd });
 				generator.Push();

@@ -446,6 +446,15 @@ namespace Networking
 			return entry != Players.end() ? &entry->second : nullptr;
 		}
 
+		const char* SniffHandler::Tabs() const
+		{
+			static const char tabs[] = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+
+			size_t tabIndex = std::max(0, std::min(sizeof(tabs) - 1, sizeof(tabs) - 1 - StackDepth));
+
+			return tabs + tabIndex;
+		}
+
 		ParserUtils::DataStream& SniffHandler::ResetPacketStream()
 		{
 			StreamStack.clear();

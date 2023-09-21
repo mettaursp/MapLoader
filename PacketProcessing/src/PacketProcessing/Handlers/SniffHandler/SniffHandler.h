@@ -4,55 +4,49 @@
 
 #include "./../../PacketParserBase.h"
 
-#include <GameData/Packets\Server/EnchantScrollRewardPacket.h>
-#include <GameData/Packets\Server/LoadCubesExpirationPacket.h>
+#include <GameData/Packets\Server/PlayInstrumentWritePlayDialogPacket.h>
 #include <GameData/Packets\Client/ReconnectPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionMovePlayerPacket.h>
 #include <GameData/Packets\Client/ResponseVersionPacket.h>
-#include <GameData/Packets\Server/StatPacket.h>
+#include <GameData/Packets\Server/BuffPacket.h>
 #include <GameData/Packets\Client/LogInPacket.h>
-#include <GameData/Packets\Server/FittingDollLoadPacket.h>
-#include <GameData/Packets\Server/NpcTalkRespondPacket.h>
 #include <GameData/Packets\Client/ResponseHeartbeatPacket.h>
 #include <GameData/Packets\Client/ResponseKeyPacket.h>
-#include <GameData/Packets\Server/PetRenamePacket.h>
+#include <GameData/Packets\Server/NpcTalkActionMovePlayerPacket.h>
 #include <GameData/Packets\Client/HandshakePacket.h>
 #include <GameData/Packets\Client/RequestQuitPacket.h>
-#include <GameData/Packets\Server/NpcTalkUpdatePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentViewMusicPacket.h>
+#include <GameData/Packets\Server/NpcTalkActionCutscenePacket.h>
 #include <GameData/Packets\Client/LogInAuthTokenPacket.h>
-#include <GameData/Packets\Server/PetInfoPacket.h>
-#include <GameData/Packets\Server/NpcTalkAlliancePacket.h>
 #include <GameData/Packets\Client/SkillCastPacket.h>
-#include <GameData/Packets\Server/NpcTalkEndPacket.h>
 #include <GameData/Packets\Client/SkillSyncDamagePacket.h>
 #include <GameData/Packets\Client/SkillDamagePacket.h>
+#include <GameData/Packets\Server/FittingDollLoadPacket.h>
+#include <GameData/Packets\Server/NpcTalkRespondPacket.h>
 #include <GameData/Packets\Client/SkillRegionSkillPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionRewardMesoPacket.h>
-#include <GameData/Packets\Client/SkillSyncPacket.h>
-#include <GameData/Packets\Client/SkillSyncTickPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionCutscenePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentEffectPacket.h>
-#include <GameData/Packets\Client/SkillCancelPacket.h>
-#include <GameData/Packets\Client/StateSkillPacket.h>
-#include <GameData/Packets\Client/NpcTalkClosePacket.h>
-#include <GameData/Packets\Server/NpcTalkActionAddOptionPacket.h>
-#include <GameData/Packets\Client/NpcTalkBeginPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionRewardItemPacket.h>
-#include <GameData/Packets\Server/PlayInstrumentLeaveEnsemblePacket.h>
-#include <GameData/Packets\Client/NpcTalkContinuePacket.h>
-#include <GameData/Packets\Client/NpcTalkEnchantUnknownPacket.h>
-#include <GameData/Packets\Server/ShopBuyPacket.h>
-#include <GameData/Packets\Client/NpcTalkEnchantPacket.h>
 #include <GameData/Packets\Server/ChangeAttributesScrollErrorPacket.h>
 #include <GameData/Packets\Server/NpcTalkActionOpenDialogPacket.h>
+#include <GameData/Packets\Client/SkillSyncPacket.h>
+#include <GameData/Packets\Client/SkillSyncTickPacket.h>
+#include <GameData/Packets\Server/NpcTalkUpdatePacket.h>
+#include <GameData/Packets\Client/SkillCancelPacket.h>
+#include <GameData/Packets\Client/StateSkillPacket.h>
+#include <GameData/Packets\Server/NpcTalkActionAddOptionPacket.h>
+#include <GameData/Packets\Client/NpcTalkClosePacket.h>
+#include <GameData/Packets\Client/NpcTalkBeginPacket.h>
+#include <GameData/Packets\Client/NpcTalkContinuePacket.h>
+#include <GameData/Packets\Client/NpcTalkEnchantUnknownPacket.h>
+#include <GameData/Packets\Client/NpcTalkEnchantPacket.h>
+#include <GameData/Packets\Server/NpcTalkActionRewardMesoPacket.h>
 #include <GameData/Packets\Client/NpcTalkNextQuestPacket.h>
+#include <GameData/Packets\Server/NpcTalkContinuePacket.h>
 #include <GameData/Packets\Client/NpcTalkAllianceQuestAcceptPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionRewardExpPacket.h>
 #include <GameData/Packets\Client/NpcTalkAllianceQuestTalkPacket.h>
+#include <GameData/Packets\Server/NpcTalkEndPacket.h>
+#include <GameData/Packets\Server/ChangeAttributesScrollUseScrollPacket.h>
 #include <GameData/Packets\Client/NpcTalkCinematicPacket.h>
+#include <GameData/Packets\Server/ItemEnchantBeginPacket.h>
+#include <GameData/Packets\Server/ShopRemoveBuyBackPacket.h>
+#include <GameData/Packets\Server/UserChatPacket.h>
 #include <GameData/Packets\Client/SystemInfoPacket.h>
-#include <GameData/Packets\Server/MailCollectingPacket.h>
 #include <GameData/Packets\Server/CharacterListDeletePendingPacket.h>
 #include <GameData/Packets\Server/BlackMarketSoldPacket.h>
 #include <GameData/Packets\Server/FieldRemoveNpcPacket.h>
@@ -61,7 +55,10 @@
 #include <GameData/Packets\Server/PetInventoryUpdateAmountPacket.h>
 #include <GameData/Packets\Server/Reconnect7Packet.h>
 #include <GameData/Packets\Server/MailLoadPacket.h>
-#include <GameData/Packets\Server/NpcTalkContinuePacket.h>
+#include <GameData/Packets\Server/NpcTalkActionRewardItemPacket.h>
+#include <GameData/Packets\Server/NpcTalkActionRewardExpPacket.h>
+#include <GameData/Packets\Server/PetInfoPacket.h>
+#include <GameData/Packets\Server/NpcTalkAlliancePacket.h>
 #include <GameData/Packets\Server/TradeDeclinedPacket.h>
 #include <GameData/Packets\Server/MailErrorPacket.h>
 #include <GameData/Packets\Server/CharacterListLoadPacket.h>
@@ -75,12 +72,10 @@
 #include <GameData/Packets\Server/CharacterListChangeNamePacket.h>
 #include <GameData/Packets\Server/ItemLockAddItemPacket.h>
 #include <GameData/Packets\Server/ItemLockUpdateItemPacket.h>
-#include <GameData/Packets\Server/ItemEnchantBeginPacket.h>
-#include <GameData/Packets\Server/ShopRemoveBuyBackPacket.h>
-#include <GameData/Packets\Server/UserChatPacket.h>
 #include <GameData/Packets\Server/MailSendCustomConfirmPacket.h>
 #include <GameData/Packets\Server/RequestFieldEnterPacket.h>
 #include <GameData/Packets\Server/MailReadPacket.h>
+#include <GameData/Packets\Server/MailCollectingPacket.h>
 #include <GameData/Packets\Server/MailUpdateReadTimePacket.h>
 #include <GameData/Packets\Server/MailDeletePacket.h>
 #include <GameData/Packets\Server/MailReceivePacket.h>
@@ -113,7 +108,10 @@
 #include <GameData/Packets\Server/LoadCubesPacket.h>
 #include <GameData/Packets\Server/LoadCubesAvailabilityPacket.h>
 #include <GameData/Packets\Server/LoadCubesPlotsPacket.h>
+#include <GameData/Packets\Server/EnchantScrollRewardPacket.h>
+#include <GameData/Packets\Server/LoadCubesExpirationPacket.h>
 #include <GameData/Packets\Server/FieldRemoveItemPacket.h>
+#include <GameData/Packets\Server/StatPacket.h>
 #include <GameData/Packets\Server/ExpUpPacket.h>
 #include <GameData/Packets\Server/LevelUpPacket.h>
 #include <GameData/Packets\Server/BindItemPacket.h>
@@ -123,7 +121,6 @@
 #include <GameData/Packets\Server/SkillDamageHealPacket.h>
 #include <GameData/Packets\Server/SkillDamageRegionPacket.h>
 #include <GameData/Packets\Server/SkillDamageTilePacket.h>
-#include <GameData/Packets\Server/BuffPacket.h>
 #include <GameData/Packets\Server/ChangeAttributesPreviewPacket.h>
 #include <GameData/Packets\Server/ChangeAttributesAddPacket.h>
 #include <GameData/Packets\Server/ChangeAttributesScrollPreviewItemPacket.h>
@@ -133,6 +130,7 @@
 #include <GameData/Packets\Server/ShopOpenPacket.h>
 #include <GameData/Packets\Server/PetFusionPacket.h>
 #include <GameData/Packets\Server/ShopUpdatePacket.h>
+#include <GameData/Packets\Server/ShopBuyPacket.h>
 #include <GameData/Packets\Server/ShopBuyBackItemCountPacket.h>
 #include <GameData/Packets\Server/ShopAddBuyBackPacket.h>
 #include <GameData/Packets\Server/ShopLoadMeretItemPacket.h>
@@ -178,15 +176,17 @@
 #include <GameData/Packets\Server/PlayInstrumentStopImprovisePacket.h>
 #include <GameData/Packets\Server/PlayInstrumentStartScorePacket.h>
 #include <GameData/Packets\Server/PlayInstrumentStopScorePacket.h>
+#include <GameData/Packets\Server/PlayInstrumentLeaveEnsemblePacket.h>
 #include <GameData/Packets\Server/PlayInstrumentCreateScoreResponsePacket.h>
 #include <GameData/Packets\Server/PlayInstrumentUpdateScoreUsesPacket.h>
-#include <GameData/Packets\Server/PlayInstrumentWritePlayDialogPacket.h>
-#include <GameData/Packets\Server/ChangeAttributesScrollUseScrollPacket.h>
+#include <GameData/Packets\Server/PlayInstrumentViewMusicPacket.h>
+#include <GameData/Packets\Server/PlayInstrumentEffectPacket.h>
 #include <GameData/Packets\Server/ChangeAttributesScrollUseOnItemPacket.h>
 #include <GameData/Packets\Server/ChangeAttributesScrollApplyPacket.h>
 #include <GameData/Packets\Server/PetAddPacket.h>
 #include <GameData/Packets\Server/PetRemovePacket.h>
 #include <GameData/Packets\Server/PetSoundPacket.h>
+#include <GameData/Packets\Server/PetRenamePacket.h>
 #include <GameData/Packets\Server/PetPotionPacket.h>
 #include <GameData/Packets\Server/PetLootPacket.h>
 #include <GameData/Packets\Server/PetLoadCollectionPacket.h>
@@ -207,31 +207,19 @@ namespace Networking
 	namespace Packets
 	{
 		template <>
-		void SniffHandler::PacketParsed<Server::EnchantScrollRewardPacket>(const Server::EnchantScrollRewardPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::LoadCubesExpirationPacket>(const Server::LoadCubesExpirationPacket& packet);
+		void SniffHandler::PacketParsed<Server::PlayInstrumentWritePlayDialogPacket>(const Server::PlayInstrumentWritePlayDialogPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::ReconnectPacket>(const Client::ReconnectPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkActionMovePlayerPacket>(const Server::NpcTalkActionMovePlayerPacket& packet);
-
-		template <>
 		void SniffHandler::PacketParsed<Client::ResponseVersionPacket>(const Client::ResponseVersionPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::StatPacket>(const Server::StatPacket& packet);
+		void SniffHandler::PacketParsed<Server::BuffPacket>(const Server::BuffPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::LogInPacket>(const Client::LogInPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::FittingDollLoadPacket>(const Server::FittingDollLoadPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkRespondPacket>(const Server::NpcTalkRespondPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::ResponseHeartbeatPacket>(const Client::ResponseHeartbeatPacket& packet);
@@ -240,7 +228,7 @@ namespace Networking
 		void SniffHandler::PacketParsed<Client::ResponseKeyPacket>(const Client::ResponseKeyPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::PetRenamePacket>(const Server::PetRenamePacket& packet);
+		void SniffHandler::PacketParsed<Server::NpcTalkActionMovePlayerPacket>(const Server::NpcTalkActionMovePlayerPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::HandshakePacket>(const Client::HandshakePacket& packet);
@@ -249,25 +237,13 @@ namespace Networking
 		void SniffHandler::PacketParsed<Client::RequestQuitPacket>(const Client::RequestQuitPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkUpdatePacket>(const Server::NpcTalkUpdatePacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::PlayInstrumentViewMusicPacket>(const Server::PlayInstrumentViewMusicPacket& packet);
+		void SniffHandler::PacketParsed<Server::NpcTalkActionCutscenePacket>(const Server::NpcTalkActionCutscenePacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::LogInAuthTokenPacket>(const Client::LogInAuthTokenPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::PetInfoPacket>(const Server::PetInfoPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkAlliancePacket>(const Server::NpcTalkAlliancePacket& packet);
-
-		template <>
 		void SniffHandler::PacketParsed<Client::SkillCastPacket>(const Client::SkillCastPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkEndPacket>(const Server::NpcTalkEndPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::SkillSyncDamagePacket>(const Client::SkillSyncDamagePacket& packet);
@@ -276,55 +252,13 @@ namespace Networking
 		void SniffHandler::PacketParsed<Client::SkillDamagePacket>(const Client::SkillDamagePacket& packet);
 
 		template <>
+		void SniffHandler::PacketParsed<Server::FittingDollLoadPacket>(const Server::FittingDollLoadPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::NpcTalkRespondPacket>(const Server::NpcTalkRespondPacket& packet);
+
+		template <>
 		void SniffHandler::PacketParsed<Client::SkillRegionSkillPacket>(const Client::SkillRegionSkillPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkActionRewardMesoPacket>(const Server::NpcTalkActionRewardMesoPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::SkillSyncPacket>(const Client::SkillSyncPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::SkillSyncTickPacket>(const Client::SkillSyncTickPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkActionCutscenePacket>(const Server::NpcTalkActionCutscenePacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::PlayInstrumentEffectPacket>(const Server::PlayInstrumentEffectPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::SkillCancelPacket>(const Client::SkillCancelPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::StateSkillPacket>(const Client::StateSkillPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::NpcTalkClosePacket>(const Client::NpcTalkClosePacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkActionAddOptionPacket>(const Server::NpcTalkActionAddOptionPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::NpcTalkBeginPacket>(const Client::NpcTalkBeginPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkActionRewardItemPacket>(const Server::NpcTalkActionRewardItemPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::PlayInstrumentLeaveEnsemblePacket>(const Server::PlayInstrumentLeaveEnsemblePacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::NpcTalkContinuePacket>(const Client::NpcTalkContinuePacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::NpcTalkEnchantUnknownPacket>(const Client::NpcTalkEnchantUnknownPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::ShopBuyPacket>(const Server::ShopBuyPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Client::NpcTalkEnchantPacket>(const Client::NpcTalkEnchantPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollErrorPacket>(const Server::ChangeAttributesScrollErrorPacket& packet);
@@ -333,25 +267,73 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::NpcTalkActionOpenDialogPacket>(const Server::NpcTalkActionOpenDialogPacket& packet);
 
 		template <>
+		void SniffHandler::PacketParsed<Client::SkillSyncPacket>(const Client::SkillSyncPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::SkillSyncTickPacket>(const Client::SkillSyncTickPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::NpcTalkUpdatePacket>(const Server::NpcTalkUpdatePacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::SkillCancelPacket>(const Client::SkillCancelPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::StateSkillPacket>(const Client::StateSkillPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::NpcTalkActionAddOptionPacket>(const Server::NpcTalkActionAddOptionPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::NpcTalkClosePacket>(const Client::NpcTalkClosePacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::NpcTalkBeginPacket>(const Client::NpcTalkBeginPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::NpcTalkContinuePacket>(const Client::NpcTalkContinuePacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::NpcTalkEnchantUnknownPacket>(const Client::NpcTalkEnchantUnknownPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::NpcTalkEnchantPacket>(const Client::NpcTalkEnchantPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::NpcTalkActionRewardMesoPacket>(const Server::NpcTalkActionRewardMesoPacket& packet);
+
+		template <>
 		void SniffHandler::PacketParsed<Client::NpcTalkNextQuestPacket>(const Client::NpcTalkNextQuestPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::NpcTalkContinuePacket>(const Server::NpcTalkContinuePacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::NpcTalkAllianceQuestAcceptPacket>(const Client::NpcTalkAllianceQuestAcceptPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkActionRewardExpPacket>(const Server::NpcTalkActionRewardExpPacket& packet);
+		void SniffHandler::PacketParsed<Client::NpcTalkAllianceQuestTalkPacket>(const Client::NpcTalkAllianceQuestTalkPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Client::NpcTalkAllianceQuestTalkPacket>(const Client::NpcTalkAllianceQuestTalkPacket& packet);
+		void SniffHandler::PacketParsed<Server::NpcTalkEndPacket>(const Server::NpcTalkEndPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollUseScrollPacket>(const Server::ChangeAttributesScrollUseScrollPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::NpcTalkCinematicPacket>(const Client::NpcTalkCinematicPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Client::SystemInfoPacket>(const Client::SystemInfoPacket& packet);
+		void SniffHandler::PacketParsed<Server::ItemEnchantBeginPacket>(const Server::ItemEnchantBeginPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::MailCollectingPacket>(const Server::MailCollectingPacket& packet);
+		void SniffHandler::PacketParsed<Server::ShopRemoveBuyBackPacket>(const Server::ShopRemoveBuyBackPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::UserChatPacket>(const Server::UserChatPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Client::SystemInfoPacket>(const Client::SystemInfoPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::CharacterListDeletePendingPacket>(const Server::CharacterListDeletePendingPacket& packet);
@@ -378,7 +360,16 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::MailLoadPacket>(const Server::MailLoadPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::NpcTalkContinuePacket>(const Server::NpcTalkContinuePacket& packet);
+		void SniffHandler::PacketParsed<Server::NpcTalkActionRewardItemPacket>(const Server::NpcTalkActionRewardItemPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::NpcTalkActionRewardExpPacket>(const Server::NpcTalkActionRewardExpPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::PetInfoPacket>(const Server::PetInfoPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::NpcTalkAlliancePacket>(const Server::NpcTalkAlliancePacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::TradeDeclinedPacket>(const Server::TradeDeclinedPacket& packet);
@@ -420,15 +411,6 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::ItemLockUpdateItemPacket>(const Server::ItemLockUpdateItemPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::ItemEnchantBeginPacket>(const Server::ItemEnchantBeginPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::ShopRemoveBuyBackPacket>(const Server::ShopRemoveBuyBackPacket& packet);
-
-		template <>
-		void SniffHandler::PacketParsed<Server::UserChatPacket>(const Server::UserChatPacket& packet);
-
-		template <>
 		void SniffHandler::PacketParsed<Server::MailSendCustomConfirmPacket>(const Server::MailSendCustomConfirmPacket& packet);
 
 		template <>
@@ -436,6 +418,9 @@ namespace Networking
 
 		template <>
 		void SniffHandler::PacketParsed<Server::MailReadPacket>(const Server::MailReadPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::MailCollectingPacket>(const Server::MailCollectingPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::MailUpdateReadTimePacket>(const Server::MailUpdateReadTimePacket& packet);
@@ -534,7 +519,16 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::LoadCubesPlotsPacket>(const Server::LoadCubesPlotsPacket& packet);
 
 		template <>
+		void SniffHandler::PacketParsed<Server::EnchantScrollRewardPacket>(const Server::EnchantScrollRewardPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::LoadCubesExpirationPacket>(const Server::LoadCubesExpirationPacket& packet);
+
+		template <>
 		void SniffHandler::PacketParsed<Server::FieldRemoveItemPacket>(const Server::FieldRemoveItemPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::StatPacket>(const Server::StatPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::ExpUpPacket>(const Server::ExpUpPacket& packet);
@@ -564,9 +558,6 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::SkillDamageTilePacket>(const Server::SkillDamageTilePacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::BuffPacket>(const Server::BuffPacket& packet);
-
-		template <>
 		void SniffHandler::PacketParsed<Server::ChangeAttributesPreviewPacket>(const Server::ChangeAttributesPreviewPacket& packet);
 
 		template <>
@@ -592,6 +583,9 @@ namespace Networking
 
 		template <>
 		void SniffHandler::PacketParsed<Server::ShopUpdatePacket>(const Server::ShopUpdatePacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::ShopBuyPacket>(const Server::ShopBuyPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::ShopBuyBackItemCountPacket>(const Server::ShopBuyBackItemCountPacket& packet);
@@ -729,16 +723,19 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::PlayInstrumentStopScorePacket>(const Server::PlayInstrumentStopScorePacket& packet);
 
 		template <>
+		void SniffHandler::PacketParsed<Server::PlayInstrumentLeaveEnsemblePacket>(const Server::PlayInstrumentLeaveEnsemblePacket& packet);
+
+		template <>
 		void SniffHandler::PacketParsed<Server::PlayInstrumentCreateScoreResponsePacket>(const Server::PlayInstrumentCreateScoreResponsePacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::PlayInstrumentUpdateScoreUsesPacket>(const Server::PlayInstrumentUpdateScoreUsesPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::PlayInstrumentWritePlayDialogPacket>(const Server::PlayInstrumentWritePlayDialogPacket& packet);
+		void SniffHandler::PacketParsed<Server::PlayInstrumentViewMusicPacket>(const Server::PlayInstrumentViewMusicPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollUseScrollPacket>(const Server::ChangeAttributesScrollUseScrollPacket& packet);
+		void SniffHandler::PacketParsed<Server::PlayInstrumentEffectPacket>(const Server::PlayInstrumentEffectPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollUseOnItemPacket>(const Server::ChangeAttributesScrollUseOnItemPacket& packet);
@@ -754,6 +751,9 @@ namespace Networking
 
 		template <>
 		void SniffHandler::PacketParsed<Server::PetSoundPacket>(const Server::PetSoundPacket& packet);
+
+		template <>
+		void SniffHandler::PacketParsed<Server::PetRenamePacket>(const Server::PetRenamePacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::PetPotionPacket>(const Server::PetPotionPacket& packet);

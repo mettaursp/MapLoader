@@ -136,7 +136,7 @@ namespace ParserUtils
 				{
 					std::ostream& out = PrintOutput ? std::cout : handler.FoundValues;
 
-					out << tabs << "[" << (stream.Index - lastIndex) << "] " << std::hex;
+					out << handler.Tabs() << "[" << (stream.Index - lastIndex) << "] " << std::hex;
 
 					if (stream.Index - lastIndex <= 8)
 					{
@@ -179,7 +179,7 @@ namespace ParserUtils
 		{
 			if constexpr (std::is_same_v<T, VarType>)
 			{
-				ReadValue<T>(name, handler, value, tabs, location);
+				ReadValue<T>(name, handler, value, handler.Tabs(), location);
 
 				return;
 			}
@@ -191,7 +191,7 @@ namespace ParserUtils
 
 			T tempValue = {};
 
-			ReadValue<T>(name, handler, tempValue, tabs, location);
+			ReadValue<T>(name, handler, tempValue, handler.Tabs(), location);
 
 			value = (VarType)tempValue;
 		}
@@ -239,5 +239,45 @@ namespace ParserUtils
 				}
 			}
 		}
+
+		template <typename HandlerType>
+		struct StackWatch
+		{
+			HandlerType& Handler;
+
+			StackWatch(HandlerType& handler, const char* name) : Handler(handler)
+			{
+				Push(name);
+			}
+
+			~StackWatch()
+			{
+				--Handler.StackDepth;
+			}
+
+			template <typename T1, typename... T>
+			StackWatch(HandlerType& handler, const char* name, const T1& arg1, const T&... args) : Handler(handler)
+			{
+				std::stringstream out;
+				(out << name << arg1 << args << ...);
+
+				Push(out.str().c_str());
+			}
+
+			void Push(const char* name)
+			{
+				++Handler.StackDepth;
+
+				if constexpr (PrintOutput || PrintErrors)
+				{
+					if (!(!PrintOutput && !stream.DiscardErrors && (stream.SuppressErrors || !stream.PrintOutput)))
+					{
+						std::ostream& out = PrintOutput ? std::cout : Handler.FoundValues;
+
+						out << Handler.Tabs() << name << std::endl;
+					}
+				}
+			}
+		};
 	}
 }

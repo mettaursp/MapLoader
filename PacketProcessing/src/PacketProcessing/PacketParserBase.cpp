@@ -32,6 +32,8 @@ namespace Networking
 			}
 		
 			handler.LastPacketName = opcodes[opcode - minOpcode].Name;
+			handler.StackDepth = 0;
+
 			opcodes[opcode - minOpcode].Callback(handler);
 
 			handler.CheckStreamStatus();

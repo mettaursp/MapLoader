@@ -269,7 +269,7 @@
 		<opcodeReference value="0x2A" version="12" opcode="0x2A" />
 		<opcodeReference value="0x2B" version="12" opcode="0x2B" />
 		<opcodeReference value="0x2C" version="12" opcode="0x2C" />
-		<opcodeReference value="0x2E" version="12" opcode="0x2F" />
+		<opcodeReference value="0x2F" version="12" opcode="0x2F" />
 		<opcodeReference value="0x38" version="12" opcode="0x38" />
 		<opcodeReference value="0x39" version="12" opcode="0x39" />
 		<opcodeReference value="0x3D" version="12" opcode="0x3E" />
@@ -301,11 +301,11 @@
 					<data type="long" name="shieldHealth" output="Effect.ShieldHealth" />
 				</condition>
 			</condition>
-			<condition data="instanceId" value="0" comparison="equal">
-				<data type="int" name="unknown" />
-			</condition>
 		</opcode>
 		<opcodeReference value="0x4A" version="12" opcode="0x4A" />
+		<opcodeReference value="0x4C" version="12" opcode="0x4C" />
+		<opcodeReference value="0x52" version="12" opcode="0x52" />
+		<opcodeReference value="0x55" version="12" opcode="0x55" />
 		<opcodeReference value="0x56" version="12" opcode="0x56" />
 		<opcodeReference value="0x57" version="12" opcode="0x57" />
 		<opcodeReference value="0x5A" version="12" opcode="0x5B" />
@@ -313,7 +313,17 @@
 		<opcodeReference value="0x5E" version="12" opcode="0x5F" />
 		<opcodeReference value="0x6C" version="12" opcode="0x6C" />
 		<opcodeReference value="0x7A" version="12" opcode="0x7A" />
+		<opcodeReference value="0x7D" version="12" opcode="0x7D" />
+		<opcodeReference value="0x84" version="12" opcode="0x84" />
+		<opcodeReference value="0x99" version="12" opcode="0x99" />
+		<opcodeReference value="0x9A" version="12" opcode="0x9A" />
 		<opcodeReference value="0xC1" version="12" opcode="0xC1" />
+		<opcodeReference value="0xC9" version="12" opcode="0xC9" />
+		<opcodeReference value="0xCA" version="12" opcode="0xCA" />
+		<opcodeReference value="0xCB" version="12" opcode="0xCB" />
+		<opcodeReference value="0xCE" version="12" opcode="0xCE" />
+		<opcodeReference value="0xD0" version="12" opcode="0xD0" />
+		<opcodeReference value="0xDD" version="12" opcode="0xDD" />
 		<opcodeReference value="0x105" version="12" opcode="0x105" />
 	</source>
 	<source name="client">

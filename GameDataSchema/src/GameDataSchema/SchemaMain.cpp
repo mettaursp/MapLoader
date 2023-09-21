@@ -211,6 +211,8 @@ namespace ParserUtils
 
 			while (!file.eof())
 			{
+				std::streampos packetHeaderStart = file.tellg();
+
 				long long timeStamp;
 
 				read(file, timeStamp);
@@ -244,7 +246,28 @@ namespace ParserUtils
 
 				buffer.resize(size);
 
+				std::streampos packetDataStart = file.tellg();
+
 				file.read(reinterpret_cast<char*>(buffer.data()), size);
+
+				std::streampos bytesRead = file.gcount();
+
+				if (bytesRead < (std::streampos)size)
+				{
+					if (bytesRead != 0)
+					{
+						std::cout << "attempted to read " << size << " bytes, only read " << bytesRead;
+
+						if (file.eof())
+						{
+							std::cout << "; reached end of file";
+						}
+
+						std::cout << std::endl;
+					}
+
+					return build;
+				}
 
 				if (version >= 0x2025 && version < 0x2030)
 				{

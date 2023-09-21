@@ -11,8 +11,8 @@
 			<value name="Knight" value="10" />
 			<value name="Berserker" value="20" />
 			<value name="Wizard" value="30" />
-			<value name="Archer" value="40" />
-			<value name="Priest" value="50" />
+			<value name="Priest" value="40" />
+			<value name="Archer" value="50" />
 			<value name="HeavyGunner" value="60" />
 			<value name="Thief" value="70" />
 			<value name="Assassin" value="80" />
@@ -20,6 +20,21 @@
 			<value name="Striker" value="100" />
 			<value name="Soulbinder" value="110" />
 			<value name="GameMaster" value="999" />
+		</enum>
+		<enum name="JobFlags" parent="unsigned int" directory="Enums" file="Player">
+			<value name="None" value="0" />
+			<value name="Beginner" value="1" />
+			<value name="Knight" value="2" />
+			<value name="Berserker" value="4" />
+			<value name="Wizard" value="8" />
+			<value name="Priest" value="16" />
+			<value name="Archer" value="32" />
+			<value name="HeavyGunner" value="64" />
+			<value name="Thief" value="128" />
+			<value name="Assassin" value="256" />
+			<value name="Runeblade" value="512" />
+			<value name="Striker" value="1024" />
+			<value name="Soulbinder" value="2048" />
 		</enum>
 		<enum name="JobId" parent="unsigned short" directory="Enums" file="Player">
 		</enum>

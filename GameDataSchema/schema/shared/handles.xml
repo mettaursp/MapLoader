@@ -27,6 +27,9 @@
 		<enum name="QuestId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
+		<enum name="PortalId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
 		<enum name="TrophyId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
@@ -37,6 +40,18 @@
 			<value name="Null" value="0" />
 		</enum>
 		<enum name="MountId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ShopId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ShopRepurchaseId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ShopEntryId" parent="unsigned int" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="InstrumentId" parent="unsigned int" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
 		<enum name="TitleId" parent="unsigned int" directory="Enums" file="Handles">
@@ -70,6 +85,15 @@
 			<value name="Null" value="0" />
 		</enum>
 		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="MailInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="ListingInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
+			<value name="Null" value="0" />
+		</enum>
+		<enum name="DollInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
 			<value name="Null" value="0" />
 		</enum>
 		<enum name="MapInstanceId" parent="unsigned int" directory="Enums" file="Handles">

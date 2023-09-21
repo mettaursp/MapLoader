@@ -299,6 +299,127 @@
 				<member name="Special" type="SkillTreePageData" />
 				<member name="Consumable" type="SkillTreePageData" />
 			</class>
+			<class name="NpcDialogData">
+				<member name="ScriptId" type="Enum.ScriptId" />
+				<member name="ScriptIndex" type="unsigned int" />
+				<member name="Options" type="unsigned int" />
+			</class>
+			<class name="ScriptContentData">
+				<member name="Text" type="std::wstring" />
+				<member name="VoiceId" type="std::wstring" />
+				<member name="Illustration" type="std::wstring" />
+			</class>
+			<class name="BuyPeriodData">
+				<enum name="DayOfWeekEnum" parent="unsigned char">
+					<value name="Sunday" value="1" />
+					<value name="Monday" value="2" />
+					<value name="Tuesday" value="3" />
+					<value name="Wednesday" value="4" />
+					<value name="Thursday" value="5" />
+					<value name="Friday" value="6" />
+					<value name="Saturday" value="7" />
+				</enum>
+				<class name="DayTimeEntry" isMember="false">
+					<member name="StartTime" type="unsigned int" />
+					<member name="EndTime" type="unsigned int" />
+				</class>
+				<class name="DayEntry" isMember="false">
+					<member name="ThresholdIndex" type="DayOfWeekEnum" />
+				</class>
+				<member name="HasSpecificTime" type="bool" />
+				<member name="StartTime" type="unsigned long long" />
+				<member name="EndTime" type="unsigned long long" />
+				<member name="HasSpecificDays" type="bool" />
+				<member name="DayTimes" type="std::vector" contains="DayTimeEntry" />
+				<member name="Days" type="std::vector" contains="DayEntry" />
+			</class>
+			<class name="MeretShopPremiumItemData">
+				<enum name="MarketItemLabelEnum" parent="unsigned char" />
+				<enum name="CurrencyTypeEnum" parent="unsigned char" />
+				<enum name="TabIdEnum" parent="unsigned char" />
+				<enum name="MarketBannerLabelEnum" parent="unsigned char" />
+				<member name="EntryId" type="Enum.ShopEntryId" />
+				<member name="Name" type="std::wstring" />
+				<member name="ParentId" type="Enum.ShopEntryId" />
+				<member name="MarketItemLabel" type="MarketItemLabelEnum" />
+				<member name="CurrencyType" type="CurrencyTypeEnum" />
+				<member name="Price" type="unsigned long long" />
+				<member name="SalePrice" type="unsigned long long" />
+				<member name="SellBeginTime" type="unsigned long long" />
+				<member name="SellEndTime" type="unsigned long long" />
+				<member name="RestockUnavailable" type="bool" />
+				<member name="RequiredMinLevel" type="unsigned short" />
+				<member name="RequiredMaxLevel" type="unsigned short" />
+				<member name="RequiredJob" type="Enum.JobFlags" />
+				<member name="ItemId" type="Enum.ItemId" />
+				<member name="Rarity" type="Enum.Rarity" />
+				<member name="Amount" type="unsigned int" />
+				<member name="ItemDuration" type="unsigned int" />
+				<member name="BonusQuantity" type="unsigned int" />
+				<member name="TabId" type="TabIdEnum" />
+				<member name="MarketBannerLabel" type="MarketBannerLabelEnum" />
+				<member name="BannerName" type="std::string" />
+				<member name="RequiredAchievementId" type="Enum.TrophyId" />
+				<member name="RequiredAchievementRank" type="unsigned int" />
+				<member name="PcCafe" type="bool" />
+			</class>
+			<class name="MeretShopPremiumItemEntryData">
+				<class name="QuantityEntry" isMember="false">
+					<member name="HasEntry" type="bool" />
+					<member name="EntryData" type="MeretShopPremiumItemData" />
+					<member name="HasUnknown" type="bool" />
+				</class>
+				<enum name="MarketItemLabelEnum" parent="unsigned char" />
+				<enum name="CurrencyTypeEnum" parent="unsigned char" />
+				<enum name="TabIdEnum" parent="unsigned char" />
+				<enum name="MarketBannerLabelEnum" parent="unsigned char" />
+				<member name="EntryId" type="Enum.ShopEntryId" />
+				<member name="Name" type="std::wstring" />
+				<member name="MarketItemLabel" type="MarketItemLabelEnum" />
+				<member name="CurrencyType" type="CurrencyTypeEnum" />
+				<member name="Price" type="unsigned long long" />
+				<member name="SalePrice" type="unsigned long long" />
+				<member name="RestockUnavailable" type="bool" />
+				<member name="RequiredMinLevel" type="unsigned short" />
+				<member name="RequiredMaxLevel" type="unsigned short" />
+				<member name="RequiredJob" type="Enum.JobFlags" />
+				<member name="ItemId" type="Enum.ItemId" />
+				<member name="Rarity" type="Enum.Rarity" />
+				<member name="Amount" type="unsigned int" />
+				<member name="ItemDuration" type="unsigned int" />
+				<member name="BonusQuantity" type="unsigned int" />
+				<member name="TabId" type="TabIdEnum" />
+				<member name="AdditionalQuantities" type="std::vector" contains="QuantityEntry" />
+			</class>
+			<class name="MailAdData">
+			</class>
+			<class name="MailAttachData">
+				<member name="ItemId" type="Enum.ItemId" />
+				<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				<member name="Index" type="unsigned char" />
+				<member name="Amount" type="unsigned int" />
+				<member name="Rarity" type="Enum.Rarity" />
+				<member name="ItemData" type="Maple.Game.ItemData" />
+			</class>
+			<class name="MailData">
+				<member name="Type" type="unsigned char" />
+				<member name="MailInstanceId" type="Enum.MailInstanceId" />
+				<member name="SenderCharacterId" type="Enum.CharacterId" />
+				<member name="SenderName" type="std::wstring" />
+				<member name="MailTitle" type="std::wstring" />
+				<member name="MailContent" type="std::wstring" />
+				<member name="MetadataKey" type="std::wstring" />
+				<member name="MetadataValue" type="std::wstring" />
+				<member name="Ads" type="std::vector" contains="MailAdData" />
+				<member name="AttachedItems" type="std::vector" contains="MailAttachData" />
+				<member name="Mesos" type="unsigned long long" />
+				<member name="LastPurchaseTimestamp" type="unsigned long long" />
+				<member name="BlueMerets" type="unsigned long long" />
+				<member name="RedMerets" type="unsigned long long" />
+				<member name="ReadTime" type="unsigned long long" />
+				<member name="ExpirationTime" type="unsigned long long" />
+				<member name="SentTime" type="unsigned long long" />
+			</class>
 			<class name="CubeItemData">
 				<member name="ItemId" type="Enum.ItemId" />
 				<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
@@ -318,12 +439,57 @@
 				<member name="EffectLevel" type="Enum.EffectLevel" />
 				<member name="UnknownData" type="std::vector" contains="UnknownEntry" />
 			</class>
+			<class name="BlackMarketEntryData">
+				<member name="ListingInstanceId" type="Enum.ListingInstanceId" />
+				<member name="TimeListed" type="unsigned long long" />
+				<member name="TimeListed2" type="unsigned long long" />
+				<member name="TimeExpires" type="unsigned long long" />
+				<member name="Amount" type="unsigned int" />
+				<member name="CostPerItem" type="unsigned long long" />
+				<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				<member name="ItemId" type="Enum.ItemId" />
+				<member name="Rarity" type="Enum.Rarity" />
+				<member name="ListerAccountId" type="Enum.AccountId" />
+				<member name="ItemData" type="ItemData" />
+			</class>
 			<class name="Pet">
 				<member name="ActorId" type="Enum.ActorId" />
 				<member name="ItemId" type="Enum.ItemId" />
 				<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 				<member name="Rarity" type="Enum.Rarity" />
 				<member name="ItemData" type="ItemData" />
+			</class>
+			<class name="FieldPetData">
+				<member name="HasFieldPet" type="bool" />
+				<member name="ItemId" type="Enum.ItemId" />
+				<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				<member name="Rarity" type="Enum.Rarity" />
+				<member name="ItemData" type="ItemData" />
+			</class>
+			<class name="PetProfileData">
+				<member name="Name" type="std::wstring" />
+				<member name="Exp" type="unsigned long long" />
+				<member name="Level" type="unsigned short" />
+			</class>
+			<class name="PetPotionSettingsData">
+				<class name="SlotEntry" isMember="false">
+					<member name="ThresholdIndex" type="unsigned int" />
+					<member name="Threshold" type="float" />
+					<member name="ItemId" type="Enum.ItemId" />
+				</class>
+				<member name="Slots" type="std::vector" contains="SlotEntry" />
+			</class>
+			<class name="PetLootSettingsData">
+				<member name="Mesos" type="bool" />
+				<member name="Merets" type="bool" />
+				<member name="Other" type="bool" />
+				<member name="Currency" type="bool" />
+				<member name="Equipment" type="bool" />
+				<member name="Consumable" type="bool" />
+				<member name="Gemstone" type="bool" />
+				<member name="Dropped" type="bool" />
+				<member name="MinRarity" type="Enum.Rarity" />
+				<member name="Enabled" type="bool" />
 			</class>
 		</namespace>
 	</namespace>
@@ -665,6 +831,176 @@
 					<member name="Mode" type="ModeEnum" />
 					<member name="SkillTree" type="Maple.Game.SkillTreeData" />
 				</class>
+				<class name="NpcTalkEndPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="Flags" type="unsigned char" />
+					<member name="NpcDialog" type="Maple.Game.NpcDialogData" />
+				</class>
+				<class name="NpcTalkRespondPacket" directory="Packets\Server">
+					<member name="Flags" type="unsigned char" />
+					<member name="QuestId" type="Enum.QuestId" />
+					<member name="NpcDialog" type="Maple.Game.NpcDialogData" />
+				</class>
+				<class name="NpcTalkContinuePacket" directory="Packets\Server">
+					<member name="Flags" type="unsigned char" />
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="NpcDialog" type="Maple.Game.NpcDialogData" />
+				</class>
+				<class name="NpcTalkActionMovePlayerPacket" directory="Packets\Server">
+					<member name="PortalId" type="Enum.PortalId" />
+				</class>
+				<class name="NpcTalkActionOpenDialogPacket" directory="Packets\Server">
+				</class>
+				<class name="NpcTalkActionRewardItemPacket" directory="Packets\Server">
+					<class name="ItemEntry" isMember="false">
+						<member name="ItemId" type="Enum.ItemId" />
+						<member name="Rarity" type="Enum.Rarity" />
+						<member name="Amount" type="unsigned int" />
+						<member name="ItemData" type="Maple.Game.ItemData" />
+					</class>
+					<member name="Items" type="std::vector" contains="ItemEntry" />
+				</class>
+				<class name="NpcTalkActionRewardExpPacket" directory="Packets\Server">
+					<member name="Exp" type="unsigned long long" />
+				</class>
+				<class name="NpcTalkActionRewardMesoPacket" directory="Packets\Server">
+					<member name="Meso" type="unsigned long long" />
+				</class>
+				<class name="NpcTalkActionAddOptionPacket" directory="Packets\Server">
+					<member name="AddOption" type="unsigned int" />
+				</class>
+				<class name="NpcTalkActionCutscenePacket" directory="Packets\Server">
+				</class>
+				<class name="NpcTalkUpdatePacket" directory="Packets\Server">
+					<member name="ScriptContent" type="Maple.Game.ScriptContentData" />
+				</class>
+				<class name="NpcTalkAlliancePacket" directory="Packets\Server">
+					<member name="Flags" type="unsigned char" />
+					<member name="NpcDialog" type="Maple.Game.NpcDialogData" />
+				</class>
+				<class name="ShopOpenPacket" directory="Packets\Server">
+					<enum name="ShopTypeEnum" />
+					<member name="NpcId" type="Enum.NpcId" />
+					<member name="ShopId" type="Enum.ShopId" />
+					<member name="ResetTime" type="unsigned long long" />
+					<member name="RemainingSeconds" type="unsigned int" />
+					<member name="ItemCount" type="unsigned short" />
+					<member name="CanRestock" type="bool" />
+					<member name="ShopName" type="std::string" />
+					<member name="InstantRestockCost" type="unsigned int" />
+					<member name="ShopType" type="ShopTypeEnum" />
+				</class>
+				<class name="ShopLoadItemsPacket" directory="Packets\Server">
+					<enum name="CurrencyIdEnum" />
+					<class name="ItemEntry" isMember="false">
+						<member name="EntryId" type="Enum.ShopEntryId" />
+						<member name="ItemId" type="Enum.ItemId" />
+						<member name="CurrencyId" type="CurrencyIdEnum" />
+						<member name="Price" type="unsigned int" />
+						<member name="Price2" type="unsigned int" />
+						<member name="Rarity" type="Enum.Rarity" />
+						<member name="MaxStock" type="unsigned int" />
+						<member name="TotalSold" type="unsigned int" />
+						<member name="ShopCategory" type="std::string" />
+						<member name="AchievementRequired" type="Enum.TrophyId" />
+						<member name="BundleSize" type="unsigned short" />
+						<member name="CurrencyIdString" type="std::string" />
+						<member name="HasBuyPeriod" type="bool" />
+						<member name="BuyPeriod" type="Maple.Game.BuyPeriodData" />
+						<member name="ItemData" type="Maple.Game.ItemData" />
+					</class>
+					<member name="Items" type="std::vector" contains="ItemEntry" />
+				</class>
+				<class name="ShopUpdatePacket" directory="Packets\Server">
+					<member name="EntryId" type="Enum.ShopEntryId" />
+					<member name="BuyCount" type="unsigned int" />
+				</class>
+				<class name="ShopBuyPacket" directory="Packets\Server">
+					<enum name="FontColorEnum" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="BuyCount" type="unsigned int" />
+					<member name="TotalPrice" type="unsigned int" />
+					<member name="FontColor" type="FontColorEnum" />
+					<member name="ToGuildStorage" type="bool" />
+				</class>
+				<class name="ShopBuyBackItemCountPacket" directory="Packets\Server">
+					<member name="ItemCount" type="unsigned short" />
+				</class>
+				<class name="ShopAddBuyBackPacket" directory="Packets\Server">
+					<class name="ItemEntry" isMember="false">
+						<member name="RepurchaseId" type="Enum.ShopRepurchaseId" />
+						<member name="ItemId" type="Enum.ItemId" />
+						<member name="Rarity" type="Enum.Rarity" />
+						<member name="Price" type="unsigned long long" />
+						<member name="ItemData" type="Maple.Game.ItemData" />
+					</class>
+					<member name="Items" type="std::vector" contains="ItemEntry" />
+				</class>
+				<class name="ShopRemoveBuyBackPacket" directory="Packets\Server">
+					<member name="RepurchaseId" type="Enum.ShopRepurchaseId" />
+				</class>
+				<class name="ShopInstantRestockPacket" directory="Packets\Server">
+					<member name="Restock" type="bool" />
+				</class>
+				<class name="ShopLoadMeretItemPacket" directory="Packets\Server">
+					<class name="ItemEntry" isMember="false">
+						<member name="MeretItemEntry" type="Maple.Game.MeretShopPremiumItemEntryData" />
+					</class>
+					<member name="Items" type="std::vector" contains="ItemEntry" />
+				</class>
+				<class name="ShopLoadNewPacket" directory="Packets\Server">
+					<class name="ItemEntry" isMember="false">
+						<member name="ItemId" type="Enum.ItemId" />
+						<member name="Rarity" type="Enum.Rarity" />
+						<member name="HasBuyPeriod" type="bool" />
+						<member name="BuyPeriod" type="Maple.Game.BuyPeriodData" />
+						<member name="ItemData" type="Maple.Game.ItemData" />
+					</class>
+					<member name="Items" type="std::vector" contains="ItemEntry" />
+				</class>
+				<class name="ShopErrorPacket" directory="Packets\Server">
+					<member name="Message" type="unsigned int" />
+					<member name="StringId" type="unsigned int" />
+				</class>
+				<class name="MailLoadPacket" directory="Packets\Server">
+					<member name="Mail" type="std::vector" contains="Maple.Game.MailData" />
+				</class>
+				<class name="MailSendCustomConfirmPacket" directory="Packets\Server">
+					<member name="MailInstanceId" type="Enum.MailInstanceId" />
+				</class>
+				<class name="MailReadPacket" directory="Packets\Server">
+					<member name="MailInstanceId" type="Enum.MailInstanceId" />
+					<member name="ReadTime" type="unsigned long long" />
+				</class>
+				<class name="MailErrorPacket" directory="Packets\Server">
+				</class>
+				<class name="MailCollectingPacket" directory="Packets\Server">
+					<member name="MailInstanceId" type="Enum.MailInstanceId" />
+					<member name="CollectTime" type="unsigned long long" />
+				</class>
+				<class name="MailUpdateReadTimePacket" directory="Packets\Server">
+					<member name="MailInstanceId" type="Enum.MailInstanceId" />
+					<member name="ReadTime" type="unsigned long long" />
+				</class>
+				<class name="MailDeletePacket" directory="Packets\Server">
+					<member name="MailInstanceId" type="Enum.MailInstanceId" />
+				</class>
+				<class name="MailReceivePacket" directory="Packets\Server">
+					<member name="UnreadMailCount" type="unsigned int" />
+					<member name="Alert" type="bool" />
+					<member name="Count" type="unsigned int" />
+				</class>
+				<class name="MailExpireNotificationPacket" directory="Packets\Server">
+				</class>
+				<class name="MailStartListPacket" directory="Packets\Server">
+				</class>
+				<class name="MailEndListPacket" directory="Packets\Server">
+				</class>
+				<class name="MailError2Packet" directory="Packets\Server">
+					<member name="Message" type="unsigned int" />
+				</class>
+				<class name="MailReceiveGiftNotificationPacket" directory="Packets\Server">
+				</class>
 				<class name="FieldAddNpcPacket" directory="Packets\Server">
 					<class name="Skill" isMember="false">
 						<member name="SkillId" type="Enum.SkillId" />
@@ -835,6 +1171,179 @@
 					<member name="Details" type="CharacterDetails" />
 					<member name="Equipment" type="Maple.Game.CharacterEquipment" />
 				</class>
+				<class name="FittingDollLoadPacket" directory="Packets\Server">
+					<class name="ItemEntry" isMember="false">
+						<member name="ItemId" type="Enum.ItemId" />
+						<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+						<member name="SlotName" type="std::wstring" />
+						<member name="Slot" type="unsigned char" />
+						<member name="Rarity" type="Enum.Rarity" />
+						<member name="ItemData" type="Maple.Game.ItemData" />
+					</class>
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="DollInstanceId" type="Enum.DollInstanceId" />
+					<member name="DollItemId" type="Enum.ItemId" />
+					<member name="Position" type="Vector3S" />
+					<member name="Rotation" type="Vector3S" />
+					<member name="HasItems" type="bool" />
+					<member name="ItemTypes" type="std::vector" contains="ItemEntry" />
+				</class>
+				<class name="FittingDollRemovePacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+				</class>
+				<class name="FittingDollPutOnItemPacket" directory="Packets\Server">
+					<member name="DollInstanceId" type="Enum.DollInstanceId" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="SlotName" type="std::wstring" />
+					<member name="Slot" type="unsigned char" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="FittingDollRemoveItemPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="SlotName" type="std::wstring" />
+					<member name="Slot" type="unsigned char" />
+				</class>
+				<class name="FittingDollErrorPacket" directory="Packets\Server">
+					<member name="ErrorCode" type="unsigned int" />
+				</class>
+				<class name="TradeReceiveRequestPacket" directory="Packets\Server">
+					<member name="PlayerName" type="std::wstring" />
+					<member name="CharacterId" type="Enum.CharacterId" />
+				</class>
+				<class name="TradeErrorPacket" directory="Packets\Server">
+					<member name="Message" type="unsigned int" />
+					<member name="Name" type="std::wstring" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="Level" type="unsigned int" />
+				</class>
+				<class name="TradeConfirmRequestPacket" directory="Packets\Server">
+				</class>
+				<class name="TradeDeclinedPacket" directory="Packets\Server">
+					<member name="PlayerName" type="std::wstring" />
+				</class>
+				<class name="TradeBeginPacket" directory="Packets\Server">
+					<member name="CharacterId" type="Enum.CharacterId" />
+				</class>
+				<class name="TradeEndPacket" directory="Packets\Server">
+					<member name="Success" type="bool" />
+				</class>
+				<class name="TradeAddItemPacket" directory="Packets\Server">
+					<member name="Index" type="unsigned char" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="TradeSlot" type="unsigned int" />
+					<member name="Amount" type="unsigned int" />
+					<member name="TradeSlot2" type="unsigned int" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="TradeRemoveItemPacket" directory="Packets\Server">
+					<member name="Index" type="unsigned char" />
+					<member name="TradeSlot" type="unsigned int" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="TradeSetMoneyPacket" directory="Packets\Server">
+					<member name="Index" type="unsigned char" />
+					<member name="Mesos" type="unsigned long long" />
+				</class>
+				<class name="TradeFinalizePacket" directory="Packets\Server">
+					<member name="Index" type="unsigned char" />
+				</class>
+				<class name="TradeFinalizeConfirmPacket" directory="Packets\Server">
+					<member name="Index" type="unsigned char" />
+				</class>
+				<class name="ItemEnchantBeginPacket" directory="Packets\Server">
+					<enum name="CatalystTypeEnum">
+						<value name="CrystalFrag" value="100" />
+						<value name="Onyx" value="101" />
+						<value name="ChaosOnyx" value="102" />
+					</enum>
+					<enum name="EnchantTypeEnum">
+						<value name="Ophelia" value="1" />
+						<value name="Peachy" value="2" />
+					</enum>
+					<class name="CatalystEntry" isMember="false">
+						<member name="RequiredItem" type="CatalystTypeEnum" />
+						<member name="Amount" type="unsigned int" />
+					</class>
+					<member name="EnchantType" type="EnchantTypeEnum" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Ingredients" type="std::vector" contains="CatalystEntry" />
+					<member name="Stats" type="std::vector" contains="Maple.Game.BasicStat" />
+					<member name="SuccessRate" type="float" />
+					<member name="UnknownRate2" type="float" />
+					<member name="UnknownRate3" type="float" />
+					<member name="CatalystTotalRate" type="float" />
+					<member name="ChargeTotalRate" type="float" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="Amount" type="unsigned int" />
+				</class>
+				<class name="ItemEnchantUpdateExpPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="EnchantExp" type="unsigned int" />
+				</class>
+				<class name="ItemEnchantUpdateChargesPacket" directory="Packets\Server">
+					<class name="CatalystEntry" isMember="false">
+						<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					</class>
+					<member name="ChargeCount" type="unsigned int" />
+					<member name="CatalystWeight" type="unsigned int" />
+					<member name="Catalysts" type="std::vector" contains="CatalystEntry" />
+					<member name="SuccessRate" type="float" />
+					<member name="UnknownRate2" type="float" />
+					<member name="UnknownRate3" type="float" />
+					<member name="CatalystTotalRate" type="float" />
+					<member name="ChargeTotalRate" type="float" />
+				</class>
+				<class name="ItemEnchantUpdateIngredientsPacket" directory="Packets\Server">
+					<class name="CatalystEntry" isMember="false">
+						<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					</class>
+					<member name="CatalystWeight" type="unsigned int" />
+					<member name="Catalysts" type="std::vector" contains="CatalystEntry" />
+				</class>
+				<class name="ItemEnchantSuccessPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+					<member name="Stats" type="std::vector" contains="Maple.Game.BasicStat" />
+				</class>
+				<class name="ItemEnchantFailPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+					<member name="FailStacks" type="unsigned int" />
+				</class>
+				<class name="ItemEnchantErrorPacket" directory="Packets\Server">
+					<member name="Code" type="unsigned short" />
+				</class>
+				<class name="BlackMarketErrorPacket" directory="Packets\Server">
+					<member name="ErrorCode" type="unsigned int" />
+					<member name="ListingInstanceId" type="Enum.ListingInstanceId" />
+				</class>
+				<class name="BlackMarketMyListingsPacket" directory="Packets\Server">
+					<member name="Entries" type="std::vector" contains="Maple.Game.BlackMarketEntryData" />
+				</class>
+				<class name="BlackMarketCreateListingPacket" directory="Packets\Server">
+					<member name="Listing" type="Maple.Game.BlackMarketEntryData" />
+				</class>
+				<class name="BlackMarketCancelListingPacket" directory="Packets\Server">
+					<member name="ListingInstanceId" type="Enum.ListingInstanceId" />
+				</class>
+				<class name="BlackMarketSearchResultsPacket" directory="Packets\Server">
+					<member name="Entries" type="std::vector" contains="Maple.Game.BlackMarketEntryData" />
+				</class>
+				<class name="BlackMarketPurchasePacket" directory="Packets\Server">
+					<member name="ListingInstanceId" type="Enum.ListingInstanceId" />
+				</class>
+				<class name="BlackMarketSoldPacket" directory="Packets\Server">
+				</class>
+				<class name="BlackMarketPrepareListingPacket" directory="Packets\Server">
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="ShopPrice" type="unsigned int" />
+				</class>
 				<class name="EnchantScrollEnchantUiPacket" directory="Packets\Server">
 					<class name="ItemTypeEntry" isMember="false">
 						<member name="ItemType" type="Enum.ItemType" />
@@ -896,6 +1405,218 @@
 						<member name="ItemId" type="Enum.ItemId" />
 					</class>
 					<member name="Data" type="std::vector" contains="DataEntry" />
+				</class>
+				<class name="PlayInstrumentStartImprovisePacket" directory="Packets\Server">
+					<member name="InstrumentId" type="Enum.InstrumentId" />
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="InstrumentPosition" type="Vector3S" />
+					<member name="GMId" type="int" />
+					<member name="PercussionId" type="int" />
+				</class>
+				<class name="PlayInstrumentPlayNotePacket" directory="Packets\Server">
+					<member name="InstrumentId" type="Enum.InstrumentId" />
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="MidiNote" type="int" />
+				</class>
+				<class name="PlayInstrumentStopImprovisePacket" directory="Packets\Server">
+					<member name="InstrumentId" type="Enum.InstrumentId" />
+					<member name="ActorId" type="Enum.ActorId" />
+				</class>
+				<class name="PlayInstrumentStartScorePacket" directory="Packets\Server">
+					<member name="IsCustom" type="bool" />
+					<member name="InstrumentId" type="Enum.InstrumentId" />
+					<member name="ActorId" type="Enum.ActorId" />
+					<member name="InstrumentPosition" type="Vector3S" />
+					<member name="InstrumentTick" type="int" />
+					<member name="GMId" type="int" />
+					<member name="PercussionId" type="int" />
+					<member name="MusicCode" type="std::string" />
+					<member name="FileName" type="std::wstring" />
+				</class>
+				<class name="PlayInstrumentStopScorePacket" directory="Packets\Server">
+					<member name="InstrumentId" type="Enum.InstrumentId" />
+					<member name="ActorId" type="Enum.ActorId" />
+				</class>
+				<class name="PlayInstrumentLeaveEnsemblePacket" directory="Packets\Server">
+				</class>
+				<class name="PlayInstrumentCreateScoreResponsePacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="PlayInstrumentUpdateScoreUsesPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="RemainingUses" type="int" />
+				</class>
+				<class name="PlayInstrumentViewMusicPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="MusicCode" type="std::string" />
+				</class>
+				<class name="PlayInstrumentEffectPacket" directory="Packets\Server">
+					<member name="ActorId" type="Enum.ActorId" />
+				</class>
+				<class name="PlayInstrumentWritePlayDialogPacket" directory="Packets\Server">
+				</class>
+				<class name="ChangeAttributesPreviewPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="ChangeAttributesAddPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="ChangeAttributesErrorPacket" directory="Packets\Server">
+				</class>
+				<class name="ChangeAttributesScrollUseScrollPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="ChangeAttributesScrollUseOnItemPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="ChangeAttributesScrollPreviewItemPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="ChangeAttributesScrollApplyPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="ChangeAttributesScrollErrorPacket" directory="Packets\Server">
+				</class>
+				<class name="PetAddPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="PetActorId" type="Enum.ActorId" />
+					<member name="FieldPet" type="Maple.Game.FieldPetData" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="PetRemovePacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="PetSoundPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+				</class>
+				<class name="PetRenamePacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="PetProfile" type="Maple.Game.PetProfileData" />
+				</class>
+				<class name="PetPotionPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="PetPotionSettings" type="Maple.Game.PetPotionSettingsData" />
+				</class>
+				<class name="PetLootPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="PetLootSettings" type="Maple.Game.PetLootSettingsData" />
+				</class>
+				<class name="PetLoadCollectionPacket" directory="Packets\Server">
+					<class name="PetEntry" isMember="false">
+						<member name="PetId" type="Enum.PetId" />
+						<member name="PetRarity" type="Enum.Rarity" />
+					</class>
+					<member name="Pets" type="std::vector" contains="PetEntry" />
+				</class>
+				<class name="PetAddCollectionPacket" directory="Packets\Server">
+					<member name="PetId" type="Enum.PetId" />
+					<member name="PetRarity" type="Enum.Rarity" />
+				</class>
+				<class name="PetInfoPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="PetProfile" type="Maple.Game.PetProfileData" />
+					<member name="PetPotionSettings" type="Maple.Game.PetPotionSettingsData" />
+					<member name="PetLootSettings" type="Maple.Game.PetLootSettingsData" />
+				</class>
+				<class name="PetFusionPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="Exp" type="unsigned long long" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="PetLevelUpPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="Level" type="unsigned int" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="PetFusionDialogPacket" directory="Packets\Server">
+					<member name="FusionCount" type="unsigned int" />
+				</class>
+				<class name="PetSummonedNoticePacket" directory="Packets\Server">
+					<member name="IsSummoned" type="bool" />
+				</class>
+				<class name="PetOtherPetInfoPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="PetEvolvePacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="Amount" type="unsigned int" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="PetEvolvePointsPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="Points" type="unsigned int" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="PetErrorPacket" directory="Packets\Server">
+				</class>
+				<class name="PetLapisSnarePacket" directory="Packets\Server">
+					<member name="ItemId" type="Enum.ItemId" />
+				</class>
+				<class name="PetUnknownFieldPetPacket" directory="Packets\Server">
+					<member name="PlayerActorId" type="Enum.ActorId" />
+					<member name="FieldPet" type="Maple.Game.FieldPetData" />
+				</class>
+				<class name="PetInventoryStoreItemPacket" directory="Packets\Server">
+					<member name="ItemId" type="Enum.ItemId" />
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Slot" type="unsigned short" />
+					<member name="Rarity" type="Enum.Rarity" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
+				<class name="PetInventoryRemoveItemPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="PetInventoryUpdateAmountPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Amount" type="unsigned int" />
+				</class>
+				<class name="PetInventoryMoveItemPacket" directory="Packets\Server">
+					<member name="SourceItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="SourceSlot" type="unsigned short" />
+					<member name="DestinationItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="DestinationSlot" type="unsigned short" />
+				</class>
+				<class name="PetInventoryListItemsPacket" directory="Packets\Server">
+					<class name="SlotEntry" isMember="false">
+						<member name="ItemId" type="Enum.ItemId" />
+						<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+						<member name="Slot" type="unsigned short" />
+						<member name="Rarity" type="Enum.Rarity" />
+						<member name="ItemData" type="Maple.Game.ItemData" />
+					</class>
+					<member name="Slots" type="std::vector" contains="SlotEntry" />
+				</class>
+				<class name="PetInventoryStartListPacket" directory="Packets\Server">
+				</class>
+				<class name="ItemLockAddItemPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="Slot" type="unsigned short" />
+				</class>
+				<class name="ItemLockRemoveItemPacket" directory="Packets\Server">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+				</class>
+				<class name="ItemLockUpdateItemPacket" directory="Packets\Server">
+					<class name="ItemEntry" isMember="false">
+						<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+						<member name="ItemData" type="Maple.Game.ItemData" />
+					</class>
+					<member name="Items" type="std::vector" contains="ItemEntry" />
+				</class>
+				<class name="ItemLockErrorPacket" directory="Packets\Server">
+					<member name="ErrorCode" type="unsigned int" />
 				</class>
 				<class name="BindItemPacket" directory="Packets\Server">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />

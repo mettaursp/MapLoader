@@ -58,6 +58,10 @@ namespace Enum
 	{
 		Null = 0
 	};
+	enum class InstrumentId : unsigned int
+	{
+		Null = 0
+	};
 	enum class TitleId : unsigned int
 	{
 		Null = 0

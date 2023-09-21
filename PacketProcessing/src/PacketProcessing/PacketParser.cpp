@@ -1996,6 +1996,137 @@ namespace Networking
 			}
 		}
 
+		void ParseFieldPetData_v12(PacketHandler& handler, Maple::Game::FieldPetData& blockOutput)
+		{
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<bool>("hasFieldPet", handler, blockOutput.HasFieldPet, "\t\t");
+
+			ValidateValues(stream, "hasFieldPet", "\t\t", blockOutput.HasFieldPet, (bool)0, (bool)1);
+
+			if (blockOutput.HasFieldPet)
+			{
+				Read<int>("itemId", handler, blockOutput.ItemId, "\t\t\t");
+				Read<long long>("itemInstanceId", handler, blockOutput.ItemInstanceId, "\t\t\t");
+				Read<int>("rarity", handler, blockOutput.Rarity, "\t\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+				ParseItemData_v12(handler, blockOutput.ItemData, (unsigned int)blockOutput.ItemId);
+			}
+		}
+
+		void ParsePetProfileData_v12(PacketHandler& handler, Maple::Game::PetProfileData& blockOutput)
+		{
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<std::wstring>("name", handler, blockOutput.Name, "\t\t");
+			Read<long long>("exp", handler, blockOutput.Exp, "\t\t");
+
+			int unknown_var2 = 0;
+			Read<int>("unknown", handler, unknown_var2, "\t\t");
+			Read<short>("level", handler, blockOutput.Level, "\t\t");
+
+			short unknown_var4 = 0;
+			Read<short>("unknown", handler, unknown_var4, "\t\t");
+
+			short unknown_var5 = 0;
+			Read<short>("unknown", handler, unknown_var5, "\t\t");
+		}
+
+		void ParsePetPotionSettingsData_v12(PacketHandler& handler, Maple::Game::PetPotionSettingsData& blockOutput)
+		{
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char count_var0 = 0;
+			Read<unsigned char>("count", handler, count_var0, "\t\t");
+
+			ResizeVector(handler, blockOutput.Slots, count_var0);
+
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+			for (unsigned char i = 0; i < count_var0 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				Read<int>("thresholdIndex", handler, blockOutput.Slots[i].ThresholdIndex, "\t\t\t");
+				Read<float>("threshold", handler, blockOutput.Slots[i].Threshold, "\t\t\t");
+				Read<int>("itemId", handler, blockOutput.Slots[i].ItemId, "\t\t\t");
+			}
+		}
+
+		void ParsePetLootSettingsData_v12(PacketHandler& handler, Maple::Game::PetLootSettingsData& blockOutput)
+		{
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<bool>("mesos", handler, blockOutput.Mesos, "\t\t");
+
+			ValidateValues(stream, "mesos", "\t\t", blockOutput.Mesos, (bool)0, (bool)1);
+
+			Read<bool>("merets", handler, blockOutput.Merets, "\t\t");
+
+			ValidateValues(stream, "merets", "\t\t", blockOutput.Merets, (bool)0, (bool)1);
+
+			Read<bool>("other", handler, blockOutput.Other, "\t\t");
+
+			ValidateValues(stream, "other", "\t\t", blockOutput.Other, (bool)0, (bool)1);
+
+			Read<bool>("currency", handler, blockOutput.Currency, "\t\t");
+
+			ValidateValues(stream, "currency", "\t\t", blockOutput.Currency, (bool)0, (bool)1);
+
+			Read<bool>("equipment", handler, blockOutput.Equipment, "\t\t");
+
+			ValidateValues(stream, "equipment", "\t\t", blockOutput.Equipment, (bool)0, (bool)1);
+
+			Read<bool>("consumable", handler, blockOutput.Consumable, "\t\t");
+
+			ValidateValues(stream, "consumable", "\t\t", blockOutput.Consumable, (bool)0, (bool)1);
+
+			Read<bool>("gemstone", handler, blockOutput.Gemstone, "\t\t");
+
+			ValidateValues(stream, "gemstone", "\t\t", blockOutput.Gemstone, (bool)0, (bool)1);
+
+			Read<bool>("dropped", handler, blockOutput.Dropped, "\t\t");
+
+			ValidateValues(stream, "dropped", "\t\t", blockOutput.Dropped, (bool)0, (bool)1);
+
+			Read<int>("minRarity", handler, blockOutput.MinRarity, "\t\t");
+
+			ValidateValues(stream, "minRarity", "\t\t", blockOutput.MinRarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+
+			Read<bool>("enabled", handler, blockOutput.Enabled, "\t\t");
+
+			ValidateValues(stream, "enabled", "\t\t", blockOutput.Enabled, (bool)0, (bool)1);
+		}
+
 		void ParseCharacterData_v13(PacketHandler& handler, Maple::Game::CharacterData& blockOutput)
 		{
 			if (handler.PacketStream().HasRecentlyFailed)
@@ -2604,6 +2735,32 @@ namespace Networking
 			ParseCharacterEquipmentSkins_v2486(handler, blockOutput.Equipment);
 		}
 
+		void ParseFieldPetData_v2486(PacketHandler& handler, Maple::Game::FieldPetData& blockOutput)
+		{
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<bool>("hasFieldPet", handler, blockOutput.HasFieldPet, "\t\t");
+
+			ValidateValues(stream, "hasFieldPet", "\t\t", blockOutput.HasFieldPet, (bool)0, (bool)1);
+
+			if (blockOutput.HasFieldPet)
+			{
+				Read<int>("itemId", handler, blockOutput.ItemId, "\t\t\t");
+				Read<long long>("itemInstanceId", handler, blockOutput.ItemInstanceId, "\t\t\t");
+				Read<int>("rarity", handler, blockOutput.Rarity, "\t\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+				ParseItemData_v2486(handler, blockOutput.ItemData, (unsigned int)blockOutput.ItemId);
+			}
+		}
+
 		void ParseSkillTreeData_v2493(PacketHandler& handler, Maple::Game::SkillTreeData& blockOutput)
 		{
 			if (handler.PacketStream().HasRecentlyFailed)
@@ -3032,6 +3189,32 @@ namespace Networking
 				}
 
 				ValidateValues(stream, "dummy", "\t\t\t", dummy_var3, (bool)0, (bool)1);
+			}
+		}
+
+		void ParseFieldPetData_v2497(PacketHandler& handler, Maple::Game::FieldPetData& blockOutput)
+		{
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			Read<bool>("hasFieldPet", handler, blockOutput.HasFieldPet, "\t\t");
+
+			ValidateValues(stream, "hasFieldPet", "\t\t", blockOutput.HasFieldPet, (bool)0, (bool)1);
+
+			if (blockOutput.HasFieldPet)
+			{
+				Read<int>("itemId", handler, blockOutput.ItemId, "\t\t\t");
+				Read<long long>("itemInstanceId", handler, blockOutput.ItemInstanceId, "\t\t\t");
+				Read<int>("rarity", handler, blockOutput.Rarity, "\t\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t\t", blockOutput.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+				ParseItemData_v2497(handler, blockOutput.ItemData, (unsigned int)blockOutput.ItemId);
 			}
 		}
 
@@ -4620,29 +4803,6 @@ namespace Networking
 			int count_var0 = 0;
 			Read<int>("count", handler, count_var0, "\t");
 
-			if (count_var0 == 0)
-			{
-				short unknown_var1 = 0;
-				Read<short>("unknown", handler, unknown_var1, "\t\t");
-
-				int unknown_var2 = 0;
-				Read<int>("unknown", handler, unknown_var2, "\t\t");
-
-				unsigned char unknownDataCount_var3 = 45;
-
-				ResizeVector(handler, output0.Unknown, count_var0);
-
-				if (handler.PacketStream().HasRecentlyFailed)
-				{
-					return;
-				}
-				for (int i = 0; i < unknownDataCount_var3 && !handler.PacketStream().HasRecentlyFailed; ++i)
-				{
-					long long unknown_var4 = 0;
-					Read<long long>("unknown", handler, unknown_var4, "\t\t\t");
-				}
-			}
-
 			ResizeVector(handler, output0.Items, count_var0);
 
 			if (handler.PacketStream().HasRecentlyFailed)
@@ -4654,6 +4814,8 @@ namespace Networking
 				Read<long long>("itemInstanceId", handler, output0.Items[i].ItemInstanceId, "\t\t");
 				Read<int>("itemId", handler, output0.Items[i].ItemId, "\t\t");
 				Read<int>("rarity", handler, output0.Items[i].Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output0.Items[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 				ParseItemData_v12(handler, output0.Items[i].ItemData, (unsigned int)output0.Items[i].ItemId);
 			}
 
@@ -4911,6 +5073,9 @@ namespace Networking
 				Read<int>("itemId", handler, output2.ItemId, "\t\t");
 				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId, "\t\t");
 				Read<unsigned char>("rarity", handler, output2.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output2.Rarity, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)5, (unsigned char)6);
+
 				Read<int>("slot", handler, output2.Slot, "\t\t");
 				ParseItemData_v12(handler, output2.ItemData, (unsigned int)output2.ItemId);
 
@@ -4998,6 +5163,9 @@ namespace Networking
 			Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t");
 			Read<std::wstring>("slotName", handler, output0.SlotName, "\t");
 			Read<int>("rarity", handler, output0.Rarity, "\t");
+
+			ValidateValues(stream, "rarity", "\t", output0.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+
 			Read<unsigned char>("equipTab", handler, output0.EquipTab, "\t");
 			ParseItemData_v12(handler, output0.ItemData, (unsigned int)output0.ItemId);
 
@@ -5044,6 +5212,9 @@ namespace Networking
 			Read<int>("itemId", handler, output0.ItemId, "\t");
 			Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t");
 			Read<long long>("rarity", handler, output0.Rarity, "\t");
+
+			ValidateValues(stream, "rarity", "\t", output0.Rarity, (long long)0, (long long)1, (long long)2, (long long)3, (long long)4, (long long)5, (long long)6);
+
 			Read<long long>("slot", handler, output0.Slot, "\t");
 			ParseItemData_v12(handler, output0.ItemData, (unsigned int)output0.ItemId);
 
@@ -5470,17 +5641,14 @@ namespace Networking
 			{
 				Read<long long>("expGained", handler, output0.ExpGained, "\t\t");
 
-				if (output0.ExpGained != 0)
-				{
-					short unknown_var2 = 0;
-					Read<short>("unknown", handler, unknown_var2, "\t\t\t");
-					Read<long long>("totalExp", handler, output0.TotalExp, "\t\t\t");
-					Read<long long>("restExp", handler, output0.RestExp, "\t\t\t");
-					Read<int>("message", handler, output0.Message, "\t\t\t");
-					Read<bool>("additional", handler, output0.Additional, "\t\t\t");
+				short unknown_var2 = 0;
+				Read<short>("unknown", handler, unknown_var2, "\t\t");
+				Read<long long>("totalExp", handler, output0.TotalExp, "\t\t");
+				Read<long long>("restExp", handler, output0.RestExp, "\t\t");
+				Read<int>("message", handler, output0.Message, "\t\t");
+				Read<bool>("additional", handler, output0.Additional, "\t\t");
 
-					ValidateValues(stream, "additional", "\t\t\t", output0.Additional, (bool)0, (bool)1);
-				}
+				ValidateValues(stream, "additional", "\t\t", output0.Additional, (bool)0, (bool)1);
 			}
 
 			if (output0.IsRestExp)
@@ -5573,43 +5741,33 @@ namespace Networking
 				Read<long long>("skillSn", handler, output0.SkillSn, "\t\t");
 				Read<int>("casterId", handler, output0.CasterId, "\t\t");
 				Read<unsigned int>("skillId", handler, output0.SkillId, "\t\t");
+				Read<unsigned short>("skillLevel", handler, output0.SkillLevel, "\t\t");
+				Read<unsigned char>("motionPoint", handler, output0.MotionPoint, "\t\t");
+				Read<unsigned char>("attackPoint", handler, output0.AttackPoint, "\t\t");
+				Read<Vector3Short>("position", handler, output0.Position, "\t\t");
+				Read<Vector3S>("direction", handler, output0.Direction, "\t\t");
+				Read<bool>("isChaining", handler, output0.IsChaining, "\t\t");
 
-				if (output0.SkillId == (Enum::SkillId)0)
+				ValidateValues(stream, "isChaining", "\t\t", output0.IsChaining, (bool)0, (bool)1);
+
+				Read<int>("serverTick", handler, output0.ServerTick, "\t\t");
+
+				unsigned char count_var11 = 0;
+				Read<unsigned char>("count", handler, count_var11, "\t\t");
+
+				ResizeVector(handler, output0.Hits, count_var11);
+
+				if (handler.PacketStream().HasRecentlyFailed)
 				{
-					unsigned char unknown_var4 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var4, "\t\t\t");
+					return;
 				}
-
-				if (output0.SkillId != (Enum::SkillId)0)
+				for (unsigned char i = 0; i < count_var11 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					Read<unsigned short>("skillLevel", handler, output0.SkillLevel, "\t\t\t");
-					Read<unsigned char>("motionPoint", handler, output0.MotionPoint, "\t\t\t");
-					Read<unsigned char>("attackPoint", handler, output0.AttackPoint, "\t\t\t");
-					Read<Vector3Short>("position", handler, output0.Position, "\t\t\t");
-					Read<Vector3S>("direction", handler, output0.Direction, "\t\t\t");
-					Read<bool>("isChaining", handler, output0.IsChaining, "\t\t\t");
-
-					ValidateValues(stream, "isChaining", "\t\t\t", output0.IsChaining, (bool)0, (bool)1);
-
-					Read<int>("serverTick", handler, output0.ServerTick, "\t\t\t");
-
-					unsigned char count_var12 = 0;
-					Read<unsigned char>("count", handler, count_var12, "\t\t\t");
-
-					ResizeVector(handler, output0.Hits, count_var12);
-
-					if (handler.PacketStream().HasRecentlyFailed)
-					{
-						return;
-					}
-					for (unsigned char i = 0; i < count_var12 && !handler.PacketStream().HasRecentlyFailed; ++i)
-					{
-						long long unknown_var13 = 0;
-						Read<long long>("unknown", handler, unknown_var13, "\t\t\t\t");
-						Read<long long>("skillAttack", handler, output0.Hits[i].SkillAttack, "\t\t\t\t");
-						Read<int>("targetId", handler, output0.Hits[i].TargetId, "\t\t\t\t");
-						Read<short>("animation", handler, output0.Hits[i].Animation, "\t\t\t\t");
-					}
+					long long unknown_var12 = 0;
+					Read<long long>("unknown", handler, unknown_var12, "\t\t\t");
+					Read<long long>("skillAttack", handler, output0.Hits[i].SkillAttack, "\t\t\t");
+					Read<int>("targetId", handler, output0.Hits[i].TargetId, "\t\t\t");
+					Read<short>("animation", handler, output0.Hits[i].Animation, "\t\t\t");
 				}
 
 				if (handler.Succeeded())
@@ -5695,42 +5853,42 @@ namespace Networking
 
 			if (mode_var0 == 7)
 			{
-				int unknown_var18 = 0;
-				Read<int>("unknown", handler, unknown_var18, "\t\t");
+				int unknown_var17 = 0;
+				Read<int>("unknown", handler, unknown_var17, "\t\t");
 
-				int count_var19 = 0;
-				Read<int>("count", handler, count_var19, "\t\t");
+				int count_var18 = 0;
+				Read<int>("count", handler, count_var18, "\t\t");
 
-				for (int i = 0; i < count_var19 && !handler.PacketStream().HasRecentlyFailed; ++i)
+				for (int i = 0; i < count_var18 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					int unknown_var20 = 0;
-					Read<int>("unknown", handler, unknown_var20, "\t\t\t");
+					int unknown_var19 = 0;
+					Read<int>("unknown", handler, unknown_var19, "\t\t\t");
 				}
 			}
 
 			if (mode_var0 == 8)
 			{
-				long long skillSn_var21 = 0;
-				Read<long long>("skillSn", handler, skillSn_var21, "\t\t");
+				long long skillSn_var20 = 0;
+				Read<long long>("skillSn", handler, skillSn_var20, "\t\t");
 
-				bool hasTarget_var22 = false;
-				Read<bool>("hasTarget", handler, hasTarget_var22, "\t\t");
+				bool hasTarget_var21 = false;
+				Read<bool>("hasTarget", handler, hasTarget_var21, "\t\t");
 
-				ValidateValues(stream, "hasTarget", "\t\t", hasTarget_var22, (bool)0, (bool)1);
+				ValidateValues(stream, "hasTarget", "\t\t", hasTarget_var21, (bool)0, (bool)1);
 
-				if (hasTarget_var22)
+				if (hasTarget_var21)
 				{
-					unsigned int skillId_var23 = 0;
-					Read<unsigned int>("skillId", handler, skillId_var23, "\t\t\t");
+					unsigned int skillId_var22 = 0;
+					Read<unsigned int>("skillId", handler, skillId_var22, "\t\t\t");
 
-					unsigned short skillLevel_var24 = 0;
-					Read<unsigned short>("skillLevel", handler, skillLevel_var24, "\t\t\t");
+					unsigned short skillLevel_var23 = 0;
+					Read<unsigned short>("skillLevel", handler, skillLevel_var23, "\t\t\t");
 
-					int unknown_var25 = 0;
-					Read<int>("unknown", handler, unknown_var25, "\t\t\t");
+					int unknown_var24 = 0;
+					Read<int>("unknown", handler, unknown_var24, "\t\t\t");
 
-					int npcId_var26 = 0;
-					Read<int>("npcId", handler, npcId_var26, "\t\t\t");
+					int npcId_var25 = 0;
+					Read<int>("npcId", handler, npcId_var25, "\t\t\t");
 				}
 			}
 		}
@@ -5752,40 +5910,37 @@ namespace Networking
 			Read<int>("instanceId", handler, output0.Effect.InstanceId, "\t");
 			Read<int>("sourceId", handler, output0.Effect.SourceId, "\t");
 
-			if (output0.Effect.InstanceId != (Enum::EffectInstanceId)0)
+			if (output0.Mode == (Server::BuffPacket::ModeEnum)0)
 			{
-				if (output0.Mode == (Server::BuffPacket::ModeEnum)0)
+				ParseEffectStats_v12(handler, output0.Effect.Stats);
+
+				Read<bool>("enabled", handler, output0.Effect.Enabled, "\t\t");
+
+				ValidateValues(stream, "enabled", "\t\t", output0.Effect.Enabled, (bool)0, (bool)1);
+
+				Read<long long>("shieldHealth", handler, output0.Effect.ShieldHealth, "\t\t");
+			}
+
+			if (output0.Mode == (Server::BuffPacket::ModeEnum)2)
+			{
+				int flags_var6 = 0;
+				Read<int>("flags", handler, flags_var6, "\t\t");
+
+				output0.UpdateEffect = GetBit(flags_var6, 0);
+				output0.UpdateShield = GetBit(flags_var6, 1);
+
+				if (GetBit(flags_var6, 0) == 1)
 				{
 					ParseEffectStats_v12(handler, output0.Effect.Stats);
 
 					Read<bool>("enabled", handler, output0.Effect.Enabled, "\t\t\t");
 
 					ValidateValues(stream, "enabled", "\t\t\t", output0.Effect.Enabled, (bool)0, (bool)1);
-
-					Read<long long>("shieldHealth", handler, output0.Effect.ShieldHealth, "\t\t\t");
 				}
 
-				if (output0.Mode == (Server::BuffPacket::ModeEnum)2)
+				if (GetBit(flags_var6, 1) == 1)
 				{
-					int flags_var6 = 0;
-					Read<int>("flags", handler, flags_var6, "\t\t\t");
-
-					output0.UpdateEffect = GetBit(flags_var6, 0);
-					output0.UpdateShield = GetBit(flags_var6, 1);
-
-					if (GetBit(flags_var6, 0) == 1)
-					{
-						ParseEffectStats_v12(handler, output0.Effect.Stats);
-
-						Read<bool>("enabled", handler, output0.Effect.Enabled, "\t\t\t\t");
-
-						ValidateValues(stream, "enabled", "\t\t\t\t", output0.Effect.Enabled, (bool)0, (bool)1);
-					}
-
-					if (GetBit(flags_var6, 1) == 1)
-					{
-						Read<long long>("shieldHealth", handler, output0.Effect.ShieldHealth, "\t\t\t\t");
-					}
+					Read<long long>("shieldHealth", handler, output0.Effect.ShieldHealth, "\t\t\t");
 				}
 			}
 
@@ -5796,6 +5951,135 @@ namespace Networking
 
 
 			return;
+		}
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0xca>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)1, (unsigned char)2, (unsigned char)4);
+
+			if (mode_var0 == 1)
+			{
+				Server::ChangeAttributesPreviewPacket output0;
+
+				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t\t");
+
+				int itemId_var2 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
+				}
+
+				if (itemId_var2 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v12(handler, output0.ItemData, (unsigned int)itemId_var2);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesPreviewPacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::ChangeAttributesAddPacket output1;
+
+				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId, "\t\t");
+
+				int itemId_var4 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var4 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
+				}
+
+				if (itemId_var4 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v12(handler, output1.ItemData, (unsigned int)itemId_var4);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesAddPacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 3)
+			{
+				Server::ChangeAttributesScrollPreviewItemPacket output2;
+
+				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId, "\t\t");
+
+				int itemId_var6 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var6 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
+				}
+
+				if (itemId_var6 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v12(handler, output2.ItemData, (unsigned int)itemId_var6);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewItemPacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::ChangeAttributesErrorPacket output3;
+
+				bool unknown_var7 = false;
+				Read<bool>("unknown", handler, unknown_var7, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var7, (bool)0, (bool)1);
+
+				int message_var8 = 0;
+				Read<int>("message", handler, message_var8, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var8, (int)9, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6, (int)7, (int)10);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesErrorPacket>(output3);
+				}
+
+
+				return;
+			}
 		}
 
 		template <>
@@ -6218,6 +6502,1074 @@ namespace Networking
 		}
 
 		template <>
+		void ParsePacket<12, ServerPacket, 0xc9>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)8, (unsigned char)0, (unsigned char)9, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)6, (unsigned char)10, (unsigned char)14, (unsigned char)17);
+
+			if (mode_var0 == 0)
+			{
+				Server::PlayInstrumentStartImprovisePacket output0;
+
+				Read<int>("instrumentId", handler, output0.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output0.ActorId, "\t\t");
+				Read<Vector3S>("instrumentPosition", handler, output0.InstrumentPosition, "\t\t");
+				Read<int>("gmId", handler, output0.GMId, "\t\t");
+				Read<int>("percussionId", handler, output0.PercussionId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStartImprovisePacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::PlayInstrumentPlayNotePacket output1;
+
+				Read<int>("instrumentId", handler, output1.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output1.ActorId, "\t\t");
+				Read<int>("midiNote", handler, output1.MidiNote, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentPlayNotePacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::PlayInstrumentStopImprovisePacket output2;
+
+				Read<int>("instrumentId", handler, output2.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output2.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStopImprovisePacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 3)
+			{
+				Server::PlayInstrumentStartScorePacket output3;
+
+				Read<bool>("isCustom", handler, output3.IsCustom, "\t\t");
+
+				ValidateValues(stream, "isCustom", "\t\t", output3.IsCustom, (bool)0, (bool)1);
+
+				Read<int>("instrumentId", handler, output3.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output3.ActorId, "\t\t");
+				Read<Vector3S>("instrumentPosition", handler, output3.InstrumentPosition, "\t\t");
+				Read<int>("instrumentTick", handler, output3.InstrumentTick, "\t\t");
+				Read<int>("gmId", handler, output3.GMId, "\t\t");
+				Read<int>("percussionId", handler, output3.PercussionId, "\t\t");
+
+				bool unknown_var18 = false;
+				Read<bool>("unknown", handler, unknown_var18, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var18, (bool)0, (bool)1);
+
+				if (output3.IsCustom)
+				{
+					Read<std::string>("musicCode", handler, output3.MusicCode, "\t\t\t");
+				}
+
+				else
+				{
+					Read<std::wstring>("fileName", handler, output3.FileName, "\t\t\t");
+				}
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStartScorePacket>(output3);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::PlayInstrumentStopScorePacket output4;
+
+				Read<int>("instrumentId", handler, output4.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output4.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStopScorePacket>(output4);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 6)
+			{
+				Server::PlayInstrumentLeaveEnsemblePacket output5;
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentLeaveEnsemblePacket>(output5);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 8)
+			{
+				Server::PlayInstrumentCreateScoreResponsePacket output6;
+
+				Read<long long>("itemInstanceId", handler, output6.ItemInstanceId, "\t\t");
+
+				int itemId_var24 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var24 = handler.GetItemIdFromInstance(output6.ItemInstanceId);
+				}
+
+				if (itemId_var24 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v12(handler, output6.ItemData, (unsigned int)itemId_var24);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentCreateScoreResponsePacket>(output6);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 9)
+			{
+				Server::PlayInstrumentUpdateScoreUsesPacket output7;
+
+				Read<long long>("itemInstanceId", handler, output7.ItemInstanceId, "\t\t");
+				Read<int>("remainingUses", handler, output7.RemainingUses, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentUpdateScoreUsesPacket>(output7);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 10)
+			{
+				Server::PlayInstrumentViewMusicPacket output8;
+
+				Read<long long>("itemInstanceId", handler, output8.ItemInstanceId, "\t\t");
+				Read<std::string>("musicCode", handler, output8.MusicCode, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentViewMusicPacket>(output8);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 14)
+			{
+				Server::PlayInstrumentEffectPacket output9;
+
+				Read<int>("actorId", handler, output9.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentEffectPacket>(output9);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 17)
+			{
+				Server::PlayInstrumentWritePlayDialogPacket output10;
+
+				unsigned char unknown_var30 = 0;
+				Read<unsigned char>("unknown", handler, unknown_var30, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var30, (unsigned char)16, (unsigned char)8, (unsigned char)10);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentWritePlayDialogPacket>(output10);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0xce>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)8, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)4, (unsigned char)5, (unsigned char)6, (unsigned char)7, (unsigned char)9, (unsigned char)10, (unsigned char)11, (unsigned char)12, (unsigned char)15, (unsigned char)16, (unsigned char)17, (unsigned char)18, (unsigned char)19, (unsigned char)20, (unsigned char)21);
+
+			if (mode_var0 == 0)
+			{
+				Server::PetAddPacket output0;
+
+				Read<int>("playerActorId", handler, output0.PlayerActorId, "\t\t");
+				Read<int>("petActorId", handler, output0.PetActorId, "\t\t");
+				ParseFieldPetData_v12(handler, output0.FieldPet);
+
+				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetAddPacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::PetRemovePacket output1;
+
+				Read<int>("playerActorId", handler, output1.PlayerActorId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetRemovePacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::PetSoundPacket output2;
+
+				Read<int>("playerActorId", handler, output2.PlayerActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetSoundPacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::PetRenamePacket output3;
+
+				Read<int>("playerActorId", handler, output3.PlayerActorId, "\t\t");
+				ParsePetProfileData_v12(handler, output3.PetProfile);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetRenamePacket>(output3);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 5)
+			{
+				Server::PetPotionPacket output4;
+
+				Read<int>("playerActorId", handler, output4.PlayerActorId, "\t\t");
+				ParsePetPotionSettingsData_v12(handler, output4.PetPotionSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetPotionPacket>(output4);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 6)
+			{
+				Server::PetLootPacket output5;
+
+				Read<int>("playerActorId", handler, output5.PlayerActorId, "\t\t");
+				ParsePetLootSettingsData_v12(handler, output5.PetLootSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLootPacket>(output5);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 7)
+			{
+				Server::PetLoadCollectionPacket output6;
+
+				int count_var10 = 0;
+				Read<int>("count", handler, count_var10, "\t\t");
+
+				ResizeVector(handler, output6.Pets, count_var10);
+
+				if (handler.PacketStream().HasRecentlyFailed)
+				{
+					return;
+				}
+				for (int i = 0; i < count_var10 && !handler.PacketStream().HasRecentlyFailed; ++i)
+				{
+					Read<int>("petId", handler, output6.Pets[i].PetId, "\t\t\t");
+					Read<short>("petRarity", handler, output6.Pets[i].PetRarity, "\t\t\t");
+
+					ValidateValues(stream, "petRarity", "\t\t\t", output6.Pets[i].PetRarity, (short)0, (short)1, (short)2, (short)3, (short)4, (short)5, (short)6);
+				}
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLoadCollectionPacket>(output6);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 8)
+			{
+				Server::PetAddCollectionPacket output7;
+
+				Read<int>("petId", handler, output7.PetId, "\t\t");
+				Read<short>("petRarity", handler, output7.PetRarity, "\t\t");
+
+				ValidateValues(stream, "petRarity", "\t\t", output7.PetRarity, (short)0, (short)1, (short)2, (short)3, (short)4, (short)5, (short)6);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetAddCollectionPacket>(output7);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 9)
+			{
+				Server::PetInfoPacket output8;
+
+				Read<int>("playerActorId", handler, output8.PlayerActorId, "\t\t");
+				ParsePetProfileData_v12(handler, output8.PetProfile);
+				ParsePetPotionSettingsData_v12(handler, output8.PetPotionSettings);
+				ParsePetLootSettingsData_v12(handler, output8.PetLootSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetInfoPacket>(output8);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 10)
+			{
+				Server::PetFusionPacket output9;
+
+				Read<int>("playerActorId", handler, output9.PlayerActorId, "\t\t");
+				Read<long long>("exp", handler, output9.Exp, "\t\t");
+				Read<long long>("itemInstanceId", handler, output9.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetFusionPacket>(output9);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 11)
+			{
+				Server::PetLevelUpPacket output10;
+
+				Read<int>("playerActorId", handler, output10.PlayerActorId, "\t\t");
+				Read<int>("level", handler, output10.Level, "\t\t");
+				Read<long long>("itemInstanceId", handler, output10.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLevelUpPacket>(output10);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 12)
+			{
+				Server::PetFusionDialogPacket output11;
+
+				Read<int>("fusionCount", handler, output11.FusionCount, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetFusionDialogPacket>(output11);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 15)
+			{
+				Server::PetSummonedNoticePacket output12;
+
+				Read<bool>("isSummoned", handler, output12.IsSummoned, "\t\t");
+
+				ValidateValues(stream, "isSummoned", "\t\t", output12.IsSummoned, (bool)0, (bool)1);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetSummonedNoticePacket>(output12);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 16)
+			{
+				Server::PetOtherPetInfoPacket output13;
+
+				Read<int>("playerActorId", handler, output13.PlayerActorId, "\t\t");
+				Read<int>("itemId", handler, output13.ItemId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output13.ItemInstanceId, "\t\t");
+				Read<int>("rarity", handler, output13.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output13.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+				ParseItemData_v12(handler, output13.ItemData, (unsigned int)output13.ItemId);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetOtherPetInfoPacket>(output13);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 17)
+			{
+				Server::PetEvolvePacket output14;
+
+				Read<int>("playerActorId", handler, output14.PlayerActorId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output14.ItemInstanceId, "\t\t");
+				Read<unsigned char>("rarity", handler, output14.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output14.Rarity, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)5, (unsigned char)6);
+
+				Read<int>("amount", handler, output14.Amount, "\t\t");
+
+				int itemId_var32 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var32 = handler.GetItemIdFromInstance(output14.ItemInstanceId);
+				}
+
+				if (itemId_var32 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v12(handler, output14.ItemData, (unsigned int)itemId_var32);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetEvolvePacket>(output14);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 18)
+			{
+				Server::PetEvolvePointsPacket output15;
+
+				Read<int>("playerActorId", handler, output15.PlayerActorId, "\t\t");
+				Read<int>("points", handler, output15.Points, "\t\t");
+				Read<long long>("itemInstanceId", handler, output15.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetEvolvePointsPacket>(output15);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 19)
+			{
+				Server::PetErrorPacket output16;
+
+				int message_var36 = 0;
+				Read<int>("message", handler, message_var36, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var36, (int)27, (int)28, (int)30, (int)32, (int)33, (int)39);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetErrorPacket>(output16);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 20)
+			{
+				Server::PetLapisSnarePacket output17;
+
+				Read<int>("itemId", handler, output17.ItemId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLapisSnarePacket>(output17);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 21)
+			{
+				Server::PetUnknownFieldPetPacket output18;
+
+				Read<int>("playerActorId", handler, output18.PlayerActorId, "\t\t");
+				ParseFieldPetData_v12(handler, output18.FieldPet);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetUnknownFieldPetPacket>(output18);
+				}
+
+
+				return;
+			}
+
+			unsigned char mode_var39 = 0;
+			Read<unsigned char>("mode", handler, mode_var39, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var39, (unsigned char)1, (unsigned char)2, (unsigned char)4);
+
+			if (mode_var0 == 0)
+			{
+				Server::ChangeAttributesScrollUseScrollPacket output19;
+
+				Read<long long>("itemInstanceId", handler, output19.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollUseScrollPacket>(output19);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::ChangeAttributesScrollUseOnItemPacket output20;
+
+				Read<long long>("itemInstanceId", handler, output20.ItemInstanceId, "\t\t");
+
+				int itemId_var42 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var42 = handler.GetItemIdFromInstance(output20.ItemInstanceId);
+				}
+
+				if (itemId_var42 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v12(handler, output20.ItemData, (unsigned int)itemId_var42);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollUseOnItemPacket>(output20);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::ChangeAttributesScrollPreviewItemPacket output21;
+
+				Read<long long>("itemInstanceId", handler, output21.ItemInstanceId, "\t\t");
+
+				int itemId_var44 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var44 = handler.GetItemIdFromInstance(output21.ItemInstanceId);
+				}
+
+				if (itemId_var44 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v12(handler, output21.ItemData, (unsigned int)itemId_var44);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewItemPacket>(output21);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::ChangeAttributesScrollErrorPacket output22;
+
+				bool unknown_var45 = false;
+				Read<bool>("unknown", handler, unknown_var45, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var45, (bool)0, (bool)1);
+
+				int message_var46 = 0;
+				Read<int>("message", handler, message_var46, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var46, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6, (int)7, (int)8, (int)10, (int)11, (int)12, (int)13, (int)14, (int)15, (int)16, (int)17);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollErrorPacket>(output22);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2486, ServerPacket, 0xcc>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)8, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)4, (unsigned char)5, (unsigned char)6, (unsigned char)7, (unsigned char)9, (unsigned char)10, (unsigned char)11, (unsigned char)12, (unsigned char)15, (unsigned char)16, (unsigned char)17, (unsigned char)18, (unsigned char)19, (unsigned char)20, (unsigned char)21);
+
+			if (mode_var0 == 0)
+			{
+				Server::PetAddPacket output0;
+
+				Read<int>("playerActorId", handler, output0.PlayerActorId, "\t\t");
+				Read<int>("petActorId", handler, output0.PetActorId, "\t\t");
+				ParseFieldPetData_v2486(handler, output0.FieldPet);
+
+				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetAddPacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::PetRemovePacket output1;
+
+				Read<int>("playerActorId", handler, output1.PlayerActorId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetRemovePacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::PetSoundPacket output2;
+
+				Read<int>("playerActorId", handler, output2.PlayerActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetSoundPacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::PetRenamePacket output3;
+
+				Read<int>("playerActorId", handler, output3.PlayerActorId, "\t\t");
+				ParsePetProfileData_v12(handler, output3.PetProfile);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetRenamePacket>(output3);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 5)
+			{
+				Server::PetPotionPacket output4;
+
+				Read<int>("playerActorId", handler, output4.PlayerActorId, "\t\t");
+				ParsePetPotionSettingsData_v12(handler, output4.PetPotionSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetPotionPacket>(output4);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 6)
+			{
+				Server::PetLootPacket output5;
+
+				Read<int>("playerActorId", handler, output5.PlayerActorId, "\t\t");
+				ParsePetLootSettingsData_v12(handler, output5.PetLootSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLootPacket>(output5);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 7)
+			{
+				Server::PetLoadCollectionPacket output6;
+
+				int count_var10 = 0;
+				Read<int>("count", handler, count_var10, "\t\t");
+
+				ResizeVector(handler, output6.Pets, count_var10);
+
+				if (handler.PacketStream().HasRecentlyFailed)
+				{
+					return;
+				}
+				for (int i = 0; i < count_var10 && !handler.PacketStream().HasRecentlyFailed; ++i)
+				{
+					Read<int>("petId", handler, output6.Pets[i].PetId, "\t\t\t");
+					Read<short>("petRarity", handler, output6.Pets[i].PetRarity, "\t\t\t");
+
+					ValidateValues(stream, "petRarity", "\t\t\t", output6.Pets[i].PetRarity, (short)0, (short)1, (short)2, (short)3, (short)4, (short)5, (short)6);
+				}
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLoadCollectionPacket>(output6);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 8)
+			{
+				Server::PetAddCollectionPacket output7;
+
+				Read<int>("petId", handler, output7.PetId, "\t\t");
+				Read<short>("petRarity", handler, output7.PetRarity, "\t\t");
+
+				ValidateValues(stream, "petRarity", "\t\t", output7.PetRarity, (short)0, (short)1, (short)2, (short)3, (short)4, (short)5, (short)6);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetAddCollectionPacket>(output7);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 9)
+			{
+				Server::PetInfoPacket output8;
+
+				Read<int>("playerActorId", handler, output8.PlayerActorId, "\t\t");
+				ParsePetProfileData_v12(handler, output8.PetProfile);
+				ParsePetPotionSettingsData_v12(handler, output8.PetPotionSettings);
+				ParsePetLootSettingsData_v12(handler, output8.PetLootSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetInfoPacket>(output8);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 10)
+			{
+				Server::PetFusionPacket output9;
+
+				Read<int>("playerActorId", handler, output9.PlayerActorId, "\t\t");
+				Read<long long>("exp", handler, output9.Exp, "\t\t");
+				Read<long long>("itemInstanceId", handler, output9.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetFusionPacket>(output9);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 11)
+			{
+				Server::PetLevelUpPacket output10;
+
+				Read<int>("playerActorId", handler, output10.PlayerActorId, "\t\t");
+				Read<int>("level", handler, output10.Level, "\t\t");
+				Read<long long>("itemInstanceId", handler, output10.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLevelUpPacket>(output10);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 12)
+			{
+				Server::PetFusionDialogPacket output11;
+
+				Read<int>("fusionCount", handler, output11.FusionCount, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetFusionDialogPacket>(output11);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 15)
+			{
+				Server::PetSummonedNoticePacket output12;
+
+				Read<bool>("isSummoned", handler, output12.IsSummoned, "\t\t");
+
+				ValidateValues(stream, "isSummoned", "\t\t", output12.IsSummoned, (bool)0, (bool)1);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetSummonedNoticePacket>(output12);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 16)
+			{
+				Server::PetOtherPetInfoPacket output13;
+
+				Read<int>("playerActorId", handler, output13.PlayerActorId, "\t\t");
+				Read<int>("itemId", handler, output13.ItemId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output13.ItemInstanceId, "\t\t");
+				Read<int>("rarity", handler, output13.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output13.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+				ParseItemData_v2486(handler, output13.ItemData, (unsigned int)output13.ItemId);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetOtherPetInfoPacket>(output13);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 17)
+			{
+				Server::PetEvolvePacket output14;
+
+				Read<int>("playerActorId", handler, output14.PlayerActorId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output14.ItemInstanceId, "\t\t");
+				Read<unsigned char>("rarity", handler, output14.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output14.Rarity, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)5, (unsigned char)6);
+
+				Read<int>("amount", handler, output14.Amount, "\t\t");
+
+				int itemId_var32 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var32 = handler.GetItemIdFromInstance(output14.ItemInstanceId);
+				}
+
+				if (itemId_var32 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2486(handler, output14.ItemData, (unsigned int)itemId_var32);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetEvolvePacket>(output14);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 18)
+			{
+				Server::PetEvolvePointsPacket output15;
+
+				Read<int>("playerActorId", handler, output15.PlayerActorId, "\t\t");
+				Read<int>("points", handler, output15.Points, "\t\t");
+				Read<long long>("itemInstanceId", handler, output15.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetEvolvePointsPacket>(output15);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 19)
+			{
+				Server::PetErrorPacket output16;
+
+				int message_var36 = 0;
+				Read<int>("message", handler, message_var36, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var36, (int)27, (int)28, (int)30, (int)32, (int)33, (int)39);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetErrorPacket>(output16);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 20)
+			{
+				Server::PetLapisSnarePacket output17;
+
+				Read<int>("itemId", handler, output17.ItemId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLapisSnarePacket>(output17);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 21)
+			{
+				Server::PetUnknownFieldPetPacket output18;
+
+				Read<int>("playerActorId", handler, output18.PlayerActorId, "\t\t");
+				ParseFieldPetData_v2486(handler, output18.FieldPet);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetUnknownFieldPetPacket>(output18);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
 		void ParsePacket<2486, ServerPacket, 0xc>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
@@ -6359,6 +7711,9 @@ namespace Networking
 			Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t");
 			Read<unsigned char>("slot", handler, output0.Slot, "\t");
 			Read<int>("rarity", handler, output0.Rarity, "\t");
+
+			ValidateValues(stream, "rarity", "\t", output0.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+
 			Read<unsigned char>("equipTab", handler, output0.EquipTab, "\t");
 			ParseItemData_v2486(handler, output0.ItemData, (unsigned int)output0.ItemId);
 
@@ -6468,6 +7823,9 @@ namespace Networking
 			Read<int>("itemId", handler, output0.ItemId, "\t");
 			Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t");
 			Read<long long>("rarity", handler, output0.Rarity, "\t");
+
+			ValidateValues(stream, "rarity", "\t", output0.Rarity, (long long)0, (long long)1, (long long)2, (long long)3, (long long)4, (long long)5, (long long)6);
+
 			Read<long long>("slot", handler, output0.Slot, "\t");
 			ParseItemData_v2486(handler, output0.ItemData, (unsigned int)output0.ItemId);
 
@@ -6754,6 +8112,8 @@ namespace Networking
 				Read<long long>("itemInstanceId", handler, output0.Items[i].ItemInstanceId, "\t\t");
 				Read<int>("itemId", handler, output0.Items[i].ItemId, "\t\t");
 				Read<int>("rarity", handler, output0.Items[i].Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output0.Items[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 				ParseItemData_v2486(handler, output0.Items[i].ItemData, (unsigned int)output0.Items[i].ItemId);
 			}
 
@@ -6813,6 +8173,9 @@ namespace Networking
 				Read<int>("itemId", handler, output2.ItemId, "\t\t");
 				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId, "\t\t");
 				Read<unsigned char>("rarity", handler, output2.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output2.Rarity, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)5, (unsigned char)6);
+
 				Read<int>("slot", handler, output2.Slot, "\t\t");
 				ParseItemData_v2486(handler, output2.ItemData, (unsigned int)output2.ItemId);
 
@@ -6991,41 +8354,31 @@ namespace Networking
 				Read<long long>("skillSn", handler, output0.SkillSn, "\t\t");
 				Read<int>("casterId", handler, output0.CasterId, "\t\t");
 				Read<unsigned int>("skillId", handler, output0.SkillId, "\t\t");
+				Read<unsigned short>("skillLevel", handler, output0.SkillLevel, "\t\t");
+				Read<unsigned char>("motionPoint", handler, output0.MotionPoint, "\t\t");
+				Read<unsigned char>("attackPoint", handler, output0.AttackPoint, "\t\t");
+				Read<Vector3Short>("position", handler, output0.Position, "\t\t");
+				Read<Vector3S>("direction", handler, output0.Direction, "\t\t");
+				Read<bool>("isChaining", handler, output0.IsChaining, "\t\t");
 
-				if (output0.SkillId == (Enum::SkillId)0)
+				ValidateValues(stream, "isChaining", "\t\t", output0.IsChaining, (bool)0, (bool)1);
+
+				unsigned char count_var10 = 0;
+				Read<unsigned char>("count", handler, count_var10, "\t\t");
+
+				ResizeVector(handler, output0.Hits, count_var10);
+
+				if (handler.PacketStream().HasRecentlyFailed)
 				{
-					unsigned char unknown_var4 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var4, "\t\t\t");
+					return;
 				}
-
-				if (output0.SkillId != (Enum::SkillId)0)
+				for (unsigned char i = 0; i < count_var10 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					Read<unsigned short>("skillLevel", handler, output0.SkillLevel, "\t\t\t");
-					Read<unsigned char>("motionPoint", handler, output0.MotionPoint, "\t\t\t");
-					Read<unsigned char>("attackPoint", handler, output0.AttackPoint, "\t\t\t");
-					Read<Vector3Short>("position", handler, output0.Position, "\t\t\t");
-					Read<Vector3S>("direction", handler, output0.Direction, "\t\t\t");
-					Read<bool>("isChaining", handler, output0.IsChaining, "\t\t\t");
-
-					ValidateValues(stream, "isChaining", "\t\t\t", output0.IsChaining, (bool)0, (bool)1);
-
-					unsigned char count_var11 = 0;
-					Read<unsigned char>("count", handler, count_var11, "\t\t\t");
-
-					ResizeVector(handler, output0.Hits, count_var11);
-
-					if (handler.PacketStream().HasRecentlyFailed)
-					{
-						return;
-					}
-					for (unsigned char i = 0; i < count_var11 && !handler.PacketStream().HasRecentlyFailed; ++i)
-					{
-						long long unknown_var12 = 0;
-						Read<long long>("unknown", handler, unknown_var12, "\t\t\t\t");
-						Read<long long>("skillAttack", handler, output0.Hits[i].SkillAttack, "\t\t\t\t");
-						Read<int>("targetId", handler, output0.Hits[i].TargetId, "\t\t\t\t");
-						Read<short>("animation", handler, output0.Hits[i].Animation, "\t\t\t\t");
-					}
+					long long unknown_var11 = 0;
+					Read<long long>("unknown", handler, unknown_var11, "\t\t\t");
+					Read<long long>("skillAttack", handler, output0.Hits[i].SkillAttack, "\t\t\t");
+					Read<int>("targetId", handler, output0.Hits[i].TargetId, "\t\t\t");
+					Read<short>("animation", handler, output0.Hits[i].Animation, "\t\t\t");
 				}
 
 				if (handler.Succeeded())
@@ -7111,42 +8464,42 @@ namespace Networking
 
 			if (mode_var0 == 7)
 			{
-				int unknown_var17 = 0;
-				Read<int>("unknown", handler, unknown_var17, "\t\t");
+				int unknown_var16 = 0;
+				Read<int>("unknown", handler, unknown_var16, "\t\t");
 
-				int count_var18 = 0;
-				Read<int>("count", handler, count_var18, "\t\t");
+				int count_var17 = 0;
+				Read<int>("count", handler, count_var17, "\t\t");
 
-				for (int i = 0; i < count_var18 && !handler.PacketStream().HasRecentlyFailed; ++i)
+				for (int i = 0; i < count_var17 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					int unknown_var19 = 0;
-					Read<int>("unknown", handler, unknown_var19, "\t\t\t");
+					int unknown_var18 = 0;
+					Read<int>("unknown", handler, unknown_var18, "\t\t\t");
 				}
 			}
 
 			if (mode_var0 == 8)
 			{
-				long long skillSn_var20 = 0;
-				Read<long long>("skillSn", handler, skillSn_var20, "\t\t");
+				long long skillSn_var19 = 0;
+				Read<long long>("skillSn", handler, skillSn_var19, "\t\t");
 
-				bool hasTarget_var21 = false;
-				Read<bool>("hasTarget", handler, hasTarget_var21, "\t\t");
+				bool hasTarget_var20 = false;
+				Read<bool>("hasTarget", handler, hasTarget_var20, "\t\t");
 
-				ValidateValues(stream, "hasTarget", "\t\t", hasTarget_var21, (bool)0, (bool)1);
+				ValidateValues(stream, "hasTarget", "\t\t", hasTarget_var20, (bool)0, (bool)1);
 
-				if (hasTarget_var21)
+				if (hasTarget_var20)
 				{
-					unsigned int skillId_var22 = 0;
-					Read<unsigned int>("skillId", handler, skillId_var22, "\t\t\t");
+					unsigned int skillId_var21 = 0;
+					Read<unsigned int>("skillId", handler, skillId_var21, "\t\t\t");
 
-					unsigned short skillLevel_var23 = 0;
-					Read<unsigned short>("skillLevel", handler, skillLevel_var23, "\t\t\t");
+					unsigned short skillLevel_var22 = 0;
+					Read<unsigned short>("skillLevel", handler, skillLevel_var22, "\t\t\t");
 
-					int unknown_var24 = 0;
-					Read<int>("unknown", handler, unknown_var24, "\t\t\t");
+					int unknown_var23 = 0;
+					Read<int>("unknown", handler, unknown_var23, "\t\t\t");
 
-					int npcId_var25 = 0;
-					Read<int>("npcId", handler, npcId_var25, "\t\t\t");
+					int npcId_var24 = 0;
+					Read<int>("npcId", handler, npcId_var24, "\t\t\t");
 				}
 			}
 		}
@@ -7389,6 +8742,477 @@ namespace Networking
 		}
 
 		template <>
+		void ParsePacket<2486, ServerPacket, 0xc7>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)8, (unsigned char)0, (unsigned char)9, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)6, (unsigned char)10, (unsigned char)14, (unsigned char)17);
+
+			if (mode_var0 == 0)
+			{
+				Server::PlayInstrumentStartImprovisePacket output0;
+
+				Read<int>("instrumentId", handler, output0.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output0.ActorId, "\t\t");
+				Read<Vector3S>("instrumentPosition", handler, output0.InstrumentPosition, "\t\t");
+				Read<int>("gmId", handler, output0.GMId, "\t\t");
+				Read<int>("percussionId", handler, output0.PercussionId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStartImprovisePacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::PlayInstrumentPlayNotePacket output1;
+
+				Read<int>("instrumentId", handler, output1.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output1.ActorId, "\t\t");
+				Read<int>("midiNote", handler, output1.MidiNote, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentPlayNotePacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::PlayInstrumentStopImprovisePacket output2;
+
+				Read<int>("instrumentId", handler, output2.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output2.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStopImprovisePacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 3)
+			{
+				Server::PlayInstrumentStartScorePacket output3;
+
+				Read<bool>("isCustom", handler, output3.IsCustom, "\t\t");
+
+				ValidateValues(stream, "isCustom", "\t\t", output3.IsCustom, (bool)0, (bool)1);
+
+				Read<int>("instrumentId", handler, output3.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output3.ActorId, "\t\t");
+				Read<Vector3S>("instrumentPosition", handler, output3.InstrumentPosition, "\t\t");
+				Read<int>("instrumentTick", handler, output3.InstrumentTick, "\t\t");
+				Read<int>("gmId", handler, output3.GMId, "\t\t");
+				Read<int>("percussionId", handler, output3.PercussionId, "\t\t");
+
+				bool unknown_var18 = false;
+				Read<bool>("unknown", handler, unknown_var18, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var18, (bool)0, (bool)1);
+
+				if (output3.IsCustom)
+				{
+					Read<std::string>("musicCode", handler, output3.MusicCode, "\t\t\t");
+				}
+
+				else
+				{
+					Read<std::wstring>("fileName", handler, output3.FileName, "\t\t\t");
+				}
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStartScorePacket>(output3);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::PlayInstrumentStopScorePacket output4;
+
+				Read<int>("instrumentId", handler, output4.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output4.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStopScorePacket>(output4);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 6)
+			{
+				Server::PlayInstrumentLeaveEnsemblePacket output5;
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentLeaveEnsemblePacket>(output5);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 8)
+			{
+				Server::PlayInstrumentCreateScoreResponsePacket output6;
+
+				Read<long long>("itemInstanceId", handler, output6.ItemInstanceId, "\t\t");
+
+				int itemId_var24 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var24 = handler.GetItemIdFromInstance(output6.ItemInstanceId);
+				}
+
+				if (itemId_var24 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2486(handler, output6.ItemData, (unsigned int)itemId_var24);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentCreateScoreResponsePacket>(output6);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 9)
+			{
+				Server::PlayInstrumentUpdateScoreUsesPacket output7;
+
+				Read<long long>("itemInstanceId", handler, output7.ItemInstanceId, "\t\t");
+				Read<int>("remainingUses", handler, output7.RemainingUses, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentUpdateScoreUsesPacket>(output7);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 10)
+			{
+				Server::PlayInstrumentViewMusicPacket output8;
+
+				Read<long long>("itemInstanceId", handler, output8.ItemInstanceId, "\t\t");
+				Read<std::string>("musicCode", handler, output8.MusicCode, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentViewMusicPacket>(output8);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 14)
+			{
+				Server::PlayInstrumentEffectPacket output9;
+
+				Read<int>("actorId", handler, output9.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentEffectPacket>(output9);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 17)
+			{
+				Server::PlayInstrumentWritePlayDialogPacket output10;
+
+				unsigned char unknown_var30 = 0;
+				Read<unsigned char>("unknown", handler, unknown_var30, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var30, (unsigned char)16, (unsigned char)8, (unsigned char)10);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentWritePlayDialogPacket>(output10);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2486, ServerPacket, 0xc8>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)1, (unsigned char)2, (unsigned char)4);
+
+			if (mode_var0 == 1)
+			{
+				Server::ChangeAttributesPreviewPacket output0;
+
+				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t\t");
+
+				int itemId_var2 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
+				}
+
+				if (itemId_var2 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2486(handler, output0.ItemData, (unsigned int)itemId_var2);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesPreviewPacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::ChangeAttributesAddPacket output1;
+
+				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId, "\t\t");
+
+				int itemId_var4 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var4 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
+				}
+
+				if (itemId_var4 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2486(handler, output1.ItemData, (unsigned int)itemId_var4);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesAddPacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::ChangeAttributesErrorPacket output2;
+
+				bool unknown_var5 = false;
+				Read<bool>("unknown", handler, unknown_var5, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var5, (bool)0, (bool)1);
+
+				int message_var6 = 0;
+				Read<int>("message", handler, message_var6, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var6, (int)9, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6, (int)7, (int)10);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesErrorPacket>(output2);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2486, ServerPacket, 0xc9>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)4);
+
+			if (mode_var0 == 0)
+			{
+				Server::ChangeAttributesScrollUseScrollPacket output0;
+
+				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollUseScrollPacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::ChangeAttributesScrollUseOnItemPacket output1;
+
+				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId, "\t\t");
+
+				int itemId_var3 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var3 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
+				}
+
+				if (itemId_var3 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2486(handler, output1.ItemData, (unsigned int)itemId_var3);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollUseOnItemPacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::ChangeAttributesScrollPreviewItemPacket output2;
+
+				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId, "\t\t");
+
+				int itemId_var5 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var5 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
+				}
+
+				if (itemId_var5 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2486(handler, output2.ItemData, (unsigned int)itemId_var5);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewItemPacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 3)
+			{
+				Server::ChangeAttributesScrollPreviewItemPacket output3;
+
+				Read<long long>("itemInstanceId", handler, output3.ItemInstanceId, "\t\t");
+
+				int itemId_var7 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var7 = handler.GetItemIdFromInstance(output3.ItemInstanceId);
+				}
+
+				if (itemId_var7 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2486(handler, output3.ItemData, (unsigned int)itemId_var7);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewItemPacket>(output3);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::ChangeAttributesScrollErrorPacket output4;
+
+				bool unknown_var8 = false;
+				Read<bool>("unknown", handler, unknown_var8, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var8, (bool)0, (bool)1);
+
+				int message_var9 = 0;
+				Read<int>("message", handler, message_var9, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var9, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6, (int)7, (int)8, (int)10, (int)11, (int)12, (int)13, (int)14, (int)15, (int)16, (int)17);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollErrorPacket>(output4);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
 		void ParsePacket<2486, ServerPacket, 0x103>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
@@ -7510,12 +9334,6 @@ namespace Networking
 				{
 					Read<long long>("shieldHealth", handler, output0.Effect.ShieldHealth, "\t\t\t");
 				}
-			}
-
-			if (output0.Effect.InstanceId == (Enum::EffectInstanceId)0)
-			{
-				int unknown_var9 = 0;
-				Read<int>("unknown", handler, unknown_var9, "\t\t");
 			}
 
 			if (handler.Succeeded())
@@ -7800,6 +9618,373 @@ namespace Networking
 		}
 
 		template <>
+		void ParsePacket<2497, ServerPacket, 0xcc>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)8, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)4, (unsigned char)5, (unsigned char)6, (unsigned char)7, (unsigned char)9, (unsigned char)10, (unsigned char)11, (unsigned char)12, (unsigned char)15, (unsigned char)16, (unsigned char)17, (unsigned char)18, (unsigned char)19, (unsigned char)20, (unsigned char)21);
+
+			if (mode_var0 == 0)
+			{
+				Server::PetAddPacket output0;
+
+				Read<int>("playerActorId", handler, output0.PlayerActorId, "\t\t");
+				Read<int>("petActorId", handler, output0.PetActorId, "\t\t");
+				ParseFieldPetData_v2497(handler, output0.FieldPet);
+
+				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetAddPacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::PetRemovePacket output1;
+
+				Read<int>("playerActorId", handler, output1.PlayerActorId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetRemovePacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::PetSoundPacket output2;
+
+				Read<int>("playerActorId", handler, output2.PlayerActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetSoundPacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::PetRenamePacket output3;
+
+				Read<int>("playerActorId", handler, output3.PlayerActorId, "\t\t");
+				ParsePetProfileData_v12(handler, output3.PetProfile);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetRenamePacket>(output3);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 5)
+			{
+				Server::PetPotionPacket output4;
+
+				Read<int>("playerActorId", handler, output4.PlayerActorId, "\t\t");
+				ParsePetPotionSettingsData_v12(handler, output4.PetPotionSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetPotionPacket>(output4);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 6)
+			{
+				Server::PetLootPacket output5;
+
+				Read<int>("playerActorId", handler, output5.PlayerActorId, "\t\t");
+				ParsePetLootSettingsData_v12(handler, output5.PetLootSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLootPacket>(output5);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 7)
+			{
+				Server::PetLoadCollectionPacket output6;
+
+				int count_var10 = 0;
+				Read<int>("count", handler, count_var10, "\t\t");
+
+				ResizeVector(handler, output6.Pets, count_var10);
+
+				if (handler.PacketStream().HasRecentlyFailed)
+				{
+					return;
+				}
+				for (int i = 0; i < count_var10 && !handler.PacketStream().HasRecentlyFailed; ++i)
+				{
+					Read<int>("petId", handler, output6.Pets[i].PetId, "\t\t\t");
+					Read<short>("petRarity", handler, output6.Pets[i].PetRarity, "\t\t\t");
+
+					ValidateValues(stream, "petRarity", "\t\t\t", output6.Pets[i].PetRarity, (short)0, (short)1, (short)2, (short)3, (short)4, (short)5, (short)6);
+				}
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLoadCollectionPacket>(output6);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 8)
+			{
+				Server::PetAddCollectionPacket output7;
+
+				Read<int>("petId", handler, output7.PetId, "\t\t");
+				Read<short>("petRarity", handler, output7.PetRarity, "\t\t");
+
+				ValidateValues(stream, "petRarity", "\t\t", output7.PetRarity, (short)0, (short)1, (short)2, (short)3, (short)4, (short)5, (short)6);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetAddCollectionPacket>(output7);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 9)
+			{
+				Server::PetInfoPacket output8;
+
+				Read<int>("playerActorId", handler, output8.PlayerActorId, "\t\t");
+				ParsePetProfileData_v12(handler, output8.PetProfile);
+				ParsePetPotionSettingsData_v12(handler, output8.PetPotionSettings);
+				ParsePetLootSettingsData_v12(handler, output8.PetLootSettings);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetInfoPacket>(output8);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 10)
+			{
+				Server::PetFusionPacket output9;
+
+				Read<int>("playerActorId", handler, output9.PlayerActorId, "\t\t");
+				Read<long long>("exp", handler, output9.Exp, "\t\t");
+				Read<long long>("itemInstanceId", handler, output9.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetFusionPacket>(output9);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 11)
+			{
+				Server::PetLevelUpPacket output10;
+
+				Read<int>("playerActorId", handler, output10.PlayerActorId, "\t\t");
+				Read<int>("level", handler, output10.Level, "\t\t");
+				Read<long long>("itemInstanceId", handler, output10.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLevelUpPacket>(output10);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 12)
+			{
+				Server::PetFusionDialogPacket output11;
+
+				Read<int>("fusionCount", handler, output11.FusionCount, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetFusionDialogPacket>(output11);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 15)
+			{
+				Server::PetSummonedNoticePacket output12;
+
+				Read<bool>("isSummoned", handler, output12.IsSummoned, "\t\t");
+
+				ValidateValues(stream, "isSummoned", "\t\t", output12.IsSummoned, (bool)0, (bool)1);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetSummonedNoticePacket>(output12);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 16)
+			{
+				Server::PetOtherPetInfoPacket output13;
+
+				Read<int>("playerActorId", handler, output13.PlayerActorId, "\t\t");
+				Read<int>("itemId", handler, output13.ItemId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output13.ItemInstanceId, "\t\t");
+				Read<int>("rarity", handler, output13.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output13.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+				ParseItemData_v2497(handler, output13.ItemData, (unsigned int)output13.ItemId);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetOtherPetInfoPacket>(output13);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 17)
+			{
+				Server::PetEvolvePacket output14;
+
+				Read<int>("playerActorId", handler, output14.PlayerActorId, "\t\t");
+				Read<long long>("itemInstanceId", handler, output14.ItemInstanceId, "\t\t");
+				Read<unsigned char>("rarity", handler, output14.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output14.Rarity, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)5, (unsigned char)6);
+
+				Read<int>("amount", handler, output14.Amount, "\t\t");
+
+				int itemId_var32 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var32 = handler.GetItemIdFromInstance(output14.ItemInstanceId);
+				}
+
+				if (itemId_var32 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2497(handler, output14.ItemData, (unsigned int)itemId_var32);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetEvolvePacket>(output14);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 18)
+			{
+				Server::PetEvolvePointsPacket output15;
+
+				Read<int>("playerActorId", handler, output15.PlayerActorId, "\t\t");
+				Read<int>("points", handler, output15.Points, "\t\t");
+				Read<long long>("itemInstanceId", handler, output15.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetEvolvePointsPacket>(output15);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 19)
+			{
+				Server::PetErrorPacket output16;
+
+				int message_var36 = 0;
+				Read<int>("message", handler, message_var36, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var36, (int)27, (int)28, (int)30, (int)32, (int)33, (int)39);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetErrorPacket>(output16);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 20)
+			{
+				Server::PetLapisSnarePacket output17;
+
+				Read<int>("itemId", handler, output17.ItemId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetLapisSnarePacket>(output17);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 21)
+			{
+				Server::PetUnknownFieldPetPacket output18;
+
+				Read<int>("playerActorId", handler, output18.PlayerActorId, "\t\t");
+				ParseFieldPetData_v2497(handler, output18.FieldPet);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PetUnknownFieldPetPacket>(output18);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
 		void ParsePacket<2497, ServerPacket, 0xc>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
@@ -7940,6 +10125,9 @@ namespace Networking
 			Read<int>("itemId", handler, output0.ItemId, "\t");
 			Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t");
 			Read<long long>("rarity", handler, output0.Rarity, "\t");
+
+			ValidateValues(stream, "rarity", "\t", output0.Rarity, (long long)0, (long long)1, (long long)2, (long long)3, (long long)4, (long long)5, (long long)6);
+
 			Read<long long>("slot", handler, output0.Slot, "\t");
 			ParseItemData_v2497(handler, output0.ItemData, (unsigned int)output0.ItemId);
 
@@ -8226,6 +10414,8 @@ namespace Networking
 				Read<long long>("itemInstanceId", handler, output0.Items[i].ItemInstanceId, "\t\t");
 				Read<int>("itemId", handler, output0.Items[i].ItemId, "\t\t");
 				Read<int>("rarity", handler, output0.Items[i].Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output0.Items[i].Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 				ParseItemData_v2497(handler, output0.Items[i].ItemData, (unsigned int)output0.Items[i].ItemId);
 			}
 
@@ -8334,6 +10524,9 @@ namespace Networking
 				Read<int>("itemId", handler, output2.ItemId, "\t\t");
 				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId, "\t\t");
 				Read<unsigned char>("rarity", handler, output2.Rarity, "\t\t");
+
+				ValidateValues(stream, "rarity", "\t\t", output2.Rarity, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)5, (unsigned char)6);
+
 				Read<int>("slot", handler, output2.Slot, "\t\t");
 				ParseItemData_v2497(handler, output2.ItemData, (unsigned int)output2.ItemId);
 
@@ -8421,6 +10614,9 @@ namespace Networking
 			Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t");
 			Read<unsigned char>("slot", handler, output0.Slot, "\t");
 			Read<int>("rarity", handler, output0.Rarity, "\t");
+
+			ValidateValues(stream, "rarity", "\t", output0.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
+
 			Read<unsigned char>("equipTab", handler, output0.EquipTab, "\t");
 			ParseItemData_v2497(handler, output0.ItemData, (unsigned int)output0.ItemId);
 
@@ -8662,6 +10858,477 @@ namespace Networking
 				if (handler.Succeeded())
 				{
 					handler.PacketParsed<Server::EnchantScrollRewardPacket>(output4);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2497, ServerPacket, 0xc7>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)8, (unsigned char)0, (unsigned char)9, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)6, (unsigned char)10, (unsigned char)14, (unsigned char)17);
+
+			if (mode_var0 == 0)
+			{
+				Server::PlayInstrumentStartImprovisePacket output0;
+
+				Read<int>("instrumentId", handler, output0.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output0.ActorId, "\t\t");
+				Read<Vector3S>("instrumentPosition", handler, output0.InstrumentPosition, "\t\t");
+				Read<int>("gmId", handler, output0.GMId, "\t\t");
+				Read<int>("percussionId", handler, output0.PercussionId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStartImprovisePacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::PlayInstrumentPlayNotePacket output1;
+
+				Read<int>("instrumentId", handler, output1.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output1.ActorId, "\t\t");
+				Read<int>("midiNote", handler, output1.MidiNote, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentPlayNotePacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::PlayInstrumentStopImprovisePacket output2;
+
+				Read<int>("instrumentId", handler, output2.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output2.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStopImprovisePacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 3)
+			{
+				Server::PlayInstrumentStartScorePacket output3;
+
+				Read<bool>("isCustom", handler, output3.IsCustom, "\t\t");
+
+				ValidateValues(stream, "isCustom", "\t\t", output3.IsCustom, (bool)0, (bool)1);
+
+				Read<int>("instrumentId", handler, output3.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output3.ActorId, "\t\t");
+				Read<Vector3S>("instrumentPosition", handler, output3.InstrumentPosition, "\t\t");
+				Read<int>("instrumentTick", handler, output3.InstrumentTick, "\t\t");
+				Read<int>("gmId", handler, output3.GMId, "\t\t");
+				Read<int>("percussionId", handler, output3.PercussionId, "\t\t");
+
+				bool unknown_var18 = false;
+				Read<bool>("unknown", handler, unknown_var18, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var18, (bool)0, (bool)1);
+
+				if (output3.IsCustom)
+				{
+					Read<std::string>("musicCode", handler, output3.MusicCode, "\t\t\t");
+				}
+
+				else
+				{
+					Read<std::wstring>("fileName", handler, output3.FileName, "\t\t\t");
+				}
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStartScorePacket>(output3);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::PlayInstrumentStopScorePacket output4;
+
+				Read<int>("instrumentId", handler, output4.InstrumentId, "\t\t");
+				Read<int>("actorId", handler, output4.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentStopScorePacket>(output4);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 6)
+			{
+				Server::PlayInstrumentLeaveEnsemblePacket output5;
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentLeaveEnsemblePacket>(output5);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 8)
+			{
+				Server::PlayInstrumentCreateScoreResponsePacket output6;
+
+				Read<long long>("itemInstanceId", handler, output6.ItemInstanceId, "\t\t");
+
+				int itemId_var24 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var24 = handler.GetItemIdFromInstance(output6.ItemInstanceId);
+				}
+
+				if (itemId_var24 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2497(handler, output6.ItemData, (unsigned int)itemId_var24);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentCreateScoreResponsePacket>(output6);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 9)
+			{
+				Server::PlayInstrumentUpdateScoreUsesPacket output7;
+
+				Read<long long>("itemInstanceId", handler, output7.ItemInstanceId, "\t\t");
+				Read<int>("remainingUses", handler, output7.RemainingUses, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentUpdateScoreUsesPacket>(output7);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 10)
+			{
+				Server::PlayInstrumentViewMusicPacket output8;
+
+				Read<long long>("itemInstanceId", handler, output8.ItemInstanceId, "\t\t");
+				Read<std::string>("musicCode", handler, output8.MusicCode, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentViewMusicPacket>(output8);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 14)
+			{
+				Server::PlayInstrumentEffectPacket output9;
+
+				Read<int>("actorId", handler, output9.ActorId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentEffectPacket>(output9);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 17)
+			{
+				Server::PlayInstrumentWritePlayDialogPacket output10;
+
+				unsigned char unknown_var30 = 0;
+				Read<unsigned char>("unknown", handler, unknown_var30, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var30, (unsigned char)16, (unsigned char)8, (unsigned char)10);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::PlayInstrumentWritePlayDialogPacket>(output10);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2497, ServerPacket, 0xc8>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)1, (unsigned char)2, (unsigned char)4);
+
+			if (mode_var0 == 1)
+			{
+				Server::ChangeAttributesPreviewPacket output0;
+
+				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t\t");
+
+				int itemId_var2 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
+				}
+
+				if (itemId_var2 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2497(handler, output0.ItemData, (unsigned int)itemId_var2);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesPreviewPacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::ChangeAttributesAddPacket output1;
+
+				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId, "\t\t");
+
+				int itemId_var4 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var4 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
+				}
+
+				if (itemId_var4 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2497(handler, output1.ItemData, (unsigned int)itemId_var4);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesAddPacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 3)
+			{
+				Server::ChangeAttributesScrollPreviewItemPacket output2;
+
+				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId, "\t\t");
+
+				int itemId_var6 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var6 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
+				}
+
+				if (itemId_var6 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2497(handler, output2.ItemData, (unsigned int)itemId_var6);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewItemPacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::ChangeAttributesErrorPacket output3;
+
+				bool unknown_var7 = false;
+				Read<bool>("unknown", handler, unknown_var7, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var7, (bool)0, (bool)1);
+
+				int message_var8 = 0;
+				Read<int>("message", handler, message_var8, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var8, (int)9, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6, (int)7, (int)10);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesErrorPacket>(output3);
+				}
+
+
+				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<2497, ServerPacket, 0xc9>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0, "\t");
+
+			ValidateValues(stream, "mode", "\t", mode_var0, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)4);
+
+			if (mode_var0 == 0)
+			{
+				Server::ChangeAttributesScrollUseScrollPacket output0;
+
+				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId, "\t\t");
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollUseScrollPacket>(output0);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 1)
+			{
+				Server::ChangeAttributesScrollUseOnItemPacket output1;
+
+				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId, "\t\t");
+
+				int itemId_var3 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var3 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
+				}
+
+				if (itemId_var3 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2497(handler, output1.ItemData, (unsigned int)itemId_var3);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollUseOnItemPacket>(output1);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 2)
+			{
+				Server::ChangeAttributesScrollPreviewItemPacket output2;
+
+				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId, "\t\t");
+
+				int itemId_var5 = 0;
+
+				if (!handler.PacketStream().HasRecentlyFailed)
+				{
+					itemId_var5 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
+				}
+
+				if (itemId_var5 == 0)
+				{
+					handler.DiscardPacket();
+
+					return;
+
+				}
+				ParseItemData_v2497(handler, output2.ItemData, (unsigned int)itemId_var5);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewItemPacket>(output2);
+				}
+
+
+				return;
+			}
+
+			if (mode_var0 == 4)
+			{
+				Server::ChangeAttributesScrollErrorPacket output3;
+
+				bool unknown_var6 = false;
+				Read<bool>("unknown", handler, unknown_var6, "\t\t");
+
+				ValidateValues(stream, "unknown", "\t\t", unknown_var6, (bool)0, (bool)1);
+
+				int message_var7 = 0;
+				Read<int>("message", handler, message_var7, "\t\t");
+
+				ValidateValues(stream, "message", "\t\t", message_var7, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6, (int)7, (int)8, (int)10, (int)11, (int)12, (int)13, (int)14, (int)15, (int)16, (int)17);
+
+				if (handler.Succeeded())
+				{
+					handler.PacketParsed<Server::ChangeAttributesScrollErrorPacket>(output3);
 				}
 
 
@@ -9482,41 +12149,31 @@ namespace Networking
 				Read<long long>("skillSn", handler, output0.SkillSn, "\t\t");
 				Read<int>("casterId", handler, output0.CasterId, "\t\t");
 				Read<unsigned int>("skillId", handler, output0.SkillId, "\t\t");
+				Read<unsigned short>("skillLevel", handler, output0.SkillLevel, "\t\t");
+				Read<unsigned char>("motionPoint", handler, output0.MotionPoint, "\t\t");
+				Read<unsigned char>("attackPoint", handler, output0.AttackPoint, "\t\t");
+				Read<Vector3Short>("position", handler, output0.Position, "\t\t");
+				Read<Vector3S>("direction", handler, output0.Direction, "\t\t");
+				Read<bool>("isChaining", handler, output0.IsChaining, "\t\t");
 
-				if (output0.SkillId == (Enum::SkillId)0)
+				ValidateValues(stream, "isChaining", "\t\t", output0.IsChaining, (bool)0, (bool)1);
+
+				unsigned char count_var10 = 0;
+				Read<unsigned char>("count", handler, count_var10, "\t\t");
+
+				ResizeVector(handler, output0.Hits, count_var10);
+
+				if (handler.PacketStream().HasRecentlyFailed)
 				{
-					unsigned char unknown_var4 = 0;
-					Read<unsigned char>("unknown", handler, unknown_var4, "\t\t\t");
+					return;
 				}
-
-				if (output0.SkillId != (Enum::SkillId)0)
+				for (unsigned char i = 0; i < count_var10 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					Read<unsigned short>("skillLevel", handler, output0.SkillLevel, "\t\t\t");
-					Read<unsigned char>("motionPoint", handler, output0.MotionPoint, "\t\t\t");
-					Read<unsigned char>("attackPoint", handler, output0.AttackPoint, "\t\t\t");
-					Read<Vector3Short>("position", handler, output0.Position, "\t\t\t");
-					Read<Vector3S>("direction", handler, output0.Direction, "\t\t\t");
-					Read<bool>("isChaining", handler, output0.IsChaining, "\t\t\t");
-
-					ValidateValues(stream, "isChaining", "\t\t\t", output0.IsChaining, (bool)0, (bool)1);
-
-					unsigned char count_var11 = 0;
-					Read<unsigned char>("count", handler, count_var11, "\t\t\t");
-
-					ResizeVector(handler, output0.Hits, count_var11);
-
-					if (handler.PacketStream().HasRecentlyFailed)
-					{
-						return;
-					}
-					for (unsigned char i = 0; i < count_var11 && !handler.PacketStream().HasRecentlyFailed; ++i)
-					{
-						long long unknown_var12 = 0;
-						Read<long long>("unknown", handler, unknown_var12, "\t\t\t\t");
-						Read<long long>("skillAttack", handler, output0.Hits[i].SkillAttack, "\t\t\t\t");
-						Read<int>("targetId", handler, output0.Hits[i].TargetId, "\t\t\t\t");
-						Read<short>("animation", handler, output0.Hits[i].Animation, "\t\t\t\t");
-					}
+					long long unknown_var11 = 0;
+					Read<long long>("unknown", handler, unknown_var11, "\t\t\t");
+					Read<long long>("skillAttack", handler, output0.Hits[i].SkillAttack, "\t\t\t");
+					Read<int>("targetId", handler, output0.Hits[i].TargetId, "\t\t\t");
+					Read<short>("animation", handler, output0.Hits[i].Animation, "\t\t\t");
 				}
 
 				if (handler.Succeeded())
@@ -9602,42 +12259,42 @@ namespace Networking
 
 			if (mode_var0 == 7)
 			{
-				int unknown_var17 = 0;
-				Read<int>("unknown", handler, unknown_var17, "\t\t");
+				int unknown_var16 = 0;
+				Read<int>("unknown", handler, unknown_var16, "\t\t");
 
-				int count_var18 = 0;
-				Read<int>("count", handler, count_var18, "\t\t");
+				int count_var17 = 0;
+				Read<int>("count", handler, count_var17, "\t\t");
 
-				for (int i = 0; i < count_var18 && !handler.PacketStream().HasRecentlyFailed; ++i)
+				for (int i = 0; i < count_var17 && !handler.PacketStream().HasRecentlyFailed; ++i)
 				{
-					int unknown_var19 = 0;
-					Read<int>("unknown", handler, unknown_var19, "\t\t\t");
+					int unknown_var18 = 0;
+					Read<int>("unknown", handler, unknown_var18, "\t\t\t");
 				}
 			}
 
 			if (mode_var0 == 8)
 			{
-				long long skillSn_var20 = 0;
-				Read<long long>("skillSn", handler, skillSn_var20, "\t\t");
+				long long skillSn_var19 = 0;
+				Read<long long>("skillSn", handler, skillSn_var19, "\t\t");
 
-				bool hasTarget_var21 = false;
-				Read<bool>("hasTarget", handler, hasTarget_var21, "\t\t");
+				bool hasTarget_var20 = false;
+				Read<bool>("hasTarget", handler, hasTarget_var20, "\t\t");
 
-				ValidateValues(stream, "hasTarget", "\t\t", hasTarget_var21, (bool)0, (bool)1);
+				ValidateValues(stream, "hasTarget", "\t\t", hasTarget_var20, (bool)0, (bool)1);
 
-				if (hasTarget_var21)
+				if (hasTarget_var20)
 				{
-					unsigned int skillId_var22 = 0;
-					Read<unsigned int>("skillId", handler, skillId_var22, "\t\t\t");
+					unsigned int skillId_var21 = 0;
+					Read<unsigned int>("skillId", handler, skillId_var21, "\t\t\t");
 
-					unsigned short skillLevel_var23 = 0;
-					Read<unsigned short>("skillLevel", handler, skillLevel_var23, "\t\t\t");
+					unsigned short skillLevel_var22 = 0;
+					Read<unsigned short>("skillLevel", handler, skillLevel_var22, "\t\t\t");
 
-					int unknown_var24 = 0;
-					Read<int>("unknown", handler, unknown_var24, "\t\t\t");
+					int unknown_var23 = 0;
+					Read<int>("unknown", handler, unknown_var23, "\t\t\t");
 
-					int npcId_var25 = 0;
-					Read<int>("npcId", handler, npcId_var25, "\t\t\t");
+					int npcId_var24 = 0;
+					Read<int>("npcId", handler, npcId_var24, "\t\t\t");
 				}
 			}
 		}

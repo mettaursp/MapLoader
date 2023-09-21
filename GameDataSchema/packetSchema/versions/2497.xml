@@ -197,6 +197,8 @@
 				<enum name="Player" value="1" />
 				<enum name="System" value="101" />
 				<enum name="BlackMarketSale" value="102" />
+				<enum name="BlackMarketCancel" value="104" />
+				<enum name="Unknown" value="107" />
 				<enum name="Ad" value="200" />
 			</data>
 			<data type="long" name="mailInstanceId" output="MailInstanceId" />
@@ -599,27 +601,24 @@
 				<useBlock name="ItemData" version="2497" output="ItemData" args="itemId" />
 			</condition>
 		</opcode>
-		<opcode name="NpcTalk" value="0x4C">
+		<opcode name="NpcTalk" value="0x4B">
 			<data type="byte" name="mode">
 				<enum name="EndTalk" value="0" />
 				<enum name="Respond" value="1" />
 				<enum name="ContinueTalking" value="2" />
 				<enum name="Action" value="3" />
 				<enum name="Update" value="4" />
-				<!--enum name="Unknown8" value="8" /-->
+				<enum name="AllianceAccept?" value="8" />
 				<enum name="AllianceTalk" value="9" />
 				<!--enum name="Unknown10" value="10" /-->
 			</data>
 			<condition data="mode" value="0" comparison="equal">
 				<output type="Networking.Packets.Server.NpcTalkEndPacket" schemaName="packetData" />
-				<data type="int" name="actorId" output="ActorId" />
-				<data type="byte" name="flags" output="Flags" />
-				<useBlock name="NpcDialog" version="12" output="Dialog" />
 			</condition>
 			<condition data="mode" value="1" comparison="equal">
 				<output type="Networking.Packets.Server.NpcTalkRespondPacket" schemaName="packetData" />
-				<data type="byte" name="flags" output="Flags" />
 				<data type="int" name="questId" output="QuestId" />
+				<data type="byte" name="flags" output="Flags" />
 				<useBlock name="NpcDialog" version="12" output="Dialog" />
 			</condition>
 			<condition data="mode" value="2" comparison="equal">
@@ -640,20 +639,20 @@
 					<enum name="Unknown9" value="9" />
 					<enum name="Cutscene" value="10" />
 				</data>
-				<condition data="mode" value="1" comparison="equal">
+				<condition data="actionMode" value="1" comparison="equal">
 					<!--output type="Networking.Packets.Server.NpcTalkActionPacket" schemaName="packetData" /-->
 					<data type="wstring" name="unknown" />
 				</condition>
-				<condition data="mode" value="3" comparison="equal">
+				<condition data="actionMode" value="3" comparison="equal">
 					<output type="Networking.Packets.Server.NpcTalkActionMovePlayerPacket" schemaName="packetData" />
 					<data type="int" name="portalId" output="PortalId" />
 				</condition>
-				<condition data="mode" value="4" comparison="equal">
+				<condition data="actionMode" value="4" comparison="equal">
 					<output type="Networking.Packets.Server.NpcTalkActionOpenDialogPacket" schemaName="packetData" />
 					<data type="wstring" name="unknown" />
 					<data type="wstring" name="unknown" />
 				</condition>
-				<condition data="mode" value="5" comparison="equal">
+				<condition data="actionMode" value="5" comparison="equal">
 					<output type="Networking.Packets.Server.NpcTalkActionRewardItemPacket" schemaName="packetData" />
 					<data type="int" name="count" />
 					<array data="count" output="Items">
@@ -671,22 +670,22 @@
 						<useBlock name="ItemData" version="2497" output="ItemData" args="itemId" />
 					</array>
 				</condition>
-				<condition data="mode" value="6" comparison="equal">
+				<condition data="actionMode" value="6" comparison="equal">
 					<output type="Networking.Packets.Server.NpcTalkActionRewardExpPacket" schemaName="packetData" />
 					<data type="long" name="exp" output="Exp" />
 				</condition>
-				<condition data="mode" value="7" comparison="equal">
+				<condition data="actionMode" value="7" comparison="equal">
 					<output type="Networking.Packets.Server.NpcTalkActionRewardMesoPacket" schemaName="packetData" />
 					<data type="long" name="meso" output="Meso" />
 				</condition>
-				<condition data="mode" value="8" comparison="equal">
+				<condition data="actionMode" value="8" comparison="equal">
 					<output type="Networking.Packets.Server.NpcTalkActionAddOptionPacket" schemaName="packetData" />
 					<data type="int" name="addOption" output="AddOption" />
 				</condition>
-				<condition data="mode" value="9" comparison="equal">
+				<condition data="actionMode" value="9" comparison="equal">
 					<!--output type="Networking.Packets.Server.NpcTalkActionPacket" schemaName="packetData" /-->
 				</condition>
-				<condition data="mode" value="10" comparison="equal">
+				<condition data="actionMode" value="10" comparison="equal">
 					<output type="Networking.Packets.Server.NpcTalkActionCutscenePacket" schemaName="packetData" />
 					<data type="int" name="unknown" />
 					<data type="wstring" name="unknown" />
@@ -695,6 +694,13 @@
 			<condition data="mode" value="4" comparison="equal">
 				<output type="Networking.Packets.Server.NpcTalkUpdatePacket" schemaName="packetData" />
 				<useBlock name="ScriptContent" version="12" output="ScriptContent" />
+			</condition>
+			<condition data="mode" value="8" comparison="equal">
+				<!--output type="Networking.Packets.Server.NpcTalkActionPacket" schemaName="packetData" /-->
+				<output type="Networking.Packets.Server.NpcTalkAlliancePacket" schemaName="packetData" />
+				<data type="byte" name="flags" output="Flags" />
+				<data type="int" name="actorId" />
+				<useBlock name="NpcDialog" version="12" output="Dialog" />
 			</condition>
 			<condition data="mode" value="9" comparison="equal">
 				<output type="Networking.Packets.Server.NpcTalkAlliancePacket" schemaName="packetData" />
@@ -968,6 +974,7 @@
 			<data type="byte" name="mode">
 				<enum name="Load" value="0" />
 				<enum name="Remove" value="1" />
+				<enum name="Unknown" value="4" />
 				<enum name="PutOnItem" value="6" />
 				<enum name="RemoveItem" value="7" />
 				<enum name="Unknown" value="8" />
@@ -1002,6 +1009,10 @@
 				<output type="Networking.Packets.Server.FittingDollRemovePacket" schemaName="packetData" />
 				<data type="int" name="actorId" output="ActorId" />
 			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<!--output type="Networking.Packets.Server.FittingDollUnknownPacket" schemaName="packetData" /-->
+				<data type="long" name="unknown" />
+			</condition>
 			<condition data="mode" value="6" comparison="equal">
 				<output type="Networking.Packets.Server.FittingDollPutOnItemPacket" schemaName="packetData" />
 				<data type="long" name="dollInstanceId" output="DollInstanceId" />
@@ -1034,7 +1045,7 @@
 				<data type="int" name="errorCode" output="ErrorCode" />
 			</condition>
 		</opcode>
-		<opcode name="Trade" value="0x84">
+		<opcode name="Trade" value="0x82">
 			<data type="byte" name="mode">
 				<enum name="ReceiveRequest" value="0" />
 				<enum name="Error" value="1" />
@@ -1129,7 +1140,7 @@
 				<!--output type="Networking.Packets.Server.TradeFinalizeConfirmPacket" schemaName="packetData" /-->
 			</condition>
 		</opcode>
-		<opcode name="ItemEnchant" value="0x99">
+		<opcode name="ItemEnchant" value="0x97">
 			<data type="byte" name="mode">
 				<enum name="Begin" value="5" />
 				<enum name="UpdateExp" value="6" />
@@ -1172,6 +1183,7 @@
 					<data type="float" name="chargeTotalRate" output="ChargeTotalRate" />
 					<data type="long" name="unknown" />
 					<data type="long" name="unknown" />
+					<data type="byte" name="unknown" />
 				</condition>
 				<condition data="enchantType" value="1" value2="2" comparison="between">
 					<data type="int" name="itemId" output="ItemId" />
@@ -1257,7 +1269,7 @@
 				<!--output type="Networking.Packets.Server.ItemEnchantPacket" schemaName="packetData" /-->
 			</condition>
 		</opcode>
-		<opcode name="BlackMarket" value="0x9A">
+		<opcode name="BlackMarket" value="0x98">
 			<data type="byte" name="mode">
 				<enum name="Error" value="0" />
 				<enum name="MyListings" value="1" />
@@ -1328,6 +1340,7 @@
 					<enum name="Ascendant" value="6" />
 				</data>
 				<data type="int" name="shopPrice" output="ShopPrice" />
+				<data type="int" name="unknown" />
 			</condition>
 			<condition data="mode" value="9" comparison="equal">
 				<!--output type="Networking.Packets.Server.BlackMarketPacket" schemaName="packetData" /-->
@@ -1757,7 +1770,7 @@
 				<useBlock name="FieldPetData" version="2497" output="FieldPet" />
 			</condition>
 		</opcode>
-		<opcode name="PetInventory" value="0xCE">
+		<opcode name="PetInventory" value="0xCC">
 			<data type="byte" name="mode">
 				<enum name="StoreItem" value="0" />
 				<enum name="RemoveItem" value="1" />

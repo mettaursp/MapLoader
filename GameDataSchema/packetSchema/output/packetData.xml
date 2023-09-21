@@ -1336,6 +1336,7 @@
 				</class>
 				<class name="BlackMarketPurchasePacket" directory="Packets\Server">
 					<member name="ListingInstanceId" type="Enum.ListingInstanceId" />
+					<member name="Amount" type="unsigned int" />
 				</class>
 				<class name="BlackMarketSoldPacket" directory="Packets\Server">
 				</class>

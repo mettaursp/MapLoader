@@ -378,7 +378,14 @@ namespace ParserUtils
 					}
 
 					std::cout << path.string() << std::endl;
-					std::cout << "Version: " << build << "; Packet length: " << stream.Data.size() << "; Opcode: 0x" << std::hex << opcode << '\n';
+					std::cout << "Version: " << build << "; Packet length: " << stream.Data.size() << "; Opcode: 0x" << std::hex << opcode;
+					
+					if (handler.LastPacketName.size())
+					{
+						std::cout << " " << handler.LastPacketName;
+					}
+
+					std::cout << '\n';
 					
 					size_t size = stream.Data.size();
 					size_t printCount = 16 * ((size / 16) + (size % 16 ? 1 : 0));
@@ -885,7 +892,7 @@ int main(int argc, char** argv)
 		return false;
 	};
 
-	bool regenerate = !true;
+	bool regenerate = true;
 	bool showSuccesses = !false;
 	bool showSeen = false;
 	bool showUnparsed = !false;

@@ -21,8 +21,8 @@ namespace Enum
 		Knight = 10,
 		Berserker = 20,
 		Wizard = 30,
-		Archer = 40,
-		Priest = 50,
+		Priest = 40,
+		Archer = 50,
 		HeavyGunner = 60,
 		Thief = 70,
 		Assassin = 80,
@@ -30,5 +30,21 @@ namespace Enum
 		Striker = 100,
 		Soulbinder = 110,
 		GameMaster = 999
+	};
+	enum class JobFlags : unsigned int
+	{
+		None = 0,
+		Beginner = 1,
+		Knight = 2,
+		Berserker = 4,
+		Wizard = 8,
+		Priest = 16,
+		Archer = 32,
+		HeavyGunner = 64,
+		Thief = 128,
+		Assassin = 256,
+		Runeblade = 512,
+		Striker = 1024,
+		Soulbinder = 2048
 	};
 }

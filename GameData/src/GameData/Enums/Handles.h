@@ -42,6 +42,10 @@ namespace Enum
 	{
 		Null = 0
 	};
+	enum class PortalId : unsigned int
+	{
+		Null = 0
+	};
 	enum class TrophyId : unsigned int
 	{
 		Null = 0
@@ -55,6 +59,22 @@ namespace Enum
 		Null = 0
 	};
 	enum class MountId : unsigned int
+	{
+		Null = 0
+	};
+	enum class ShopId : unsigned int
+	{
+		Null = 0
+	};
+	enum class DollInstanceId : unsigned long long
+	{
+		Null = 0
+	};
+	enum class ShopRepurchaseId : unsigned int
+	{
+		Null = 0
+	};
+	enum class ShopEntryId : unsigned int
 	{
 		Null = 0
 	};
@@ -94,11 +114,19 @@ namespace Enum
 	{
 		Null = 0
 	};
+	enum class ListingInstanceId : unsigned long long
+	{
+		Null = 0
+	};
 	enum class AccountId : unsigned long long
 	{
 		Null = 0
 	};
 	enum class ItemInstanceId : unsigned long long
+	{
+		Null = 0
+	};
+	enum class MailInstanceId : unsigned long long
 	{
 		Null = 0
 	};

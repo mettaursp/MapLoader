@@ -12,6 +12,8 @@ namespace Networking
 
 		void ParsePacket(PacketHandler& handler, unsigned short version, bool isServer, unsigned short opcode)
 		{
+			handler.LastPacketName = "";
+
 			size_t versionIndex = version == 12 ? 0 : VersionIndices[std::min(MaxVersion - MinVersion, std::max(version, (unsigned short)MinVersion) - MinVersion)];
 			const PacketVersionData& versionData = Versions[versionIndex];
 		
@@ -29,6 +31,7 @@ namespace Networking
 				std::cout << "[" << version << "] Packet Opcode 0x" << std::hex << opcode << std::dec << ": " << opcodes[opcode - minOpcode].Name << std::endl;
 			}
 		
+			handler.LastPacketName = opcodes[opcode - minOpcode].Name;
 			opcodes[opcode - minOpcode].Callback(handler);
 
 			handler.CheckStreamStatus();

@@ -233,6 +233,7 @@ namespace Networking
 			unsigned short Version = 0;
 			unsigned short Feature = 0;
 			std::string Locale;
+			std::string LastPacketName;
 
 			Enum::ActorId PlayerId = Enum::ActorId::Null;
 			Enum::AccountId AccountId = Enum::AccountId::Null;

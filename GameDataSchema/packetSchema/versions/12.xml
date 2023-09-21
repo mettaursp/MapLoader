@@ -710,9 +710,9 @@
 		</block>
 		<block name="ScriptContent">
 			<outputParam type="Maple.Game.ScriptContentData" schema="packetData" />
-			<data type="std::wstring" name="text" output="Text" />
-			<data type="std::wstring" name="voiceId" output="VoiceId" />
-			<data type="std::wstring" name="illustration" output="Illustration" />
+			<data type="wstring" name="text" output="Text" />
+			<data type="wstring" name="voiceId" output="VoiceId" />
+			<data type="wstring" name="illustration" output="Illustration" />
 		</block>
 		<block name="ShopData">
 			<outputParam type="Networking.Packets.Server.ShopOpenPacket" schema="packetData" />
@@ -850,7 +850,7 @@
 			<data type="int" name="amount" output="Amount" />
 			<data type="int" name="itemDuration" output="ItemDuration" />
 			<data type="int" name="bonusQuantity" output="BonusQuantity" />
-			<data type="int" name="tabID" output="TabID" />
+			<data type="int" name="tabId" output="TabId" />
 			<data type="int" name="unknown" />
 			<data type="int" name="unknown" />
 			<data type="byte" name="unknown" />
@@ -981,7 +981,7 @@
 			<data type="int" name="amount" output="Amount" />
 			<data type="int" name="itemDuration" output="ItemDuration" />
 			<data type="int" name="bonusQuantity" output="BonusQuantity" />
-			<data type="int" name="tabID" output="TabID" />
+			<data type="int" name="tabId" output="TabId" />
 			<data type="int" name="unknown" />
 			<data type="bool" name="unknown" />
 			<data type="byte" name="unknown" />
@@ -2151,8 +2151,8 @@
 			</condition>
 			<condition data="mode" value="12" comparison="equal">
 				<!--output type="Networking.Packets.Server.MailPacket" schemaName="packetData" /-->
-				<data type="long" name="mailInstanceId" output="MailInstanceId" />
-				<data type="long" name="timestamp" output="Timestamp" />
+				<data type="long" name="mailInstanceId" />
+				<data type="long" name="timestamp" />
 			</condition>
 			<condition data="mode" value="13" comparison="equal">
 				<output type="Networking.Packets.Server.MailDeletePacket" schemaName="packetData" />

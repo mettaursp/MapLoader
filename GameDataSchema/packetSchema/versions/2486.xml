@@ -1031,8 +1031,8 @@
 			</condition>
 			<condition data="mode" value="12" comparison="equal">
 				<!--output type="Networking.Packets.Server.MailPacket" schemaName="packetData" /-->
-				<data type="long" name="mailInstanceId" output="MailInstanceId" />
-				<data type="long" name="timestamp" output="Timestamp" />
+				<data type="long" name="mailInstanceId" />
+				<data type="long" name="timestamp" />
 			</condition>
 			<condition data="mode" value="13" comparison="equal">
 				<output type="Networking.Packets.Server.MailDeletePacket" schemaName="packetData" />

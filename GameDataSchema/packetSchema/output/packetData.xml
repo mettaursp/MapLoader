@@ -324,7 +324,7 @@
 					<member name="EndTime" type="unsigned int" />
 				</class>
 				<class name="DayEntry" isMember="false">
-					<member name="ThresholdIndex" type="DayOfWeekEnum" />
+					<member name="DayOfWeek" type="DayOfWeekEnum" />
 				</class>
 				<member name="HasSpecificTime" type="bool" />
 				<member name="StartTime" type="unsigned long long" />
@@ -834,17 +834,17 @@
 				<class name="NpcTalkEndPacket" directory="Packets\Server">
 					<member name="ActorId" type="Enum.ActorId" />
 					<member name="Flags" type="unsigned char" />
-					<member name="NpcDialog" type="Maple.Game.NpcDialogData" />
+					<member name="Dialog" type="Maple.Game.NpcDialogData" />
 				</class>
 				<class name="NpcTalkRespondPacket" directory="Packets\Server">
 					<member name="Flags" type="unsigned char" />
 					<member name="QuestId" type="Enum.QuestId" />
-					<member name="NpcDialog" type="Maple.Game.NpcDialogData" />
+					<member name="Dialog" type="Maple.Game.NpcDialogData" />
 				</class>
 				<class name="NpcTalkContinuePacket" directory="Packets\Server">
 					<member name="Flags" type="unsigned char" />
 					<member name="ActorId" type="Enum.ActorId" />
-					<member name="NpcDialog" type="Maple.Game.NpcDialogData" />
+					<member name="Dialog" type="Maple.Game.NpcDialogData" />
 				</class>
 				<class name="NpcTalkActionMovePlayerPacket" directory="Packets\Server">
 					<member name="PortalId" type="Enum.PortalId" />
@@ -876,7 +876,7 @@
 				</class>
 				<class name="NpcTalkAlliancePacket" directory="Packets\Server">
 					<member name="Flags" type="unsigned char" />
-					<member name="NpcDialog" type="Maple.Game.NpcDialogData" />
+					<member name="Dialog" type="Maple.Game.NpcDialogData" />
 				</class>
 				<class name="ShopOpenPacket" directory="Packets\Server">
 					<enum name="ShopTypeEnum" />
@@ -1186,7 +1186,7 @@
 					<member name="Position" type="Vector3S" />
 					<member name="Rotation" type="Vector3S" />
 					<member name="HasItems" type="bool" />
-					<member name="ItemTypes" type="std::vector" contains="ItemEntry" />
+					<member name="Items" type="std::vector" contains="ItemEntry" />
 				</class>
 				<class name="FittingDollRemovePacket" directory="Packets\Server">
 					<member name="ActorId" type="Enum.ActorId" />

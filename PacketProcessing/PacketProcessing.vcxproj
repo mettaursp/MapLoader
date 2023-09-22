@@ -761,4 +761,10 @@
     <ItemGroup>
         <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\PetInventoryStartListPacket-s-SniffHandler.cpp"/>
     </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\TradeChangeOfferPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ShopMeretItemCountPacket-s-SniffHandler.cpp"/>
+    </ItemGroup>
 </Project>

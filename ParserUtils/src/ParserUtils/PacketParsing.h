@@ -105,7 +105,7 @@ namespace ParserUtils
 		}
 
 		template <typename T, typename HandlerType>
-		void ReadValue(const char* name, HandlerType& handler, T& value, const char* tabs, const std::source_location location = std::source_location::current())
+		void ReadValue(const char* name, HandlerType& handler, T& value, const std::source_location location = std::source_location::current())
 		{
 			DataStream& stream = handler.PacketStream();
 
@@ -175,11 +175,11 @@ namespace ParserUtils
 		}
 
 		template <typename T, typename HandlerType, typename VarType>
-		void Read(const char* name, HandlerType& handler, VarType& value, const char* tabs, const std::source_location location = std::source_location::current())
+		void Read(const char* name, HandlerType& handler, VarType& value, const std::source_location location = std::source_location::current())
 		{
 			if constexpr (std::is_same_v<T, VarType>)
 			{
-				ReadValue<T>(name, handler, value, handler.Tabs(), location);
+				ReadValue<T>(name, handler, value, location);
 
 				return;
 			}
@@ -191,7 +191,7 @@ namespace ParserUtils
 
 			T tempValue = {};
 
-			ReadValue<T>(name, handler, tempValue, handler.Tabs(), location);
+			ReadValue<T>(name, handler, tempValue, location);
 
 			value = (VarType)tempValue;
 		}
@@ -207,36 +207,66 @@ namespace ParserUtils
 		{
 			return ((value >> bitIndex) & 1) != 0;
 		}
-
-		template <typename T, typename... Types>
-		void ValidateValues(ParserUtils::DataStream& stream, const char* name, const char* tabs, const T& value, Types... expected)
+		
+		template <typename T, typename HandlerType, typename... Types>
+		void ValidateValues(HandlerType& handler, const char* name, const T& value, Types... expected)
 		{
 			if constexpr (PrintUnknownValues)
 			{
+				DataStream& stream = handler.PacketStream();
+
 				bool found = stream.SuppressErrors || stream.DiscardErrors || stream.IgnoreUnknownValues || ((value == expected) || ...);
 
 				if (!found)
 				{
-					std::cout << tabs << "'" << name << "' unknown value: ";
+					std::ostream& out = (PrintOutput || !stream.PrintOutput) ? std::cout : handler.FoundValues;
+
+					out << handler.Tabs() << "'" << name << "' unknown value: ";
 
 					if constexpr (std::is_integral_v<T> && !std::is_floating_point_v<T>)
 					{
 						if constexpr(std::is_signed_v<T>)
 						{
-							std::cout << (long long)value << std::endl;
+							out << (long long)value << std::endl;
 						}
 						else
 						{
-							std::cout << (unsigned long long)value << std::endl;
+							out << (unsigned long long)value << std::endl;
 						}
 					}
 					else
 					{
-						std::cout << value << std::endl;
+						out << value << std::endl;
 					}
 
 					stream.FoundUnknownValue = true;
 				}
+			}
+		}
+
+		template <typename T>
+		std::ostream& operator<(std::ostream& out, const T& value)
+		{
+			typedef std::remove_cvref_t<T> Type;
+
+			if constexpr (std::is_same_v<Type, unsigned char> || std::is_same_v<Type, char>)
+			{
+				return out << (unsigned int)value;
+			}
+			else if constexpr (std::is_integral_v<Type> && !std::is_floating_point_v<T>)
+			{
+				if constexpr (std::is_signed_v<Type>)
+				{
+					return out << (long long)value;
+				}
+				else
+				{
+					return out << (unsigned long long)value;
+				}
+			}
+			else
+			{
+				return out << value;
 			}
 		}
 
@@ -259,15 +289,13 @@ namespace ParserUtils
 			StackWatch(HandlerType& handler, const char* name, const T1& arg1, const T&... args) : Handler(handler)
 			{
 				std::stringstream out;
-				((out << name << arg1) << ... << args);
+				((out << name < arg1) < ... < args);
 
 				Push(out.str().c_str());
 			}
 
 			void Push(const char* name)
 			{
-				++Handler.StackDepth;
-
 				if constexpr (PrintOutput || PrintErrors)
 				{
 					DataStream& stream = Handler.PacketStream();
@@ -279,6 +307,8 @@ namespace ParserUtils
 						out << Handler.Tabs() << name << std::endl;
 					}
 				}
+
+				++Handler.StackDepth;
 			}
 		};
 	}

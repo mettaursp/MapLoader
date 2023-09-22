@@ -438,7 +438,7 @@ namespace ParserUtils
 							std::cout << values << std::endl;
 						}
 
-						if (stream.Index < stream.Data.size() && !stream.HasRecentlyFailed)
+						if (stream.Index < stream.Data.size())// && !stream.HasRecentlyFailed)
 						{
 							std::cout << "remaining: \n" << std::hex;
 
@@ -892,7 +892,7 @@ int main(int argc, char** argv)
 		return false;
 	};
 
-	bool regenerate = true;
+	bool regenerate = !true;
 	bool showSuccesses = !false;
 	bool showSeen = false;
 	bool showUnparsed = !false;

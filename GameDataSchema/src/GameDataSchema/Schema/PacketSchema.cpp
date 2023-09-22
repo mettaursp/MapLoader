@@ -2136,11 +2136,11 @@ namespace PacketSchema
 		out << tabs << "using namespace ParserUtils::Packets;\n\n";
 		out << tabs << "ParserUtils::DataStream& stream = handler.PacketStream();\n\n";
 
-		out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_block" << "(handler, \"";
+		out << "\t" << tabs << "StackWatch<PacketHandler> watch_block" << "(handler, \"";
 		
 		if (opcode.IsBlock)
 		{
-			out << opcode.Name << "(\"";
+			out << opcode.Name << "_v" << currentVersion << "(\"";
 			
 			for (size_t i = 0; i < opcode.Parameters.size(); ++i)
 			{
@@ -2148,13 +2148,13 @@ namespace PacketSchema
 
 				out << (i == 0 ? ", \"" : ", \", ") << parameter.Name << ": \", " << parameter.Name << "_param" << i;
 			}
+
+			out << ", \")\");\n\n";
 		}
 		else
 		{
-			out << (opcode.IsServer ? "[Server] 0x" : "[Client] 0x") << std::hex << opcode.Value << std::dec << " '" << opcode.Name << "'\"";
+			out << (opcode.IsServer ? "[Server] 0x" : "[Client] 0x") << std::hex << opcode.Value << std::dec << " '" << opcode.Name << "' v" << currentVersion << "\");\n\n";
 		}
-
-		out << ");\n\n";
 
 		const PacketOutput* topOutput = nullptr;
 
@@ -2474,14 +2474,7 @@ namespace PacketSchema
 							out << output.Name;
 						}
 
-						out << ", \"";
-
-						for (size_t i = 0; i <= stack.size(); ++i)
-						{
-							out << "\\t";
-						}
-
-						out << "\"" << ");\n";
+						out << ");\n";
 					}
 				}
 				else
@@ -2539,14 +2532,7 @@ namespace PacketSchema
 				{
 					type = PacketInfoType::Validation;
 
-					out << "\n" << tabs << "ValidateValues(handler, \"" << data.Name << "\", \"";
-
-					for (size_t i = 0; i <= stack.size(); ++i)
-					{
-						out << "\\t";
-					}
-					
-					out << "\", ";
+					out << "\n" << tabs << "ValidateValues(handler, \"" << data.Name << "\", ";
 
 					if (makeVariable || !output.Member)
 					{
@@ -2620,7 +2606,7 @@ namespace PacketSchema
 				validateOutput(output, outputMember.Output, outputMember.Target);
 
 				out << "\n" << tabs << "{\n";
-				out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"" << output.Name << "\");\n";
+				out << "\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"" << output.Name << "\");\n";
 
 				stack.push_back({ i, outputMember.RegionEnd, output });
 				generator.Push();
@@ -2637,7 +2623,7 @@ namespace PacketSchema
 				validateOutput(output, buffer.Output, buffer.Target);
 
 				out << "\n" << tabs << "{\n";
-				out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"buffer[\", ";
+				out << "\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"buffer[\", ";
 
 				stack.push_back({ i, buffer.RegionEnd, output });
 				generator.Push();
@@ -2645,7 +2631,7 @@ namespace PacketSchema
 				std::string sizeParam = getReference(buffer.BufferSizeDataIndex, opcode, i, outputs, topOutput, stack).Name;
 				std::string isDeflatedParam = buffer.IsDeflatedDataIndex != (size_t)-1 ? getReference(buffer.IsDeflatedDataIndex, opcode, i, outputs, topOutput, stack).Name : "false";
 
-				out << "sizeParam, ']');\n";
+				out << sizeParam << ", \"]\");\n";
 
 				out << tabs << "Buffer buffer" << index << "(handler, (size_t)" << sizeParam << ", " << isDeflatedParam << ");\n";
 
@@ -2724,7 +2710,7 @@ namespace PacketSchema
 
 					out << tabs << "for (" << param.TypeName << " " << iteratorName << " = 0; " << iteratorName << " < " << param.Name << " && !handler.PacketStream().HasRecentlyFailed; ++" << iteratorName << ")\n";
 					out << tabs << "{\n";
-					out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"";
+					out << "\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"";
 					
 					if (output.Output)
 					{
@@ -2739,7 +2725,7 @@ namespace PacketSchema
 						out << "array" << index << "[\", ";
 					}
 
-					out << iteratorName << ", ']'); \n";
+					out << iteratorName << ", \"]\"); \n";
 
 					stack.push_back({ i, array.RegionEnd, output, true, false, array.Name, generator.LoopIndex });
 					generator.Push();
@@ -2770,7 +2756,7 @@ namespace PacketSchema
 
 					out << tabs << "while (" << param.Name << " && !handler.PacketStream().HasRecentlyFailed)\n";
 					out << tabs << "{\n";
-					out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"";
+					out << "\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"";
 
 					if (output.Output)
 					{
@@ -2785,7 +2771,7 @@ namespace PacketSchema
 						out << "array" << index << "[\", ";
 					}
 
-					out << iteratorName << ", ']'); \n";
+					out << iteratorName << ", \"]\"); \n";
 
 					stack.push_back({ i, array.RegionEnd, output, true, true, array.Name, generator.LoopIndex });
 					generator.Push();
@@ -2897,7 +2883,7 @@ namespace PacketSchema
 				}
 
 				out << tabs << "{\n";
-				out << "\n\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"" << conditionType << conditionOut.str() << "\");\n";
+				out << "\t" << tabs << "StackWatch<PacketHandler> watch_" << i << "(handler, \"" << conditionType << conditionOut.str() << "\");\n";
 
 				stack.push_back({ i, condition.RegionEnd });
 				generator.Push();

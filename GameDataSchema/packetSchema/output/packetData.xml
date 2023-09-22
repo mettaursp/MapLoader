@@ -942,6 +942,9 @@
 				<class name="ShopInstantRestockPacket" directory="Packets\Server">
 					<member name="Restock" type="bool" />
 				</class>
+				<class name="ShopMeretItemCountPacket" directory="Packets\Server">
+					<member name="Count" type="unsigned short" />
+				</class>
 				<class name="ShopLoadMeretItemPacket" directory="Packets\Server">
 					<class name="ItemEntry" isMember="false">
 						<member name="MeretItemEntry" type="Maple.Game.MeretShopPremiumItemEntryData" />
@@ -1249,6 +1252,9 @@
 					<member name="Mesos" type="unsigned long long" />
 				</class>
 				<class name="TradeFinalizePacket" directory="Packets\Server">
+					<member name="Index" type="unsigned char" />
+				</class>
+				<class name="TradeChangeOfferPacket" directory="Packets\Server">
 					<member name="Index" type="unsigned char" />
 				</class>
 				<class name="TradeFinalizeConfirmPacket" directory="Packets\Server">

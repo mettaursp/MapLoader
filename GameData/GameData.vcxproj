@@ -735,6 +735,12 @@
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopInstantRestockPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopMeretItemCountPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopMeretItemCountPacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopLoadMeretItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
@@ -991,6 +997,12 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeFinalizePacket.cpp"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeChangeOfferPacket.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeChangeOfferPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeFinalizeConfirmPacket.h"/>

@@ -450,7 +450,7 @@ namespace Networking
 		{
 			static const char tabs[] = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
 
-			size_t tabIndex = std::max(0, std::min(sizeof(tabs) - 1, sizeof(tabs) - 1 - StackDepth));
+			size_t tabIndex = std::max((size_t)0, std::min(sizeof(tabs) - 1, sizeof(tabs) - 1 - StackDepth));
 
 			return tabs + tabIndex;
 		}

@@ -1121,6 +1121,16 @@
         </ClCompile>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopMeretItemCountPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopMeretItemCountPacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopLoadMeretItemPacket.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
@@ -1547,6 +1557,16 @@
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeFinalizePacket.cpp">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeChangeOfferPacket.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeChangeOfferPacket.cpp">
             <Filter>Source Files\Packets\Server</Filter>
         </ClCompile>
     </ItemGroup>

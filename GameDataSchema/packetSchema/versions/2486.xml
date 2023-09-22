@@ -194,11 +194,14 @@
 			<outputParam type="Maple.Game.MailData" schema="packetData" />
 			<data type="byte" name="type" output="Type">
 				<enum name="Player" value="1" />
+				<enum name="Player" value="2" />
 				<enum name="System" value="101" />
 				<enum name="BlackMarketSale" value="102" />
 				<enum name="BlackMarketCancel" value="104" />
+				<enum name="MesoMarket" value="106" />
 				<enum name="Unknown" value="107" />
-				<enum name="NexonNews" value="112" />
+				<enum name="WeddingSystem" value="112" />
+				<enum name="WeddingInvite" value="112" />
 				<enum name="Ad" value="200" />
 			</data>
 			<data type="long" name="mailInstanceId" output="MailInstanceId" />
@@ -241,6 +244,64 @@
 			<data type="long" name="sentTime" output="SentTime" />
 			<data type="wstring" name="unkown" />
 		</block>
+		<block name="MeretShopPremiumItem">
+			<outputParam type="Maple.Game.MeretShopPremiumItemData" schema="packetData" />
+			<data type="int" name="entryId" output="EntryId" />
+			<data type="byte" name="unknown" />
+			<data type="wstring" name="name" output="Name" />
+			<data type="bool" name="unknown" />
+			<data type="int" name="parentId" output="ParentId" />
+			<data type="int" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="byte" name="marketItemLabel" output="MarketItemLabel" />
+			<data type="byte" name="currencyType" output="CurrencyType" />
+			<data type="long" name="price" output="Price" />
+			<data type="long" name="SalePrice" output="SalePrice" />
+			<data type="byte" name="unknown" />
+			<data type="long" name="sellBeginTime" output="SellBeginTime" />
+			<data type="long" name="sellEndTime" output="SellEndTime" />
+			<data type="int" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="bool" name="restockUnavailable" output="RestockUnavailable" />
+			<data type="int" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="short" name="requiredMinLevel" output="RequiredMinLevel" />
+			<data type="short" name="requiredMaxLevel" output="RequiredMaxLevel" />
+			<data type="int" name="requiredJob" output="RequiredJob" />
+			<data type="int" name="itemId" output="ItemId" />
+			<data type="byte" name="rarity" output="Rarity">
+				<enum name="None" value="0" />
+				<enum name="Common" value="1" />
+				<enum name="Rare" value="2" />
+				<enum name="Exceptional" value="3" />
+				<enum name="Epic" value="4" />
+				<enum name="Legendary" value="5" />
+				<enum name="Ascendant" value="6" />
+			</data>
+			<data type="int" name="amount" output="Amount" />
+			<data type="int" name="itemDuration" output="ItemDuration" />
+			<data type="int" name="bonusQuantity" output="BonusQuantity" />
+			<data type="int" name="tabId" output="TabId" />
+			<data type="int" name="unknown" />
+			<data type="int" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="int" name="marketBannerLabel" output="MarketBannerLabel" />
+			<data type="string" name="bannerName" output="BannerName" />
+			<data type="string" name="unknown" />
+			<data type="bool" name="unknown" />
+			<!-- one of these bytes is removed, which one is unknown -->
+			<!--data type="byte" name="unknown" /-->
+			<data type="int" name="unknown" />
+			<data type="bool" name="unknown" />
+			<data type="int" name="requiredAchievementId" output="RequiredAchievementId" />
+			<data type="int" name="requiredAchievementRank" output="RequiredAchievementRank" />
+			<data type="int" name="unknown" />
+			<!-- one of these bytes is removed, or one in MeretShopPremiumItemEntry, which one is unknown -->
+			<!--data type="bool" name="pcCafe" output="PcCafe" /-->
+			<data type="bool" name="unknown" />
+			<data type="int" name="unknown" />
+		</block>
 		<block name="MeretShopPremiumItemEntry">
 			<outputParam type="Maple.Game.MeretShopPremiumItemEntryData" schema="packetData" />
 			<data type="int" name="entryId" output="EntryId" />
@@ -280,11 +341,13 @@
 			<data type="int" name="unknown" />
 			<data type="bool" name="unknown" />
 			<data type="int" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="int" name="unknown" />
 			<data type="byte" name="count" />
 			<array data="count" output="AdditionalQuantities">
 				<data type="bool" name="hasEntry" output="HasEntry" />
 				<condition data="hasEntry" value="1" comparison="equal">
-					<useBlock name="MeretShopPremiumItem" version="12" output="EntryData" />
+					<useBlock name="MeretShopPremiumItem" version="2486" output="EntryData" />
 					<data type="bool" name="hasUnknown" output="HasUnknown" />
 					<condition data="hasUnknown" value="1" comparison="equal">
 						<data type="string" name="unknown" />
@@ -911,8 +974,8 @@
 				<enum name="AddBuyBack" value="7" />
 				<enum name="RemoveBuyBack" value="8" />
 				<enum name="InstantRestock" value="9" />
-				<!--enum name="Unknown" value="11" /-->
-				<!--enum name="Unknown" value="12" /-->
+				<enum name="MeretItemCount" value="11" />
+				<enum name="LoadMeretItem" value="12" />
 				<!--enum name="Unknown" value="13" /-->
 				<enum name="LoadNew" value="14" />
 				<enum name="Error" value="15" />
@@ -984,8 +1047,8 @@
 				</condition>
 			</condition>
 			<condition data="mode" value="11" comparison="equal">
-				<!--output type="Networking.Packets.Server.ShopLoadNewPacket" schemaName="packetData" /-->
-				<data type="short" name="unknown" />
+				<output type="Networking.Packets.Server.ShopMeretItemCountPacket" schemaName="packetData" />
+				<data type="short" name="count" output="Count" />
 			</condition>
 			<condition data="mode" value="12" comparison="equal">
 				<output type="Networking.Packets.Server.ShopLoadMeretItemPacket" schemaName="packetData" />
@@ -1249,7 +1312,7 @@
 				<enum name="RemoveItem" value="9" />
 				<enum name="SetMoney" value="10" />
 				<enum name="Finalize" value="11" />
-				<!--enum name="Unknown" value="12" /-->
+				<enum name="ChangeOffer" value="12" />
 				<enum name="FinalizeConfirm" value="13" />
 				<!--enum name="Unknown" value="14" /-->
 			</data>
@@ -1321,8 +1384,8 @@
 				<data type="byte" name="index" output="Index" />
 			</condition>
 			<condition data="mode" value="12" comparison="equal">
-				<!--output type="Networking.Packets.Server.TradeFinalizeConfirmPacket" schemaName="packetData" /-->
-				<data type="byte" name="index" />
+				<output type="Networking.Packets.Server.TradeChangeOfferPacket" schemaName="packetData" />
+				<data type="byte" name="index" output="Index" />
 			</condition>
 			<condition data="mode" value="13" comparison="equal">
 				<output type="Networking.Packets.Server.TradeFinalizeConfirmPacket" schemaName="packetData" />
@@ -1356,6 +1419,10 @@
 				<array data="ingredientInfoCount" output="Ingredients">
 					<data type="int" name="unknown" />
 					<data type="int" name="requiredItem" output="RequiredItem">
+						<enum name="MetaCell" value="96" />
+						<enum name="RedCrystal" value="97" />
+						<enum name="GreenCrystal" value="98" />
+						<enum name="BlueCrystal" value="99" />
 						<enum name="CrystalFrag" value="100" />
 						<enum name="Onyx" value="101" />
 						<enum name="ChaosOnyx" value="102" />

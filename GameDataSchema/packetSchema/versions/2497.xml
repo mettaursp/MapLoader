@@ -195,11 +195,14 @@
 			<outputParam type="Maple.Game.MailData" schema="packetData" />
 			<data type="byte" name="type" output="Type">
 				<enum name="Player" value="1" />
+				<enum name="Player" value="2" />
 				<enum name="System" value="101" />
 				<enum name="BlackMarketSale" value="102" />
 				<enum name="BlackMarketCancel" value="104" />
+				<enum name="MesoMarket" value="106" />
 				<enum name="Unknown" value="107" />
-				<enum name="NexonNews" value="112" />
+				<enum name="WeddingSystem" value="112" />
+				<enum name="WeddingInvite" value="112" />
 				<enum name="Ad" value="200" />
 			</data>
 			<data type="long" name="mailInstanceId" output="MailInstanceId" />
@@ -719,8 +722,8 @@
 				<enum name="AddBuyBack" value="7" />
 				<enum name="RemoveBuyBack" value="8" />
 				<enum name="InstantRestock" value="9" />
-				<!--enum name="Unknown" value="11" /-->
-				<!--enum name="Unknown" value="12" /-->
+				<enum name="MeretItemCount" value="11" />
+				<enum name="LoadMeretItem" value="12" />
 				<!--enum name="Unknown" value="13" /-->
 				<enum name="LoadNew" value="14" />
 				<enum name="Error" value="15" />
@@ -793,12 +796,12 @@
 				</condition>
 			</condition>
 			<condition data="mode" value="11" comparison="equal">
-				<!--output type="Networking.Packets.Server.ShopLoadNewPacket" schemaName="packetData" /-->
-				<data type="short" name="unknown" />
+				<output type="Networking.Packets.Server.ShopMeretItemCountPacket" schemaName="packetData" />
+				<data type="short" name="count" output="Count" />
 			</condition>
 			<condition data="mode" value="12" comparison="equal">
 				<output type="Networking.Packets.Server.ShopLoadMeretItemPacket" schemaName="packetData" />
-				<data type="short" name="count" />
+				<data type="byte" name="count" />
 				<array data="count" output="Items">
 					<useBlock name="MeretShopPremiumItemEntry" version="2486" output="MeretItemEntry" />
 					<data type="byte" name="unknown" />
@@ -1059,7 +1062,7 @@
 				<enum name="RemoveItem" value="9" />
 				<enum name="SetMoney" value="10" />
 				<enum name="Finalize" value="11" />
-				<!--enum name="Unknown" value="12" /-->
+				<enum name="ChangeOffer" value="12" />
 				<enum name="FinalizeConfirm" value="13" />
 				<!--enum name="Unknown" value="14" /-->
 			</data>
@@ -1131,8 +1134,8 @@
 				<data type="byte" name="index" output="Index" />
 			</condition>
 			<condition data="mode" value="12" comparison="equal">
-				<!--output type="Networking.Packets.Server.TradeFinalizeConfirmPacket" schemaName="packetData" /-->
-				<data type="byte" name="index" />
+				<output type="Networking.Packets.Server.TradeChangeOfferPacket" schemaName="packetData" />
+				<data type="byte" name="index" output="Index" />
 			</condition>
 			<condition data="mode" value="13" comparison="equal">
 				<output type="Networking.Packets.Server.TradeFinalizeConfirmPacket" schemaName="packetData" />
@@ -1166,6 +1169,10 @@
 				<array data="ingredientInfoCount" output="Ingredients">
 					<data type="int" name="unknown" />
 					<data type="int" name="requiredItem" output="RequiredItem">
+						<enum name="MetaCell" value="96" />
+						<enum name="RedCrystal" value="97" />
+						<enum name="GreenCrystal" value="98" />
+						<enum name="BlueCrystal" value="99" />
 						<enum name="CrystalFrag" value="100" />
 						<enum name="Onyx" value="101" />
 						<enum name="ChaosOnyx" value="102" />

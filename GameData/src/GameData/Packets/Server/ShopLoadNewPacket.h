@@ -1,11 +1,11 @@
 #pragma once
 
-#include <GameData/Enums/Item.h>
 #include <vector>
 #include <GameData/Packets\Server/ShopLoadNewPacket.h>
+#include <GameData/Enums/MapleHandles.h>
+#include <GameData/Enums/MapleItem.h>
+#include <GameData/Packets\Server/BuyPeriodData.h>
 #include <GameData/Data/ItemData.h>
-#include <GameData/Enums/Handles.h>
-#include <GameData/Data/BuyPeriodData.h>
 
 namespace Networking
 {

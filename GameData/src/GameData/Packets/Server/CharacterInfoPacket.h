@@ -1,13 +1,13 @@
 #pragma once
 
-#include <GameData/Enums/Player.h>
-#include <GameData/Enums/Handles.h>
 #include <string>
 #include <GameData/Data/DyeColor.h>
 #include <GameData/Data/CharacterEquipment.h>
 #include <GameData/Packets\Server/CharacterInfoPacket.h>
 #include <vector>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Data/ActorStats.h>
+#include <GameData/Enums/MaplePlayer.h>
 
 namespace Networking
 {

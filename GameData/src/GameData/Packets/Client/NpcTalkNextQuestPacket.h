@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameData/Enums/Handles.h>
 #include <GameData/Packets\Client/NpcTalkNextQuestPacket.h>
+#include <GameData/Enums/MapleHandles.h>
 
 namespace Networking
 {

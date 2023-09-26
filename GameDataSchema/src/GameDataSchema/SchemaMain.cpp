@@ -11,6 +11,7 @@
 #include <ParserUtils/DataStream.h>
 #include <ParserUtils/PacketParsing.h>
 #include <PacketProcessing/Handlers/SniffHandler/SniffHandler.h>
+#include <GameData/Data/ItemData.h>
 
 namespace fs = std::filesystem;
 

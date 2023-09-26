@@ -1,9 +1,9 @@
 #pragma once
 
 #include <GameData/Data/ItemData.h>
-#include <GameData/Enums/Handles.h>
 #include <string>
-#include <GameData/Enums/Item.h>
+#include <GameData/Enums/MapleHandles.h>
+#include <GameData/Enums/MapleItem.h>
 
 namespace Networking
 {

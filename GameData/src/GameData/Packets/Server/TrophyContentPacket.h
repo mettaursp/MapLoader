@@ -2,7 +2,7 @@
 
 #include <GameData/Packets\Server/TrophyContentPacket.h>
 #include <vector>
-#include <GameData/Enums/Handles.h>
+#include <GameData/Enums/MapleHandles.h>
 
 namespace Networking
 {

@@ -3,13 +3,13 @@
 #include <GameData/Data/SkillTreeData.h>
 #include <GameData/Data/Pet.h>
 #include <Engine/Math/Vector3S.h>
-#include <GameData/Enums/Handles.h>
 #include <string>
 #include <GameData/Data/DyeColor.h>
 #include <vector>
 #include <GameData/Data/CharacterData.h>
-#include <GameData/Data/ActorStats.h>
 #include <GameData/Data/CubeItemData.h>
+#include <GameData/Enums/MapleHandles.h>
+#include <GameData/Data/ActorStats.h>
 #include <GameData/Data/MountData.h>
 #include <GameData/Data/CharacterEquipment.h>
 #include <GameData/Data/AdditionalEffect.h>

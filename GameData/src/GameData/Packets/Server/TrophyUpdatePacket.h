@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Packets\Server/TrophyUpdatePacket.h>
-#include <GameData/Enums/Handles.h>
 
 namespace Networking
 {

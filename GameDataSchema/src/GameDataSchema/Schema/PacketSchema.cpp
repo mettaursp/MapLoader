@@ -2213,13 +2213,6 @@ namespace PacketSchema
 				{
 					if (stack.size() > 1 || !opcode.IsBlock)
 					{
-						if (!outputsReferenced.contains(output->Class))
-						{
-							outputsReferenced[output->Class] = opcode.IsServer;
-
-							(opcode.IsServer ? serverOutputsReferenced : clientOutputsReferenced)[opcode.Name].Outputs.push_back(output->Class);
-						}
-
 						out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
 						out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking.Packets"), "::") << ">(" << *output << ");\n";
 
@@ -2919,6 +2912,13 @@ namespace PacketSchema
 
 				outputs[output.Name] = &output;
 
+				if (!outputsReferenced.contains(output.Class))
+				{
+					outputsReferenced[output.Class] = opcode.IsServer;
+
+					(opcode.IsServer ? serverOutputsReferenced : clientOutputsReferenced)[opcode.Name].Outputs.push_back(output.Class);
+				}
+
 				lastType = type;
 
 				continue;
@@ -2935,13 +2935,6 @@ namespace PacketSchema
 			{
 				if (stack.size() > 1 || !opcode.IsBlock)
 				{
-					if (!outputsReferenced.contains(output->Class))
-					{
-						outputsReferenced[output->Class] = opcode.IsServer;
-
-						(opcode.IsServer ? serverOutputsReferenced : clientOutputsReferenced)[opcode.Name].Outputs.push_back(output->Class);
-					}
-
 					out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
 					out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(output->Class->Scope, "Networking.Packets"), "::") << ">(" << *output << ");\n";
 
@@ -2992,13 +2985,6 @@ namespace PacketSchema
 		{
 			if (stack.size() > 1 || !opcode.IsBlock)
 			{
-				if (!outputsReferenced.contains(topOutput->Class))
-				{
-					outputsReferenced[topOutput->Class] = opcode.IsServer;
-
-					(opcode.IsServer ? serverOutputsReferenced : clientOutputsReferenced)[opcode.Name].Outputs.push_back(topOutput->Class);
-				}
-
 				out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
 				out << tabs << "\thandler.PacketParsed<" << OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(topOutput->Class->Scope, "Networking.Packets"), "::") << ">(" << *topOutput << ");\n";
 
@@ -3413,6 +3399,7 @@ namespace PacketSchema
 			cppOut << "#include \"PacketParser.h\"\n\n";
 			cppOut << "#include <vector>\n\n";
 			cppOut << "#include <ParserUtils/PacketParsing.h>\n\n";
+			cppOut << "#include \"PacketParserOutputs.h\"\n\n";
 
 			cppOut << "namespace Networking\n{\n";
 
@@ -3500,6 +3487,21 @@ namespace PacketSchema
 			cppOut << "\t}\n";
 			cppOut << "}\n";
 		}
+
+		fs::path includesHeaderPath = packetProjDir / "src/PacketProcessing/PacketParserOutputs.h";
+
+		{
+			std::ofstream headerOut(includesHeaderPath);
+
+			headerOut << "#pragma once\n";
+
+			for (const auto& entry : outputsReferenced)
+			{
+				const OutputSchema::SchemaClass* schemaClass = entry.first;
+
+				headerOut << "#include <GameData/" << schemaClass->Directory << "/" << schemaClass->Name << ".h>\n";
+			}
+		}
 	}
 
 	void generateHandler(const std::string& name)
@@ -3537,7 +3539,7 @@ namespace PacketSchema
 					{
 						std::string current = schemaClass->Scope.substr(lastStart, i - lastStart);
 						std::string currentFull = schemaClass->Scope.substr(0, i);
-						std::string lastFull = schemaClass->Scope.substr(0, lastStart);
+						std::string lastFull = schemaClass->Scope.substr(0, lastStart ? lastStart - 1 : 0);
 						
 						referencedNamespaces[lastFull].Children[current] = &referencedNamespaces[currentFull];
 
@@ -3548,7 +3550,7 @@ namespace PacketSchema
 				if (lastStart < size)
 				{
 					std::string current = schemaClass->Scope.substr(lastStart, size - lastStart);
-					std::string currentFull = schemaClass->Scope.substr(0, size);
+					std::string currentFull = schemaClass->Scope.substr(0, lastStart ? lastStart - 1 : 0);
 
 					auto& parent = referencedNamespaces[currentFull];
 
@@ -3575,38 +3577,32 @@ namespace PacketSchema
 			{
 				NamespaceStackEntry& entry = namespaceStack.back();
 
-				const char* currentTabs = tabs + maxTabs - namespaceStack.size();
+				size_t size = namespaceStack.size();
+				const char* currentTabs = tabs + maxTabs - size;
+
+				for (const auto entry : entry.Namespace->Classes)
+				{
+					headerOut << currentTabs << "struct " << entry << ";\n";
+				}
+
+				if (entry.Namespace->Classes.size() && entry.Namespace->Children.size())
+				{
+					headerOut << currentTabs << "\n";
+				}
 
 				if (entry.Entry == entry.Namespace->Children.end())
 				{
 					namespaceStack.pop_back();
 
-					NamespaceStackEntry& nextEntry = namespaceStack.back();
-
-					if (namespaceStack.size() > 1)
+					if (namespaceStack.size() > 0)
 					{
-						std::cout << currentTabs << "}\n";
+						headerOut << (currentTabs + 1) << "}\n";
 					}
 
 					continue;
 				}
 
-				size_t size = namespaceStack.size();
-
-				if (size > 1)
-				{
-					headerOut << currentTabs << "namespace " << name << "\n" << currentTabs << "{\n";
-				}
-
-				for (const auto entry : entry.Namespace->Classes)
-				{
-					headerOut << (currentTabs - 1) << "struct " << entry << ";\n";
-				}
-
-				if (entry.Namespace->Classes.size())
-				{
-					headerOut << currentTabs << "\n";
-				}
+				headerOut << currentTabs << "namespace " << entry.Entry->first << "\n" << currentTabs << "{\n";
 
 				NamespaceStackEntry next = { entry.Entry->first, entry.Entry->second, entry.Entry->second->Children.begin() };
 
@@ -3619,13 +3615,6 @@ namespace PacketSchema
 			{
 				headerOut << "\n";
 			}
-
-			//for (const auto& entry : outputsReferenced)
-			//{
-			//	const OutputSchema::SchemaClass* schemaClass = entry.first;
-			//
-			//	headerOut << "#include <GameData/" << schemaClass->Directory << "/" << schemaClass->Name << ".h>\n";
-			//}
 
 			headerOut << "\nnamespace Networking\n{\n";
 
@@ -3683,15 +3672,20 @@ namespace PacketSchema
 
 			for (size_t i = 0; i < opcode.Outputs.size(); ++i)
 			{
+				if (i != 0)
+				{
+					cppOut << "\t\n";
+				}
+
 				const OutputSchema::SchemaClass* schemaClass = opcode.Outputs[i];
 
 				std::string typeName = OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(schemaClass->Scope, "Networking.Packets"), "::");
 				cppOut << (i == 0 ? "\t\ttemplate <>\n" : "\n\t\ttemplate <>\n");
 				cppOut << "\t\tvoid " << name << "::PacketParsed<" << typeName << ">(const " << typeName << "& packet)\n\t\t{\n\t\t\t\n\t\t}\n";
-
-				cppOut << "\t}\n";
-				cppOut << "}\n";
 			}
+
+			cppOut << "\t}\n";
+			cppOut << "}\n";
 
 			std::string filterData = "Source Files\\Handlers\\" + name + (isServer ? "\\Server" : "\\Client");
 

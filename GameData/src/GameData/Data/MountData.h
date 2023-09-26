@@ -1,10 +1,10 @@
 #pragma once
 
-#include <GameData/Enums/Item.h>
 #include <vector>
-#include <GameData/Data/MountData.h>
-#include <GameData/Enums/Handles.h>
+#include <GameData/Enums/MapleItem.h>
 #include <GameData/Data/ItemUgc.h>
+#include <GameData/Enums/MapleHandles.h>
+#include <GameData/Data/MountData.h>
 
 namespace Maple
 {

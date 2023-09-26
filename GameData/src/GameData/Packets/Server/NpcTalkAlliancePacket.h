@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameData/Data/NpcDialogData.h>
+#include <GameData/Packets\Server/NpcDialogData.h>
 
 namespace Networking
 {

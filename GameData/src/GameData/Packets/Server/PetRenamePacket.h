@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameData/Enums/Handles.h>
-#include <GameData/Data/PetProfileData.h>
+#include <GameData/Packets\Server/PetProfileData.h>
+#include <GameData/Enums/MapleHandles.h>
 
 namespace Networking
 {

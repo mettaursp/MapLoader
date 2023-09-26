@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameData/Data/ScriptContentData.h>
+#include <GameData/Packets\Server/ScriptContentData.h>
 
 namespace Networking
 {

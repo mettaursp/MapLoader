@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameData/Enums/Handles.h>
 #include <string>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Packets\Server/UserChatPacket.h>
 
 namespace Networking

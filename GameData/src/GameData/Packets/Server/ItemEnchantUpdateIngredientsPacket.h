@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <GameData/Packets\Server/ItemEnchantUpdateIngredientsPacket.h>
-#include <GameData/Enums/Handles.h>
+#include <GameData/Enums/MapleHandles.h>
 
 namespace Networking
 {

@@ -3,8 +3,8 @@
 #include <Engine/Math/Vector3S.h>
 #include <vector>
 #include <GameData/Packets\Server/LoadCubesPacket.h>
-#include <GameData/Enums/Handles.h>
 #include <GameData/Data/CubeItemData.h>
+#include <GameData/Enums/MapleHandles.h>
 
 namespace Networking
 {

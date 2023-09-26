@@ -1,13 +1,13 @@
 #pragma once
 
 #include <GameData/Data/ActorBasicStat.h>
-#include <GameData/Enums/Handles.h>
-#include <GameData/Enums/Player.h>
 #include <string>
 #include <Engine/Math/Vector3S.h>
 #include <vector>
 #include <GameData/Data/DyeColor.h>
 #include <GameData/Data/CharacterData.h>
+#include <GameData/Enums/MapleHandles.h>
+#include <GameData/Enums/MaplePlayer.h>
 #include <GameData/Data/MasteryData.h>
 
 namespace Maple

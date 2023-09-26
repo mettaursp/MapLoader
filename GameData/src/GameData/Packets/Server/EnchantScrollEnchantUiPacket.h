@@ -1,9 +1,9 @@
 #pragma once
 
-#include <GameData/Enums/Item.h>
 #include <vector>
-#include <GameData/Enums/Handles.h>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Packets\Server/EnchantScrollEnchantUiPacket.h>
+#include <GameData/Enums/MapleItem.h>
 
 namespace Networking
 {

@@ -2,7 +2,7 @@
 
 #include <Engine/Math/Vector3S.h>
 #include <vector>
-#include <GameData/Enums/Handles.h>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Packets\Server/SkillDamageSyncPacket.h>
 
 namespace Networking

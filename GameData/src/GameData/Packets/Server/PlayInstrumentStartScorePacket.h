@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Engine/Math/Vector3S.h>
-#include <GameData/Enums/Handles.h>
 #include <string>
+#include <GameData/Enums/MapleHandles.h>
 
 namespace Networking
 {

@@ -4,6 +4,8 @@
 
 #include <ParserUtils/PacketParsing.h>
 
+#include "PacketParserOutputs.h"
+
 namespace Networking
 {
 	namespace Packets

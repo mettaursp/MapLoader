@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameData/Data/MeretShopPremiumItemEntryData.h>
+#include <GameData/Packets\Server/MeretShopPremiumItemEntryData.h>
 #include <vector>
 #include <GameData/Packets\Server/ShopLoadMeretItemPacket.h>
 

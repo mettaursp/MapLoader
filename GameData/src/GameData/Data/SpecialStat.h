@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameData/Enums/Stats.h>
+#include <GameData/Enums/MapleStats.h>
 
 namespace Maple
 {

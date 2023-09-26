@@ -1,8 +1,8 @@
 #pragma once
 
 #include <vector>
-#include <GameData/Enums/Handles.h>
 #include <GameData/Packets\Server/EnchantScrollStatUiPacket.h>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Data/BasicStat.h>
 
 namespace Networking

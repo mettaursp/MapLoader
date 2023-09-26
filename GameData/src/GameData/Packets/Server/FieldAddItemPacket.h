@@ -1,9 +1,9 @@
 #pragma once
 
 #include <Engine/Math/Vector3S.h>
+#include <GameData/Enums/MapleHandles.h>
+#include <GameData/Enums/MapleItem.h>
 #include <GameData/Data/ItemData.h>
-#include <GameData/Enums/Handles.h>
-#include <GameData/Enums/Item.h>
 
 namespace Networking
 {

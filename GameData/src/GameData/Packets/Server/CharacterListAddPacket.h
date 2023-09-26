@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameData/Data/CharacterListEntry.h>
+#include <GameData/Packets\Server/CharacterListEntry.h>
 
 namespace Networking
 {

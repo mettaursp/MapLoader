@@ -90,1509 +90,762 @@
         <ClInclude Include="./../GameData\src/GameData\Data\ActorBasicStat.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ActorBasicStat.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ActorSpecialStat.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ActorSpecialStat.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ActorStats.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ActorStats.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\DyeColor.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\DyeColor.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemCapCustomization.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemCapCustomization.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemHairCustomization.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemHairCustomization.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemDecalCustomization.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemDecalCustomization.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemCustomization.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemCustomization.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\BasicStat.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\BasicStat.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\SpecialStat.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\SpecialStat.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\BonusStats.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\BonusStats.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemStats.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemStats.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemEnchantment.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemEnchantment.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemLimitBreak.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemLimitBreak.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemUgc.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemUgc.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemBlueprint.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemBlueprint.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemPet.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemPet.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemMusic.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemMusic.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemBadge.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemBadge.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemBinding.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemBinding.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemTransfer.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemTransfer.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemSocket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemSocket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemCouple.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemCouple.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\ItemData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ItemData.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\EffectStats.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\EffectStats.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\AdditionalEffect.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\AdditionalEffect.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\MasteryData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\MasteryData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\CharacterData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\CharacterData.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\EquipmentData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\EquipmentData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\CharacterEquipment.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\CharacterEquipment.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\CharacterListEntry.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\CharacterListEntry.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListEntry.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\SkillTreePageData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\SkillTreePageData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\SkillTreeData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\SkillTreeData.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcDialogData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\NpcDialogData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ScriptContentData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\NpcDialogData.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BuyPeriodData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ScriptContentData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MeretShopPremiumItemData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\ScriptContentData.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MeretShopPremiumItemEntryData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\BuyPeriodData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailAdData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\BuyPeriodData.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailAttachData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\MeretShopPremiumItemData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\MeretShopPremiumItemData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\MeretShopPremiumItemEntryData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\MeretShopPremiumItemEntryData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\MailAdData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\MailAdData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\MailAttachData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\MailAttachData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\MailData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\MailData.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\CubeItemData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\CubeItemData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\MountData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\MountData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\BlackMarketEntryData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\BlackMarketEntryData.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketEntryData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\Pet.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\Pet.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldPetData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\FieldPetData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetProfileData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\FieldPetData.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPotionSettingsData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\PetProfileData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\PetProfileData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\PetPotionSettingsData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\PetPotionSettingsData.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\PetLootSettingsData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Data\PetLootSettingsData.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLootSettingsData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\Reconnect7Packet.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\Reconnect7Packet.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ServerEnterPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ServerEnterPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListLoadPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterListLoadPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListAddPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterListAddPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListDeletePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterListDeletePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListDeletePendingPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterListDeletePendingPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListCancelDeletePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterListCancelDeletePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListChangeNamePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterListChangeNamePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPlayerPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddPlayerPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePlayerPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemovePlayerPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\UserChatPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageStartListPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageStartListPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageCountPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageCountPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageAddPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageAddPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageRemovePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageRemovePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStoragePurchasePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStoragePurchasePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageUpdatePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageUpdatePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageEndListPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageEndListPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemPutOnPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemPutOffPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOnPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOnPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdatePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemUpdatePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveItemPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\StatPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\StatPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ExpUpPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ExpUpPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\LevelUpPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LevelUpPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageSyncPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\SkillDamageSyncPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamagePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\SkillDamagePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageDotPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\SkillDamageDotPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageHealPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\SkillDamageHealPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageRegionPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\SkillDamageRegionPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageTilePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\SkillDamageTilePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BuffPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BuffPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\JobPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\JobPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkEndPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkEndPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkRespondPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkRespondPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkContinuePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkContinuePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionMovePlayerPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionMovePlayerPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionOpenDialogPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionOpenDialogPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardExpPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardExpPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardMesoPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardMesoPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionAddOptionPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionAddOptionPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionCutscenePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionCutscenePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkUpdatePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkUpdatePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkAlliancePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\NpcTalkAlliancePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopOpenPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopOpenPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopLoadItemsPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopLoadItemsPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopUpdatePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopUpdatePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopBuyPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopBuyPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopBuyBackItemCountPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopBuyBackItemCountPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopAddBuyBackPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopAddBuyBackPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopRemoveBuyBackPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopRemoveBuyBackPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopInstantRestockPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopInstantRestockPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopMeretItemCountPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopMeretItemCountPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopLoadMeretItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopLoadMeretItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopLoadNewPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopLoadNewPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopErrorPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ShopErrorPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailLoadPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailLoadPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailSendCustomConfirmPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailSendCustomConfirmPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailReadPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailReadPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailErrorPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailErrorPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailCollectingPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailCollectingPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailUpdateReadTimePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailUpdateReadTimePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailDeletePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailDeletePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailReceivePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailReceivePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailExpireNotificationPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailExpireNotificationPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailStartListPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailStartListPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailEndListPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailEndListPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailError2Packet.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailError2Packet.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailReceiveGiftNotificationPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\MailReceiveGiftNotificationPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPetPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldAddPetPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyStartPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TrophyStartPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyContentPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TrophyContentPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyUpdatePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TrophyUpdatePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LoadCubesPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesAvailabilityPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LoadCubesAvailabilityPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesPlotsPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LoadCubesPlotsPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesExpirationPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\LoadCubesExpirationPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterInfoPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\CharacterInfoPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollLoadPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FittingDollLoadPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollRemovePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FittingDollRemovePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollPutOnItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FittingDollPutOnItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollRemoveItemPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FittingDollRemoveItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollErrorPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\FittingDollErrorPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeReceiveRequestPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeReceiveRequestPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeErrorPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeErrorPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeConfirmRequestPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeConfirmRequestPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeDeclinedPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeDeclinedPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeBeginPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeBeginPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeEndPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeEndPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeAddItemPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeAddItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeRemoveItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeRemoveItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeSetMoneyPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeSetMoneyPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeFinalizePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeFinalizePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeChangeOfferPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeChangeOfferPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeFinalizeConfirmPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\TradeFinalizeConfirmPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantBeginPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemEnchantBeginPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateExpPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateExpPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateChargesPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateChargesPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateIngredientsPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateIngredientsPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantSuccessPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemEnchantSuccessPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantFailPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemEnchantFailPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantErrorPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemEnchantErrorPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketErrorPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BlackMarketErrorPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketMyListingsPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BlackMarketMyListingsPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketCreateListingPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BlackMarketCreateListingPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketCancelListingPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BlackMarketCancelListingPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketSearchResultsPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BlackMarketSearchResultsPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketPurchasePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BlackMarketPurchasePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketSoldPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BlackMarketSoldPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketPrepareListingPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BlackMarketPrepareListingPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollEnchantUiPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollEnchantUiPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollStatUiPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollStatUiPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollSuccessPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollSuccessPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollResultPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollResultPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollRewardPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\EnchantScrollRewardPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStartImprovisePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStartImprovisePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentPlayNotePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentPlayNotePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStopImprovisePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStopImprovisePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStartScorePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStartScorePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStopScorePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStopScorePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentLeaveEnsemblePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentLeaveEnsemblePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentCreateScoreResponsePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentCreateScoreResponsePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentUpdateScoreUsesPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentUpdateScoreUsesPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentViewMusicPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentViewMusicPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentEffectPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentEffectPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentWritePlayDialogPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentWritePlayDialogPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesPreviewPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesPreviewPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesAddPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesAddPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesErrorPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesErrorPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollUseScrollPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollUseScrollPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollUseOnItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollUseOnItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollPreviewItemPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollPreviewItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollApplyPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollApplyPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollErrorPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollErrorPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetAddPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetAddPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetRemovePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetRemovePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetSoundPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetSoundPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetRenamePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetRenamePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPotionPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetPotionPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLootPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetLootPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLoadCollectionPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetLoadCollectionPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetAddCollectionPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetAddCollectionPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInfoPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetInfoPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetFusionPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetFusionPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLevelUpPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetLevelUpPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetFusionDialogPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetFusionDialogPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetSummonedNoticePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetSummonedNoticePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetOtherPetInfoPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetOtherPetInfoPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetEvolvePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetEvolvePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetEvolvePointsPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetEvolvePointsPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetErrorPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetErrorPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLapisSnarePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetLapisSnarePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetUnknownFieldPetPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetUnknownFieldPetPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryStoreItemPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetInventoryStoreItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryRemoveItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetInventoryRemoveItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryUpdateAmountPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetInventoryUpdateAmountPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryMoveItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetInventoryMoveItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryListItemsPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetInventoryListItemsPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryStartListPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\PetInventoryStartListPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockAddItemPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemLockAddItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockRemoveItemPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemLockRemoveItemPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockUpdateItemPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemLockUpdateItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockErrorPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\ItemLockErrorPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Server\BindItemPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseVersionPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\ResponseVersionPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\HandshakePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\HandshakePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\LogInPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInAuthTokenPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\LogInAuthTokenPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\ReconnectPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\ReconnectPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseKeyPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\ResponseKeyPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseHeartbeatPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\ResponseHeartbeatPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\RequestQuitPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\RequestQuitPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillCastPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillCastPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncDamagePacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillSyncDamagePacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillDamagePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillDamagePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillRegionSkillPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillRegionSkillPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillSyncPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncTickPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillSyncTickPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillCancelPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SkillCancelPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\StateSkillPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\StateSkillPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkClosePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkClosePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkBeginPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkBeginPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkContinuePacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkContinuePacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkEnchantUnknownPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkEnchantUnknownPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkEnchantPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkEnchantPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkNextQuestPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkNextQuestPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkAllianceQuestAcceptPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkAllianceQuestAcceptPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkAllianceQuestTalkPacket.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkAllianceQuestTalkPacket.cpp"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkCinematicPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\NpcTalkCinematicPacket.cpp"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SystemInfoPacket.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClCompile Include="./../GameData\src/GameData\Packets\Client\SystemInfoPacket.cpp"/>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapleCombat.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Combat.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapleHandles.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Player.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MaplePlayer.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Item.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapleItem.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Handles.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\Stats.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapleStats.h"/>
     </ItemGroup>
 </Project>

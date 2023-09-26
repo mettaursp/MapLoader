@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include <GameData/Data/MailData.h>
+#include <GameData/Packets\Server/MailData.h>
 
 namespace Networking
 {

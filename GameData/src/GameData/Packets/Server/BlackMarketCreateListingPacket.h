@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameData/Data/BlackMarketEntryData.h>
+#include <GameData/Packets\Server/BlackMarketEntryData.h>
 
 namespace Networking
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <GameData/Enums/Handles.h>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Packets\Server/ShopBuyPacket.h>
 
 namespace Networking

@@ -1,9 +1,9 @@
 #pragma once
 
 #include <vector>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Packets\Server/ItemLockUpdateItemPacket.h>
 #include <GameData/Data/ItemData.h>
-#include <GameData/Enums/Handles.h>
 
 namespace Networking
 {

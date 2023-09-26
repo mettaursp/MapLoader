@@ -2,8 +2,8 @@
 
 #include <vector>
 #include <GameData/Data/ItemBinding.h>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Data/ItemSocket.h>
-#include <GameData/Enums/Handles.h>
 
 namespace Maple
 {

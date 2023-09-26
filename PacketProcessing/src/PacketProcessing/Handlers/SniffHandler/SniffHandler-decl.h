@@ -4,12 +4,12 @@
 #include <ostream>
 
 #include <ParserUtils/DataStream.h>
-#include <GameData/Enums/Handles.h>
-#include <GameData/Enums/Player.h>
+#include <GameData/Enums/MapleHandles.h>
+#include <GameData/Enums/MaplePlayer.h>
 #include <GameData/Data/ActorStats.h>
 #include <GameData/Data/AdditionalEffect.h>
 #include <GameData/Data/SkillTreeData.h>
-#include <GameData/Enums/Item.h>
+#include <GameData/Enums/MapleItem.h>
 
 namespace Maple
 {

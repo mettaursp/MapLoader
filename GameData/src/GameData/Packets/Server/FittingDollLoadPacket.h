@@ -1,12 +1,12 @@
 #pragma once
 
 #include <GameData/Data/ItemData.h>
-#include <GameData/Enums/Handles.h>
 #include <string>
 #include <Engine/Math/Vector3S.h>
-#include <GameData/Enums/Item.h>
 #include <vector>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Packets\Server/FittingDollLoadPacket.h>
+#include <GameData/Enums/MapleItem.h>
 
 namespace Networking
 {

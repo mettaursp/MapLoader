@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameData/Enums/Handles.h>
 #include <GameData/Data/EffectStats.h>
+#include <GameData/Enums/MapleHandles.h>
 
 namespace Maple
 {

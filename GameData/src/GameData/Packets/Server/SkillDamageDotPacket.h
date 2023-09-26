@@ -1,7 +1,7 @@
 #pragma once
 
-#include <GameData/Enums/Handles.h>
-#include <GameData/Enums/Combat.h>
+#include <GameData/Enums/MapleHandles.h>
+#include <GameData/Enums/MapleCombat.h>
 
 namespace Networking
 {

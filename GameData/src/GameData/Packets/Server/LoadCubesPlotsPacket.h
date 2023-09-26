@@ -1,8 +1,8 @@
 #pragma once
 
-#include <GameData/Enums/Handles.h>
 #include <string>
 #include <vector>
+#include <GameData/Enums/MapleHandles.h>
 #include <GameData/Packets\Server/LoadCubesPlotsPacket.h>
 
 namespace Networking

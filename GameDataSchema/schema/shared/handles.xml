@@ -1,114 +1,114 @@
 <outputSchema isGlobal="true">
 	<namespace name="Enum">
-		<enum name="SkillId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="SkillId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="SkillLevel" parent="unsigned short" directory="Enums" file="Handles">
+		<enum name="SkillLevel" parent="unsigned short" directory="Enums" file="MapleHandles">
 			<value name="Zero" value="0" />
 		</enum>
-		<enum name="EffectId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="EffectId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="EffectLevel" parent="unsigned short" directory="Enums" file="Handles">
+		<enum name="EffectLevel" parent="unsigned short" directory="Enums" file="MapleHandles">
 			<value name="Zero" value="0" />
 		</enum>
-		<enum name="SkillSn" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="SkillSn" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ActorId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="ActorId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="NpcId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="NpcId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="MapId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="MapId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="QuestId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="QuestId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="PortalId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="PortalId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="TrophyId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="TrophyId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ItemId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="ItemId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="PetId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="PetId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="MountId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="MountId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ShopId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="ShopId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ShopRepurchaseId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="ShopRepurchaseId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ShopEntryId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="ShopEntryId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="InstrumentId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="InstrumentId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="TitleId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="TitleId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="InsigniaId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="InsigniaId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ItemEntityId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="ItemEntityId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ScriptId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="ScriptId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ChannelId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="ChannelId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="SuperChatId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="SuperChatId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="BadgeId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="BadgeId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="EffectInstanceId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="EffectInstanceId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="CharacterId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="CharacterId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="AccountId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="AccountId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="ItemInstanceId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="MailInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="MailInstanceId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ListingInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="ListingInstanceId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="DollInstanceId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="DollInstanceId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="MapInstanceId" parent="unsigned int" directory="Enums" file="Handles">
+		<enum name="MapInstanceId" parent="unsigned int" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="ClubId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="ClubId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="GuildId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="GuildId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="SessionId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="SessionId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
-		<enum name="SkillAttackId" parent="unsigned long long" directory="Enums" file="Handles">
+		<enum name="SkillAttackId" parent="unsigned long long" directory="Enums" file="MapleHandles">
 			<value name="Null" value="0" />
 		</enum>
 	</namespace>

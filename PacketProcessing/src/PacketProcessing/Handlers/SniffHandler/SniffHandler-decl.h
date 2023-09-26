@@ -11,6 +11,14 @@
 #include <GameData/Data/SkillTreeData.h>
 #include <GameData/Enums/Item.h>
 
+namespace Maple
+{
+	namespace Game
+	{
+		struct ItemData;
+	}
+}
+
 namespace Networking
 {
 	namespace Packets
@@ -58,6 +66,7 @@ namespace Networking
 			unsigned char BadgeType = 0;
 			unsigned int BadgeId = 0;
 			bool IsBadge = false;
+			unsigned short Level = 0;
 		};
 
 		struct Metadata
@@ -163,11 +172,10 @@ namespace Networking
 			Enum::ItemId ItemId = Enum::ItemId::Null;
 			Enum::ItemInstanceId InstanceId = Enum::ItemInstanceId::Null;
 			Enum::Rarity Rarity = Enum::Rarity::None;
-			Enum::SlotType Slot = Enum::SlotType(0);
 			Enum::BadgeType BadgeType = Enum::BadgeType::None;
-			unsigned int Quantity = 0;
+			unsigned int Amount = 0;
 			const ItemData* Meta = nullptr;
-			ItemStats Data;
+			Maple::Game::ItemData* Data = nullptr;
 		};
 
 		struct FieldState
@@ -181,6 +189,7 @@ namespace Networking
 			std::unordered_map<Enum::ActorId, Player> Players;
 			std::unordered_map<Enum::ActorId, Pet> Pets;
 			std::unordered_map<Enum::ItemInstanceId, Item> Items;
+			std::unordered_map<Enum::ItemInstanceId, Maple::Game::ItemData> ItemStats;
 
 			Actor* GetActor(Enum::ActorId actor);
 			const Actor* GetActor(Enum::ActorId actor) const;
@@ -213,6 +222,18 @@ namespace Networking
 			Enum::SkillLevel SkillLevel = (Enum::SkillLevel)0;
 		};
 
+		struct PrintItem
+		{
+			const FieldState& Field;
+			Enum::ItemInstanceId ItemInstanceId = Enum::ItemInstanceId::Null;
+		};
+
+		struct PrintItemStats
+		{
+			const FieldState& Field;
+			Enum::ItemInstanceId ItemInstanceId = Enum::ItemInstanceId::Null;
+		};
+
 		extern std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Gms2JobBaseStats;
 		extern std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Kms2JobBaseStats;
 
@@ -235,6 +256,7 @@ namespace Networking
 			std::string Locale;
 			std::string LastPacketName;
 			size_t StackDepth = 0;
+			size_t DiscardedItemPackets = 0;
 
 			const char* Tabs() const;
 
@@ -271,7 +293,10 @@ namespace Networking
 			unsigned short GetItemCategory(unsigned int itemId) const;
 			bool StatIntToFloat(float& rate) const;
 			unsigned char GetActorType(Enum::ActorId actorId);
-			int GetItemIdFromInstance(Enum::ItemInstanceId instanceId) const;
+			int GetItemIdFromInstance(Enum::ItemInstanceId instanceId);
+
+			Item* RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId);
+			Item* GetItem(Enum::ItemInstanceId instanceId);
 
 			template <typename T>
 			const T& Copy(const T& value) { return value; }
@@ -285,3 +310,5 @@ namespace Networking
 std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintActor& actor);
 std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintEffect& effect);
 std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintSkill& effect);
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItem& item);
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItemStats& item);

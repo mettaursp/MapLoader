@@ -1,6 +1,6 @@
 <outputSchema isGlobal="true">
 	<namespace name="Enum">
-		<enum name="HitType" directory="Enums" file="Combat">
+		<enum name="HitType" directory="Enums" file="MapleCombat">
 			<value name="Normal" value="0" />
 			<value name="Critical" value="1" />
 			<value name="Miss" value="2" />
@@ -8,7 +8,7 @@
 			<value name="Unknown4" value="4" />
 			<value name="Unknown8" value="8" />
 		</enum>
-		<enum name="NpcType" parent="unsigned long long" directory="Enums" file="Combat">
+		<enum name="NpcType" parent="unsigned long long" directory="Enums" file="MapleCombat">
 			<value name="Enemy" value="0" />
 			<value name="Ally" value="1" />
 			<value name="Friendly" value="2" />

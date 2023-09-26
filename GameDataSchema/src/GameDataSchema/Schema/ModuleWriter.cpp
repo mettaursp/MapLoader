@@ -489,12 +489,12 @@ namespace OutputSchema
 		fs::create_directories(outputDir);
 
 		addProjectNode(vcxprojRoot, "ClInclude", outputHeader.string(), nullptr);
-		addProjectNode(vcxprojRoot, "ClCompile", outputCpp.string(), nullptr);
+		//addProjectNode(vcxprojRoot, "ClCompile", outputCpp.string(), nullptr);
 
 		std::string filter = "Source Files\\" + schemaClass.Directory;
 
 		addProjectNode(filtersRoot, "ClInclude", outputHeader.string(), filter.c_str());
-		addProjectNode(filtersRoot, "ClCompile", outputCpp.string(), filter.c_str());
+		//addProjectNode(filtersRoot, "ClCompile", outputCpp.string(), filter.c_str());
 
 		{
 			std::ofstream outFile(outputHeader);

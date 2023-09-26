@@ -1,6 +1,6 @@
 <outputSchema isGlobal="true">
 	<namespace name="Enum">
-		<enum name="StatAttributeBasic" parent="unsigned char" directory="Enums" file="Stats">
+		<enum name="StatAttributeBasic" parent="unsigned char" directory="Enums" file="MapleStats">
 			<value name="Str" value="0" />
 			<value name="Dex" value="1" />
 			<value name="Int" value="2" />
@@ -37,7 +37,7 @@
 			<value name="BonusAtk" value="33" />
 			<value name="PetBonusAtk" value="34" />
 		</enum>
-		<enum name="StatAttributeSpecial" parent="unsigned short" directory="Enums" file="Stats">
+		<enum name="StatAttributeSpecial" parent="unsigned short" directory="Enums" file="MapleStats">
 			<value name="ExpBonus" value="1" />
 			<value name="MesoBonus" value="2" />
 			<value name="SwimSpeed" value="3" />

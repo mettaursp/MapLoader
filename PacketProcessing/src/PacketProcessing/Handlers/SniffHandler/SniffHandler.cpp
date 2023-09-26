@@ -1,4 +1,4 @@
-#include "SniffHandler-decl.h"
+#include "SniffHandler.h"
 
 #include <zlib.h>
 
@@ -40,6 +40,15 @@ namespace Networking
 			{ Enum::StatAttributeBasic::Defense, "Defense" },
 			{ Enum::StatAttributeBasic::SpRegen, "SpRegen" },
 			{ Enum::StatAttributeBasic::SpRegenInterval, "SpRegenInterval" }
+		};
+
+		const std::unordered_map<Enum::Rarity, std::string> Rarities = {
+			{ Enum::Rarity::Common, "Common" },
+			{ Enum::Rarity::Rare, "Rare" },
+			{ Enum::Rarity::Exceptional, "Exceptional" },
+			{ Enum::Rarity::Epic, "Epic" },
+			{ Enum::Rarity::Legendary, "Legendary" },
+			{ Enum::Rarity::Ascendant, "Ascendant" },
 		};
 
 		void AddStats(ActorStats& stats, const Maple::Game::ActorStats& packetStats)
@@ -808,16 +817,89 @@ namespace Networking
 			return Unknown;
 		}
 
-		int SniffHandler::GetItemIdFromInstance(Enum::ItemInstanceId instanceId) const
+		int SniffHandler::GetItemIdFromInstance(Enum::ItemInstanceId instanceId)
 		{
 			const auto entry = Field.Items.find(instanceId);
 
 			if (entry == Field.Items.end())
 			{
+				++DiscardedItemPackets;
+
 				return 0;
 			}
 
 			return (int)entry->second.ItemId;
+		}
+
+		Item* SniffHandler::RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId)
+		{
+			if (Field.Items.contains(instanceId))
+			{
+				Item* item = &Field.Items[instanceId];
+
+				if (item->ItemId == itemId)
+				{
+					return &Field.Items[instanceId];
+				}
+
+				*item = {};
+
+				if (Field.ItemStats.contains(instanceId))
+				{
+					Field.ItemStats.erase(instanceId);
+				}
+			}
+			
+			const auto metaEntry = Field.GameData->Items.find(itemId);
+
+			if (metaEntry == Field.GameData->Items.end())
+			{
+				if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				{
+					FoundUnknownValue();
+
+					std::cout << TimeStamp << "registering item with unknown item id " << itemId << std::endl;
+				}
+
+				return nullptr;
+			}
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << TimeStamp << "registering item [" << itemId << "] '" << metaEntry->second.Name << "' " << instanceId << std::endl;
+			}
+
+			Item* item = &Field.Items[instanceId];
+
+			item->ItemId = itemId;
+			item->InstanceId = instanceId;
+			item->Meta = &metaEntry->second;
+
+			if ((unsigned int)itemId < 90000001 || (unsigned int)itemId > 90000003)
+			{
+				item->Data = &Field.ItemStats[instanceId];
+			}
+
+			return item;
+		}
+
+		Item* SniffHandler::GetItem(Enum::ItemInstanceId instanceId)
+		{
+			const auto itemEntry = Field.Items.find(instanceId);
+
+			if (itemEntry == Field.Items.end())
+			{
+				if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				{
+					FoundUnknownValue();
+
+					std::cout << TimeStamp << "referencing unregistered item instance " << instanceId << std::endl;
+				}
+
+				return nullptr;
+			}
+
+			return &itemEntry->second;
 		}
 
 		void SniffHandler::DiscardPacket()
@@ -1035,4 +1117,69 @@ std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintSkil
 	}
 
 	return out << "Lv" << (unsigned short)effect.SkillLevel;
+}
+
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItem& itemRef)
+{
+	const auto itemEntry = itemRef.Field.Items.find(itemRef.ItemInstanceId);
+
+	if (itemEntry == itemRef.Field.Items.end())
+	{
+		return out << "<unknown item " << itemRef.ItemInstanceId << ">";
+	}
+
+	const Networking::Packets::Item* item = &itemEntry->second;
+
+	const auto rarityEntry = Networking::Packets::Rarities.find(item->Rarity);
+
+	out << "[" << item->ItemId << "] ";
+
+	if (rarityEntry != Networking::Packets::Rarities.end())
+	{
+		out << rarityEntry->second << " ";
+	}
+	else
+	{
+		out << "<unknown rarity> ";
+	}
+
+	if (item->Meta->Level != 0)
+	{
+		out << "Lv" << item->Meta->Level << " ";
+	}
+
+	out << "'" << item->Meta->Name << "' ";
+
+	if (item->Amount != 1)
+	{
+		out << "x" << item->Amount << " ";
+	}
+
+	if (item->Data)
+	{
+		if (item->Data->LimitBreak.Level != 0)
+		{
+			out << "*" << item->Data->LimitBreak.Level << " ";
+		}
+		else if (item->Data->Enchantment.Level != 0)
+		{
+			out << "+" << item->Data->Enchantment.Level << " ";
+		}
+	}
+
+	return out << item->InstanceId;
+}
+
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItemStats& itemRef)
+{
+	const auto itemEntry = itemRef.Field.Items.find(itemRef.ItemInstanceId);
+
+	if (itemEntry == itemRef.Field.Items.end())
+	{
+		return out << "\t<unknown item stats " << itemRef.ItemInstanceId << ">";
+	}
+
+	const Networking::Packets::Item* item = &itemEntry->second;
+
+	return out;
 }

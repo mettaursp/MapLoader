@@ -2112,6 +2112,13 @@ namespace PacketSchema
 		}
 	}
 
+	struct OutputFiles
+	{
+		std::vector<const OutputSchema::SchemaClass*> Outputs;
+	};
+	
+	std::unordered_map<std::string, OutputFiles> serverOutputsReferenced;
+	std::unordered_map<std::string, OutputFiles> clientOutputsReferenced;
 	std::unordered_map<const OutputSchema::SchemaClass*, bool> outputsReferenced;
 
 	void generateParser(Generator& generator, std::ofstream& out, const PacketOpcode& opcode)
@@ -2209,6 +2216,8 @@ namespace PacketSchema
 						if (!outputsReferenced.contains(output->Class))
 						{
 							outputsReferenced[output->Class] = opcode.IsServer;
+
+							(opcode.IsServer ? serverOutputsReferenced : clientOutputsReferenced)[opcode.Name].Outputs.push_back(output->Class);
 						}
 
 						out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
@@ -2929,6 +2938,8 @@ namespace PacketSchema
 					if (!outputsReferenced.contains(output->Class))
 					{
 						outputsReferenced[output->Class] = opcode.IsServer;
+
+						(opcode.IsServer ? serverOutputsReferenced : clientOutputsReferenced)[opcode.Name].Outputs.push_back(output->Class);
 					}
 
 					out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
@@ -2984,6 +2995,8 @@ namespace PacketSchema
 				if (!outputsReferenced.contains(topOutput->Class))
 				{
 					outputsReferenced[topOutput->Class] = opcode.IsServer;
+
+					(opcode.IsServer ? serverOutputsReferenced : clientOutputsReferenced)[opcode.Name].Outputs.push_back(topOutput->Class);
 				}
 
 				out << "\n" << tabs << "if (handler.Succeeded())\n" << tabs << "{\n";
@@ -3391,6 +3404,8 @@ namespace PacketSchema
 		fs::path cppPath = packetProjDir / "src/PacketProcessing/PacketParser.cpp";
 
 		outputsReferenced.clear();
+		serverOutputsReferenced.clear();
+		clientOutputsReferenced.clear();
 
 		{
 			std::ofstream cppOut(cppPath);
@@ -3500,12 +3515,117 @@ namespace PacketSchema
 			headerOut << "#include \"" << name << "-decl.h\"\n\n";
 			headerOut << "#include \"./../../PacketParserBase.h\"\n\n";
 
+			struct NamespaceScope
+			{
+				std::unordered_set<std::string> Classes;
+				std::unordered_map<std::string, const NamespaceScope*> Children;
+			};
+
+			std::unordered_map<std::string, NamespaceScope> referencedNamespaces;
+
 			for (const auto& entry : outputsReferenced)
 			{
 				const OutputSchema::SchemaClass* schemaClass = entry.first;
 
-				headerOut << "#include <GameData/" << schemaClass->Directory << "/" << schemaClass->Name << ".h>\n";
+				size_t lastStart = 0;
+
+				size_t size = schemaClass->Scope.size();
+
+				for (size_t i = 0; i < size; ++i)
+				{
+					if (schemaClass->Scope[i] == '.')
+					{
+						std::string current = schemaClass->Scope.substr(lastStart, i - lastStart);
+						std::string currentFull = schemaClass->Scope.substr(0, i);
+						std::string lastFull = schemaClass->Scope.substr(0, lastStart);
+						
+						referencedNamespaces[lastFull].Children[current] = &referencedNamespaces[currentFull];
+
+						lastStart = i + 1;
+					}
+				}
+
+				if (lastStart < size)
+				{
+					std::string current = schemaClass->Scope.substr(lastStart, size - lastStart);
+					std::string currentFull = schemaClass->Scope.substr(0, size);
+
+					auto& parent = referencedNamespaces[currentFull];
+
+					if (!parent.Classes.contains(current))
+					{
+						parent.Classes.insert(current);
+					}
+				}
 			}
+
+			static const char tabs[] = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
+			static const size_t maxTabs = sizeof(tabs);
+
+			struct NamespaceStackEntry
+			{
+				std::string Name;
+				const NamespaceScope* Namespace;
+				std::unordered_map<std::string, const NamespaceScope*>::const_iterator Entry;
+			};
+
+			std::vector<NamespaceStackEntry> namespaceStack = { { "", &referencedNamespaces[""], referencedNamespaces[""].Children.begin() }};
+
+			while (namespaceStack.size())
+			{
+				NamespaceStackEntry& entry = namespaceStack.back();
+
+				const char* currentTabs = tabs + maxTabs - namespaceStack.size();
+
+				if (entry.Entry == entry.Namespace->Children.end())
+				{
+					namespaceStack.pop_back();
+
+					NamespaceStackEntry& nextEntry = namespaceStack.back();
+
+					if (namespaceStack.size() > 1)
+					{
+						std::cout << currentTabs << "}\n";
+					}
+
+					continue;
+				}
+
+				size_t size = namespaceStack.size();
+
+				if (size > 1)
+				{
+					headerOut << currentTabs << "namespace " << name << "\n" << currentTabs << "{\n";
+				}
+
+				for (const auto entry : entry.Namespace->Classes)
+				{
+					headerOut << (currentTabs - 1) << "struct " << entry << ";\n";
+				}
+
+				if (entry.Namespace->Classes.size())
+				{
+					headerOut << currentTabs << "\n";
+				}
+
+				NamespaceStackEntry next = { entry.Entry->first, entry.Entry->second, entry.Entry->second->Children.begin() };
+
+				++entry.Entry;
+
+				namespaceStack.push_back(next);
+			}
+
+			if (referencedNamespaces.size() > 1)
+			{
+				headerOut << "\n";
+			}
+
+			//for (const auto& entry : outputsReferenced)
+			//{
+			//	const OutputSchema::SchemaClass* schemaClass = entry.first;
+			//
+			//	headerOut << "#include <GameData/" << schemaClass->Directory << "/" << schemaClass->Name << ".h>\n";
+			//}
 
 			headerOut << "\nnamespace Networking\n{\n";
 
@@ -3539,37 +3659,54 @@ namespace PacketSchema
 		fs::create_directories(handlerPath / "Server");
 		fs::create_directories(handlerPath / "Client");
 
-		for (const auto& entry : outputsReferenced)
+		const auto generateStub = [&handlerPath, &vcxprojRoot, &filtersRoot, &name](const std::string& opcodeName, const OutputFiles& opcode, bool isServer)
 		{
-			const OutputSchema::SchemaClass* schemaClass = entry.first;
-			bool isServer = entry.second;
-
-			fs::path cppPath = handlerPath / (isServer ? "Server" : "Client") / (schemaClass->Name + (isServer ? "-s-" : "-c-") + name + ".cpp");
+			fs::path cppPath = handlerPath / (isServer ? "Server" : "Client") / (opcodeName + (isServer ? "-s-" : "-c-") + name + ".cpp");
 
 			if (fs::exists(cppPath))
 			{
-				continue;
+				return;
 			}
 
 			std::ofstream cppOut(cppPath);
 
 			cppOut << "#include \"./../" << name << ".h\"\n\n";
 
-			cppOut << "namespace Networking\n{\n";
+			for (const OutputSchema::SchemaClass* schemaClass : opcode.Outputs)
+			{
+				cppOut << "#include <GameData/" << schemaClass->Directory << "/" << schemaClass->Name << ".h>\n";
+			}
+
+			cppOut << "\nnamespace Networking\n{\n";
 
 			cppOut << "\tnamespace Packets\n\t{\n";
 
-			std::string typeName = OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(schemaClass->Scope, "Networking.Packets"), "::");
-			cppOut << "\t\ttemplate <>\n";
-			cppOut << "\t\tvoid " << name << "::PacketParsed<" << typeName << ">(const " << typeName << "& packet)\n\t\t{\n\t\t\t\n\t\t}\n";
+			for (size_t i = 0; i < opcode.Outputs.size(); ++i)
+			{
+				const OutputSchema::SchemaClass* schemaClass = opcode.Outputs[i];
 
-			cppOut << "\t}\n";
-			cppOut << "}\n";
+				std::string typeName = OutputSchema::swapSeparator(OutputSchema::stripCommonNamespaces(schemaClass->Scope, "Networking.Packets"), "::");
+				cppOut << (i == 0 ? "\t\ttemplate <>\n" : "\n\t\ttemplate <>\n");
+				cppOut << "\t\tvoid " << name << "::PacketParsed<" << typeName << ">(const " << typeName << "& packet)\n\t\t{\n\t\t\t\n\t\t}\n";
+
+				cppOut << "\t}\n";
+				cppOut << "}\n";
+			}
 
 			std::string filterData = "Source Files\\Handlers\\" + name + (isServer ? "\\Server" : "\\Client");
 
 			OutputSchema::addProjectNode(vcxprojRoot, "ClCompile", cppPath.string(), nullptr);
 			OutputSchema::addProjectNode(filtersRoot, "ClCompile", cppPath.string(), filterData.c_str());
+		};
+
+		for (const auto& entry : serverOutputsReferenced)
+		{
+			generateStub(entry.first, entry.second, true);
+		}
+
+		for (const auto& entry : clientOutputsReferenced)
+		{
+			generateStub(entry.first, entry.second, false);
 		}
 
 		vcxproj.SaveFile(vcxprojPath.string().c_str());

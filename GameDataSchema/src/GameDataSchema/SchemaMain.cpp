@@ -77,6 +77,7 @@ namespace ParserUtils
 		std::unordered_map<unsigned short, VersionSuccesses> successfulPackets;
 		std::unordered_map<unsigned short, VersionSuccesses> seenPackets;
 		std::unordered_map<unsigned short, VersionSuccesses> unparsedPackets;
+		size_t discardedItemPackets = 0;
 
 		std::string printTimeStamp(long long timeStamp)
 		{
@@ -293,6 +294,8 @@ namespace ParserUtils
 				}
 
 				Networking::Packets::ParsePacket(handler, build, !outbound, opcode);
+
+				discardedItemPackets += handler.DiscardedItemPackets;
 
 				ParserUtils::DataStream& stream = handler.PacketStream();
 
@@ -734,6 +737,18 @@ int main(int argc, char** argv)
 
 		for (tinyxml2::XMLElement* environmentElement = rootElement->FirstChildElement(); environmentElement; environmentElement = environmentElement->NextSiblingElement())
 		{
+			tinyxml2::XMLElement* limitElement = environmentElement->FirstChildElement("limit");
+
+			if (limitElement)
+			{
+				const tinyxml2::XMLAttribute* levelAttribute = limitElement->FindAttribute("levelLimit");
+
+				if (levelAttribute)
+				{
+					item.Level = (unsigned short)atoi(levelAttribute->Value());
+				}
+			}
+
 			tinyxml2::XMLElement* gemElement = environmentElement->FirstChildElement("gem");
 
 			if (gemElement)
@@ -835,6 +850,18 @@ int main(int argc, char** argv)
 
 			for (tinyxml2::XMLElement* environmentElement = itemElement->FirstChildElement(); environmentElement; environmentElement = environmentElement->NextSiblingElement())
 			{
+				tinyxml2::XMLElement* limitElement = environmentElement->FirstChildElement("limit");
+
+				if (limitElement)
+				{
+					const tinyxml2::XMLAttribute* levelAttribute = limitElement->FindAttribute("levelLimit");
+
+					if (levelAttribute)
+					{
+						item.Level = (unsigned short)atoi(levelAttribute->Value());
+					}
+				}
+
 				tinyxml2::XMLElement* uccElement = environmentElement->FirstChildElement("ucc");
 
 				if (uccElement)
@@ -893,9 +920,9 @@ int main(int argc, char** argv)
 	};
 
 	bool regenerate = !true;
-	bool showSuccesses = !false;
+	bool showSuccesses = false;
 	bool showSeen = false;
-	bool showUnparsed = !false;
+	bool showUnparsed = false;
 	bool showUnused = false;
 	bool printBaseStats = false;
 
@@ -1438,6 +1465,11 @@ int main(int argc, char** argv)
 		lastOp = opcode;
 
 		std::cout << version << "[" << length << "]" << ", ";
+	}
+
+	if (ParserUtils::Packets::discardedItemPackets)
+	{
+		std::cout << "discarded item packets: " << ParserUtils::Packets::discardedItemPackets << std::endl;
 	}
 
 	std::cout << std::endl << std::endl;

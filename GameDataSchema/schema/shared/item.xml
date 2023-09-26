@@ -1,6 +1,6 @@
 <outputSchema isGlobal="true">
 	<namespace name="Enum">
-		<enum name="Rarity" directory="Enums" file="Item">
+		<enum name="Rarity" directory="Enums" file="MapleItem">
 			<value name="None" value="0" />
 			<value name="Common" value="1" />
 			<value name="Rare" value="2" />
@@ -9,7 +9,7 @@
 			<value name="Legendary" value="5" />
 			<value name="Ascendant" value="6" />
 		</enum>
-		<enum name="BadgeType" parent="unsigned char" directory="Enums" file="Item">
+		<enum name="BadgeType" parent="unsigned char" directory="Enums" file="MapleItem">
 			<value name="None" value="0" />
 			<value name="Transparency" value="1" />
 			<value name="Damage" value="2" />
@@ -24,13 +24,13 @@
 			<value name="Pet" value="11" />
 			<value name="Meta" value="12" />
 		</enum>
-		<enum name="SlotType" parent="unsigned char" directory="Enums" file="Item">
+		<enum name="SlotType" parent="unsigned char" directory="Enums" file="MapleItem">
 		</enum>
-		<enum name="ItemType" parent="unsigned char" directory="Enums" file="Item">
+		<enum name="ItemType" parent="unsigned char" directory="Enums" file="MapleItem">
 		</enum>
-		<enum name="EquipTab" parent="unsigned char" directory="Enums" file="Item">
+		<enum name="EquipTab" parent="unsigned char" directory="Enums" file="MapleItem">
 		</enum>
-		<enum name="RideMode" parent="unsigned char" directory="Enums" file="Item">
+		<enum name="RideMode" parent="unsigned char" directory="Enums" file="MapleItem">
 			<value name="Default" value="0" />
 			<value name="UseItem" value="1" />
 			<value name="AdditionalEffect" value="2" />

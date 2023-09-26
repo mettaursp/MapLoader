@@ -1,11 +1,11 @@
 <outputSchema isGlobal="true">
 	<namespace name="Enum">
-		<enum name="Gender" parent="unsigned char" directory="Enums" file="Player">
+		<enum name="Gender" parent="unsigned char" directory="Enums" file="MaplePlayer">
 			<value name="Male" value="0" />
 			<value name="Female" value="1" />
 			<value name="Both" value="2" />
 		</enum>
-		<enum name="JobCode" parent="unsigned short" directory="Enums" file="Player">
+		<enum name="JobCode" parent="unsigned short" directory="Enums" file="MaplePlayer">
 			<value name="None" value="0" />
 			<value name="Beginner" value="1" />
 			<value name="Knight" value="10" />
@@ -21,7 +21,7 @@
 			<value name="Soulbinder" value="110" />
 			<value name="GameMaster" value="999" />
 		</enum>
-		<enum name="JobFlags" parent="unsigned int" directory="Enums" file="Player">
+		<enum name="JobFlags" parent="unsigned int" directory="Enums" file="MaplePlayer">
 			<value name="None" value="0" />
 			<value name="Beginner" value="1" />
 			<value name="Knight" value="2" />
@@ -36,9 +36,9 @@
 			<value name="Striker" value="1024" />
 			<value name="Soulbinder" value="2048" />
 		</enum>
-		<enum name="JobId" parent="unsigned short" directory="Enums" file="Player">
+		<enum name="JobId" parent="unsigned short" directory="Enums" file="MaplePlayer">
 		</enum>
-		<enum name="JobTier" parent="unsigned short" directory="Enums" file="Player">
+		<enum name="JobTier" parent="unsigned short" directory="Enums" file="MaplePlayer">
 		</enum>
 	</namespace>
 </outputSchema>

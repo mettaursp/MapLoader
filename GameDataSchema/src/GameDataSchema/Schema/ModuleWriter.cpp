@@ -530,16 +530,18 @@ namespace OutputSchema
 			size_t start = 0;
 			size_t length = 0;
 
-			while (start < currentNamespace.size())
+			std::string namespacePath = currentNamespace + '.';
+
+			while (start < namespacePath.size())
 			{
-				for (length; start + length < currentNamespace.size() && currentNamespace[start + length] != '.'; ++length);
+				for (length; start + length < namespacePath.size() && namespacePath[start + length] != '.'; ++length);
 
 				if (length == 0)
 				{
 					break;
 				}
 
-				std::string_view name = { currentNamespace.data() + start, length };
+				std::string_view name = { namespacePath.data() + start, length };
 
 				start += length + 1;
 				length = 0;
@@ -620,16 +622,18 @@ namespace OutputSchema
 			size_t start = 0;
 			size_t length = 0;
 
-			while (start < currentNamespace.size())
+			std::string namespacePath = currentNamespace + '.';
+
+			while (start < namespacePath.size())
 			{
-				for (length; start + length < currentNamespace.size() && currentNamespace[start + length] != '.'; ++length);
+				for (length; start + length < namespacePath.size() && namespacePath[start + length] != '.'; ++length);
 
 				if (length == 0)
 				{
 					break;
 				}
 
-				std::string_view name = { currentNamespace.data() + start, length };
+				std::string_view name = { namespacePath.data() + start, length };
 
 				start += length + 1;
 				length = 0;
@@ -902,16 +906,18 @@ namespace OutputSchema
 			size_t start = 0;
 			size_t length = 0;
 
-			while (start < currentNamespace.size())
+			std::string namespacePath = currentNamespace + '.';
+
+			while (start < namespacePath.size())
 			{
-				for (length; start + length < currentNamespace.size() && currentNamespace[start + length] != '.'; ++length);
+				for (length; start + length < namespacePath.size() && namespacePath[start + length] != '.'; ++length);
 
 				if (length == 0)
 				{
 					break;
 				}
 
-				std::string_view name = { currentNamespace.data() + start, length };
+				std::string_view name = { namespacePath.data() + start, length };
 
 				start += length + 1;
 				length = 0;

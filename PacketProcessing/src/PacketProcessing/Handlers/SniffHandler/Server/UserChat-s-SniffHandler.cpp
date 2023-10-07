@@ -17,6 +17,8 @@ namespace Networking
 
 			using TypeEnum = Server::UserChatPacket::TypeEnum;
 
+			std::cout << TimeStamp << "chat: ";
+
 			switch (packet.Type)
 			{
 			case TypeEnum::WhisperFrom:

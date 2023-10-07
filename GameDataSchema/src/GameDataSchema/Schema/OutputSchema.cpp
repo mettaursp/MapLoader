@@ -345,7 +345,14 @@ namespace OutputSchema
 				continue;
 			}
 
-			std::cout << "unknown attribute of element 'namespace': '" << name << "'" << std::endl;
+			if (strcmp(name, "file") == 0)
+			{
+				schemaClass.FileName = value;
+
+				continue;
+			}
+
+			std::cout << "unknown attribute of element 'class': '" << name << "'" << std::endl;
 		}
 
 		for (tinyxml2::XMLElement* child = element->FirstChildElement(); child; child = child->NextSiblingElement())
@@ -439,7 +446,7 @@ namespace OutputSchema
 				continue;
 			}
 
-			std::cout << "unknown attribute of element 'namespace': '" << name << "'" << std::endl;
+			std::cout << "unknown attribute of element 'collection': '" << name << "'" << std::endl;
 		}
 
 		tinyxml2::XMLElement* child = element->FirstChildElement();
@@ -561,6 +568,7 @@ namespace OutputSchema
 		{
 			readSchemaElement(schema.Global, child);
 		}
+
 	}
 
 	void readSchemas(const fs::path& directory)

@@ -486,6 +486,48 @@ namespace OutputSchema
 		fs::path outputHeader = outputDir / (schemaClass.Name + ".h");
 		fs::path outputCpp = outputDir / (schemaClass.Name + ".cpp");
 
+		if (schemaClass.FileName.size())
+		{
+			return;
+		}
+
+		if (outputFiles.contains(outputHeader.string()))
+		{
+			fs::create_directories(outputDir);
+
+			std::string fileName = outputHeader.string();
+
+			OutputFile& file = outputFiles[fileName];
+
+			file.Directory = schemaClass.Directory;
+
+			OutputNamespace* current = &file.Global;
+
+			size_t start = 0;
+			size_t length = 0;
+
+			while (start < currentNamespace.size())
+			{
+				for (length; start + length < currentNamespace.size() && currentNamespace[start + length] != '.'; ++length);
+
+				if (length == 0)
+				{
+					break;
+				}
+
+				std::string_view name = { currentNamespace.data() + start, length };
+
+				start += length + 1;
+				length = 0;
+
+				current = &current->Namespaces[std::string(name)];
+			}
+
+			current->Classes[schemaClass.Name] = &schemaClass;
+
+			return;
+		}
+
 		fs::create_directories(outputDir);
 
 		addProjectNode(vcxprojRoot, "ClInclude", outputHeader.string(), nullptr);
@@ -532,6 +574,7 @@ namespace OutputSchema
 	struct OutputNamespace
 	{
 		std::unordered_map<std::string, const SchemaEnum*> Enums;
+		std::unordered_map<std::string, const SchemaClass*> Classes;
 		std::unordered_map<std::string, OutputNamespace> Namespaces;
 	};
 	
@@ -546,12 +589,18 @@ namespace OutputSchema
 	void generateEnum(const SchemaEnum& schemaEnum, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
 	{
 		fs::path outputDir = gameDataProjDir / "src/GameData" / schemaEnum.Directory;
+		fs::path outputHeader = outputDir / (schemaEnum.Name + ".h");
 
 		if (schemaEnum.FileName.size())
 		{
+			return;
+		}
+
+		if (outputFiles.contains(outputHeader.string()))
+		{
 			fs::create_directories(outputDir);
 
-			std::string fileName = (outputDir / (schemaEnum.FileName + ".h")).string();
+			std::string fileName = outputHeader.string();
 
 			OutputFile& file = outputFiles[fileName];
 
@@ -584,8 +633,6 @@ namespace OutputSchema
 			return;
 		}
 
-		fs::path outputHeader = outputDir / (schemaEnum.Name + ".h");
-
 		fs::create_directories(outputDir);
 
 		addProjectNode(vcxprojRoot, "ClInclude", outputHeader.string(), nullptr);
@@ -609,6 +656,11 @@ namespace OutputSchema
 
 	void generateEnums(ModuleWriter& module, const OutputNamespace& out, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace, bool pushNamespace = true)
 	{
+		for (const auto& current : out.Classes)
+		{
+			generateClassDefinitions(*current.second, module, currentNamespace);
+		}
+
 		for (const auto& current : out.Enums)
 		{
 			generateEnumDefinitions(*current.second, module, currentNamespace);
@@ -728,8 +780,45 @@ namespace OutputSchema
 		}
 	}
 
-	void updateRequiredHeaders(SchemaClass& parentClass, const SchemaClass& schemaClass)
+	void updateRequiredHeaders(SchemaClass& parentClass, const SchemaClass& schemaClass, const std::string& currentNamespace)
 	{
+		if (schemaClass.FileName.size())
+		{
+			fs::path outputDir = gameDataProjDir / "src/GameData" / schemaClass.Directory;
+
+			fs::create_directories(outputDir);
+
+			std::string fileName = (outputDir / (schemaClass.FileName + ".h")).string();
+
+			OutputFile& file = outputFiles[fileName];
+
+			file.Directory = schemaClass.Directory;
+
+			OutputNamespace* current = &file.Global;
+
+			size_t start = 0;
+			size_t length = 0;
+
+			while (start < currentNamespace.size())
+			{
+				for (length; start + length < currentNamespace.size() && currentNamespace[start + length] != '.'; ++length);
+
+				if (length == 0)
+				{
+					break;
+				}
+
+				std::string_view name = { currentNamespace.data() + start, length };
+
+				start += length + 1;
+				length = 0;
+
+				current = &current->Namespaces[std::string(name)];
+			}
+
+			current->Classes[schemaClass.Name] = &schemaClass;
+		}
+
 		for (const SchemaMember& schemaMember : schemaClass.Members)
 		{
 			std::string includePath;
@@ -751,15 +840,57 @@ namespace OutputSchema
 
 		for (const SchemaClass& childClass : schemaClass.ChildClasses)
 		{
-			updateRequiredHeaders(parentClass, childClass);
+			updateRequiredHeaders(parentClass, childClass, currentNamespace);
 		}
 	}
 
-	void updateRequiredHeaders(SchemaNamespace& schemaNamespace)
+	void updateRequiredHeaders(const SchemaEnum& schemaEnum, const std::string& currentNamespace)
+	{
+		if (!schemaEnum.FileName.size())
+		{
+			return;
+		}
+
+		fs::path outputDir = gameDataProjDir / "src/GameData" / schemaEnum.Directory;
+
+		fs::create_directories(outputDir);
+
+		std::string fileName = (outputDir / (schemaEnum.FileName + ".h")).string();
+
+		OutputFile& file = outputFiles[fileName];
+
+		file.Directory = schemaEnum.Directory;
+
+		OutputNamespace* current = &file.Global;
+
+		size_t start = 0;
+		size_t length = 0;
+
+		while (start < currentNamespace.size())
+		{
+			for (length; start + length < currentNamespace.size() && currentNamespace[start + length] != '.'; ++length);
+
+			if (length == 0)
+			{
+				break;
+			}
+
+			std::string_view name = { currentNamespace.data() + start, length };
+
+			start += length + 1;
+			length = 0;
+
+			current = &current->Namespaces[std::string(name)];
+		}
+
+		current->Enums[schemaEnum.Name] = &schemaEnum;
+	}
+
+	void updateRequiredHeaders(SchemaNamespace& schemaNamespace, const std::string& currentNamespace)
 	{
 		for (SchemaNamespace& childNamespace : schemaNamespace.Namespaces)
 		{
-			updateRequiredHeaders(childNamespace);
+			updateRequiredHeaders(childNamespace, currentNamespace.size() ? currentNamespace + "." + childNamespace.Name : childNamespace.Name);
 		}
 
 		for (SchemaCollection& schemaCollection : schemaNamespace.Collections)
@@ -769,7 +900,12 @@ namespace OutputSchema
 
 		for (SchemaClass& schemaClass : schemaNamespace.Classes)
 		{
-			updateRequiredHeaders(schemaClass, schemaClass);
+			updateRequiredHeaders(schemaClass, schemaClass, currentNamespace);
+		}
+
+		for (SchemaEnum& schemaEnum : schemaNamespace.Enums)
+		{
+			updateRequiredHeaders(schemaEnum, currentNamespace);
 		}
 	}
 
@@ -879,8 +1015,11 @@ namespace OutputSchema
 
 		for (auto& schema : CollectionSchemas)
 		{
-			updateRequiredHeaders(schema.second.Global);
+			updateRequiredHeaders(schema.second.Global, "");
+		}
 
+		for (auto& schema : CollectionSchemas)
+		{
 			generateItemsInNamespace(schema.second.Global, vcxprojRoot, filtersRoot);
 		}
 

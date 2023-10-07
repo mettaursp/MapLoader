@@ -57,6 +57,7 @@ namespace OutputSchema
 		std::string Scope;
 		std::string ChildTypeSuffix;
 		std::string Directory = "Data";
+		std::string FileName;
 		std::string SchemaName;
 
 		std::vector<SchemaClass> ChildClasses;

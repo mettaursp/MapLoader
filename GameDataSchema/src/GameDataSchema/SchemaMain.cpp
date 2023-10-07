@@ -920,7 +920,7 @@ int main(int argc, char** argv)
 		return false;
 	};
 
-	bool regenerate = !true;
+	bool regenerate = true;
 	bool showSuccesses = false;
 	bool showSeen = false;
 	bool showUnparsed = false;

@@ -707,6 +707,47 @@ namespace OutputSchema
 		}
 	}
 
+	bool pathEquals(const std::string& path1, const std::string& path2)
+	{
+		if (path1.size() != path2.size())
+		{
+			return false;
+		}
+
+		for (size_t i = 0; i < path1.size(); ++i)
+		{
+			char char1 = path1[i];
+			char char2 = path2[i];
+
+			if (char1 >= 'A' && char1 <= 'Z')
+			{
+				char1 += 'a' - 'A';
+			}
+
+			if (char1 == '\\')
+			{
+				char1 = '/';
+			}
+
+			if (char2 >= 'A' && char2 <= 'Z')
+			{
+				char2 += 'a' - 'A';
+			}
+
+			if (char2 == '\\')
+			{
+				char2 = '/';
+			}
+
+			if (char1 != char2)
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	void generateEnums(tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot)
 	{
 		for (const auto& file : outputFiles)
@@ -726,7 +767,7 @@ namespace OutputSchema
 
 				for (const std::string& requiredHeader : file.second.RequiredHeaders)
 				{
-					if (requiredHeader == outputHeader)
+					if (pathEquals(requiredHeader, outputHeader))
 					{
 						continue;
 					}

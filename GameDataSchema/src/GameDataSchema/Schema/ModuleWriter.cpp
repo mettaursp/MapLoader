@@ -753,6 +753,26 @@ namespace OutputSchema
 		for (const auto& file : outputFiles)
 		{
 			std::string outputHeader = file.first;
+			std::string outputHeaderBase;
+
+			const char findBase[] = "src/";
+
+			for (size_t i = 0; i < outputHeader.size() - 4 && !outputHeaderBase.size(); ++i)
+			{
+				bool skip = false;
+
+				for (size_t j = 0; j < 4 && !skip; ++j)
+				{
+					skip = outputHeader[i + j] != findBase[j];
+				}
+
+				if (!skip)
+				{
+					i += 4;
+
+					outputHeaderBase = outputHeader.substr(i, outputHeader.size() - i);
+				}
+			}
 
 			addProjectNode(vcxprojRoot, "ClInclude", outputHeader, nullptr);
 
@@ -767,7 +787,9 @@ namespace OutputSchema
 
 				for (const std::string& requiredHeader : file.second.RequiredHeaders)
 				{
-					if (pathEquals(requiredHeader, outputHeader))
+					std::string requiredHeaderBase = requiredHeader.substr(1, requiredHeader.size() - 2);
+
+					if (pathEquals(requiredHeaderBase, outputHeaderBase))
 					{
 						continue;
 					}

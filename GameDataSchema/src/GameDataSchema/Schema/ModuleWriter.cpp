@@ -667,7 +667,7 @@ namespace OutputSchema
 		}
 	}
 
-	void generateEnums(ModuleWriter& module, const OutputNamespace& out, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace, bool pushNamespace = true)
+	void generateEnums(ModuleWriter& module, const OutputNamespace& out, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
 	{
 		size_t i = 0;
 
@@ -697,17 +697,11 @@ namespace OutputSchema
 
 		for (const auto& current : out.Namespaces)
 		{
-			if (pushNamespace)
-			{
-				module.PushNamespace(current.first);
-			}
+			module.PushNamespace(current.first);
 
 			generateEnums(module, current.second, vcxprojRoot, filtersRoot, currentNamespace.size() ? currentNamespace + "." + current.first : current.first);
 
-			if (pushNamespace)
-			{
-				module.PopStack();
-			}
+			module.PopStack();
 		}
 	}
 
@@ -808,7 +802,7 @@ namespace OutputSchema
 
 				ModuleWriter module(outFile);
 
-				generateEnums(module, file.second.Global, vcxprojRoot, filtersRoot, "", false);
+				generateEnums(module, file.second.Global, vcxprojRoot, filtersRoot, "");
 			}
 		}
 	}

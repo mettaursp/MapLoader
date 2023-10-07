@@ -667,20 +667,6 @@ namespace OutputSchema
 	{
 		size_t i = 0;
 
-		for (const auto& current : out.Classes)
-		{
-			if (i)
-			{
-				module.PushLine();
-			}
-
-			generateClassDefinitions(*current.second, module, currentNamespace);
-
-			++i;
-		}
-
-		i = 0;
-
 		for (const auto& current : out.Enums)
 		{
 			if (i)
@@ -689,6 +675,18 @@ namespace OutputSchema
 			}
 
 			generateEnumDefinitions(*current.second, module, currentNamespace);
+
+			++i;
+		}
+
+		for (const auto& current : out.Classes)
+		{
+			if (i)
+			{
+				module.PushLine();
+			}
+
+			generateClassDefinitions(*current.second, module, currentNamespace);
 
 			++i;
 		}

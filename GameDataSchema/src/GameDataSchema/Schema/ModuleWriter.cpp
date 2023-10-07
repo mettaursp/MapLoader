@@ -726,6 +726,11 @@ namespace OutputSchema
 
 				for (const std::string& requiredHeader : file.second.RequiredHeaders)
 				{
+					if (requiredHeader == outputHeader)
+					{
+						continue;
+					}
+
 					outFile << "#include " << requiredHeader << "\n";
 				}
 

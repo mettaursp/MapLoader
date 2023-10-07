@@ -869,7 +869,7 @@ namespace OutputSchema
 			{
 				if (childClass.Name == name)
 				{
-					return "<GameData/" + childClass.Directory + "/" + childClass.Name + ".h>";
+					return "<GameData/" + childClass.Directory + "/" + (childClass.FileName.size() ? childClass.FileName : childClass.Name) + ".h>";
 				}
 			}
 		}

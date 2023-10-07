@@ -665,14 +665,32 @@ namespace OutputSchema
 
 	void generateEnums(ModuleWriter& module, const OutputNamespace& out, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace, bool pushNamespace = true)
 	{
+		size_t i = 0;
+
 		for (const auto& current : out.Classes)
 		{
+			if (i)
+			{
+				module.PushLine();
+			}
+
 			generateClassDefinitions(*current.second, module, currentNamespace);
+
+			++i;
 		}
+
+		i = 0;
 
 		for (const auto& current : out.Enums)
 		{
+			if (i)
+			{
+				module.PushLine();
+			}
+
 			generateEnumDefinitions(*current.second, module, currentNamespace);
+
+			++i;
 		}
 
 		for (const auto& current : out.Namespaces)

@@ -480,6 +480,22 @@ namespace OutputSchema
 
 	}
 
+	struct OutputNamespace
+	{
+		std::unordered_map<std::string, const SchemaEnum*> Enums;
+		std::unordered_map<std::string, const SchemaClass*> Classes;
+		std::unordered_map<std::string, OutputNamespace> Namespaces;
+	};
+
+	struct OutputFile
+	{
+		std::string Directory;
+		OutputNamespace Global;
+		std::unordered_set<std::string> RequiredHeaders;
+	};
+
+	std::unordered_map<std::string, OutputFile> outputFiles;
+
 	void generateClasses(const SchemaClass& schemaClass, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
 	{
 		fs::path outputDir = gameDataProjDir / "src/GameData" / schemaClass.Directory;
@@ -498,6 +514,14 @@ namespace OutputSchema
 			std::string fileName = outputHeader.string();
 
 			OutputFile& file = outputFiles[fileName];
+
+			for (const std::string& requiredHeader : schemaClass.RequiredHeaders)
+			{
+				if (!file.RequiredHeaders.contains(requiredHeader))
+				{
+					file.RequiredHeaders.insert(requiredHeader);
+				}
+			}
 
 			file.Directory = schemaClass.Directory;
 
@@ -570,21 +594,6 @@ namespace OutputSchema
 			generateClassDeclarations(schemaClass, module, currentNamespace, schemaClass.Name);
 		}
 	}
-
-	struct OutputNamespace
-	{
-		std::unordered_map<std::string, const SchemaEnum*> Enums;
-		std::unordered_map<std::string, const SchemaClass*> Classes;
-		std::unordered_map<std::string, OutputNamespace> Namespaces;
-	};
-	
-	struct OutputFile
-	{
-		std::string Directory;
-		OutputNamespace Global;
-	};
-
-	std::unordered_map<std::string, OutputFile> outputFiles;
 
 	void generateEnum(const SchemaEnum& schemaEnum, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
 	{
@@ -698,6 +707,16 @@ namespace OutputSchema
 				std::ofstream outFile(outputHeader);
 
 				outFile << "#pragma once\n\n";
+
+				for (const std::string& requiredHeader : file.second.RequiredHeaders)
+				{
+					outFile << "#include " << requiredHeader << "\n";
+				}
+
+				if (file.second.RequiredHeaders.size())
+				{
+					outFile << "\n";
+				}
 
 				ModuleWriter module(outFile);
 
@@ -841,6 +860,23 @@ namespace OutputSchema
 		for (const SchemaClass& childClass : schemaClass.ChildClasses)
 		{
 			updateRequiredHeaders(parentClass, childClass, currentNamespace);
+		}
+
+		if (schemaClass.FileName.size())
+		{
+			fs::path outputDir = gameDataProjDir / "src/GameData" / schemaClass.Directory;
+
+			std::string fileName = (outputDir / (schemaClass.FileName + ".h")).string();
+
+			OutputFile& file = outputFiles[fileName];
+
+			for (const std::string& requiredHeader : schemaClass.RequiredHeaders)
+			{
+				if (!file.RequiredHeaders.contains(requiredHeader))
+				{
+					file.RequiredHeaders.insert(requiredHeader);
+				}
+			}
 		}
 	}
 

@@ -731,7 +731,7 @@ namespace OutputSchema
 			}
 		}
 
-		if (!dependenciesList.InvolvedInDependency.contains(schemaClass->Scope))
+		if (dependencies.ValueDependencies.size() && dependencies.ValueDependencies.size() && !dependenciesList.InvolvedInDependency.contains(schemaClass->Scope))
 		{
 			dependenciesList.InvolvedInDependency.insert(schemaClass->Scope);
 		}

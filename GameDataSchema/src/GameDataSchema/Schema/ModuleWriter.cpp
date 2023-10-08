@@ -704,7 +704,7 @@ namespace OutputSchema
 			return false;
 		}
 
-		for (size_t i = nameSize; i < scopeSize; ++i)
+		for (size_t i = nameSize + 1; i < scopeSize; ++i)
 		{
 			if (scope[i] == '.')
 			{
@@ -727,8 +727,6 @@ namespace OutputSchema
 		dependenciesList.Classes.push_back(&dependencies);
 
 		dependencies.Class = schemaClass;
-
-		isInSameNamespace(currentNamespace, schemaClass->Scope);
 
 		for (const auto& member : schemaClass->Members)
 		{

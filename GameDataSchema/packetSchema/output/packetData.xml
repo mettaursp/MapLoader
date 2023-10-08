@@ -161,7 +161,7 @@
 				<member name="Name" type="std::wstring" />
 				<member name="IsCreator" type="bool" />
 			</class>
-			<class name="ItemData" directory="Data">
+			<class name="ItemData" directory="Data" file="PacketCommon">
 				<member name="Amount" type="unsigned int" />
 				<member name="CreationTime" type="unsigned long long" />
 				<member name="ExpirationTime" type="unsigned long long" />

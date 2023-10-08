@@ -790,7 +790,7 @@ namespace OutputSchema
 					{
 						entry->IsRegistered = true;
 
-						dependenciesList.Registered.insert(dependenciesList.Registered.begin(), entry);
+						dependenciesList.Registered.push_back(entry);
 
 						continue;
 					}

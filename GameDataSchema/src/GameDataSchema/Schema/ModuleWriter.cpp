@@ -667,9 +667,85 @@ namespace OutputSchema
 		}
 	}
 
+	struct ClassOrdering
+	{
+		struct ClassDependencies
+		{
+			const OutputSchema::SchemaClass* Class = nullptr;
+			std::unordered_set<std::string> ValueDependencies;
+		};
+
+		std::vector<const ClassDependencies*> Classes;
+		std::unordered_map<std::string, ClassDependencies> Dependencies;
+
+		bool operator()(const ClassDependencies* left, const ClassDependencies* right)
+		{
+			if (left->ValueDependencies.contains(right->Class->Scope))
+			{
+				return false;
+			}
+
+			if (right->ValueDependencies.contains(left->Class->Scope))
+			{
+				return true;
+			}
+
+			return left < right;
+		}
+	};
+
+	bool isInSameNamespace(const std::string& currentNamespace, const std::string& scope)
+	{
+		size_t nameSize = currentNamespace.size();
+		size_t scopeSize = scope.size();
+
+		if (strncmp(currentNamespace.data(), scope.data(), std::min(nameSize, scopeSize)) != 0)
+		{
+			return false;
+		}
+
+		for (size_t i = nameSize; i < scopeSize; ++i)
+		{
+			if (scope[i] == '.')
+			{
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	void trackDependencies(const std::string& currentNamespace, ClassOrdering& dependenciesList, const OutputSchema::SchemaClass* schemaClass)
+	{
+		if (dependenciesList.Dependencies.contains(schemaClass->Scope))
+		{
+			return;
+		}
+
+		ClassOrdering::ClassDependencies& dependencies = dependenciesList.Dependencies[schemaClass->Scope];
+
+		dependenciesList.Classes.push_back(&dependencies);
+
+		dependencies.Class = schemaClass;
+
+		isInSameNamespace(currentNamespace, schemaClass->Scope);
+
+		for (const auto& member : schemaClass->Members)
+		{
+			const std::string type = member.ContainsType.size() ? member.ContainsType : member.Type;
+
+			if (isInSameNamespace(currentNamespace, type) && !dependencies.ValueDependencies.contains(type))
+			{
+				dependencies.ValueDependencies.insert(type);
+			}
+		}
+	}
+
 	void generateEnums(ModuleWriter& module, const OutputNamespace& out, tinyxml2::XMLElement* vcxprojRoot, tinyxml2::XMLElement* filtersRoot, const std::string& currentNamespace)
 	{
 		size_t i = 0;
+
+		ClassOrdering dependencies;
 
 		for (const auto& current : out.Enums)
 		{
@@ -680,17 +756,26 @@ namespace OutputSchema
 
 			generateEnumDefinitions(*current.second, module, currentNamespace);
 
+			dependencies.Dependencies[current.second->Scope] = {};
+
 			++i;
 		}
 
 		for (const auto& current : out.Classes)
+		{
+			trackDependencies(currentNamespace, dependencies, current.second);
+		}
+
+		std::sort(dependencies.Classes.begin(), dependencies.Classes.end(), dependencies);
+
+		for (const auto& current : dependencies.Classes)
 		{
 			if (i)
 			{
 				module.PushLine();
 			}
 
-			generateClassDefinitions(*current.second, module, currentNamespace);
+			generateClassDefinitions(*current->Class, module, currentNamespace);
 
 			++i;
 		}

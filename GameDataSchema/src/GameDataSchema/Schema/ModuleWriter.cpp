@@ -704,19 +704,8 @@ namespace OutputSchema
 		return true;
 	}
 
-	void trackDependencies(const std::string& currentNamespace, ClassOrdering& dependenciesList, const OutputSchema::SchemaClass* schemaClass)
+	void trackDependencies(const std::string& currentNamespace, ClassOrdering& dependenciesList, ClassOrdering::ClassDependencies& dependencies, const OutputSchema::SchemaClass* schemaClass, bool addInvolvedDependency)
 	{
-		if (dependenciesList.Dependencies.contains(schemaClass->Scope))
-		{
-			return;
-		}
-
-		ClassOrdering::ClassDependencies& dependencies = dependenciesList.Dependencies[schemaClass->Scope];
-
-		dependenciesList.Classes.push_back(&dependencies);
-
-		dependencies.Class = schemaClass;
-
 		for (const auto& member : schemaClass->Members)
 		{
 			const std::string type = member.ContainsType.size() ? member.ContainsType : member.Type;
@@ -742,12 +731,33 @@ namespace OutputSchema
 
 				dependencies.ValueDependencies.insert(type);
 
-				if (!dependenciesList.InvolvedInDependency.contains(type))
+				if (addInvolvedDependency && !dependenciesList.InvolvedInDependency.contains(type))
 				{
 					dependenciesList.InvolvedInDependency.insert(type);
 				}
 			}
 		}
+
+		for (const auto& childClass : schemaClass->ChildClasses)
+		{
+			trackDependencies(currentNamespace, dependenciesList, dependencies, &childClass, true);
+		}
+	}
+
+	void trackDependencies(const std::string& currentNamespace, ClassOrdering& dependenciesList, const OutputSchema::SchemaClass* schemaClass)
+	{
+		if (dependenciesList.Dependencies.contains(schemaClass->Scope))
+		{
+			return;
+		}
+
+		ClassOrdering::ClassDependencies& dependencies = dependenciesList.Dependencies[schemaClass->Scope];
+
+		dependenciesList.Classes.push_back(&dependencies);
+
+		dependencies.Class = schemaClass;
+
+		trackDependencies(currentNamespace, dependenciesList, dependencies, schemaClass, true);
 
 		if (dependencies.ValueDependencies.size() && dependencies.ValueDependencies.size() && !dependenciesList.InvolvedInDependency.contains(schemaClass->Scope))
 		{

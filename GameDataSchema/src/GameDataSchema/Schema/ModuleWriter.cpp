@@ -676,6 +676,7 @@ namespace OutputSchema
 			std::unordered_set<std::string> ValueDependencies;
 		};
 
+		const std::unordered_map<std::string, const SchemaClass*>& NamespaceClasses;
 		std::vector<ClassDependencies*> Classes;
 		std::unordered_map<std::string, ClassDependencies> Dependencies;
 		std::unordered_set<std::string> InvolvedInDependency;
@@ -724,9 +725,9 @@ namespace OutputSchema
 			{
 				bool found = false;
 
-				for (const auto& entry : dependenciesList.Classes)
+				for (const auto& entry : dependenciesList.NamespaceClasses)
 				{
-					if (entry->Class->Scope == type)
+					if (entry.second->Scope == type)
 					{
 						found = true;
 
@@ -815,7 +816,7 @@ namespace OutputSchema
 	{
 		size_t i = 0;
 
-		ClassOrdering dependencies;
+		ClassOrdering dependencies = { out.Classes };
 
 		for (const auto& current : out.Enums)
 		{

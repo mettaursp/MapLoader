@@ -671,27 +671,15 @@ namespace OutputSchema
 	{
 		struct ClassDependencies
 		{
+			bool IsRegistered = false;
 			const OutputSchema::SchemaClass* Class = nullptr;
 			std::unordered_set<std::string> ValueDependencies;
 		};
 
-		std::vector<const ClassDependencies*> Classes;
+		std::vector<ClassDependencies*> Classes;
 		std::unordered_map<std::string, ClassDependencies> Dependencies;
-
-		bool operator()(const ClassDependencies* left, const ClassDependencies* right)
-		{
-			if (left->ValueDependencies.contains(right->Class->Scope))
-			{
-				return false;
-			}
-
-			if (right->ValueDependencies.contains(left->Class->Scope))
-			{
-				return true;
-			}
-
-			return left < right;
-		}
+		std::unordered_set<std::string> InvolvedInDependency;
+		std::vector<const ClassDependencies*> Registered;
 	};
 
 	bool isInSameNamespace(const std::string& currentNamespace, const std::string& scope)
@@ -735,7 +723,74 @@ namespace OutputSchema
 			if (isInSameNamespace(currentNamespace, type) && !dependencies.ValueDependencies.contains(type))
 			{
 				dependencies.ValueDependencies.insert(type);
+
+				if (!dependenciesList.InvolvedInDependency.contains(type))
+				{
+					dependenciesList.InvolvedInDependency.insert(type);
+				}
 			}
+		}
+
+		if (!dependenciesList.InvolvedInDependency.contains(schemaClass->Scope))
+		{
+			dependenciesList.InvolvedInDependency.insert(schemaClass->Scope);
+		}
+	}
+
+	void generateDependencyOrder(ClassOrdering& dependenciesList)
+	{
+		while (dependenciesList.Registered.size() < dependenciesList.InvolvedInDependency.size())
+		{
+			for (auto& entry : dependenciesList.Classes)
+			{
+				if (entry->IsRegistered)
+				{
+					continue;
+				}
+
+				if (entry->ValueDependencies.size() == 0 && dependenciesList.InvolvedInDependency.contains(entry->Class->Scope))
+				{
+					entry->IsRegistered = true;
+
+					dependenciesList.Registered.insert(dependenciesList.Registered.begin(), entry);
+
+					continue;
+				}
+
+				if (entry->ValueDependencies.size())
+				{
+					size_t found = 0;
+
+					for (const auto& dependency : entry->ValueDependencies)
+					{
+						if (dependenciesList.Dependencies[dependency].IsRegistered)
+						{
+							++found;
+						}
+					}
+
+					if (found == entry->ValueDependencies.size())
+					{
+						entry->IsRegistered = true;
+
+						dependenciesList.Registered.insert(dependenciesList.Registered.begin(), entry);
+
+						continue;
+					}
+				}
+			}
+		}
+
+		for (auto& entry : dependenciesList.Classes)
+		{
+			if (entry->IsRegistered)
+			{
+				continue;
+			}
+
+			entry->IsRegistered = true;
+
+			dependenciesList.Registered.insert(dependenciesList.Registered.begin(), entry);
 		}
 	}
 
@@ -764,9 +819,9 @@ namespace OutputSchema
 			trackDependencies(currentNamespace, dependencies, current.second);
 		}
 
-		std::sort(dependencies.Classes.begin(), dependencies.Classes.end(), dependencies);
+		generateDependencyOrder(dependencies);
 
-		for (const auto& current : dependencies.Classes)
+		for (const auto& current : dependencies.Registered)
 		{
 			if (i)
 			{

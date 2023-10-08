@@ -722,6 +722,23 @@ namespace OutputSchema
 
 			if (isInSameNamespace(currentNamespace, type) && !dependencies.ValueDependencies.contains(type))
 			{
+				bool found = false;
+
+				for (const auto& entry : dependenciesList.Classes)
+				{
+					if (entry->Class->Scope == type)
+					{
+						found = true;
+
+						break;
+					}
+				}
+
+				if (!found)
+				{
+					continue;
+				}
+
 				dependencies.ValueDependencies.insert(type);
 
 				if (!dependenciesList.InvolvedInDependency.contains(type))

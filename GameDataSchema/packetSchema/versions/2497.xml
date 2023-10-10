@@ -1564,7 +1564,7 @@
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 			</condition>
 			<condition data="mode" value="1" comparison="equal">
-				<output type="Networking.Packets.Server.ChangeAttributesScrollUseOnItemPacket" schemaName="packetData" />
+				<output type="Networking.Packets.Server.ChangeAttributesScrollAddPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
 				<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />
@@ -1574,7 +1574,7 @@
 				<useBlock name="ItemData" version="2497" output="ItemData" args="itemId" />
 			</condition>
 			<condition data="mode" value="2" comparison="equal">
-				<output type="Networking.Packets.Server.ChangeAttributesScrollPreviewItemPacket" schemaName="packetData" />
+				<output type="Networking.Packets.Server.ChangeAttributesScrollApplyPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
 				<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />

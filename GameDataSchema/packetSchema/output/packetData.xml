@@ -1471,24 +1471,24 @@
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
+				<class name="ChangeAttributesApplyPacket" directory="Packets\Server" file="ChangeAttributesScrollData">
+					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
+					<member name="ItemData" type="Maple.Game.ItemData" />
+				</class>
 				<class name="ChangeAttributesErrorPacket" directory="Packets\Server" file="ChangeAttributesData">
 				</class>
-				<class name="ChangeAttributesScrollUseScrollPacket" directory="Packets\Server" file="ChangeAttributesData">
+				<class name="ChangeAttributesScrollUseScrollPacket" directory="Packets\Server" file="ChangeAttributesScrollData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 				</class>
-				<class name="ChangeAttributesScrollUseOnItemPacket" directory="Packets\Server" file="ChangeAttributesData">
-					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
-					<member name="ItemData" type="Maple.Game.ItemData" />
-				</class>
-				<class name="ChangeAttributesScrollPreviewItemPacket" directory="Packets\Server" file="ChangeAttributesData">
+				<class name="ChangeAttributesScrollAddPacket" directory="Packets\Server" file="ChangeAttributesScrollData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
-				<class name="ChangeAttributesScrollApplyPacket" directory="Packets\Server" file="ChangeAttributesData">
+				<class name="ChangeAttributesScrollApplyPacket" directory="Packets\Server" file="ChangeAttributesScrollData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
-				<class name="ChangeAttributesScrollErrorPacket" directory="Packets\Server" file="ChangeAttributesData">
+				<class name="ChangeAttributesScrollErrorPacket" directory="Packets\Server" file="ChangeAttributesScrollData">
 				</class>
 				<class name="PetAddPacket" directory="Packets\Server" file="PetData">
 					<member name="PlayerActorId" type="Enum.ActorId" />

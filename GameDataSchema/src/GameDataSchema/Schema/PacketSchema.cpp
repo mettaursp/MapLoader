@@ -3495,11 +3495,22 @@ namespace PacketSchema
 
 			headerOut << "#pragma once\n";
 
+			std::unordered_set<std::string> printedFiles;
+
 			for (const auto& entry : outputsReferenced)
 			{
 				const OutputSchema::SchemaClass* schemaClass = entry.first;
 
-				headerOut << "#include <GameData/" << schemaClass->Directory << "/" << schemaClass->Name << ".h>\n";
+				std::string path = schemaClass->Directory + "/" + (schemaClass->FileName.size() ? schemaClass->FileName : schemaClass->Name);
+
+				if (printedFiles.contains(path))
+				{
+					continue;
+				}
+
+				printedFiles.insert(path);
+
+				headerOut << "#include <GameData/" << path << ".h>\n";
 			}
 		}
 	}
@@ -3661,9 +3672,20 @@ namespace PacketSchema
 
 			cppOut << "#include \"./../" << name << ".h\"\n\n";
 
+			std::unordered_set<std::string> printedFiles;
+
 			for (const OutputSchema::SchemaClass* schemaClass : opcode.Outputs)
 			{
-				cppOut << "#include <GameData/" << schemaClass->Directory << "/" << schemaClass->Name << ".h>\n";
+				std::string path = schemaClass->Directory + "/" + (schemaClass->FileName.size() ? schemaClass->FileName : schemaClass->Name);
+
+				if (printedFiles.contains(path))
+				{
+					continue;
+				}
+
+				printedFiles.insert(path);
+
+				cppOut << "#include <GameData/" << path << ".h>\n";
 			}
 
 			cppOut << "\nnamespace Networking\n{\n";

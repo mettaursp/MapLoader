@@ -1,9 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/ItemLockAddItemPacket.h>
-#include <GameData/Packets\Server/ItemLockRemoveItemPacket.h>
-#include <GameData/Packets\Server/ItemLockUpdateItemPacket.h>
-#include <GameData/Packets\Server/ItemLockErrorPacket.h>
+#include <GameData/Packets\Server/ItemLockData.h>
 
 namespace Networking
 {

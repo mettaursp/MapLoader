@@ -11,7 +11,7 @@
 #include <ParserUtils/DataStream.h>
 #include <ParserUtils/PacketParsing.h>
 #include <PacketProcessing/Handlers/SniffHandler/SniffHandler.h>
-#include <GameData/Data/ItemData.h>
+#include <GameData/Data/PacketCommon.h>
 
 namespace fs = std::filesystem;
 
@@ -920,7 +920,7 @@ int main(int argc, char** argv)
 		return false;
 	};
 
-	bool regenerate = true;
+	bool regenerate = !true;
 	bool showSuccesses = false;
 	bool showSeen = false;
 	bool showUnparsed = false;

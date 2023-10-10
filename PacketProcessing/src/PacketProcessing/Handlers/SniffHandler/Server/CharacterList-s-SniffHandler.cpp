@@ -1,11 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/CharacterListLoadPacket.h>
-#include <GameData/Packets\Server/CharacterListAddPacket.h>
-#include <GameData/Packets\Server/CharacterListDeletePacket.h>
-#include <GameData/Packets\Server/CharacterListDeletePendingPacket.h>
-#include <GameData/Packets\Server/CharacterListCancelDeletePacket.h>
-#include <GameData/Packets\Server/CharacterListChangeNamePacket.h>
+#include <GameData/Packets\Server/CharacterListData.h>
 
 namespace Networking
 {

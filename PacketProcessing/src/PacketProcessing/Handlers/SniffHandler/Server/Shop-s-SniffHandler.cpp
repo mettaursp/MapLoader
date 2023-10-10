@@ -1,17 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/ShopOpenPacket.h>
-#include <GameData/Packets\Server/ShopLoadItemsPacket.h>
-#include <GameData/Packets\Server/ShopUpdatePacket.h>
-#include <GameData/Packets\Server/ShopBuyPacket.h>
-#include <GameData/Packets\Server/ShopBuyBackItemCountPacket.h>
-#include <GameData/Packets\Server/ShopAddBuyBackPacket.h>
-#include <GameData/Packets\Server/ShopRemoveBuyBackPacket.h>
-#include <GameData/Packets\Server/ShopInstantRestockPacket.h>
-#include <GameData/Packets\Server/ShopMeretItemCountPacket.h>
-#include <GameData/Packets\Server/ShopLoadMeretItemPacket.h>
-#include <GameData/Packets\Server/ShopLoadNewPacket.h>
-#include <GameData/Packets\Server/ShopErrorPacket.h>
+#include <GameData/Packets\Server/ShopData.h>
 
 namespace Networking
 {

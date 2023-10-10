@@ -11,6 +11,7 @@ namespace Enum
 		Unknown4 = 4,
 		Unknown8 = 8
 	};
+	
 	enum class NpcType : unsigned long long
 	{
 		Enemy = 0,

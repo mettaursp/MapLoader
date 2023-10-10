@@ -1,12 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/ItemEnchantBeginPacket.h>
-#include <GameData/Packets\Server/ItemEnchantUpdateExpPacket.h>
-#include <GameData/Packets\Server/ItemEnchantUpdateChargesPacket.h>
-#include <GameData/Packets\Server/ItemEnchantUpdateIngredientsPacket.h>
-#include <GameData/Packets\Server/ItemEnchantSuccessPacket.h>
-#include <GameData/Packets\Server/ItemEnchantFailPacket.h>
-#include <GameData/Packets\Server/ItemEnchantErrorPacket.h>
+#include <GameData/Packets\Server/ItemEnchantData.h>
 
 namespace Networking
 {

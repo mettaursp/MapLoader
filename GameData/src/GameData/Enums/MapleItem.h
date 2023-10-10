@@ -5,6 +5,7 @@ namespace Enum
 	enum class EquipTab : unsigned char
 	{
 	};
+	
 	enum class Rarity
 	{
 		None = 0,
@@ -15,6 +16,7 @@ namespace Enum
 		Legendary = 5,
 		Ascendant = 6
 	};
+	
 	enum class RideMode : unsigned char
 	{
 		Default = 0,
@@ -22,6 +24,7 @@ namespace Enum
 		AdditionalEffect = 2,
 		HideAndSeek = 3
 	};
+	
 	enum class BadgeType : unsigned char
 	{
 		None = 0,
@@ -38,9 +41,11 @@ namespace Enum
 		Pet = 11,
 		Meta = 12
 	};
+	
 	enum class SlotType : unsigned char
 	{
 	};
+	
 	enum class ItemType : unsigned char
 	{
 	};

@@ -1,6 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/FieldAddItemPacket.h>
+#include <GameData/Packets\Server/FieldAddItemData.h>
 #include <ParserUtils/PacketParsing.h>
 
 namespace Networking

@@ -1,8 +1,8 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/RequestFieldEnterPacket.h>
+#include <GameData/Packets\Server/RequestFieldEnterData.h>
 #include <ParserUtils/PacketParsing.h>
-#include <GameData/Data/ItemData.h>
+#include <GameData/Data/PacketCommon.h>
 
 namespace Networking
 {

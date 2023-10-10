@@ -1,8 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/TrophyStartPacket.h>
-#include <GameData/Packets\Server/TrophyContentPacket.h>
-#include <GameData/Packets\Server/TrophyUpdatePacket.h>
+#include <GameData/Packets\Server/TrophyData.h>
 
 namespace Networking
 {

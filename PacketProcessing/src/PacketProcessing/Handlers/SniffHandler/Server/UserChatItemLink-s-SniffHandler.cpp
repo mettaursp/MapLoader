@@ -1,6 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/UserChatItemLinkPacket.h>
+#include <GameData/Packets\Server/UserChatItemLinkData.h>
 
 namespace Networking
 {

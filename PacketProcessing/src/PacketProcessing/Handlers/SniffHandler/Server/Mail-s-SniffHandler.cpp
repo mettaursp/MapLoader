@@ -1,18 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/MailLoadPacket.h>
-#include <GameData/Packets\Server/MailSendCustomConfirmPacket.h>
-#include <GameData/Packets\Server/MailReadPacket.h>
-#include <GameData/Packets\Server/MailErrorPacket.h>
-#include <GameData/Packets\Server/MailCollectingPacket.h>
-#include <GameData/Packets\Server/MailUpdateReadTimePacket.h>
-#include <GameData/Packets\Server/MailDeletePacket.h>
-#include <GameData/Packets\Server/MailReceivePacket.h>
-#include <GameData/Packets\Server/MailExpireNotificationPacket.h>
-#include <GameData/Packets\Server/MailStartListPacket.h>
-#include <GameData/Packets\Server/MailEndListPacket.h>
-#include <GameData/Packets\Server/MailError2Packet.h>
-#include <GameData/Packets\Server/MailReceiveGiftNotificationPacket.h>
+#include <GameData/Packets\Server/MailData.h>
 
 namespace Networking
 {

@@ -1,7 +1,7 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Client/LogInPacket.h>
-#include <GameData/Packets\Client/LogInAuthTokenPacket.h>
+#include <GameData/Packets\Client/LogInData.h>
+#include <GameData/Packets\Client/LogInAuthTokenData.h>
 
 namespace Networking
 {

@@ -1,17 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/NpcTalkEndPacket.h>
-#include <GameData/Packets\Server/NpcTalkRespondPacket.h>
-#include <GameData/Packets\Server/NpcTalkContinuePacket.h>
-#include <GameData/Packets\Server/NpcTalkActionMovePlayerPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionOpenDialogPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionRewardItemPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionRewardExpPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionRewardMesoPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionAddOptionPacket.h>
-#include <GameData/Packets\Server/NpcTalkActionCutscenePacket.h>
-#include <GameData/Packets\Server/NpcTalkUpdatePacket.h>
-#include <GameData/Packets\Server/NpcTalkAlliancePacket.h>
+#include <GameData/Packets\Server/NpcTalkServerData.h>
 
 namespace Networking
 {

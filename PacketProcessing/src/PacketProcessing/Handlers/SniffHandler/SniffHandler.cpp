@@ -5,7 +5,7 @@
 #include <ParserUtils/PacketParsing.h>
 #include <ArchiveParser/ArchiveParser.h>
 #include <Engine/Assets/ParserUtils.h>
-#include <GameData/Data/ItemData.h>
+#include <GameData/Data/PacketCommon.h>
 
 namespace Networking
 {

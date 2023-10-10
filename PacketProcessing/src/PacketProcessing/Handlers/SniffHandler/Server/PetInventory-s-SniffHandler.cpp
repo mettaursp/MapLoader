@@ -1,11 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/PetInventoryStoreItemPacket.h>
-#include <GameData/Packets\Server/PetInventoryRemoveItemPacket.h>
-#include <GameData/Packets\Server/PetInventoryUpdateAmountPacket.h>
-#include <GameData/Packets\Server/PetInventoryMoveItemPacket.h>
-#include <GameData/Packets\Server/PetInventoryListItemsPacket.h>
-#include <GameData/Packets\Server/PetInventoryStartListPacket.h>
+#include <GameData/Packets\Server/PetData.h>
 
 namespace Networking
 {

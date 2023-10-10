@@ -40,6 +40,7 @@ namespace Enum
 		BonusAtk = 33,
 		PetBonusAtk = 34
 	};
+	
 	enum class StatAttributeSpecial : unsigned short
 	{
 		ExpBonus = 1,

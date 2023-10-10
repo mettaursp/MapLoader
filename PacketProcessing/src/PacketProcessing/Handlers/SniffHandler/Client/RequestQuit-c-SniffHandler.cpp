@@ -1,6 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Client/RequestQuitPacket.h>
+#include <GameData/Packets\Client/RequestQuitData.h>
 
 namespace Networking
 {

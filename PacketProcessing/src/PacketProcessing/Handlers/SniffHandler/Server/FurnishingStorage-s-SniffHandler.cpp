@@ -1,12 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/FurnishingStorageStartListPacket.h>
-#include <GameData/Packets\Server/FurnishingStorageCountPacket.h>
-#include <GameData/Packets\Server/FurnishingStorageAddPacket.h>
-#include <GameData/Packets\Server/FurnishingStorageRemovePacket.h>
-#include <GameData/Packets\Server/FurnishingStoragePurchasePacket.h>
-#include <GameData/Packets\Server/FurnishingStorageUpdatePacket.h>
-#include <GameData/Packets\Server/FurnishingStorageEndListPacket.h>
+#include <GameData/Packets\Server/FurnishingStorageData.h>
 
 namespace Networking
 {

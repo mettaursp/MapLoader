@@ -1,13 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/BlackMarketErrorPacket.h>
-#include <GameData/Packets\Server/BlackMarketMyListingsPacket.h>
-#include <GameData/Packets\Server/BlackMarketCreateListingPacket.h>
-#include <GameData/Packets\Server/BlackMarketCancelListingPacket.h>
-#include <GameData/Packets\Server/BlackMarketSearchResultsPacket.h>
-#include <GameData/Packets\Server/BlackMarketPurchasePacket.h>
-#include <GameData/Packets\Server/BlackMarketSoldPacket.h>
-#include <GameData/Packets\Server/BlackMarketPrepareListingPacket.h>
+#include <GameData/Packets\Server/BlackMarketData.h>
 
 namespace Networking
 {

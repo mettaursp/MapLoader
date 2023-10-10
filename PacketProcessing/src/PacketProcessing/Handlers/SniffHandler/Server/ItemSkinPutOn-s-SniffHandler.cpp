@@ -1,6 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/ItemSkinPutOnPacket.h>
+#include <GameData/Packets\Server/ItemSkinPutOnData.h>
 
 namespace Networking
 {

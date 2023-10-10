@@ -1,17 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/TradeReceiveRequestPacket.h>
-#include <GameData/Packets\Server/TradeErrorPacket.h>
-#include <GameData/Packets\Server/TradeConfirmRequestPacket.h>
-#include <GameData/Packets\Server/TradeDeclinedPacket.h>
-#include <GameData/Packets\Server/TradeBeginPacket.h>
-#include <GameData/Packets\Server/TradeEndPacket.h>
-#include <GameData/Packets\Server/TradeAddItemPacket.h>
-#include <GameData/Packets\Server/TradeRemoveItemPacket.h>
-#include <GameData/Packets\Server/TradeSetMoneyPacket.h>
-#include <GameData/Packets\Server/TradeFinalizePacket.h>
-#include <GameData/Packets\Server/TradeChangeOfferPacket.h>
-#include <GameData/Packets\Server/TradeFinalizeConfirmPacket.h>
+#include <GameData/Packets\Server/TradeData.h>
 
 namespace Networking
 {

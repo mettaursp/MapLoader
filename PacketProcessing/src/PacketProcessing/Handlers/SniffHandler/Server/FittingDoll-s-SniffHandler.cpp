@@ -1,10 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/FittingDollLoadPacket.h>
-#include <GameData/Packets\Server/FittingDollRemovePacket.h>
-#include <GameData/Packets\Server/FittingDollPutOnItemPacket.h>
-#include <GameData/Packets\Server/FittingDollRemoveItemPacket.h>
-#include <GameData/Packets\Server/FittingDollErrorPacket.h>
+#include <GameData/Packets\Server/FittingDollData.h>
 
 namespace Networking
 {

@@ -6,9 +6,7 @@
 #include <ParserUtils/DataStream.h>
 #include <GameData/Enums/MapleHandles.h>
 #include <GameData/Enums/MaplePlayer.h>
-#include <GameData/Data/ActorStats.h>
-#include <GameData/Data/AdditionalEffect.h>
-#include <GameData/Data/SkillTreeData.h>
+#include <GameData/Data/PacketCommon.h>
 #include <GameData/Enums/MapleItem.h>
 
 namespace Maple

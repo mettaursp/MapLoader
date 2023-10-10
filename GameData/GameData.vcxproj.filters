@@ -41,42 +41,7 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ActorBasicStat.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ActorSpecialStat.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ActorStats.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\DyeColor.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemCapCustomization.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemHairCustomization.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemDecalCustomization.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemCustomization.h">
             <Filter>Source Files\Data</Filter>
         </ClInclude>
     </ItemGroup>
@@ -91,153 +56,28 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\BonusStats.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemStats.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemEnchantment.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemLimitBreak.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemUgc.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemBlueprint.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemPet.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemMusic.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemBadge.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemBinding.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemTransfer.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemSocket.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemCouple.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\ItemData.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\EffectStats.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\AdditionalEffect.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\MasteryData.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\CharacterData.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\EquipmentData.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\CharacterEquipment.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListEntry.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\SkillTreePageData.h">
             <Filter>Source Files\Data</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\SkillTreeData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SystemInfoData.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Data\PacketCommon.h">
             <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcDialogData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ScriptContentData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BuyPeriodData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MeretShopPremiumItemData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MeretShopPremiumItemEntryData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailAdData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailAttachData.h">
-            <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
@@ -246,1042 +86,267 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\CubeItemData.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\MountData.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketEntryData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Data\Pet.h">
-            <Filter>Source Files\Data</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldPetData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetProfileData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPotionSettingsData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLootSettingsData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\Reconnect7Packet.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ServerEnterPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListLoadPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListAddPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListDeletePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListDeletePendingPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListCancelDeletePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListChangeNamePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPlayerPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePlayerPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageStartListPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageCountPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageAddPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageRemovePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStoragePurchasePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageUpdatePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageEndListPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOnPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdatePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\StatPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ExpUpPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LevelUpPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageSyncPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamagePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageDotPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageHealPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageRegionPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillDamageTilePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BuffPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\JobPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkEndPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkRespondPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkContinuePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionMovePlayerPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionOpenDialogPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardExpPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionRewardMesoPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionAddOptionPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkActionCutscenePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkUpdatePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkAlliancePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopOpenPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopLoadItemsPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopUpdatePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopBuyPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopBuyBackItemCountPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopAddBuyBackPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopRemoveBuyBackPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopInstantRestockPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopMeretItemCountPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopLoadMeretItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopLoadNewPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailLoadPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailSendCustomConfirmPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailReadPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailCollectingPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailUpdateReadTimePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailDeletePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailReceivePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailExpireNotificationPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailStartListPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailEndListPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailError2Packet.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailReceiveGiftNotificationPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPetPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyStartPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyContentPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyUpdatePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesAvailabilityPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesPlotsPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesExpirationPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterInfoPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollLoadPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollRemovePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollPutOnItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollRemoveItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeReceiveRequestPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeConfirmRequestPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeDeclinedPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeBeginPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeEndPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeAddItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeRemoveItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeSetMoneyPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeFinalizePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeChangeOfferPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeFinalizeConfirmPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantBeginPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateExpPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateChargesPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantUpdateIngredientsPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantSuccessPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantFailPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketMyListingsPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketCreateListingPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketCancelListingPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketSearchResultsPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketPurchasePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketSoldPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketPrepareListingPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollEnchantUiPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollStatUiPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollSuccessPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollResultPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollRewardPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStartImprovisePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentPlayNotePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStopImprovisePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStartScorePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentStopScorePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentLeaveEnsemblePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentCreateScoreResponsePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentUpdateScoreUsesPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentViewMusicPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentEffectPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentWritePlayDialogPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesPreviewPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesAddPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollUseScrollPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollUseOnItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollPreviewItemPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollApplyPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetAddPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetRemovePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetSoundPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetRenamePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPotionPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLootPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLoadCollectionPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetAddCollectionPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInfoPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetFusionPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLevelUpPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetFusionDialogPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetSummonedNoticePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetOtherPetInfoPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetEvolvePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetEvolvePointsPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetErrorPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetLapisSnarePacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetUnknownFieldPetPacket.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryStoreItemPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryRemoveItemPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryUpdateAmountPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingStorageData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryMoveItemPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\Reconnect7Data.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryListItemsPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkServerData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryStartListPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPetData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockAddItemPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockRemoveItemPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BuffData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockUpdateItemPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockErrorPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ServerEnterData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseVersionPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\StateSkillData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\HandshakePacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOnData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPlayerData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseHeartbeatData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePlayerData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapleStats.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInAuthTokenData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInAuthTokenPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdateData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveItemData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MaplePlayer.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\StatData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ExpUpData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LevelUpData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterInfoData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\JobData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseKeyData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ReconnectPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkClientData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseKeyPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\RequestQuitData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseHeartbeatPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\RequestQuitPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseVersionData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillCastPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\HandshakeData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncDamagePacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ReconnectData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillDamagePacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillRegionSkillPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillSyncTickPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillCancelPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\StateSkillPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkClosePacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkBeginPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkContinuePacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkEnchantUnknownPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkEnchantPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkNextQuestPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkAllianceQuestAcceptPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkAllianceQuestTalkPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkCinematicPacket.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SystemInfoPacket.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
@@ -1296,17 +361,7 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\MaplePlayer.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\MapleItem.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\MapleStats.h">
             <Filter>Source Files\Enums</Filter>
         </ClInclude>
     </ItemGroup>

@@ -1,24 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/PetAddPacket.h>
-#include <GameData/Packets\Server/PetRemovePacket.h>
-#include <GameData/Packets\Server/PetSoundPacket.h>
-#include <GameData/Packets\Server/PetRenamePacket.h>
-#include <GameData/Packets\Server/PetPotionPacket.h>
-#include <GameData/Packets\Server/PetLootPacket.h>
-#include <GameData/Packets\Server/PetLoadCollectionPacket.h>
-#include <GameData/Packets\Server/PetAddCollectionPacket.h>
-#include <GameData/Packets\Server/PetInfoPacket.h>
-#include <GameData/Packets\Server/PetFusionPacket.h>
-#include <GameData/Packets\Server/PetLevelUpPacket.h>
-#include <GameData/Packets\Server/PetFusionDialogPacket.h>
-#include <GameData/Packets\Server/PetSummonedNoticePacket.h>
-#include <GameData/Packets\Server/PetOtherPetInfoPacket.h>
-#include <GameData/Packets\Server/PetEvolvePacket.h>
-#include <GameData/Packets\Server/PetEvolvePointsPacket.h>
-#include <GameData/Packets\Server/PetErrorPacket.h>
-#include <GameData/Packets\Server/PetLapisSnarePacket.h>
-#include <GameData/Packets\Server/PetUnknownFieldPetPacket.h>
+#include <GameData/Packets\Server/PetData.h>
 
 namespace Networking
 {

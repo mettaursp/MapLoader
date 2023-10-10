@@ -5,15 +5,18 @@ namespace Enum
 	enum class JobTier : unsigned short
 	{
 	};
+	
 	enum class Gender : unsigned char
 	{
 		Male = 0,
 		Female = 1,
 		Both = 2
 	};
+	
 	enum class JobId : unsigned short
 	{
 	};
+	
 	enum class JobCode : unsigned short
 	{
 		None = 0,
@@ -31,6 +34,7 @@ namespace Enum
 		Soulbinder = 110,
 		GameMaster = 999
 	};
+	
 	enum class JobFlags : unsigned int
 	{
 		None = 0,

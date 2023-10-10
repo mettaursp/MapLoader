@@ -1,6 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Client/HandshakePacket.h>
+#include <GameData/Packets\Client/HandshakeData.h>
 
 namespace Networking
 {

@@ -1,9 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/ChangeAttributesScrollUseScrollPacket.h>
-#include <GameData/Packets\Server/ChangeAttributesScrollUseOnItemPacket.h>
-#include <GameData/Packets\Server/ChangeAttributesScrollApplyPacket.h>
-#include <GameData/Packets\Server/ChangeAttributesScrollErrorPacket.h>
+#include <GameData/Packets\Server/ChangeAttributesData.h>
 
 namespace Networking
 {

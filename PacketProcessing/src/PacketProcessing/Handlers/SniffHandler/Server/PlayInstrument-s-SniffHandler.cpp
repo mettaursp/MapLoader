@@ -1,16 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/PlayInstrumentStartImprovisePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentPlayNotePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentStopImprovisePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentStartScorePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentStopScorePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentLeaveEnsemblePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentCreateScoreResponsePacket.h>
-#include <GameData/Packets\Server/PlayInstrumentUpdateScoreUsesPacket.h>
-#include <GameData/Packets\Server/PlayInstrumentViewMusicPacket.h>
-#include <GameData/Packets\Server/PlayInstrumentEffectPacket.h>
-#include <GameData/Packets\Server/PlayInstrumentWritePlayDialogPacket.h>
+#include <GameData/Packets\Server/PlayInstrumentData.h>
 
 namespace Networking
 {

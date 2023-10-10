@@ -1,6 +1,0 @@
-namespace Maple
-{
-	namespace Game
-	{
-	}
-}

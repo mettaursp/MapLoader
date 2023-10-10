@@ -1,14 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Client/NpcTalkClosePacket.h>
-#include <GameData/Packets\Client/NpcTalkBeginPacket.h>
-#include <GameData/Packets\Client/NpcTalkContinuePacket.h>
-#include <GameData/Packets\Client/NpcTalkEnchantUnknownPacket.h>
-#include <GameData/Packets\Client/NpcTalkEnchantPacket.h>
-#include <GameData/Packets\Client/NpcTalkNextQuestPacket.h>
-#include <GameData/Packets\Client/NpcTalkAllianceQuestAcceptPacket.h>
-#include <GameData/Packets\Client/NpcTalkAllianceQuestTalkPacket.h>
-#include <GameData/Packets\Client/NpcTalkCinematicPacket.h>
+#include <GameData/Packets\Client/NpcTalkClientData.h>
 
 namespace Networking
 {

@@ -1,12 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Client/SkillCastPacket.h>
-#include <GameData/Packets\Client/SkillSyncDamagePacket.h>
-#include <GameData/Packets\Client/SkillDamagePacket.h>
-#include <GameData/Packets\Client/SkillRegionSkillPacket.h>
-#include <GameData/Packets\Client/SkillSyncPacket.h>
-#include <GameData/Packets\Client/SkillSyncTickPacket.h>
-#include <GameData/Packets\Client/SkillCancelPacket.h>
+#include <GameData/Packets\Client/SkillData.h>
 
 namespace Networking
 {

@@ -1,6 +1,7 @@
 #include "./../SniffHandler.h"
 
 #include <GameData/Packets\Server/NpcTalkServerData.h>
+#include <ParserUtils/PacketParsing.h>
 
 namespace Networking
 {
@@ -44,7 +45,7 @@ namespace Networking
 		template <>
 		void SniffHandler::PacketParsed<Server::NpcTalkActionRewardItemPacket>(const Server::NpcTalkActionRewardItemPacket& packet)
 		{
-			
+
 		}
 	
 

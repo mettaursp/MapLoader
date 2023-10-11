@@ -56,8 +56,7 @@ namespace Networking
 			struct ChangeAttributesAddPacket;
 			struct NpcTalkUpdatePacket;
 			struct NpcTalkRespondPacket;
-			struct ChangeAttributesErrorPacket;
-			struct NpcTalkActionRewardExpPacket;
+			struct ChangeAttributesApplyPacket;
 			struct ItemLockErrorPacket;
 			struct PetOtherPetInfoPacket;
 			struct MailUpdateReadTimePacket;
@@ -77,6 +76,7 @@ namespace Networking
 			struct PetLapisSnarePacket;
 			struct SkillDamageSyncPacket;
 			struct NpcTalkActionRewardItemPacket;
+			struct ChangeAttributesScrollAddPacket;
 			struct NpcTalkActionOpenDialogPacket;
 			struct FurnishingStorageRemovePacket;
 			struct PlayInstrumentStopImprovisePacket;
@@ -93,6 +93,8 @@ namespace Networking
 			struct Reconnect7Packet;
 			struct FieldRemoveItemPacket;
 			struct NpcTalkActionMovePlayerPacket;
+			struct ChangeAttributesErrorPacket;
+			struct NpcTalkActionRewardExpPacket;
 			struct MailLoadPacket;
 			struct RequestFieldEnterPacket;
 			struct CharacterListLoadPacket;
@@ -126,7 +128,7 @@ namespace Networking
 			struct FurnishingStorageUpdatePacket;
 			struct BlackMarketSearchResultsPacket;
 			struct FurnishingStorageEndListPacket;
-			struct ChangeAttributesScrollUseOnItemPacket;
+			struct ChangeAttributesScrollUseScrollPacket;
 			struct PetInventoryStartListPacket;
 			struct ItemPutOnPacket;
 			struct EnchantScrollRewardPacket;
@@ -147,7 +149,6 @@ namespace Networking
 			struct ItemEnchantSuccessPacket;
 			struct BuffPacket;
 			struct ChangeAttributesPreviewPacket;
-			struct ChangeAttributesScrollPreviewItemPacket;
 			struct JobPacket;
 			struct ShopOpenPacket;
 			struct TradeErrorPacket;
@@ -206,7 +207,6 @@ namespace Networking
 			struct PlayInstrumentUpdateScoreUsesPacket;
 			struct PlayInstrumentViewMusicPacket;
 			struct PlayInstrumentWritePlayDialogPacket;
-			struct ChangeAttributesScrollUseScrollPacket;
 			struct PetSoundPacket;
 			struct PetRenamePacket;
 			struct PetLootPacket;
@@ -276,7 +276,7 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::PetFusionPacket>(const Server::PetFusionPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::ChangeAttributesErrorPacket>(const Server::ChangeAttributesErrorPacket& packet);
+		void SniffHandler::PacketParsed<Server::ChangeAttributesApplyPacket>(const Server::ChangeAttributesApplyPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Client::LogInAuthTokenPacket>(const Client::LogInAuthTokenPacket& packet);
@@ -531,7 +531,7 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::FurnishingStorageEndListPacket>(const Server::FurnishingStorageEndListPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollUseOnItemPacket>(const Server::ChangeAttributesScrollUseOnItemPacket& packet);
+		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollUseScrollPacket>(const Server::ChangeAttributesScrollUseScrollPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::ItemPutOnPacket>(const Server::ItemPutOnPacket& packet);
@@ -591,7 +591,7 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::ChangeAttributesPreviewPacket>(const Server::ChangeAttributesPreviewPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollPreviewItemPacket>(const Server::ChangeAttributesScrollPreviewItemPacket& packet);
+		void SniffHandler::PacketParsed<Server::ChangeAttributesErrorPacket>(const Server::ChangeAttributesErrorPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::JobPacket>(const Server::JobPacket& packet);
@@ -795,7 +795,7 @@ namespace Networking
 		void SniffHandler::PacketParsed<Server::PlayInstrumentWritePlayDialogPacket>(const Server::PlayInstrumentWritePlayDialogPacket& packet);
 
 		template <>
-		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollUseScrollPacket>(const Server::ChangeAttributesScrollUseScrollPacket& packet);
+		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollAddPacket>(const Server::ChangeAttributesScrollAddPacket& packet);
 
 		template <>
 		void SniffHandler::PacketParsed<Server::PetAddPacket>(const Server::PetAddPacket& packet);

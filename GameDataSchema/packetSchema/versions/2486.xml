@@ -1754,16 +1754,6 @@
 				<enum name="AddItem" value="2" />
 				<enum name="Error" value="4" />
 			</data>
-			<condition data="mode" value="1" comparison="equal">
-				<output type="Networking.Packets.Server.ChangeAttributesPreviewPacket" schemaName="packetData" />
-				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
-				<data type="int" name="itemId" doRead="false" />
-				<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />
-				<condition data="itemId" value="0" comparison="equal">
-					<discard />
-				</condition>
-				<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
-			</condition>
 			<condition data="mode" value="2" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesAddPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
@@ -1775,7 +1765,6 @@
 				<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
 			</condition>
 			<condition data="mode" value="3" comparison="equal">
-				<!-- unknown mode, change packet type later  -->
 				<output type="Networking.Packets.Server.ChangeAttributesApplyPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />

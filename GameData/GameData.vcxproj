@@ -252,10 +252,13 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInData.h"/>

@@ -12,6 +12,7 @@
 #include <GameData/Packets\Server/PetData.h>
 #include <GameData/Packets\Server/ChangeAttributesData.h>
 #include <GameData/Packets\Client/LogInData.h>
+#include <GameData/Packets\Server/ChangeAttributesScrollData.h>
 #include <GameData/Packets\Client/LogInAuthTokenData.h>
 #include <GameData/Packets\Client/ResponseKeyData.h>
 #include <GameData/Packets\Server/BlackMarketData.h>

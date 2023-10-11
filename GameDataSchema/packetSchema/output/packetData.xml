@@ -1463,15 +1463,11 @@
 				</class>
 				<class name="PlayInstrumentWritePlayDialogPacket" directory="Packets\Server" file="PlayInstrumentData">
 				</class>
-				<class name="ChangeAttributesPreviewPacket" directory="Packets\Server" file="ChangeAttributesData">
-					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
-					<member name="ItemData" type="Maple.Game.ItemData" />
-				</class>
 				<class name="ChangeAttributesAddPacket" directory="Packets\Server" file="ChangeAttributesData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
-				<class name="ChangeAttributesApplyPacket" directory="Packets\Server" file="ChangeAttributesScrollData">
+				<class name="ChangeAttributesApplyPacket" directory="Packets\Server" file="ChangeAttributesData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
@@ -1576,27 +1572,27 @@
 					<member name="PlayerActorId" type="Enum.ActorId" />
 					<member name="FieldPet" type="Maple.Game.FieldPetData" />
 				</class>
-				<class name="PetInventoryStoreItemPacket" directory="Packets\Server" file="PetData">
+				<class name="PetInventoryStoreItemPacket" directory="Packets\Server" file="PetInventoryData">
 					<member name="ItemId" type="Enum.ItemId" />
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="Slot" type="unsigned short" />
 					<member name="Rarity" type="Enum.Rarity" />
 					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
-				<class name="PetInventoryRemoveItemPacket" directory="Packets\Server" file="PetData">
+				<class name="PetInventoryRemoveItemPacket" directory="Packets\Server" file="PetInventoryData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 				</class>
-				<class name="PetInventoryUpdateAmountPacket" directory="Packets\Server" file="PetData">
+				<class name="PetInventoryUpdateAmountPacket" directory="Packets\Server" file="PetPetInventoryDataData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="Amount" type="unsigned int" />
 				</class>
-				<class name="PetInventoryMoveItemPacket" directory="Packets\Server" file="PetData">
+				<class name="PetInventoryMoveItemPacket" directory="Packets\Server" file="PetInventoryData">
 					<member name="SourceItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="SourceSlot" type="unsigned short" />
 					<member name="DestinationItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="DestinationSlot" type="unsigned short" />
 				</class>
-				<class name="PetInventoryListItemsPacket" directory="Packets\Server" file="PetData">
+				<class name="PetInventoryListItemsPacket" directory="Packets\Server" file="PetInventoryData">
 					<class name="SlotEntry" isMember="false">
 						<member name="ItemId" type="Enum.ItemId" />
 						<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
@@ -1606,7 +1602,7 @@
 					</class>
 					<member name="Slots" type="std::vector" contains="SlotEntry" />
 				</class>
-				<class name="PetInventoryStartListPacket" directory="Packets\Server" file="PetData">
+				<class name="PetInventoryStartListPacket" directory="Packets\Server" file="PetInventoryData">
 				</class>
 				<class name="ItemLockAddItemPacket" directory="Packets\Server" file="ItemLockData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />

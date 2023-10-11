@@ -1,6 +1,7 @@
 #include "./../SniffHandler.h"
 
 #include <GameData/Packets\Server/FieldAddPlayerData.h>
+#include <PacketProcessing/PacketLogging.h>
 #include <ParserUtils/PacketParsing.h>
 
 namespace Networking
@@ -57,9 +58,6 @@ namespace Networking
 				std::cout << TimeStamp << "adding " << PrintActor{ Field, packet.ActorId, ActorType::Player } << std::endl;
 			}
 
-			actor.AddEffects(*this, packet.Effects);
-			player.AddSkills(*this, packet.SkillTree);
-
 			if (packet.HasPet)
 			{
 				const auto petEntry = Field.Pets.find(packet.Pet.ActorId);
@@ -84,7 +82,27 @@ namespace Networking
 						std::cout << "with " << PrintActor{ Field, pet.Actor->ActorId, ActorType::Pet } << std::endl;
 					}
 				}
+
+				Item* item = RegisterItem(packet.Pet.ItemInstanceId, packet.Pet.ItemId);
+
+				item->Amount = 1;
+				item->Rarity = packet.Pet.Rarity;
+
+				if constexpr (ParserUtils::Packets::PrintPacketOutput)
+				{
+					std::cout << PrintItemStats{ Field, packet.Pet.ItemInstanceId };
+				}
 			}
+
+			actor.AddEffects(*this, packet.Effects);
+			player.AddSkills(*this, packet.SkillTree);
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << TimeStamp << "logging equipment for character " << packet.Character.Name << std::endl;
+			}
+
+			LogEquipment(this, packet.Equipment);
 		}
 	}
 }

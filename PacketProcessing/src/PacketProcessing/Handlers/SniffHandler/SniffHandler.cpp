@@ -1182,5 +1182,10 @@ std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItem
 
 	const Networking::Packets::Item* item = &itemEntry->second;
 
-	return out;
+	return out << Networking::Packets::PrintItemDataStats{ itemRef.Field, item->Data };
+}
+
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItemDataStats& item)
+{
+
 }

@@ -9,26 +9,25 @@ namespace Networking
 	{
 		namespace Server
 		{
-			struct ChangeAttributesErrorPacket
+			struct ChangeAttributesScrollErrorPacket
 			{
 			};
 			
-			struct ChangeAttributesAddPacket
+			struct ChangeAttributesScrollApplyPacket
 			{
 				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
 				Maple::Game::ItemData ItemData;
 			};
 			
-			struct ChangeAttributesPreviewPacket
+			struct ChangeAttributesScrollAddPacket
 			{
 				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
 				Maple::Game::ItemData ItemData;
 			};
 			
-			struct ChangeAttributesApplyPacket
+			struct ChangeAttributesScrollUseScrollPacket
 			{
 				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
-				Maple::Game::ItemData ItemData;
 			};
 		}
 	}

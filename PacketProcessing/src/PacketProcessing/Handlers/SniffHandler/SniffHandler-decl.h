@@ -232,6 +232,12 @@ namespace Networking
 			Enum::ItemInstanceId ItemInstanceId = Enum::ItemInstanceId::Null;
 		};
 
+		struct PrintItemDataStats
+		{
+			const FieldState& Field;
+			const Maple::Game::ItemData* Data = nullptr;
+		};
+
 		extern std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Gms2JobBaseStats;
 		extern std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Kms2JobBaseStats;
 
@@ -310,3 +316,4 @@ std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintEffe
 std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintSkill& effect);
 std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItem& item);
 std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItemStats& item);
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItemDataStats& item);

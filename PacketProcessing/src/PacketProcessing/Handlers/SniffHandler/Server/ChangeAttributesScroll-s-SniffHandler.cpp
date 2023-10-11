@@ -1,6 +1,6 @@
 #include "./../SniffHandler.h"
 
-#include <GameData/Packets\Server/ChangeAttributesData.h>
+#include <GameData/Packets\Server/ChangeAttributesScrollData.h>
 #include <ParserUtils/PacketParsing.h>
 
 namespace Networking
@@ -15,7 +15,7 @@ namespace Networking
 	
 
 		template <>
-		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollUseOnItemPacket>(const Server::ChangeAttributesScrollUseOnItemPacket& packet)
+		void SniffHandler::PacketParsed<Server::ChangeAttributesScrollAddPacket>(const Server::ChangeAttributesScrollAddPacket& packet)
 		{
 			Item* item = GetItem(packet.ItemInstanceId);
 

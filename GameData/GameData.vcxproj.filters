@@ -316,12 +316,17 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>

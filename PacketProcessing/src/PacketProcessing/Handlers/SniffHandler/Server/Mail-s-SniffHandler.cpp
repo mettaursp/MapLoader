@@ -1,6 +1,7 @@
 #include "./../SniffHandler.h"
 
 #include <GameData/Packets\Server/MailData.h>
+#include <ParserUtils/PacketParsing.h>
 
 namespace Networking
 {
@@ -9,7 +10,22 @@ namespace Networking
 		template <>
 		void SniffHandler::PacketParsed<Server::MailLoadPacket>(const Server::MailLoadPacket& packet)
 		{
-			
+			for (const auto& entry : packet.Mail)
+			{
+				for (const auto& attachment : entry.AttachedItems)
+				{
+					Item* item = RegisterItem(attachment.ItemInstanceId, attachment.ItemId);
+
+					item->Amount = 1;
+					item->Rarity = attachment.Rarity;
+
+					if constexpr (ParserUtils::Packets::PrintPacketOutput)
+					{
+						std::cout << TimeStamp << "received mail with attachment " << PrintItem{ Field, attachment.ItemInstanceId } << std::endl;
+						std::cout << PrintItemStats{ Field, attachment.ItemInstanceId };
+					}
+				}
+			}
 		}
 	
 

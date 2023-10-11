@@ -1,6 +1,7 @@
 #include "./../SniffHandler.h"
 
 #include <GameData/Packets\Server/FurnishingStorageData.h>
+#include <ParserUtils/PacketParsing.h>
 
 namespace Networking
 {
@@ -23,7 +24,16 @@ namespace Networking
 		template <>
 		void SniffHandler::PacketParsed<Server::FurnishingStorageAddPacket>(const Server::FurnishingStorageAddPacket& packet)
 		{
-			
+			Item* item = RegisterItem(packet.ItemInstanceId, packet.ItemId);
+
+			item->Amount = 1;
+			item->Rarity = packet.Rarity;
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << TimeStamp << "added item to furnishing storage " << PrintItem{ Field, packet.ItemInstanceId } << std::endl;
+				std::cout << PrintItemStats{ Field, packet.ItemInstanceId };
+			}
 		}
 	
 

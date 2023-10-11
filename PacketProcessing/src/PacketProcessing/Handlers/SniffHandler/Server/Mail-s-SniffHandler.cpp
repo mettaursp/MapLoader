@@ -30,7 +30,7 @@ namespace Networking
 					if constexpr (ParserUtils::Packets::PrintPacketOutput)
 					{
 						std::cout << "\twith attachment " << PrintItem{ Field, attachment.ItemInstanceId } << std::endl;
-						std::cout << PrintItemStats{ Field, attachment.ItemInstanceId };
+						std::cout << PrintItemStats{ Field, attachment.ItemInstanceId, 2 };
 					}
 				}
 			}

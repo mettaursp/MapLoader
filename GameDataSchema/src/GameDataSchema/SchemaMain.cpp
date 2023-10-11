@@ -1523,12 +1523,12 @@ int main(int argc, char** argv)
 
 					for (const auto& stat : levelEntry.Basic)
 					{
-						std::cout << "\t\t\t" << Networking::Packets::StatNames.find(stat.first)->second << ": " << stat.second.Base << std::endl;
+						std::cout << "\t\t\t" << Networking::Packets::GetStatName(stat.first) << ": " << stat.second.Base << std::endl;
 
 						if (stat.first == Enum::StatAttributeBasic::SpRegen || stat.first == Enum::StatAttributeBasic::SpRegenInterval)
 						{
-							std::cout << "\t\t\t" << Networking::Packets::StatNames.find(stat.first)->second << " Max: " << stat.second.Max << std::endl;
-							std::cout << "\t\t\t" << Networking::Packets::StatNames.find(stat.first)->second << " Current: " << stat.second.Current << std::endl;
+							std::cout << "\t\t\t" << Networking::Packets::GetStatName(stat.first) << " Max: " << stat.second.Max << std::endl;
+							std::cout << "\t\t\t" << Networking::Packets::GetStatName(stat.first) << " Current: " << stat.second.Current << std::endl;
 						}
 					}
 				}

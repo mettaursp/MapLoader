@@ -28,19 +28,240 @@ namespace Networking
 			{ 999, "GameMaster" },
 		};
 
-		const std::unordered_map<Enum::StatAttributeBasic, std::string> StatNames = {
-			{ Enum::StatAttributeBasic::Hp, "Hp" },
+		const std::unordered_map<Enum::StatAttributeBasic, std::string> StatBasicNames = {
 			{ Enum::StatAttributeBasic::Str, "Str" },
 			{ Enum::StatAttributeBasic::Dex, "Dex" },
 			{ Enum::StatAttributeBasic::Int, "Int" },
 			{ Enum::StatAttributeBasic::Luk, "Luk" },
-			{ Enum::StatAttributeBasic::PhysicalAtk, "PhysicalAtk" },
-			{ Enum::StatAttributeBasic::PhysicalRes, "PhysicalRes" },
-			{ Enum::StatAttributeBasic::MagicAtk, "MagicAtk" },
-			{ Enum::StatAttributeBasic::MagicRes, "MagicRes" },
-			{ Enum::StatAttributeBasic::Defense, "Defense" },
+			{ Enum::StatAttributeBasic::Hp, "Hp" },
+			{ Enum::StatAttributeBasic::HpRegen, "HpRegen" },
+			{ Enum::StatAttributeBasic::HpRegenInterval, "HpRegenInterval" },
+			{ Enum::StatAttributeBasic::Spirit, "Spirit" },
 			{ Enum::StatAttributeBasic::SpRegen, "SpRegen" },
-			{ Enum::StatAttributeBasic::SpRegenInterval, "SpRegenInterval" }
+			{ Enum::StatAttributeBasic::SpRegenInterval, "SpRegenInterval" },
+			{ Enum::StatAttributeBasic::Stamina, "Stamina" },
+			{ Enum::StatAttributeBasic::StaminaRegen, "StaminaRegen" },
+			{ Enum::StatAttributeBasic::StaminaRegenInterval, "StaminaRegenInterval" },
+			{ Enum::StatAttributeBasic::AttackSpeed, "AttackSpeed" },
+			{ Enum::StatAttributeBasic::MoveSpeed, "MoveSpeed" },
+			{ Enum::StatAttributeBasic::Accuracy, "Accuracy" },
+			{ Enum::StatAttributeBasic::Evasion, "Evasion" },
+			{ Enum::StatAttributeBasic::CritRate, "CritRate" },
+			{ Enum::StatAttributeBasic::CritDamage, "CritDamage" },
+			{ Enum::StatAttributeBasic::CritEvasion, "CritEvasion" },
+			{ Enum::StatAttributeBasic::Defense, "Defense" },
+			{ Enum::StatAttributeBasic::PerfectGuard, "PerfectGuard" },
+			{ Enum::StatAttributeBasic::JumpHeight, "JumpHeight" },
+			{ Enum::StatAttributeBasic::PhysicalAtk, "PhysicalAtk" },
+			{ Enum::StatAttributeBasic::MagicAtk, "MagicAtk" },
+			{ Enum::StatAttributeBasic::PhysicalRes, "PhysicalRes" },
+			{ Enum::StatAttributeBasic::MagicRes, "MagicRes" },
+			{ Enum::StatAttributeBasic::MinWeaponAtk, "MinWeaponAtk" },
+			{ Enum::StatAttributeBasic::MaxWeaponAtk, "MaxWeaponAtk" },
+			{ Enum::StatAttributeBasic::MinDamage, "MinDamage" },
+			{ Enum::StatAttributeBasic::MaxDamage, "MaxDamage" },
+			{ Enum::StatAttributeBasic::Pierce, "Pierce" },
+			{ Enum::StatAttributeBasic::MountMoveSpeed, "MountMoveSpeed" },
+			{ Enum::StatAttributeBasic::BonusAtk, "BonusAtk" },
+			{ Enum::StatAttributeBasic::PetBonusAtk, "PetBonusAtk" }
+		};
+
+		const std::unordered_map<Enum::StatAttributeSpecial, std::string> StatSpecialNames = {
+			{ Enum::StatAttributeSpecial::ExpBonus, "ExpBonus" },
+			{ Enum::StatAttributeSpecial::MesoBonus, "MesoBonus" },
+			{ Enum::StatAttributeSpecial::SwimSpeed, "SwimSpeed" },
+			{ Enum::StatAttributeSpecial::DashDistance, "DashDistance" },
+			{ Enum::StatAttributeSpecial::TonicDropRate, "TonicDropRate" },
+			{ Enum::StatAttributeSpecial::GearDropRate, "GearDropRate" },
+			{ Enum::StatAttributeSpecial::TotalDamage, "TotalDamage" },
+			{ Enum::StatAttributeSpecial::CriticalDamage, "CriticalDamage" },
+			{ Enum::StatAttributeSpecial::Damage, "Damage" },
+			{ Enum::StatAttributeSpecial::LeaderDamage, "LeaderDamage" },
+			{ Enum::StatAttributeSpecial::EliteDamage, "EliteDamage" },
+			{ Enum::StatAttributeSpecial::BossDamage, "BossDamage" }, /* This is actually used in conjunction with "sgi_target" in the XMLs. It's not boss damage, it's for a specified monster type. Currently ignoring it and just using it as boss damage, as nothing in the data uses it for non-boss mobs */
+			{ Enum::StatAttributeSpecial::HpOnKill, "HpOnKill" },
+			{ Enum::StatAttributeSpecial::SpiritOnKill, "SpiritOnKill" },
+			{ Enum::StatAttributeSpecial::StaminaOnKill, "StaminaOnKill" },
+			{ Enum::StatAttributeSpecial::Heal, "Heal" },
+			{ Enum::StatAttributeSpecial::AllyRecovery, "AllyRecovery" },
+			{ Enum::StatAttributeSpecial::IceDamage, "IceDamage" },
+			{ Enum::StatAttributeSpecial::FireDamage, "FireDamage" },
+			{ Enum::StatAttributeSpecial::DarkDamage, "DarkDamage" },
+			{ Enum::StatAttributeSpecial::HolyDamage, "HolyDamage" },
+			{ Enum::StatAttributeSpecial::PoisonDamage, "PoisonDamage" },
+			{ Enum::StatAttributeSpecial::ElectricDamage, "ElectricDamage" },
+			{ Enum::StatAttributeSpecial::MeleeDamage, "MeleeDamage" },
+			{ Enum::StatAttributeSpecial::RangedDamage, "RangedDamage" },
+			{ Enum::StatAttributeSpecial::PhysicalPiercing, "PhysicalPiercing" },
+			{ Enum::StatAttributeSpecial::MagicPiercing, "MagicPiercing" },
+			{ Enum::StatAttributeSpecial::IceDamageReduce, "IceDamageReduce" },
+			{ Enum::StatAttributeSpecial::FireDamageReduce, "FireDamageReduce" },
+			{ Enum::StatAttributeSpecial::DarkDamageReduce, "DarkDamageReduce" },
+			{ Enum::StatAttributeSpecial::HolyDamageReduce, "HolyDamageReduce" },
+			{ Enum::StatAttributeSpecial::PoisonDamageReduce, "PoisonDamageReduce" },
+			{ Enum::StatAttributeSpecial::ElectricDamageReduce, "ElectricDamageReduce" },
+			{ Enum::StatAttributeSpecial::StunReduce, "StunReduce" },
+			{ Enum::StatAttributeSpecial::CooldownReduce, "CooldownReduce" },
+			{ Enum::StatAttributeSpecial::DebuffDurationReduce, "DebuffDurationReduce" },
+			{ Enum::StatAttributeSpecial::MeleeDamageReduce, "MeleeDamageReduce" },
+			{ Enum::StatAttributeSpecial::RangedDamageReduce, "RangedDamageReduce" },
+			{ Enum::StatAttributeSpecial::KnockbackReduce, "KnockbackReduce" },
+			{ Enum::StatAttributeSpecial::MeleeStun, "MeleeStun" }, /* melee chance to stun */
+			{ Enum::StatAttributeSpecial::RangedStun, "RangedStun" }, /* melee chance to stun */
+			{ Enum::StatAttributeSpecial::MeeleeKnockback, "MeeleeKnockback" }, /* chance of knockback after meele att */
+			{ Enum::StatAttributeSpecial::RangedKnockback, "RangedKnockback" }, /* chance of knockback after ranged att */
+			{ Enum::StatAttributeSpecial::MeleeImmob, "MeleeImmob" }, /* ranged chance to immob */
+			{ Enum::StatAttributeSpecial::RangedImmob, "RangedImmob" }, /* ranged chance to immob */
+			{ Enum::StatAttributeSpecial::MeleeAoeDamage, "MeleeAoeDamage" }, /* melee chance to do aoe damage */
+			{ Enum::StatAttributeSpecial::RangedAoeDamage, "RangedAoeDamage" }, /* ranged chance to do aoe damage */
+			{ Enum::StatAttributeSpecial::DropRate, "DropRate" },
+			{ Enum::StatAttributeSpecial::QuestExp, "QuestExp" },
+			{ Enum::StatAttributeSpecial::QuestMeso, "QuestMeso" },
+			{ Enum::StatAttributeSpecial::InvokeEffect1, "InvokeEffect1" }, /* needs better name */
+			{ Enum::StatAttributeSpecial::InvokeEffect2, "InvokeEffect2" }, /* needs better name */
+			{ Enum::StatAttributeSpecial::InvokeEffect3, "InvokeEffect3" }, /* needs better name */
+			{ Enum::StatAttributeSpecial::PvPDamage, "PvPDamage" },
+			{ Enum::StatAttributeSpecial::PvPDefense, "PvPDefense" },
+			{ Enum::StatAttributeSpecial::GuildExp, "GuildExp" },
+			{ Enum::StatAttributeSpecial::GuildCoin, "GuildCoin" },
+			{ Enum::StatAttributeSpecial::McKayXpOrb, "McKayXpOrb" }, /* mc-kay experience orb value bonus */
+			{ Enum::StatAttributeSpecial::FishingExp, "FishingExp" },
+			{ Enum::StatAttributeSpecial::ArcadeExp, "ArcadeExp" },
+
+			{ Enum::StatAttributeSpecial::PerformanceExp, "PerformanceExp" },
+			{ Enum::StatAttributeSpecial::BlackMarketReduce, "BlackMarketReduce" },
+			{ Enum::StatAttributeSpecial::EnchantCatalystDiscount, "EnchantCatalystDiscount" },
+			{ Enum::StatAttributeSpecial::MeretReviveFee, "MeretReviveFee" },
+			{ Enum::StatAttributeSpecial::MiningBonus, "MiningBonus" },
+			{ Enum::StatAttributeSpecial::RanchingBonus, "RanchingBonus" },
+			{ Enum::StatAttributeSpecial::SmithingExp, "SmithingExp" },
+			{ Enum::StatAttributeSpecial::HandicraftMastery, "HandicraftMastery" },
+			{ Enum::StatAttributeSpecial::ForagingBonus, "ForagingBonus" },
+			{ Enum::StatAttributeSpecial::FarmingBonus, "FarmingBonus" },
+			{ Enum::StatAttributeSpecial::AlchemyMastery, "AlchemyMastery" },
+			{ Enum::StatAttributeSpecial::CookingMastery, "CookingMastery" },
+			{ Enum::StatAttributeSpecial::ForagingExp, "ForagingExp" },
+
+			/* techs */
+			{ Enum::StatAttributeSpecial::TECH, "TECH" }, /* level 1 skill */
+			{ Enum::StatAttributeSpecial::TECH_2, "TECH_2" }, /* 2nd level 1 skill */
+			{ Enum::StatAttributeSpecial::TECH_10, "TECH_10" }, /* lv 10 skill */
+			{ Enum::StatAttributeSpecial::TECH_13, "TECH_13" }, /* lv 13 skill */
+			{ Enum::StatAttributeSpecial::TECH_16, "TECH_16" }, /* lv 16 skill */
+			{ Enum::StatAttributeSpecial::TECH_19, "TECH_19" }, /* lv 19 skill */
+			{ Enum::StatAttributeSpecial::TECH_22, "TECH_22" }, /* lv 22 skill */
+			{ Enum::StatAttributeSpecial::TECH_25, "TECH_25" }, /* lv 25 skill */
+			{ Enum::StatAttributeSpecial::TECH_28, "TECH_28" }, /* lv 28 skill */
+			{ Enum::StatAttributeSpecial::TECH_31, "TECH_31" }, /* lv 31 skill */
+			{ Enum::StatAttributeSpecial::TECH_34, "TECH_34" }, /* lv 34 skill */
+			{ Enum::StatAttributeSpecial::TECH_37, "TECH_37" }, /* lv 37 skill */
+			{ Enum::StatAttributeSpecial::TECH_40, "TECH_40" }, /* lv 40 skill */
+			{ Enum::StatAttributeSpecial::TECH_43, "TECH_43" }, /* lv 43 skill */
+
+			{ Enum::StatAttributeSpecial::OXQuizExp, "OXQuizExp" },
+			{ Enum::StatAttributeSpecial::TrapMasterExp, "TrapMasterExp" },
+			{ Enum::StatAttributeSpecial::SoleSurvivorExp, "SoleSurvivorExp" },
+			{ Enum::StatAttributeSpecial::CrazyRunnerExp, "CrazyRunnerExp" },
+			{ Enum::StatAttributeSpecial::LudiEscapeExp, "LudiEscapeExp" },
+			{ Enum::StatAttributeSpecial::SpringBeachExp, "SpringBeachExp" },
+			{ Enum::StatAttributeSpecial::DanceDanceExp, "DanceDanceExp" },
+
+			{ Enum::StatAttributeSpecial::OXMovementSpeed, "OXMovementSpeed" },
+			{ Enum::StatAttributeSpecial::TrapMasterMovementSpeed, "TrapMasterMovementSpeed" },
+			{ Enum::StatAttributeSpecial::SoleSurvivorMovementSpeed, "SoleSurvivorMovementSpeed" },
+			{ Enum::StatAttributeSpecial::CrazyRunnerMovementSpeed, "CrazyRunnerMovementSpeed" },
+			{ Enum::StatAttributeSpecial::LudiEscapeMovementSpeed, "LudiEscapeMovementSpeed" },
+			{ Enum::StatAttributeSpecial::SpringBeachMovementSpeed, "SpringBeachMovementSpeed" },
+			{ Enum::StatAttributeSpecial::DanceDanceStopMovementSpeed, "DanceDanceStopMovementSpeed" },
+
+			{ Enum::StatAttributeSpecial::GenerateSpiritOrbs, "GenerateSpiritOrbs" },
+			{ Enum::StatAttributeSpecial::GenerateStaminaOrbs, "GenerateStaminaOrbs" },
+			{ Enum::StatAttributeSpecial::ValorTokens, "ValorTokens" },
+			{ Enum::StatAttributeSpecial::PvPExp, "PvPExp" },
+			{ Enum::StatAttributeSpecial::DarkDescentDamageBonus, "DarkDescentDamageBonus" },
+			{ Enum::StatAttributeSpecial::DarkDescentEvasion, "DarkDescentEvasion" },
+			{ Enum::StatAttributeSpecial::DarkDescentDamageReduce, "DarkDescentDamageReduce" },
+
+			{ Enum::StatAttributeSpecial::DoubleFishingMastery, "DoubleFishingMastery" },
+			{ Enum::StatAttributeSpecial::DoublePerformanceMastery, "DoublePerformanceMastery" },
+
+			{ Enum::StatAttributeSpecial::ExploredAreasMovementSpeed, "ExploredAreasMovementSpeed" },
+			{ Enum::StatAttributeSpecial::AirMountAscentSpeed, "AirMountAscentSpeed" },
+			{ Enum::StatAttributeSpecial::AdditionalEffect_95000018, "AdditionalEffect_95000018" },
+			{ Enum::StatAttributeSpecial::EnemyDefenseDecreaseOnHit, "EnemyDefenseDecreaseOnHit" },
+			{ Enum::StatAttributeSpecial::EnemyAttackDecreaseOnHit, "EnemyAttackDecreaseOnHit" },
+
+			{ Enum::StatAttributeSpecial::IncreaseTotalDamageIf1NearbyEnemy, "IncreaseTotalDamageIf1NearbyEnemy" }, /* Increases damage if there is an enemy within 5m */
+			{ Enum::StatAttributeSpecial::IncreaseTotalDamageIf3NearbyEnemies, "IncreaseTotalDamageIf3NearbyEnemies" }, /* Increases damage if there is at least 3 enemies within 5m */
+			{ Enum::StatAttributeSpecial::IncreaseTotalDamageIf80Spirit, "IncreaseTotalDamageIf80Spirit" }, /* Increase damage if you have 80 or more spirit */
+			{ Enum::StatAttributeSpecial::IncreaseTotalDamageIfFullStamina, "IncreaseTotalDamageIfFullStamina" },
+			{ Enum::StatAttributeSpecial::IncreaseTotalDamageIfHerbEffectActive, "IncreaseTotalDamageIfHerbEffectActive" }, /* Increase damage if you have a herb-like effect active */
+			{ Enum::StatAttributeSpecial::IncreaseTotalDamageToWorldBoss, "IncreaseTotalDamageToWorldBoss" },
+
+			{ Enum::StatAttributeSpecial::Effect95000026, "Effect95000026" },
+			{ Enum::StatAttributeSpecial::Effect95000027, "Effect95000027" },
+			{ Enum::StatAttributeSpecial::Effect95000028, "Effect95000028" },
+			{ Enum::StatAttributeSpecial::Effect95000029, "Effect95000029" },
+			{ Enum::StatAttributeSpecial::StaminaRecoverySpeed, "StaminaRecoverySpeed" },
+			{ Enum::StatAttributeSpecial::MaxWeaponAttack, "MaxWeaponAttack" },
+
+			{ Enum::StatAttributeSpecial::DoubleMiningProduction, "DoubleMiningProduction" },
+			{ Enum::StatAttributeSpecial::DoubleRanchingProduction, "DoubleRanchingProduction" },
+			{ Enum::StatAttributeSpecial::DoubleForagingProduction, "DoubleForagingProduction" },
+			{ Enum::StatAttributeSpecial::DoubleFarmingProduction, "DoubleFarmingProduction" },
+			{ Enum::StatAttributeSpecial::DoubleSmithingProduction, "DoubleSmithingProduction" },
+			{ Enum::StatAttributeSpecial::DoubleHandicraftProduction, "DoubleHandicraftProduction" },
+			{ Enum::StatAttributeSpecial::DoubleAlchemyProduction, "DoubleAlchemyProduction" },
+			{ Enum::StatAttributeSpecial::DoubleCookingProduction, "DoubleCookingProduction" },
+
+			{ Enum::StatAttributeSpecial::DoubleMiningMastery, "DoubleMiningMastery" },
+			{ Enum::StatAttributeSpecial::DoubleRanchingMastery, "DoubleRanchingMastery" },
+			{ Enum::StatAttributeSpecial::DoubleForagingMastery, "DoubleForagingMastery" },
+			{ Enum::StatAttributeSpecial::DoubleFarmingMastery, "DoubleFarmingMastery" },
+			{ Enum::StatAttributeSpecial::DoubleSmithingMastery, "DoubleSmithingMastery" },
+			{ Enum::StatAttributeSpecial::DoubleHandicraftMastery, "DoubleHandicraftMastery" },
+			{ Enum::StatAttributeSpecial::DoubleAlchemyMastery, "DoubleAlchemyMastery" },
+			{ Enum::StatAttributeSpecial::DoubleCookingMastery, "DoubleCookingMastery" },
+
+			{ Enum::StatAttributeSpecial::ChaosRaidWeaponAttack, "ChaosRaidWeaponAttack" },
+			{ Enum::StatAttributeSpecial::ChaosRaidAttackSpeed, "ChaosRaidAttackSpeed" },
+			{ Enum::StatAttributeSpecial::ChaosRaidAccuracy, "ChaosRaidAccuracy" },
+			{ Enum::StatAttributeSpecial::ChaosRaidHealth, "ChaosRaidHealth" },
+
+			{ Enum::StatAttributeSpecial::StaminaAndSpiritFromOrbs, "StaminaAndSpiritFromOrbs" },
+
+			{ Enum::StatAttributeSpecial::WorldBossExp, "WorldBossExp" },
+			{ Enum::StatAttributeSpecial::WorldBossDropRate, "WorldBossDropRate" },
+			{ Enum::StatAttributeSpecial::WorldBossDamageReduce, "WorldBossDamageReduce" },
+
+			{ Enum::StatAttributeSpecial::Effect9500016, "Effect9500016" },
+			{ Enum::StatAttributeSpecial::PetCaptureRewards, "PetCaptureRewards" },
+
+			{ Enum::StatAttributeSpecial::MiningEfficency, "MiningEfficency" },
+			{ Enum::StatAttributeSpecial::RanchingEfficiency, "RanchingEfficiency" },
+			{ Enum::StatAttributeSpecial::ForagingEfficiency, "ForagingEfficiency" },
+			{ Enum::StatAttributeSpecial::FarmingEfficiency, "FarmingEfficiency" },
+
+			{ Enum::StatAttributeSpecial::ShanghaiCrazyRunnersExp, "ShanghaiCrazyRunnersExp" },
+			{ Enum::StatAttributeSpecial::ShanghaiCrazyRunnersMovementSpeed, "ShanghaiCrazyRunnersMovementSpeed" },
+
+			{ Enum::StatAttributeSpecial::HealthBasedDamageReduce, "HealthBasedDamageReduce" },
+			{ Enum::StatAttributeSpecial::ReduceMesoRevivalFee, "ReduceMesoRevivalFee" },
+			{ Enum::StatAttributeSpecial::ImproveRidingRunSpeed, "ImproveRidingRunSpeed" },
+			{ Enum::StatAttributeSpecial::ImproveDungeonRewardMeso, "ImproveDungeonRewardMeso" },
+			{ Enum::StatAttributeSpecial::ImproveShopBuyingMeso, "ImproveShopBuyingMeso" },
+			{ Enum::StatAttributeSpecial::ImproveItemboxRewardMeso, "ImproveItemboxRewardMeso" },
+			{ Enum::StatAttributeSpecial::ReduceRemakeOptionRee, "ReduceRemakeOptionRee" },
+			{ Enum::StatAttributeSpecial::ReduceAirTaxiFee, "ReduceAirTaxiFee" },
+			{ Enum::StatAttributeSpecial::ImproveSocketUnlockProbability, "ImproveSocketUnlockProbability" },
+			{ Enum::StatAttributeSpecial::ReduceGemstoneUpgradeFee, "ReduceGemstoneUpgradeFee" },
+			{ Enum::StatAttributeSpecial::ReducePetRemakeOptionFee, "ReducePetRemakeOptionFee" },
+			{ Enum::StatAttributeSpecial::ImproveRidingSpeed, "ImproveRidingSpeed" },
+			{ Enum::StatAttributeSpecial::ImproveSurvivalKill_exp, "ImproveSurvivalKill_exp" },
+			{ Enum::StatAttributeSpecial::ImproveSurvivalTime_exp, "ImproveSurvivalTime_exp" },
+			{ Enum::StatAttributeSpecial::OffensivePhysicalDamage, "OffensivePhysicalDamage" },
+			{ Enum::StatAttributeSpecial::OffensiveMagicalDamage, "OffensiveMagicalDamage" },
+			{ Enum::StatAttributeSpecial::ReduceGameitemSocketUnlockFee, "ReduceGameitemSocketUnlockFee" }
 		};
 
 		const std::unordered_map<Enum::Rarity, std::string> Rarities = {
@@ -925,6 +1146,34 @@ namespace Networking
 			}
 		}
 
+		const std::string& GetStatName(Enum::StatAttributeBasic stat)
+		{
+			static const std::string unknown = "<unknown>";
+
+			const auto entry = StatBasicNames.find(stat);
+
+			if (entry == StatBasicNames.end())
+			{
+				return unknown;
+			}
+
+			return entry->second;
+		}
+
+		const std::string& GetStatName(Enum::StatAttributeSpecial stat)
+		{
+			static const std::string unknown = "<unknown>";
+
+			const auto entry = StatSpecialNames.find(stat);
+
+			if (entry == StatSpecialNames.end())
+			{
+				return unknown;
+			}
+
+			return entry->second;
+		}
+
 		std::string GetJobName(Enum::JobCode jobCode, Enum::JobId job)
 		{
 			return GetJobName(jobCode, (jobCode >= 10 && jobCode <= 110) ? ((unsigned short)job % 10) : 0);
@@ -1187,10 +1436,75 @@ std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItem
 
 	const Networking::Packets::Item* item = &itemEntry->second;
 
-	return out << Networking::Packets::PrintItemDataStats{ itemRef.Field, item->Data };
+	return out << Networking::Packets::PrintItemDataStats{ itemRef.Field, item->Data, itemRef.Tabs };
 }
 
-std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItemDataStats& item)
+template <typename T>
+void printStat(const std::vector<T>& stats, const char* message, const char* tabs)
 {
+	if (stats.size())
+	{
+		std::cout << (tabs + 1) << message << std::endl;
+	}
+
+	for (const auto& entry : stats)
+	{
+		if (entry.Rate == 0 && entry.Value == 0)
+		{
+			continue;
+		}
+
+		std::cout << tabs << Networking::Packets::GetStatName(entry.Type) << ": ";
+
+		if (entry.Rate != 0)
+		{
+			std::cout << "r: " << (entry.Rate * 100) << (entry.Value != 0 ? "%; " : "%");
+		}
+
+		if (entry.Value != 0)
+		{
+			if constexpr (std::is_floating_point_v<decltype(entry.Value)>)
+			{
+				std::cout << "v: " << (entry.Value * 100) << "%";
+			}
+			else
+			{
+
+				std::cout << "v: " << entry.Value;
+			}
+		}
+
+		std::cout << std::endl;
+	}
+}
+
+std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItemDataStats& itemRef)
+{
+	const char tabData[] = "\t\t\t\t\t";
+	const char* tabs = tabData + (sizeof(tabData) - 1) - itemRef.Tabs;
+	
+	printStat(itemRef.Data->LimitBreak.Stats.Basic, "limit break basic stats", tabs - 1);
+	printStat(itemRef.Data->LimitBreak.Stats.Special, "limit break special stats", tabs - 1);
+	printStat(itemRef.Data->Enchantment.Basic, "enchantment basic stats", tabs - 1);
+
+	printStat(itemRef.Data->Stats.Constant.Basic, "constant basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Constant.Special, "constant special stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Static.Basic, "static basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Static.Special, "static special stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Random.Basic, "random basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Random.Special, "random special stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Title.Basic, "title basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Title.Special, "title special stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment1.Basic, "empowerment 1 basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment1.Special, "empowerment 1 special stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment2.Basic, "empowerment 2 basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment2.Special, "empowerment 2 special stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment3.Basic, "empowerment 3 basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment3.Special, "empowerment 3 special stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment4.Basic, "empowerment 4 basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment4.Special, "empowerment 4 special stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment5.Basic, "empowerment 5 basic stats", tabs - 1);
+	printStat(itemRef.Data->Stats.Empowerment5.Special, "empowerment 5 special stats", tabs - 1);
+
 	return out;
 }

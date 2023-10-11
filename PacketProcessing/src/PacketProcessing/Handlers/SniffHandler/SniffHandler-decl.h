@@ -23,8 +23,11 @@ namespace Networking
 	{
 		extern const std::string JobSuffixes[3];
 		extern const std::unordered_map<unsigned short, std::string> JobNames;
-		extern const std::unordered_map<Enum::StatAttributeBasic, std::string> StatNames;
+		extern const std::unordered_map<Enum::StatAttributeBasic, std::string> StatBasicNames;
+		extern const std::unordered_map<Enum::StatAttributeSpecial, std::string> StatSpecialNames;
 
+		const std::string& GetStatName(Enum::StatAttributeBasic stat);
+		const std::string& GetStatName(Enum::StatAttributeSpecial stat);
 		std::string GetJobName(Enum::JobCode jobCode, Enum::JobId job);
 		std::string GetJobName(Enum::JobCode jobCode, unsigned int rank);
 
@@ -230,12 +233,14 @@ namespace Networking
 		{
 			const FieldState& Field;
 			Enum::ItemInstanceId ItemInstanceId = Enum::ItemInstanceId::Null;
+			size_t Tabs = 1;
 		};
 
 		struct PrintItemDataStats
 		{
 			const FieldState& Field;
 			const Maple::Game::ItemData* Data = nullptr;
+			size_t Tabs = 1;
 		};
 
 		extern std::unordered_map<Enum::JobCode, std::unordered_map<unsigned short, ActorStats>> Gms2JobBaseStats;

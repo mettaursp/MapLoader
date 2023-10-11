@@ -17,7 +17,7 @@ namespace Networking
 			if constexpr (ParserUtils::Packets::PrintPacketOutput)
 			{
 				std::cout << message << PrintItem{ handler->Field, equipment.ItemInstanceId } << std::endl;
-				std::cout << PrintItemStats{ handler->Field, equipment.ItemInstanceId };
+				std::cout << PrintItemStats{ handler->Field, equipment.ItemInstanceId, 2 };
 			}
 		}
 

@@ -59,34 +59,6 @@ namespace Networking
 			}
 		}
 	
-
-		template <>
-		void SniffHandler::PacketParsed<Server::ChangeAttributesApplyPacket>(const Server::ChangeAttributesApplyPacket& packet)
-		{
-			Item* item = GetItem(packet.ItemInstanceId);
-
-			if (item)
-			{
-				*item->Data = packet.ItemData;
-
-				if constexpr (ParserUtils::Packets::PrintPacketOutput)
-				{
-					std::cout << TimeStamp << "changing attributes on " << PrintItem{ Field, packet.ItemInstanceId } << std::endl;
-					std::cout << PrintItemStats{ Field, packet.ItemInstanceId };
-				}
-			}
-			else
-			{
-				if constexpr (ParserUtils::Packets::PrintUnknownValues)
-				{
-					FoundUnknownValue();
-
-					std::cout << TimeStamp << "attempting to changing binding on unregistered item instance " << packet.ItemInstanceId << std::endl;
-				}
-			}
-		}
-	
-
 		template <>
 		void SniffHandler::PacketParsed<Server::ChangeAttributesErrorPacket>(const Server::ChangeAttributesErrorPacket& packet)
 		{

@@ -28,7 +28,7 @@ namespace Networking
 				if constexpr (ParserUtils::Packets::PrintPacketOutput)
 				{
 					std::cout <<  "\tlinked item " << PrintItem{ Field, entry.ItemInstanceId } << std::endl;
-					std::cout << PrintItemStats{ Field, entry.ItemInstanceId };
+					std::cout << PrintItemStats{ Field, entry.ItemInstanceId, 2 };
 				}
 			}
 		}

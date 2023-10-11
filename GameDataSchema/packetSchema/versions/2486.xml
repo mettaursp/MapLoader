@@ -1755,7 +1755,7 @@
 				<enum name="Error" value="4" />
 			</data>
 			<condition data="mode" value="2" comparison="equal">
-				<output type="Networking.Packets.Server.ChangeAttributesAddPacket" schemaName="packetData" />
+				<output type="Networking.Packets.Server.ChangeAttributesPreviewChangePacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
 				<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />
@@ -1803,7 +1803,7 @@
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 			</condition>
 			<condition data="mode" value="1" comparison="equal">
-				<output type="Networking.Packets.Server.ChangeAttributesScrollAddPacket" schemaName="packetData" />
+				<output type="Networking.Packets.Server.ChangeAttributesScrollPreviewChangePacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
 				<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />

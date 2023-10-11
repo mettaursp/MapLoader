@@ -1,6 +1,7 @@
 #include "./../SniffHandler.h"
 
 #include <GameData/Packets\Server/TradeData.h>
+#include <ParserUtils/PacketParsing.h>
 
 namespace Networking
 {
@@ -51,7 +52,16 @@ namespace Networking
 		template <>
 		void SniffHandler::PacketParsed<Server::TradeAddItemPacket>(const Server::TradeAddItemPacket& packet)
 		{
-			
+			Item* item = RegisterItem(packet.ItemInstanceId, packet.ItemId);
+
+			item->Amount = packet.Amount;
+			item->Rarity = packet.Rarity;
+
+			if constexpr (ParserUtils::Packets::PrintPacketOutput)
+			{
+				std::cout << TimeStamp << "adding item to trade window " << PrintItem{ Field, packet.ItemInstanceId } << std::endl;
+				std::cout << PrintItemStats{ Field, packet.ItemInstanceId };
+			}
 		}
 	
 

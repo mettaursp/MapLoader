@@ -207,6 +207,9 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\StatData.h"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPetInventoryDataData.h"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ExpUpData.h"/>
     </ItemGroup>
     <ItemGroup>
@@ -256,6 +259,9 @@
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockData.h"/>

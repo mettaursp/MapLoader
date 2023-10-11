@@ -12,7 +12,7 @@ namespace Networking
 		{
 			Item* item = RegisterItem(packet.ItemInstanceId, packet.ItemId);
 
-			item->Amount = 1;
+			item->Amount = packet.Amount;
 			item->Rarity = packet.Rarity;
 
 			if constexpr (ParserUtils::Packets::PrintPacketOutput)

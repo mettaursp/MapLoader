@@ -13,19 +13,13 @@ namespace Networking
 			{
 			};
 			
-			struct ChangeAttributesAddPacket
-			{
-				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
-				Maple::Game::ItemData ItemData;
-			};
-			
-			struct ChangeAttributesPreviewPacket
-			{
-				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
-				Maple::Game::ItemData ItemData;
-			};
-			
 			struct ChangeAttributesApplyPacket
+			{
+				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
+				Maple::Game::ItemData ItemData;
+			};
+			
+			struct ChangeAttributesAddPacket
 			{
 				Enum::ItemInstanceId ItemInstanceId = (Enum::ItemInstanceId)0;
 				Maple::Game::ItemData ItemData;

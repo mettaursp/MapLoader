@@ -1,6 +1,7 @@
 #include "./../SniffHandler.h"
 
 #include <GameData/Packets\Server/PlayInstrumentData.h>
+#include <ParserUtils/PacketParsing.h>
 
 namespace Networking
 {
@@ -51,7 +52,26 @@ namespace Networking
 		template <>
 		void SniffHandler::PacketParsed<Server::PlayInstrumentCreateScoreResponsePacket>(const Server::PlayInstrumentCreateScoreResponsePacket& packet)
 		{
-			
+			Item* item = GetItem(packet.ItemInstanceId);
+
+			if (item)
+			{
+				*item->Data = packet.ItemData;
+
+				if constexpr (ParserUtils::Packets::PrintPacketOutput)
+				{
+					std::cout << TimeStamp << "created score " << PrintItem{ Field, packet.ItemInstanceId } << std::endl;
+				}
+			}
+			else
+			{
+				if constexpr (ParserUtils::Packets::PrintUnknownValues)
+				{
+					FoundUnknownValue();
+
+					std::cout << TimeStamp << "attempting to create score " << packet.ItemInstanceId << std::endl;
+				}
+			}
 		}
 	
 

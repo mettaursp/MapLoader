@@ -12,16 +12,24 @@ namespace Networking
 		{
 			for (const auto& entry : packet.Mail)
 			{
+				if constexpr (ParserUtils::Packets::PrintPacketOutput)
+				{
+					if (entry.AttachedItems.size())
+					{
+						std::cout << TimeStamp << "listing mail" << std::endl;
+					}
+				}
+
 				for (const auto& attachment : entry.AttachedItems)
 				{
 					Item* item = RegisterItem(attachment.ItemInstanceId, attachment.ItemId);
 
-					item->Amount = 1;
+					item->Amount = attachment.Amount;
 					item->Rarity = attachment.Rarity;
 
 					if constexpr (ParserUtils::Packets::PrintPacketOutput)
 					{
-						std::cout << TimeStamp << "received mail with attachment " << PrintItem{ Field, attachment.ItemInstanceId } << std::endl;
+						std::cout << "\twith attachment " << PrintItem{ Field, attachment.ItemInstanceId } << std::endl;
 						std::cout << PrintItemStats{ Field, attachment.ItemInstanceId };
 					}
 				}

@@ -21,7 +21,7 @@ namespace Networking
 
 			if (item)
 			{
-				*item->Data = packet.ItemData;
+				//*item->Data = packet.ItemData;
 
 				if constexpr (ParserUtils::Packets::PrintPacketOutput)
 				{
@@ -34,7 +34,7 @@ namespace Networking
 				{
 					FoundUnknownValue();
 
-					std::cout << TimeStamp << "attempting to changing binding on unregistered item instance " << packet.ItemInstanceId << std::endl;
+					std::cout << TimeStamp << "attempting to change attributes with scroll on unregistered item instance " << packet.ItemInstanceId << std::endl;
 				}
 			}
 		}
@@ -61,7 +61,7 @@ namespace Networking
 				{
 					FoundUnknownValue();
 
-					std::cout << TimeStamp << "attempting to changing binding on unregistered item instance " << packet.ItemInstanceId << std::endl;
+					std::cout << TimeStamp << "attempting to change attributes with scroll on unregistered item instance " << packet.ItemInstanceId << std::endl;
 				}
 			}
 		}

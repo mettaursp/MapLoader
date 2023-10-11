@@ -1463,7 +1463,7 @@
 				</class>
 				<class name="PlayInstrumentWritePlayDialogPacket" directory="Packets\Server" file="PlayInstrumentData">
 				</class>
-				<class name="ChangeAttributesAddPacket" directory="Packets\Server" file="ChangeAttributesData">
+				<class name="ChangeAttributesPreviewChangePacket" directory="Packets\Server" file="ChangeAttributesData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>
@@ -1476,7 +1476,7 @@
 				<class name="ChangeAttributesScrollUseScrollPacket" directory="Packets\Server" file="ChangeAttributesScrollData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 				</class>
-				<class name="ChangeAttributesScrollAddPacket" directory="Packets\Server" file="ChangeAttributesScrollData">
+				<class name="ChangeAttributesScrollPreviewChangePacket" directory="Packets\Server" file="ChangeAttributesScrollData">
 					<member name="ItemInstanceId" type="Enum.ItemInstanceId" />
 					<member name="ItemData" type="Maple.Game.ItemData" />
 				</class>

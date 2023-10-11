@@ -148,12 +148,14 @@
     <ItemGroup>
         <ClInclude Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler-decl.h"/>
         <ClInclude Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler.h"/>
+        <ClInclude Include="src\PacketProcessing\PacketLogging.h"/>
         <ClInclude Include="src\PacketProcessing\PacketParser.h"/>
         <ClInclude Include="src\PacketProcessing\PacketParserBase.h"/>
         <ClInclude Include="src\PacketProcessing\PacketParserOutputs.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClCompile Include="src\PacketProcessing\Handlers\SniffHandler\SniffHandler.cpp"/>
+        <ClCompile Include="src\PacketProcessing\PacketLogging.cpp"/>
         <ClCompile Include="src\PacketProcessing\PacketOpcodes.cpp"/>
         <ClCompile Include="src\PacketProcessing\PacketParser.cpp"/>
         <ClCompile Include="src\PacketProcessing\PacketParserBase.cpp"/>

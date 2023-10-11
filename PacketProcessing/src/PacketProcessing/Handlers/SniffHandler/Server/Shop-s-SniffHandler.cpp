@@ -1,6 +1,7 @@
 #include "./../SniffHandler.h"
 
 #include <GameData/Packets\Server/ShopData.h>
+#include <ParserUtils/PacketParsing.h>
 
 namespace Networking
 {
@@ -79,7 +80,7 @@ namespace Networking
 		template <>
 		void SniffHandler::PacketParsed<Server::ShopLoadNewPacket>(const Server::ShopLoadNewPacket& packet)
 		{
-			
+
 		}
 	
 

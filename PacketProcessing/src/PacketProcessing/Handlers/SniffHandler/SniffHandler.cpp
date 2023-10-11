@@ -1166,6 +1166,11 @@ std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItem
 		{
 			out << "+" << item->Data->Enchantment.Level << " ";
 		}
+
+		if (item->Data->Binding.CharacterId != Enum::CharacterId::Null)
+		{
+			out << "(Bound to " << item->Data->Binding.Name << ") ";
+		}
 	}
 
 	return out << item->InstanceId;
@@ -1187,5 +1192,5 @@ std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItem
 
 std::ostream& operator<<(std::ostream& out, const Networking::Packets::PrintItemDataStats& item)
 {
-
+	return out;
 }

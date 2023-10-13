@@ -11,3992 +11,3984 @@ namespace Networking
 		};
 		const std::vector<PacketVersionData> Versions = {
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v12+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<12, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<12, ServerPacket, 0x48> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "NpcTalk", &ParsePacket<12, ServerPacket, 0x4c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<12, ServerPacket, 0x52> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<12, ServerPacket, 0x55> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterInfo", &ParsePacket<12, ServerPacket, 0x7a> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<12, ServerPacket, 0x7d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<12, ServerPacket, 0x84> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<12, ServerPacket, 0x99> },
-					{ "BlackMarket", &ParsePacket<12, ServerPacket, 0x9a> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<12, ServerPacket, 0xc1> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<12, ServerPacket, 0xc9> },
-					{ "ChangeAttributes", &ParsePacket<12, ServerPacket, 0xca> },
-					{ "ChangeAttributesScroll", &ParsePacket<12, ServerPacket, 0xcb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<12, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<12, ServerPacket, 0xd0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<12, ServerPacket, 0xdd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<12, ServerPacket, 0x105> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<12, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> }, // 0x38
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "Buff", &ParsePacket<12, ServerPacket, 0x48> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "NpcTalk", &ParsePacket<12, ServerPacket, 0x4c> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "Shop", &ParsePacket<12, ServerPacket, 0x52> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "Mail", &ParsePacket<12, ServerPacket, 0x55> }, // 0x55
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x56
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5b
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "CharacterInfo", &ParsePacket<12, ServerPacket, 0x7a> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "FittingDoll", &ParsePacket<12, ServerPacket, 0x7d> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "Trade", &ParsePacket<12, ServerPacket, 0x84> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "ItemEnchant", &ParsePacket<12, ServerPacket, 0x99> }, // 0x99
+					{ "BlackMarket", &ParsePacket<12, ServerPacket, 0x9a> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "", &ParsePacket<0, false, 0> }, // 0xbf
+					{ "", &ParsePacket<0, false, 0> }, // 0xc0
+					{ "EnchantScroll", &ParsePacket<12, ServerPacket, 0xc1> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "", &ParsePacket<0, false, 0> }, // 0xc7
+					{ "", &ParsePacket<0, false, 0> }, // 0xc8
+					{ "PlayInstrument", &ParsePacket<12, ServerPacket, 0xc9> }, // 0xc9
+					{ "ChangeAttributes", &ParsePacket<12, ServerPacket, 0xca> }, // 0xca
+					{ "ChangeAttributesScroll", &ParsePacket<12, ServerPacket, 0xcb> }, // 0xcb
+					{ "", &ParsePacket<0, false, 0> }, // 0xcc
+					{ "", &ParsePacket<0, false, 0> }, // 0xcd
+					{ "Pet", &ParsePacket<12, ServerPacket, 0xce> }, // 0xce
+					{ "", &ParsePacket<0, false, 0> }, // 0xcf
+					{ "PetInventory", &ParsePacket<12, ServerPacket, 0xd0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "", &ParsePacket<0, false, 0> }, // 0xdb
+					{ "", &ParsePacket<0, false, 0> }, // 0xdc
+					{ "ItemLock", &ParsePacket<12, ServerPacket, 0xdd> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "", &ParsePacket<0, false, 0> }, // 0x103
+					{ "", &ParsePacket<0, false, 0> }, // 0x104
+					{ "BindItem", &ParsePacket<12, ServerPacket, 0x105> } // 0x105
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<12, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<12, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<0, false, 0> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb7
 				}
 			},
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v13+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<13, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "NpcTalk", &ParsePacket<12, ServerPacket, 0x4c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<12, ServerPacket, 0x52> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<12, ServerPacket, 0x55> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterInfo", &ParsePacket<12, ServerPacket, 0x7a> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<12, ServerPacket, 0x7d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<12, ServerPacket, 0x84> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<12, ServerPacket, 0x99> },
-					{ "BlackMarket", &ParsePacket<12, ServerPacket, 0x9a> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<12, ServerPacket, 0xc1> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<12, ServerPacket, 0xc9> },
-					{ "ChangeAttributes", &ParsePacket<12, ServerPacket, 0xca> },
-					{ "ChangeAttributesScroll", &ParsePacket<12, ServerPacket, 0xcb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<12, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<12, ServerPacket, 0xd0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<12, ServerPacket, 0xdd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<12, ServerPacket, 0x105> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<13, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> }, // 0x38
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "NpcTalk", &ParsePacket<12, ServerPacket, 0x4c> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "Shop", &ParsePacket<12, ServerPacket, 0x52> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "Mail", &ParsePacket<12, ServerPacket, 0x55> }, // 0x55
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x56
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5a
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "CharacterInfo", &ParsePacket<12, ServerPacket, 0x7a> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "FittingDoll", &ParsePacket<12, ServerPacket, 0x7d> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "Trade", &ParsePacket<12, ServerPacket, 0x84> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "ItemEnchant", &ParsePacket<12, ServerPacket, 0x99> }, // 0x98
+					{ "BlackMarket", &ParsePacket<12, ServerPacket, 0x9a> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "", &ParsePacket<0, false, 0> }, // 0xbf
+					{ "EnchantScroll", &ParsePacket<12, ServerPacket, 0xc1> }, // 0xc0
+					{ "", &ParsePacket<0, false, 0> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "", &ParsePacket<0, false, 0> }, // 0xc7
+					{ "PlayInstrument", &ParsePacket<12, ServerPacket, 0xc9> }, // 0xc8
+					{ "ChangeAttributes", &ParsePacket<12, ServerPacket, 0xca> }, // 0xc9
+					{ "ChangeAttributesScroll", &ParsePacket<12, ServerPacket, 0xcb> }, // 0xca
+					{ "", &ParsePacket<0, false, 0> }, // 0xcb
+					{ "", &ParsePacket<0, false, 0> }, // 0xcc
+					{ "Pet", &ParsePacket<12, ServerPacket, 0xce> }, // 0xcd
+					{ "", &ParsePacket<0, false, 0> }, // 0xce
+					{ "PetInventory", &ParsePacket<12, ServerPacket, 0xd0> }, // 0xcf
+					{ "", &ParsePacket<0, false, 0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "", &ParsePacket<0, false, 0> }, // 0xdb
+					{ "ItemLock", &ParsePacket<12, ServerPacket, 0xdd> }, // 0xdc
+					{ "", &ParsePacket<0, false, 0> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "", &ParsePacket<0, false, 0> }, // 0x103
+					{ "BindItem", &ParsePacket<12, ServerPacket, 0x105> } // 0x104
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<12, ClientPacket, 0x16> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<12, ClientPacket, 0x16> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb5
 				}
 			},
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v2465+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<13, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "NpcTalk", &ParsePacket<12, ServerPacket, 0x4c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<12, ServerPacket, 0x52> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<12, ServerPacket, 0x55> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterInfo", &ParsePacket<12, ServerPacket, 0x7a> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<12, ServerPacket, 0x7d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<12, ServerPacket, 0x84> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<12, ServerPacket, 0x99> },
-					{ "BlackMarket", &ParsePacket<12, ServerPacket, 0x9a> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<12, ServerPacket, 0xc1> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<12, ServerPacket, 0xc9> },
-					{ "ChangeAttributes", &ParsePacket<12, ServerPacket, 0xca> },
-					{ "ChangeAttributesScroll", &ParsePacket<12, ServerPacket, 0xcb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<12, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<12, ServerPacket, 0xd0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<12, ServerPacket, 0xdd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<12, ServerPacket, 0x105> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<13, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> }, // 0x37
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "NpcTalk", &ParsePacket<12, ServerPacket, 0x4c> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "Shop", &ParsePacket<12, ServerPacket, 0x52> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "Mail", &ParsePacket<12, ServerPacket, 0x55> }, // 0x54
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x55
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5a
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "CharacterInfo", &ParsePacket<12, ServerPacket, 0x7a> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "FittingDoll", &ParsePacket<12, ServerPacket, 0x7d> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "Trade", &ParsePacket<12, ServerPacket, 0x84> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "ItemEnchant", &ParsePacket<12, ServerPacket, 0x99> }, // 0x97
+					{ "BlackMarket", &ParsePacket<12, ServerPacket, 0x9a> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "EnchantScroll", &ParsePacket<12, ServerPacket, 0xc1> }, // 0xbf
+					{ "", &ParsePacket<0, false, 0> }, // 0xc0
+					{ "", &ParsePacket<0, false, 0> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "PlayInstrument", &ParsePacket<12, ServerPacket, 0xc9> }, // 0xc7
+					{ "ChangeAttributes", &ParsePacket<12, ServerPacket, 0xca> }, // 0xc8
+					{ "ChangeAttributesScroll", &ParsePacket<12, ServerPacket, 0xcb> }, // 0xc9
+					{ "", &ParsePacket<0, false, 0> }, // 0xca
+					{ "", &ParsePacket<0, false, 0> }, // 0xcb
+					{ "Pet", &ParsePacket<12, ServerPacket, 0xce> }, // 0xcc
+					{ "", &ParsePacket<0, false, 0> }, // 0xcd
+					{ "PetInventory", &ParsePacket<12, ServerPacket, 0xd0> }, // 0xce
+					{ "", &ParsePacket<0, false, 0> }, // 0xcf
+					{ "", &ParsePacket<0, false, 0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "ItemLock", &ParsePacket<12, ServerPacket, 0xdd> }, // 0xdb
+					{ "", &ParsePacket<0, false, 0> }, // 0xdc
+					{ "", &ParsePacket<0, false, 0> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "BindItem", &ParsePacket<12, ServerPacket, 0x105> }, // 0x103
+					{ "", &ParsePacket<0, false, 0> } // 0x104
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<12, ClientPacket, 0x16> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<12, ClientPacket, 0x16> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb5
 				}
 			},
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v2486+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<2486, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<2486, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "NpcTalk", &ParsePacket<2486, ServerPacket, 0x4b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<2486, ServerPacket, 0x51> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<2486, ServerPacket, 0x54> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterInfo", &ParsePacket<2486, ServerPacket, 0x78> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<2486, ServerPacket, 0x7b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<2486, ServerPacket, 0x82> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<2486, ServerPacket, 0x97> },
-					{ "BlackMarket", &ParsePacket<2486, ServerPacket, 0x98> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<2486, ServerPacket, 0xbf> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<2486, ServerPacket, 0xc7> },
-					{ "ChangeAttributes", &ParsePacket<2486, ServerPacket, 0xc8> },
-					{ "ChangeAttributesScroll", &ParsePacket<2486, ServerPacket, 0xc9> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<2486, ServerPacket, 0xcc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<2486, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<2486, ServerPacket, 0xdb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x103> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x105> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<2486, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<2486, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "NpcTalk", &ParsePacket<2486, ServerPacket, 0x4b> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "Shop", &ParsePacket<2486, ServerPacket, 0x51> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "Mail", &ParsePacket<2486, ServerPacket, 0x54> }, // 0x54
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x55
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5a
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "CharacterInfo", &ParsePacket<2486, ServerPacket, 0x78> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "FittingDoll", &ParsePacket<2486, ServerPacket, 0x7b> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "Trade", &ParsePacket<2486, ServerPacket, 0x82> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "ItemEnchant", &ParsePacket<2486, ServerPacket, 0x97> }, // 0x97
+					{ "BlackMarket", &ParsePacket<2486, ServerPacket, 0x98> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "EnchantScroll", &ParsePacket<2486, ServerPacket, 0xbf> }, // 0xbf
+					{ "", &ParsePacket<0, false, 0> }, // 0xc0
+					{ "", &ParsePacket<0, false, 0> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "PlayInstrument", &ParsePacket<2486, ServerPacket, 0xc7> }, // 0xc7
+					{ "ChangeAttributes", &ParsePacket<2486, ServerPacket, 0xc8> }, // 0xc8
+					{ "ChangeAttributesScroll", &ParsePacket<2486, ServerPacket, 0xc9> }, // 0xc9
+					{ "", &ParsePacket<0, false, 0> }, // 0xca
+					{ "", &ParsePacket<0, false, 0> }, // 0xcb
+					{ "Pet", &ParsePacket<2486, ServerPacket, 0xcc> }, // 0xcc
+					{ "", &ParsePacket<0, false, 0> }, // 0xcd
+					{ "PetInventory", &ParsePacket<2486, ServerPacket, 0xce> }, // 0xce
+					{ "", &ParsePacket<0, false, 0> }, // 0xcf
+					{ "", &ParsePacket<0, false, 0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "ItemLock", &ParsePacket<2486, ServerPacket, 0xdb> }, // 0xdb
+					{ "", &ParsePacket<0, false, 0> }, // 0xdc
+					{ "", &ParsePacket<0, false, 0> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x103> }, // 0x103
+					{ "", &ParsePacket<0, false, 0> } // 0x104
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<12, ClientPacket, 0x16> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<12, ClientPacket, 0x16> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb5
 				}
 			},
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v2493+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<2486, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<2493, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<2493, ServerPacket, 0x49> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "NpcTalk", &ParsePacket<2486, ServerPacket, 0x4b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<2486, ServerPacket, 0x51> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<2486, ServerPacket, 0x54> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterInfo", &ParsePacket<2486, ServerPacket, 0x78> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<2486, ServerPacket, 0x7b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<2486, ServerPacket, 0x82> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<2486, ServerPacket, 0x97> },
-					{ "BlackMarket", &ParsePacket<2486, ServerPacket, 0x98> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<2486, ServerPacket, 0xbf> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<2486, ServerPacket, 0xc7> },
-					{ "ChangeAttributes", &ParsePacket<2486, ServerPacket, 0xc8> },
-					{ "ChangeAttributesScroll", &ParsePacket<2486, ServerPacket, 0xc9> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<2486, ServerPacket, 0xcc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<2486, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<2486, ServerPacket, 0xdb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x103> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x105> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<2486, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<2493, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "Job", &ParsePacket<2493, ServerPacket, 0x49> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "NpcTalk", &ParsePacket<2486, ServerPacket, 0x4b> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "Shop", &ParsePacket<2486, ServerPacket, 0x51> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "Mail", &ParsePacket<2486, ServerPacket, 0x54> }, // 0x54
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x55
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5a
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "CharacterInfo", &ParsePacket<2486, ServerPacket, 0x78> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "FittingDoll", &ParsePacket<2486, ServerPacket, 0x7b> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "Trade", &ParsePacket<2486, ServerPacket, 0x82> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "ItemEnchant", &ParsePacket<2486, ServerPacket, 0x97> }, // 0x97
+					{ "BlackMarket", &ParsePacket<2486, ServerPacket, 0x98> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "EnchantScroll", &ParsePacket<2486, ServerPacket, 0xbf> }, // 0xbf
+					{ "", &ParsePacket<0, false, 0> }, // 0xc0
+					{ "", &ParsePacket<0, false, 0> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "PlayInstrument", &ParsePacket<2486, ServerPacket, 0xc7> }, // 0xc7
+					{ "ChangeAttributes", &ParsePacket<2486, ServerPacket, 0xc8> }, // 0xc8
+					{ "ChangeAttributesScroll", &ParsePacket<2486, ServerPacket, 0xc9> }, // 0xc9
+					{ "", &ParsePacket<0, false, 0> }, // 0xca
+					{ "", &ParsePacket<0, false, 0> }, // 0xcb
+					{ "Pet", &ParsePacket<2486, ServerPacket, 0xcc> }, // 0xcc
+					{ "", &ParsePacket<0, false, 0> }, // 0xcd
+					{ "PetInventory", &ParsePacket<2486, ServerPacket, 0xce> }, // 0xce
+					{ "", &ParsePacket<0, false, 0> }, // 0xcf
+					{ "", &ParsePacket<0, false, 0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "ItemLock", &ParsePacket<2486, ServerPacket, 0xdb> }, // 0xdb
+					{ "", &ParsePacket<0, false, 0> }, // 0xdc
+					{ "", &ParsePacket<0, false, 0> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x103> }, // 0x103
+					{ "", &ParsePacket<0, false, 0> } // 0x104
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<12, ClientPacket, 0x16> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<12, ClientPacket, 0x16> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb5
 				}
 			},
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v2496+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<2496, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<2493, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<2493, ServerPacket, 0x49> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "NpcTalk", &ParsePacket<2486, ServerPacket, 0x4b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<2496, ServerPacket, 0x51> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<2486, ServerPacket, 0x54> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterInfo", &ParsePacket<2496, ServerPacket, 0x78> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<2486, ServerPacket, 0x7b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<2486, ServerPacket, 0x82> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<2486, ServerPacket, 0x97> },
-					{ "BlackMarket", &ParsePacket<2486, ServerPacket, 0x98> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<2486, ServerPacket, 0xbf> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<2486, ServerPacket, 0xc7> },
-					{ "ChangeAttributes", &ParsePacket<2486, ServerPacket, 0xc8> },
-					{ "ChangeAttributesScroll", &ParsePacket<2486, ServerPacket, 0xc9> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<2486, ServerPacket, 0xcc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<2486, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<2486, ServerPacket, 0xdb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x103> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x105> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<2496, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<2493, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "Job", &ParsePacket<2493, ServerPacket, 0x49> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "NpcTalk", &ParsePacket<2486, ServerPacket, 0x4b> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "Shop", &ParsePacket<2496, ServerPacket, 0x51> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "Mail", &ParsePacket<2486, ServerPacket, 0x54> }, // 0x54
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x55
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5a
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "CharacterInfo", &ParsePacket<2496, ServerPacket, 0x78> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "FittingDoll", &ParsePacket<2486, ServerPacket, 0x7b> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "Trade", &ParsePacket<2486, ServerPacket, 0x82> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "ItemEnchant", &ParsePacket<2486, ServerPacket, 0x97> }, // 0x97
+					{ "BlackMarket", &ParsePacket<2486, ServerPacket, 0x98> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "EnchantScroll", &ParsePacket<2486, ServerPacket, 0xbf> }, // 0xbf
+					{ "", &ParsePacket<0, false, 0> }, // 0xc0
+					{ "", &ParsePacket<0, false, 0> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "PlayInstrument", &ParsePacket<2486, ServerPacket, 0xc7> }, // 0xc7
+					{ "ChangeAttributes", &ParsePacket<2486, ServerPacket, 0xc8> }, // 0xc8
+					{ "ChangeAttributesScroll", &ParsePacket<2486, ServerPacket, 0xc9> }, // 0xc9
+					{ "", &ParsePacket<0, false, 0> }, // 0xca
+					{ "", &ParsePacket<0, false, 0> }, // 0xcb
+					{ "Pet", &ParsePacket<2486, ServerPacket, 0xcc> }, // 0xcc
+					{ "", &ParsePacket<0, false, 0> }, // 0xcd
+					{ "PetInventory", &ParsePacket<2486, ServerPacket, 0xce> }, // 0xce
+					{ "", &ParsePacket<0, false, 0> }, // 0xcf
+					{ "", &ParsePacket<0, false, 0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "ItemLock", &ParsePacket<2486, ServerPacket, 0xdb> }, // 0xdb
+					{ "", &ParsePacket<0, false, 0> }, // 0xdc
+					{ "", &ParsePacket<0, false, 0> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "BindItem", &ParsePacket<2486, ServerPacket, 0x103> }, // 0x103
+					{ "", &ParsePacket<0, false, 0> } // 0x104
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<12, ClientPacket, 0x16> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<12, ClientPacket, 0x16> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb5
 				}
 			},
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v2497+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<2497, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<2497, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<2493, ServerPacket, 0x49> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "NpcTalk", &ParsePacket<2497, ServerPacket, 0x4b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<2497, ServerPacket, 0x51> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<2497, ServerPacket, 0x54> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterInfo", &ParsePacket<2497, ServerPacket, 0x78> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<2497, ServerPacket, 0x7b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<2497, ServerPacket, 0x82> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<2497, ServerPacket, 0x97> },
-					{ "BlackMarket", &ParsePacket<2497, ServerPacket, 0x98> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<2497, ServerPacket, 0xbf> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<2497, ServerPacket, 0xc7> },
-					{ "ChangeAttributes", &ParsePacket<2497, ServerPacket, 0xc8> },
-					{ "ChangeAttributesScroll", &ParsePacket<2497, ServerPacket, 0xc9> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<2497, ServerPacket, 0xcc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<2497, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<2497, ServerPacket, 0xdb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x103> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x105> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<2497, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<2497, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "Job", &ParsePacket<2493, ServerPacket, 0x49> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "NpcTalk", &ParsePacket<2497, ServerPacket, 0x4b> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "Shop", &ParsePacket<2497, ServerPacket, 0x51> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "Mail", &ParsePacket<2497, ServerPacket, 0x54> }, // 0x54
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x55
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5a
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "CharacterInfo", &ParsePacket<2497, ServerPacket, 0x78> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "FittingDoll", &ParsePacket<2497, ServerPacket, 0x7b> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "Trade", &ParsePacket<2497, ServerPacket, 0x82> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "ItemEnchant", &ParsePacket<2497, ServerPacket, 0x97> }, // 0x97
+					{ "BlackMarket", &ParsePacket<2497, ServerPacket, 0x98> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "EnchantScroll", &ParsePacket<2497, ServerPacket, 0xbf> }, // 0xbf
+					{ "", &ParsePacket<0, false, 0> }, // 0xc0
+					{ "", &ParsePacket<0, false, 0> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "PlayInstrument", &ParsePacket<2497, ServerPacket, 0xc7> }, // 0xc7
+					{ "ChangeAttributes", &ParsePacket<2497, ServerPacket, 0xc8> }, // 0xc8
+					{ "ChangeAttributesScroll", &ParsePacket<2497, ServerPacket, 0xc9> }, // 0xc9
+					{ "", &ParsePacket<0, false, 0> }, // 0xca
+					{ "", &ParsePacket<0, false, 0> }, // 0xcb
+					{ "Pet", &ParsePacket<2497, ServerPacket, 0xcc> }, // 0xcc
+					{ "", &ParsePacket<0, false, 0> }, // 0xcd
+					{ "PetInventory", &ParsePacket<2497, ServerPacket, 0xce> }, // 0xce
+					{ "", &ParsePacket<0, false, 0> }, // 0xcf
+					{ "", &ParsePacket<0, false, 0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "ItemLock", &ParsePacket<2497, ServerPacket, 0xdb> }, // 0xdb
+					{ "", &ParsePacket<0, false, 0> }, // 0xdc
+					{ "", &ParsePacket<0, false, 0> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x103> }, // 0x103
+					{ "", &ParsePacket<0, false, 0> } // 0x104
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<12, ClientPacket, 0x16> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<12, ClientPacket, 0x16> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<12, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb5
 				}
 			},
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v2503+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<2497, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<2497, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<2503, ServerPacket, 0x3d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<2493, ServerPacket, 0x49> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "NpcTalk", &ParsePacket<2497, ServerPacket, 0x4b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<2497, ServerPacket, 0x51> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<2497, ServerPacket, 0x54> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterInfo", &ParsePacket<2497, ServerPacket, 0x78> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<2497, ServerPacket, 0x7b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<2497, ServerPacket, 0x82> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<2497, ServerPacket, 0x97> },
-					{ "BlackMarket", &ParsePacket<2497, ServerPacket, 0x98> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<2497, ServerPacket, 0xbf> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<2497, ServerPacket, 0xc7> },
-					{ "ChangeAttributes", &ParsePacket<2497, ServerPacket, 0xc8> },
-					{ "ChangeAttributesScroll", &ParsePacket<2497, ServerPacket, 0xc9> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<2497, ServerPacket, 0xcc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<2497, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<2497, ServerPacket, 0xdb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x103> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x105> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<2497, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<2497, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "SkillDamage", &ParsePacket<2503, ServerPacket, 0x3d> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "Job", &ParsePacket<2493, ServerPacket, 0x49> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "NpcTalk", &ParsePacket<2497, ServerPacket, 0x4b> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "Shop", &ParsePacket<2497, ServerPacket, 0x51> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "Mail", &ParsePacket<2497, ServerPacket, 0x54> }, // 0x54
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x55
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5a
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "CharacterInfo", &ParsePacket<2497, ServerPacket, 0x78> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "FittingDoll", &ParsePacket<2497, ServerPacket, 0x7b> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "Trade", &ParsePacket<2497, ServerPacket, 0x82> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "ItemEnchant", &ParsePacket<2497, ServerPacket, 0x97> }, // 0x97
+					{ "BlackMarket", &ParsePacket<2497, ServerPacket, 0x98> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "EnchantScroll", &ParsePacket<2497, ServerPacket, 0xbf> }, // 0xbf
+					{ "", &ParsePacket<0, false, 0> }, // 0xc0
+					{ "", &ParsePacket<0, false, 0> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "PlayInstrument", &ParsePacket<2497, ServerPacket, 0xc7> }, // 0xc7
+					{ "ChangeAttributes", &ParsePacket<2497, ServerPacket, 0xc8> }, // 0xc8
+					{ "ChangeAttributesScroll", &ParsePacket<2497, ServerPacket, 0xc9> }, // 0xc9
+					{ "", &ParsePacket<0, false, 0> }, // 0xca
+					{ "", &ParsePacket<0, false, 0> }, // 0xcb
+					{ "Pet", &ParsePacket<2497, ServerPacket, 0xcc> }, // 0xcc
+					{ "", &ParsePacket<0, false, 0> }, // 0xcd
+					{ "PetInventory", &ParsePacket<2497, ServerPacket, 0xce> }, // 0xce
+					{ "", &ParsePacket<0, false, 0> }, // 0xcf
+					{ "", &ParsePacket<0, false, 0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "ItemLock", &ParsePacket<2497, ServerPacket, 0xdb> }, // 0xdb
+					{ "", &ParsePacket<0, false, 0> }, // 0xdc
+					{ "", &ParsePacket<0, false, 0> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x103> }, // 0x103
+					{ "", &ParsePacket<0, false, 0> } // 0x104
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<12, ClientPacket, 0x16> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<2503, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<12, ClientPacket, 0x16> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<2503, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb5
 				}
 			},
 			{
-				0x7, 0x1,
+				0x7, 0x1, // v2509+
 				{
-					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharacterList", &ParsePacket<2509, ServerPacket, 0xc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> },
-					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> },
-					{ "FieldAddPlayer", &ParsePacket<2509, ServerPacket, 0x17> },
-					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> },
-					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> },
-					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> },
-					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> },
-					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> },
-					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> },
-					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> },
-					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SkillDamage", &ParsePacket<2503, ServerPacket, 0x3d> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Job", &ParsePacket<2509, ServerPacket, 0x49> },
-					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> },
-					{ "NpcTalk", &ParsePacket<2497, ServerPacket, 0x4b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Shop", &ParsePacket<2497, ServerPacket, 0x51> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Mail", &ParsePacket<2497, ServerPacket, 0x54> },
-					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> },
-					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> },
-					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "CharaerInfo", &ParsePacket<2509, ServerPacket, 0x78> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "FittingDoll", &ParsePacket<2497, ServerPacket, 0x7b> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Trade", &ParsePacket<2497, ServerPacket, 0x82> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemEnchant", &ParsePacket<2497, ServerPacket, 0x97> },
-					{ "BlackMarket", &ParsePacket<2497, ServerPacket, 0x98> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "EnchantScroll", &ParsePacket<2497, ServerPacket, 0xbf> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PlayInstrument", &ParsePacket<2497, ServerPacket, 0xc7> },
-					{ "ChangeAttributes", &ParsePacket<2497, ServerPacket, 0xc8> },
-					{ "ChangeAttributesScroll", &ParsePacket<2497, ServerPacket, 0xc9> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Pet", &ParsePacket<2497, ServerPacket, 0xcc> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "PetInventory", &ParsePacket<2497, ServerPacket, 0xce> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ItemLock", &ParsePacket<2497, ServerPacket, 0xdb> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x103> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x105> }
+					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "", &ParsePacket<0, false, 0> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "CharacterList", &ParsePacket<2509, ServerPacket, 0xc> }, // 0xc
+					{ "", &ParsePacket<0, false, 0> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
+					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
+					{ "FieldAddPlayer", &ParsePacket<2509, ServerPacket, 0x17> }, // 0x17
+					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
+					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "", &ParsePacket<0, false, 0> }, // 0x21
+					{ "", &ParsePacket<0, false, 0> }, // 0x22
+					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> }, // 0x25
+					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
+					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> }, // 0x27
+					{ "ItemSkinPutOff", &ParsePacket<12, ServerPacket, 0x28> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> }, // 0x2a
+					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> }, // 0x2b
+					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
+					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "SkillDamage", &ParsePacket<2503, ServerPacket, 0x3d> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "Buff", &ParsePacket<13, ServerPacket, 0x47> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "Job", &ParsePacket<2509, ServerPacket, 0x49> }, // 0x49
+					{ "Job", &ParsePacket<12, ServerPacket, 0x4a> }, // 0x4a
+					{ "NpcTalk", &ParsePacket<2497, ServerPacket, 0x4b> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "Shop", &ParsePacket<2497, ServerPacket, 0x51> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "Mail", &ParsePacket<2497, ServerPacket, 0x54> }, // 0x54
+					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x55
+					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5a
+					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "Trophy", &ParsePacket<12, ServerPacket, 0x5f> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "LoadCubes", &ParsePacket<12, ServerPacket, 0x6c> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "CharaerInfo", &ParsePacket<2509, ServerPacket, 0x78> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "FittingDoll", &ParsePacket<2497, ServerPacket, 0x7b> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "Trade", &ParsePacket<2497, ServerPacket, 0x82> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "ItemEnchant", &ParsePacket<2497, ServerPacket, 0x97> }, // 0x97
+					{ "BlackMarket", &ParsePacket<2497, ServerPacket, 0x98> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "", &ParsePacket<0, false, 0> }, // 0xb5
+					{ "", &ParsePacket<0, false, 0> }, // 0xb6
+					{ "", &ParsePacket<0, false, 0> }, // 0xb7
+					{ "", &ParsePacket<0, false, 0> }, // 0xb8
+					{ "", &ParsePacket<0, false, 0> }, // 0xb9
+					{ "", &ParsePacket<0, false, 0> }, // 0xba
+					{ "", &ParsePacket<0, false, 0> }, // 0xbb
+					{ "", &ParsePacket<0, false, 0> }, // 0xbc
+					{ "", &ParsePacket<0, false, 0> }, // 0xbd
+					{ "", &ParsePacket<0, false, 0> }, // 0xbe
+					{ "EnchantScroll", &ParsePacket<2497, ServerPacket, 0xbf> }, // 0xbf
+					{ "", &ParsePacket<0, false, 0> }, // 0xc0
+					{ "", &ParsePacket<0, false, 0> }, // 0xc1
+					{ "", &ParsePacket<0, false, 0> }, // 0xc2
+					{ "", &ParsePacket<0, false, 0> }, // 0xc3
+					{ "", &ParsePacket<0, false, 0> }, // 0xc4
+					{ "", &ParsePacket<0, false, 0> }, // 0xc5
+					{ "", &ParsePacket<0, false, 0> }, // 0xc6
+					{ "PlayInstrument", &ParsePacket<2497, ServerPacket, 0xc7> }, // 0xc7
+					{ "ChangeAttributes", &ParsePacket<2497, ServerPacket, 0xc8> }, // 0xc8
+					{ "ChangeAttributesScroll", &ParsePacket<2497, ServerPacket, 0xc9> }, // 0xc9
+					{ "", &ParsePacket<0, false, 0> }, // 0xca
+					{ "", &ParsePacket<0, false, 0> }, // 0xcb
+					{ "Pet", &ParsePacket<2497, ServerPacket, 0xcc> }, // 0xcc
+					{ "", &ParsePacket<0, false, 0> }, // 0xcd
+					{ "PetInventory", &ParsePacket<2497, ServerPacket, 0xce> }, // 0xce
+					{ "", &ParsePacket<0, false, 0> }, // 0xcf
+					{ "", &ParsePacket<0, false, 0> }, // 0xd0
+					{ "", &ParsePacket<0, false, 0> }, // 0xd1
+					{ "", &ParsePacket<0, false, 0> }, // 0xd2
+					{ "", &ParsePacket<0, false, 0> }, // 0xd3
+					{ "", &ParsePacket<0, false, 0> }, // 0xd4
+					{ "", &ParsePacket<0, false, 0> }, // 0xd5
+					{ "", &ParsePacket<0, false, 0> }, // 0xd6
+					{ "", &ParsePacket<0, false, 0> }, // 0xd7
+					{ "", &ParsePacket<0, false, 0> }, // 0xd8
+					{ "", &ParsePacket<0, false, 0> }, // 0xd9
+					{ "", &ParsePacket<0, false, 0> }, // 0xda
+					{ "ItemLock", &ParsePacket<2497, ServerPacket, 0xdb> }, // 0xdb
+					{ "", &ParsePacket<0, false, 0> }, // 0xdc
+					{ "", &ParsePacket<0, false, 0> }, // 0xdd
+					{ "", &ParsePacket<0, false, 0> }, // 0xde
+					{ "", &ParsePacket<0, false, 0> }, // 0xdf
+					{ "", &ParsePacket<0, false, 0> }, // 0xe0
+					{ "", &ParsePacket<0, false, 0> }, // 0xe1
+					{ "", &ParsePacket<0, false, 0> }, // 0xe2
+					{ "", &ParsePacket<0, false, 0> }, // 0xe3
+					{ "", &ParsePacket<0, false, 0> }, // 0xe4
+					{ "", &ParsePacket<0, false, 0> }, // 0xe5
+					{ "", &ParsePacket<0, false, 0> }, // 0xe6
+					{ "", &ParsePacket<0, false, 0> }, // 0xe7
+					{ "", &ParsePacket<0, false, 0> }, // 0xe8
+					{ "", &ParsePacket<0, false, 0> }, // 0xe9
+					{ "", &ParsePacket<0, false, 0> }, // 0xea
+					{ "", &ParsePacket<0, false, 0> }, // 0xeb
+					{ "", &ParsePacket<0, false, 0> }, // 0xec
+					{ "", &ParsePacket<0, false, 0> }, // 0xed
+					{ "", &ParsePacket<0, false, 0> }, // 0xee
+					{ "", &ParsePacket<0, false, 0> }, // 0xef
+					{ "", &ParsePacket<0, false, 0> }, // 0xf0
+					{ "", &ParsePacket<0, false, 0> }, // 0xf1
+					{ "", &ParsePacket<0, false, 0> }, // 0xf2
+					{ "", &ParsePacket<0, false, 0> }, // 0xf3
+					{ "", &ParsePacket<0, false, 0> }, // 0xf4
+					{ "", &ParsePacket<0, false, 0> }, // 0xf5
+					{ "", &ParsePacket<0, false, 0> }, // 0xf6
+					{ "", &ParsePacket<0, false, 0> }, // 0xf7
+					{ "", &ParsePacket<0, false, 0> }, // 0xf8
+					{ "", &ParsePacket<0, false, 0> }, // 0xf9
+					{ "", &ParsePacket<0, false, 0> }, // 0xfa
+					{ "", &ParsePacket<0, false, 0> }, // 0xfb
+					{ "", &ParsePacket<0, false, 0> }, // 0xfc
+					{ "", &ParsePacket<0, false, 0> }, // 0xfd
+					{ "", &ParsePacket<0, false, 0> }, // 0xfe
+					{ "", &ParsePacket<0, false, 0> }, // 0xff
+					{ "", &ParsePacket<0, false, 0> }, // 0x100
+					{ "", &ParsePacket<0, false, 0> }, // 0x101
+					{ "", &ParsePacket<0, false, 0> }, // 0x102
+					{ "BindItem", &ParsePacket<2497, ServerPacket, 0x103> }, // 0x103
+					{ "", &ParsePacket<0, false, 0> } // 0x104
 				},
 				{
-					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> },
-					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> },
-					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> },
-					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> },
-					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<12, ClientPacket, 0x16> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "Skill", &ParsePacket<2503, ClientPacket, 0x20> },
-					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> },
-					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "", &ParsePacket<0, false, 0> },
-					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> }
+					{ "ResponseVersion", &ParsePacket<12, ClientPacket, 0x1> }, // 0x1
+					{ "Handshake", &ParsePacket<12, ClientPacket, 0x2> }, // 0x2
+					{ "LogIn", &ParsePacket<13, ClientPacket, 0x3> }, // 0x3
+					{ "ResponseKey", &ParsePacket<12, ClientPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ClientPacket, 0x5> }, // 0x5
+					{ "", &ParsePacket<0, false, 0> }, // 0x6
+					{ "", &ParsePacket<0, false, 0> }, // 0x7
+					{ "", &ParsePacket<0, false, 0> }, // 0x8
+					{ "", &ParsePacket<0, false, 0> }, // 0x9
+					{ "ResponseHeartbeat", &ParsePacket<12, ClientPacket, 0xa> }, // 0xa
+					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "", &ParsePacket<0, false, 0> }, // 0xc
+					{ "RequestQuit", &ParsePacket<12, ClientPacket, 0xd> }, // 0xd
+					{ "", &ParsePacket<0, false, 0> }, // 0xe
+					{ "", &ParsePacket<0, false, 0> }, // 0xf
+					{ "", &ParsePacket<0, false, 0> }, // 0x10
+					{ "", &ParsePacket<0, false, 0> }, // 0x11
+					{ "", &ParsePacket<0, false, 0> }, // 0x12
+					{ "", &ParsePacket<0, false, 0> }, // 0x13
+					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "", &ParsePacket<0, false, 0> }, // 0x15
+					{ "", &ParsePacket<12, ClientPacket, 0x16> }, // 0x16
+					{ "", &ParsePacket<0, false, 0> }, // 0x17
+					{ "", &ParsePacket<0, false, 0> }, // 0x18
+					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "", &ParsePacket<0, false, 0> }, // 0x1a
+					{ "", &ParsePacket<0, false, 0> }, // 0x1b
+					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "", &ParsePacket<0, false, 0> }, // 0x1d
+					{ "", &ParsePacket<0, false, 0> }, // 0x1e
+					{ "", &ParsePacket<0, false, 0> }, // 0x1f
+					{ "Skill", &ParsePacket<2503, ClientPacket, 0x20> }, // 0x20
+					{ "StateSkill", &ParsePacket<12, ClientPacket, 0x21> }, // 0x21
+					{ "NpcTalk", &ParsePacket<12, ClientPacket, 0x22> }, // 0x22
+					{ "", &ParsePacket<0, false, 0> }, // 0x23
+					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "", &ParsePacket<0, false, 0> }, // 0x25
+					{ "", &ParsePacket<0, false, 0> }, // 0x26
+					{ "", &ParsePacket<0, false, 0> }, // 0x27
+					{ "", &ParsePacket<0, false, 0> }, // 0x28
+					{ "", &ParsePacket<0, false, 0> }, // 0x29
+					{ "", &ParsePacket<0, false, 0> }, // 0x2a
+					{ "", &ParsePacket<0, false, 0> }, // 0x2b
+					{ "", &ParsePacket<0, false, 0> }, // 0x2c
+					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "", &ParsePacket<0, false, 0> }, // 0x2f
+					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "", &ParsePacket<0, false, 0> }, // 0x32
+					{ "", &ParsePacket<0, false, 0> }, // 0x33
+					{ "", &ParsePacket<0, false, 0> }, // 0x34
+					{ "", &ParsePacket<0, false, 0> }, // 0x35
+					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "", &ParsePacket<0, false, 0> }, // 0x38
+					{ "", &ParsePacket<0, false, 0> }, // 0x39
+					{ "", &ParsePacket<0, false, 0> }, // 0x3a
+					{ "", &ParsePacket<0, false, 0> }, // 0x3b
+					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "", &ParsePacket<0, false, 0> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "", &ParsePacket<0, false, 0> }, // 0x40
+					{ "", &ParsePacket<0, false, 0> }, // 0x41
+					{ "", &ParsePacket<0, false, 0> }, // 0x42
+					{ "", &ParsePacket<0, false, 0> }, // 0x43
+					{ "", &ParsePacket<0, false, 0> }, // 0x44
+					{ "", &ParsePacket<0, false, 0> }, // 0x45
+					{ "", &ParsePacket<0, false, 0> }, // 0x46
+					{ "", &ParsePacket<0, false, 0> }, // 0x47
+					{ "", &ParsePacket<0, false, 0> }, // 0x48
+					{ "", &ParsePacket<0, false, 0> }, // 0x49
+					{ "", &ParsePacket<0, false, 0> }, // 0x4a
+					{ "", &ParsePacket<0, false, 0> }, // 0x4b
+					{ "", &ParsePacket<0, false, 0> }, // 0x4c
+					{ "", &ParsePacket<0, false, 0> }, // 0x4d
+					{ "", &ParsePacket<0, false, 0> }, // 0x4e
+					{ "", &ParsePacket<0, false, 0> }, // 0x4f
+					{ "", &ParsePacket<0, false, 0> }, // 0x50
+					{ "", &ParsePacket<0, false, 0> }, // 0x51
+					{ "", &ParsePacket<0, false, 0> }, // 0x52
+					{ "", &ParsePacket<0, false, 0> }, // 0x53
+					{ "", &ParsePacket<0, false, 0> }, // 0x54
+					{ "", &ParsePacket<0, false, 0> }, // 0x55
+					{ "", &ParsePacket<0, false, 0> }, // 0x56
+					{ "", &ParsePacket<0, false, 0> }, // 0x57
+					{ "", &ParsePacket<0, false, 0> }, // 0x58
+					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "", &ParsePacket<0, false, 0> }, // 0x5a
+					{ "", &ParsePacket<0, false, 0> }, // 0x5b
+					{ "", &ParsePacket<0, false, 0> }, // 0x5c
+					{ "", &ParsePacket<0, false, 0> }, // 0x5d
+					{ "", &ParsePacket<0, false, 0> }, // 0x5e
+					{ "", &ParsePacket<0, false, 0> }, // 0x5f
+					{ "", &ParsePacket<0, false, 0> }, // 0x60
+					{ "", &ParsePacket<0, false, 0> }, // 0x61
+					{ "", &ParsePacket<0, false, 0> }, // 0x62
+					{ "", &ParsePacket<0, false, 0> }, // 0x63
+					{ "", &ParsePacket<0, false, 0> }, // 0x64
+					{ "", &ParsePacket<0, false, 0> }, // 0x65
+					{ "", &ParsePacket<0, false, 0> }, // 0x66
+					{ "", &ParsePacket<0, false, 0> }, // 0x67
+					{ "", &ParsePacket<0, false, 0> }, // 0x68
+					{ "", &ParsePacket<0, false, 0> }, // 0x69
+					{ "", &ParsePacket<0, false, 0> }, // 0x6a
+					{ "", &ParsePacket<0, false, 0> }, // 0x6b
+					{ "", &ParsePacket<0, false, 0> }, // 0x6c
+					{ "", &ParsePacket<0, false, 0> }, // 0x6d
+					{ "", &ParsePacket<0, false, 0> }, // 0x6e
+					{ "", &ParsePacket<0, false, 0> }, // 0x6f
+					{ "", &ParsePacket<0, false, 0> }, // 0x70
+					{ "", &ParsePacket<0, false, 0> }, // 0x71
+					{ "", &ParsePacket<0, false, 0> }, // 0x72
+					{ "", &ParsePacket<0, false, 0> }, // 0x73
+					{ "", &ParsePacket<0, false, 0> }, // 0x74
+					{ "", &ParsePacket<0, false, 0> }, // 0x75
+					{ "", &ParsePacket<0, false, 0> }, // 0x76
+					{ "", &ParsePacket<0, false, 0> }, // 0x77
+					{ "", &ParsePacket<0, false, 0> }, // 0x78
+					{ "", &ParsePacket<0, false, 0> }, // 0x79
+					{ "", &ParsePacket<0, false, 0> }, // 0x7a
+					{ "", &ParsePacket<0, false, 0> }, // 0x7b
+					{ "", &ParsePacket<0, false, 0> }, // 0x7c
+					{ "", &ParsePacket<0, false, 0> }, // 0x7d
+					{ "", &ParsePacket<0, false, 0> }, // 0x7e
+					{ "", &ParsePacket<0, false, 0> }, // 0x7f
+					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "", &ParsePacket<0, false, 0> }, // 0x81
+					{ "", &ParsePacket<0, false, 0> }, // 0x82
+					{ "", &ParsePacket<0, false, 0> }, // 0x83
+					{ "", &ParsePacket<0, false, 0> }, // 0x84
+					{ "", &ParsePacket<0, false, 0> }, // 0x85
+					{ "", &ParsePacket<0, false, 0> }, // 0x86
+					{ "", &ParsePacket<0, false, 0> }, // 0x87
+					{ "", &ParsePacket<0, false, 0> }, // 0x88
+					{ "", &ParsePacket<0, false, 0> }, // 0x89
+					{ "", &ParsePacket<0, false, 0> }, // 0x8a
+					{ "", &ParsePacket<0, false, 0> }, // 0x8b
+					{ "", &ParsePacket<0, false, 0> }, // 0x8c
+					{ "", &ParsePacket<0, false, 0> }, // 0x8d
+					{ "", &ParsePacket<0, false, 0> }, // 0x8e
+					{ "", &ParsePacket<0, false, 0> }, // 0x8f
+					{ "", &ParsePacket<0, false, 0> }, // 0x90
+					{ "", &ParsePacket<0, false, 0> }, // 0x91
+					{ "", &ParsePacket<0, false, 0> }, // 0x92
+					{ "", &ParsePacket<0, false, 0> }, // 0x93
+					{ "", &ParsePacket<0, false, 0> }, // 0x94
+					{ "", &ParsePacket<0, false, 0> }, // 0x95
+					{ "", &ParsePacket<0, false, 0> }, // 0x96
+					{ "", &ParsePacket<0, false, 0> }, // 0x97
+					{ "", &ParsePacket<0, false, 0> }, // 0x98
+					{ "", &ParsePacket<0, false, 0> }, // 0x99
+					{ "", &ParsePacket<0, false, 0> }, // 0x9a
+					{ "", &ParsePacket<0, false, 0> }, // 0x9b
+					{ "", &ParsePacket<0, false, 0> }, // 0x9c
+					{ "", &ParsePacket<0, false, 0> }, // 0x9d
+					{ "", &ParsePacket<0, false, 0> }, // 0x9e
+					{ "", &ParsePacket<0, false, 0> }, // 0x9f
+					{ "", &ParsePacket<0, false, 0> }, // 0xa0
+					{ "", &ParsePacket<0, false, 0> }, // 0xa1
+					{ "", &ParsePacket<0, false, 0> }, // 0xa2
+					{ "", &ParsePacket<0, false, 0> }, // 0xa3
+					{ "", &ParsePacket<0, false, 0> }, // 0xa4
+					{ "", &ParsePacket<0, false, 0> }, // 0xa5
+					{ "", &ParsePacket<0, false, 0> }, // 0xa6
+					{ "", &ParsePacket<0, false, 0> }, // 0xa7
+					{ "", &ParsePacket<0, false, 0> }, // 0xa8
+					{ "", &ParsePacket<0, false, 0> }, // 0xa9
+					{ "", &ParsePacket<0, false, 0> }, // 0xaa
+					{ "", &ParsePacket<0, false, 0> }, // 0xab
+					{ "", &ParsePacket<0, false, 0> }, // 0xac
+					{ "", &ParsePacket<0, false, 0> }, // 0xad
+					{ "", &ParsePacket<0, false, 0> }, // 0xae
+					{ "", &ParsePacket<0, false, 0> }, // 0xaf
+					{ "", &ParsePacket<0, false, 0> }, // 0xb0
+					{ "", &ParsePacket<0, false, 0> }, // 0xb1
+					{ "", &ParsePacket<0, false, 0> }, // 0xb2
+					{ "", &ParsePacket<0, false, 0> }, // 0xb3
+					{ "", &ParsePacket<0, false, 0> }, // 0xb4
+					{ "SystemInfo", &ParsePacket<12, ClientPacket, 0xb7> } // 0xb5
 				}
 			}
 		};

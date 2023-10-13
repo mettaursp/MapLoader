@@ -1754,7 +1754,7 @@
 				<enum name="AddItem" value="2" />
 				<enum name="Error" value="4" />
 			</data>
-			<condition data="mode" value="2" comparison="equal">
+			<condition data="mode" value="1" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesPreviewChangePacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
@@ -1764,7 +1764,7 @@
 				</condition>
 				<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
 			</condition>
-			<condition data="mode" value="3" comparison="equal">
+			<condition data="mode" value="2" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesApplyPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
@@ -1802,7 +1802,7 @@
 				<output type="Networking.Packets.Server.ChangeAttributesScrollUseScrollPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 			</condition>
-			<condition data="mode" value="1" comparison="equal">
+			<condition data="mode" value="2" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesScrollPreviewChangePacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
@@ -1812,7 +1812,7 @@
 				</condition>
 				<useBlock name="ItemData" version="2486" output="ItemData" args="itemId" />
 			</condition>
-			<condition data="mode" value="2" comparison="equal">
+			<condition data="mode" value="3" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesScrollApplyPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
@@ -2116,16 +2116,6 @@
 				<output type="Networking.Packets.Server.ItemLockErrorPacket" schemaName="packetData" />
 				<data type="int" name="errorCode" output="ErrorCode" />
 			</condition>
-		</opcode>
-		<opcode name="BindItem" value="0x105">
-			<output type="Networking.Packets.Server.BindItemPacket" schemaName="packetData" />
-			<data type="long" name="itemInstanceId" output="ItemInstanceId" />
-			<data type="int" name="itemId" doRead="false" />
-			<function data="itemId" name="GetItemIdFromInstance" params="itemInstanceId" />
-			<condition data="itemId" value="0" comparison="equal">
-				<discard />
-			</condition>
-			<useBlock name="ItemData" version="12" output="ItemData" args="itemId" />
 		</opcode>
 		<opcode name="BindItem" value="0x103">
 			<output type="Networking.Packets.Server.BindItemPacket" schemaName="packetData" />

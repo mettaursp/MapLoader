@@ -199,6 +199,79 @@ namespace ParserUtils
 	{
 		HasRecentlyFailed = true;
 	}
+
+	template <>
+	void WriteStream<bool>(std::vector<char>& buffer, const bool& value)
+	{
+		bool* data = GrowStream<bool>(buffer, sizeof(bool));
+
+		*data = value;
+	}
+
+	template <>
+	void WriteStream<std::string>(std::vector<char>& buffer, const std::string& value)
+	{
+		char* data = GrowStream<char>(buffer, sizeof(unsigned short) + value.size());
+		short* length = reinterpret_cast<short*>(data);
+
+		*length = (unsigned short)value.size();
+
+		std::memcpy(data + 2, value.c_str(), value.size());
+	}
+
+	template <>
+	void WriteStream<std::wstring>(std::vector<char>& buffer, const std::wstring& value)
+	{
+		char* data = GrowStream<char>(buffer, sizeof(unsigned short) + 2 * value.size());
+		short* length = reinterpret_cast<short*>(data);
+
+		*length = (unsigned short)value.size();
+
+		static_assert(sizeof(value[0]) == 2);
+
+		std::memcpy(data + 2, value.c_str(), 2 * value.size());
+	}
+
+	template <>
+	void WriteStream<Vector3S>(std::vector<char>& buffer, const Vector3S& value)
+	{
+		float* data = GrowStream<float>(buffer, 3 * sizeof(float));
+
+		data[0] = value.X;
+		data[1] = value.Y;
+		data[2] = value.Z;
+	}
+
+	template <>
+	void WriteStream<Vector3Short>(std::vector<char>& buffer, const Vector3Short& value)
+	{
+		short* data = GrowStream<short>(buffer, 3 * sizeof(short));
+
+		data[0] = value.X;
+		data[1] = value.Y;
+		data[2] = value.Z;
+	}
+
+	template <>
+	void WriteStream<Vector3Byte>(std::vector<char>& buffer, const Vector3Byte& value)
+	{
+		unsigned char* data = GrowStream<unsigned char>(buffer, 3 * sizeof(unsigned char));
+
+		data[0] = value.X;
+		data[1] = value.Y;
+		data[2] = value.Z;
+	}
+
+	template <>
+	void WriteStream<Color4I_BGRA>(std::vector<char>& buffer, const Color4I_BGRA& value)
+	{
+		unsigned char* data = GrowStream<unsigned char>(buffer, 4 * sizeof(unsigned char));
+
+		data[0] = value.B;
+		data[1] = value.G;
+		data[2] = value.R;
+		data[3] = value.A;
+	}
 }
 
 std::ostream& operator<<(std::ostream& out, const Vector3Short& vector)

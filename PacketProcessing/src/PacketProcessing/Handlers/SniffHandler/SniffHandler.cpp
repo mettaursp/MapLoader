@@ -1047,6 +1047,8 @@ namespace Networking
 			{
 				++DiscardedItemPackets;
 
+				//FindTypeValueReferences<unsigned long long>(instanceId);
+
 				return 0;
 			}
 
@@ -1055,6 +1057,23 @@ namespace Networking
 
 		Item* SniffHandler::RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId)
 		{
+			if (itemId == Enum::ItemId::Null)
+			{
+				Item* item = GetItem(instanceId);
+
+				if (item == nullptr)
+				{
+					if constexpr (ParserUtils::Packets::PrintUnknownValues)
+					{
+						//FoundUnknownValue();
+
+						//std::cout << TimeStamp << "registering item with null item id that doesn't have a previous entry " << instanceId << std::endl;
+					}
+				}
+
+				return item;
+			}
+
 			if (Field.Items.contains(instanceId))
 			{
 				Item* item = &Field.Items[instanceId];
@@ -1113,9 +1132,9 @@ namespace Networking
 			{
 				if constexpr (ParserUtils::Packets::PrintUnknownValues)
 				{
-					FoundUnknownValue();
+					//FoundUnknownValue();
 
-					std::cout << TimeStamp << "referencing unregistered item instance " << instanceId << std::endl;
+					//std::cout << TimeStamp << "referencing unregistered item instance " << instanceId << std::endl;
 				}
 
 				return nullptr;
@@ -1144,6 +1163,13 @@ namespace Networking
 
 				PacketStream().FoundUnknownValue = true;
 			}
+		}
+
+		void SniffHandler::FindValueReferencesInternal(size_t lastBufferEnd)
+		{
+			size_t size = FindValuesBuffer.size() - lastBufferEnd;
+
+			FindValues.push_back({ lastBufferEnd, size, PacketIndex });
 		}
 
 		const std::string& GetStatName(Enum::StatAttributeBasic stat)

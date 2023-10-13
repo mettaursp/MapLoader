@@ -35,6 +35,11 @@ namespace Networking
 			handler.StackDepth = 0;
 			handler.DiscardedItemPackets = 0;
 
+			if (handler.Field.GameData == nullptr)
+			{
+				handler.Field.GameData = handler.Data;
+			}
+
 			opcodes[opcode - minOpcode].Callback(handler);
 
 			handler.CheckStreamStatus();

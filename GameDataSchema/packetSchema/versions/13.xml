@@ -128,8 +128,26 @@
 		</block>
 	</blocks>
 	<source name="server">
+		<opcodeReference value="0x1" version="12" opcode="0x1" />
+		<opcodeReference value="0x2" version="12" opcode="0x2" />
+		<opcodeReference value="0x3" version="12" opcode="0x3" />
+		<opcodeReference value="0x4" version="12" opcode="0x4" />
+		<opcodeReference value="0x5" version="12" opcode="0x5" />
+		<opcodeReference value="0x6" version="12" opcode="0x6" />
 		<opcodeReference value="0x7" version="12" opcode="0x7" />
+		<opcodeReference value="0x8" version="12" opcode="0x8" />
+		<opcodeReference value="0x9" version="12" opcode="0x9" />
+		<opcodeReference value="0xA" version="12" opcode="0xA" />
+		<opcodeReference value="0xB" version="12" opcode="0xB" />
 		<opcodeReference value="0xC" version="12" opcode="0xC" />
+		<opcodeReference value="0xD" version="12" opcode="0xD" />
+		<opcodeReference value="0xE" version="12" opcode="0xE" />
+		<opcodeReference value="0xF" version="12" opcode="0xF" />
+		<opcodeReference value="0x10" version="12" opcode="0x10" />
+		<opcodeReference value="0x11" version="12" opcode="0x11" />
+		<opcodeReference value="0x12" version="12" opcode="0x12" />
+		<opcodeReference value="0x13" version="12" opcode="0x13" />
+		<opcodeReference value="0x14" version="12" opcode="0x14" />
 		<opcodeReference value="0x15" version="12" opcode="0x15" />
 		<opcodeReference value="0x16" version="12" opcode="0x16" />
 		<opcode name="FieldAddPlayer" value="0x17">
@@ -259,9 +277,13 @@
 			<data type="short" name="unknown" />
 		</opcode>
 		<opcodeReference value="0x18" version="12" opcode="0x18" />
+		<opcodeReference value="0x19" version="12" opcode="0x19" />
+		<opcodeReference value="0x1C" version="12" opcode="0x1C" />
 		<opcodeReference value="0x1D" version="12" opcode="0x1D" />
 		<opcodeReference value="0x1E" version="12" opcode="0x1E" />
+		<opcodeReference value="0x20" version="12" opcode="0x20" />
 		<opcodeReference value="0x23" version="12" opcode="0x23" />
+		<opcodeReference value="0x24" version="12" opcode="0x24" />
 		<opcodeReference value="0x25" version="12" opcode="0x25" />
 		<opcodeReference value="0x26" version="12" opcode="0x26" />
 		<opcodeReference value="0x27" version="12" opcode="0x27" />
@@ -269,10 +291,24 @@
 		<opcodeReference value="0x2A" version="12" opcode="0x2A" />
 		<opcodeReference value="0x2B" version="12" opcode="0x2B" />
 		<opcodeReference value="0x2C" version="12" opcode="0x2C" />
+		<opcodeReference value="0x2D" version="12" opcode="0x2D" />
+		<opcodeReference value="0x2E" version="12" opcode="0x2E" />
 		<opcodeReference value="0x2F" version="12" opcode="0x2F" />
+		<opcodeReference value="0x30" version="12" opcode="0x30" />
+		<opcodeReference value="0x31" version="12" opcode="0x31" />
+		<opcodeReference value="0x33" version="12" opcode="0x33" />
+		<opcodeReference value="0x34" version="12" opcode="0x34" />
+		<opcodeReference value="0x35" version="12" opcode="0x35" />
+		<opcodeReference value="0x36" version="12" opcode="0x36" />
+		<opcodeReference value="0x37" version="12" opcode="0x37" />
 		<opcodeReference value="0x38" version="12" opcode="0x38" />
 		<opcodeReference value="0x39" version="12" opcode="0x39" />
-		<opcodeReference value="0x3D" version="12" opcode="0x3E" />
+		<opcodeReference value="0x3A" version="12" opcode="0x3A" />
+		<opcodeReference value="0x3B" version="12" opcode="0x3B" />
+		<opcodeReference value="0x3C" version="12" opcode="0x3C" />
+		<opcodeReference value="0x3D" version="12" opcode="0x3D" />
+		<opcodeReference value="0x3E" version="12" opcode="0x3E" />
+		<opcodeReference value="0x3F" version="12" opcode="0x3F" />
 		<opcode name="Buff" value="0x47">
 			<output type="Networking.Packets.Server.BuffPacket" schemaName="packetData" />
 			<data type="byte" name="mode" output="Mode">
@@ -311,6 +347,7 @@
 		<opcodeReference value="0x5A" version="12" opcode="0x5B" />
 		<opcodeReference value="0x5B" version="12" opcode="0x5C" />
 		<opcodeReference value="0x5E" version="12" opcode="0x5F" />
+		<!--
 		<opcodeReference value="0x6C" version="12" opcode="0x6C" />
 		<opcodeReference value="0x7A" version="12" opcode="0x7A" />
 		<opcodeReference value="0x7D" version="12" opcode="0x7D" />
@@ -325,6 +362,21 @@
 		<opcodeReference value="0xD0" version="12" opcode="0xD0" />
 		<opcodeReference value="0xDD" version="12" opcode="0xDD" />
 		<opcodeReference value="0x105" version="12" opcode="0x105" />
+		-->
+		<opcodeReference value="0x6B" version="12" opcode="0x6C" />
+		<opcodeReference value="0x79" version="12" opcode="0x7A" />
+		<opcodeReference value="0x7C" version="12" opcode="0x7D" />
+		<opcodeReference value="0x83" version="12" opcode="0x84" />
+		<opcodeReference value="0x98" version="12" opcode="0x99" />
+		<opcodeReference value="0x99" version="12" opcode="0x9A" />
+		<opcodeReference value="0xC0" version="12" opcode="0xC1" />
+		<opcodeReference value="0xC8" version="12" opcode="0xC9" />
+		<opcodeReference value="0xC9" version="12" opcode="0xCA" />
+		<opcodeReference value="0xCA" version="12" opcode="0xCB" />
+		<opcodeReference value="0xCD" version="12" opcode="0xCE" />
+		<opcodeReference value="0xCF" version="12" opcode="0xD0" />
+		<opcodeReference value="0xDC" version="12" opcode="0xDD" />
+		<opcodeReference value="0x104" version="12" opcode="0x105" />
 	</source>
 	<source name="client">
 		<opcodeReference value="0x01" version="12" opcode="0x01" />

@@ -35,7 +35,7 @@ namespace Networking
 	
 
 		template <>
-		void SniffHandler::PacketParsed<Server::ChangeAttributesAddPacket>(const Server::ChangeAttributesAddPacket& packet)
+		void SniffHandler::PacketParsed<Server::ChangeAttributesPreviewChangePacket>(const Server::ChangeAttributesPreviewChangePacket& packet)
 		{
 			Item* item = GetItem(packet.ItemInstanceId);
 

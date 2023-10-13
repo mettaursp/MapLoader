@@ -91,6 +91,8 @@ namespace PacketSchema
 		NotEqual,
 		Between,
 		NotBetween,
+		LessThan,
+		GreaterThan,
 		None
 	};
 

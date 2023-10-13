@@ -11,6 +11,11 @@ namespace Networking
 		{
 			Item* item = handler->RegisterItem(fieldPetData.ItemInstanceId, fieldPetData.ItemId);
 
+			if (!item)
+			{
+				return;
+			}
+
 			item->Amount = 1;
 			item->Rarity = fieldPetData.Rarity;
 

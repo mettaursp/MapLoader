@@ -1,5 +1,49 @@
 <packetSchema version="12">
 	<blocks>
+		<block name="StateSyncData">
+			<outputParam type="Maple.Game.StateSyncData" schema="packetData" />
+			<data type="byte" name="state" />
+			<data type="byte" name="subState" />
+			<data type="byte" name="flags" />
+			<condition data="flags" bitIndex="0" value="1" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="short" name="unknown" />
+			</condition>
+			<data type="Vector3Short" name="position" />
+			<data type="short" name="rotation" />
+			<data type="byte" name="animation3" />
+			<condition data="animation3" value="127" comparison="greaterThan">
+				<data type="float" name="unknown" />
+				<data type="float" name="unknown" />
+			</condition>
+			<data type="Vector3Short" name="speed" />
+			<data type="byte" name="unknown" />
+			<data type="short" name="rotation2Div10" />
+			<data type="short" name="coordsDiv1000" />
+			<condition data="flags" bitIndex="1" value="1" comparison="equal">
+				<data type="Vector3S" name="unknown" />
+				<data type="wstring" name="unknown" />
+			</condition>
+			<condition data="flags" bitIndex="2" value="1" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="wstring" name="unknown" />
+			</condition>
+			<condition data="flags" bitIndex="3" value="1" comparison="equal">
+				<data type="wstring" name="animationString" />
+			</condition>
+			<condition data="flags" bitIndex="4" value="1" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="wstring" name="unknown" />
+			</condition>
+			<condition data="flags" bitIndex="5" value="1" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="int" name="unknown" />
+				<data type="byte" name="unknown" />
+				<data type="Vector3S" name="unknown" />
+				<data type="Vector3S" name="unknown" />
+			</condition>
+			<data type="int" name="unknown" />
+		</block>
 		<block name="BasicStat">
 			<outputParam type="Maple.Game.BasicStat" schema="packetData" />
 			<data type="short" name="type" output="Type" />
@@ -1261,9 +1305,138 @@
 		</block>
 	</blocks>
 	<source name="server">
+		<opcode name="RequestVersion" value="0x1">
+			<output type="Networking.Packets.Server.RequestVersionPacket" schemaName="packetData" />
+			<data type="int" name="ms2Version" />
+			<data type="int" name="localIV" />
+			<data type="int" name="remoteIV" />
+			<data type="int" name="blockIV" />
+			<data type="byte" name="patchType" />
+		</opcode>
+		<opcode name="VersionResult" value="0x2">
+			<output type="Networking.Packets.Server.VersionResultPacket" schemaName="packetData" />
+		</opcode>
+		<opcode name="PatchFile" value="0x3">
+			<output type="Networking.Packets.Server.PatchFilePacket" schemaName="packetData" />
+			<data type="byte" name="mode">
+				<enum name="Delete" value="1" />
+				<enum name="Unknown" value="2" />
+				<enum name="DownloadOnline" value="3" />
+				<enum name="DownloadPacket" value="5" />
+			</data>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.PatchFileDeletePacket" schemaName="packetData" />
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<!--output type="Networking.Packets.Server.PatchFilePacket" schemaName="packetData" /-->
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<output type="Networking.Packets.Server.PatchFileDownloadOnlinePacket" schemaName="packetData" />
+				<data type="int" name="count" />
+				<array data="count" output="UnknownData">
+					<data type="string" name="unknown" />
+					<data type="long" name="unknown" />
+					<data type="string" name="unknown" />
+				</array>
+			</condition>
+			<condition data="mode" value="5" comparison="equal">
+				<output type="Networking.Packets.Server.PatchFileDownloadPacketPacket" schemaName="packetData" />
+				<data type="string" name="unknown" />
+				<data type="long" name="unknown" />
+				<data type="int" name="count" />
+				<data type="byte" name="unknown" />
+				<data type="string" name="unknown" />
+				<array data="count" output="UnknownData">
+					<data type="byte" name="unknown" />
+				</array>
+			</condition>
+		</opcode>
+		<opcode name="RequestKey" value="0x4">
+			<output type="Networking.Packets.Server.RequestKeyPacket" schemaName="packetData" />
+		</opcode>
+		<opcode name="Reconnect" value="0x5">
+			<data type="byte" name="mode">
+				<enum name="Unknown0" value="0" />
+				<enum name="Disconnected" value="1" />
+				<enum name="Unknown2" value="2" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<!--output type="Networking.Packets.Server.ReconnectPacket" schemaName="packetData" /-->
+				<data type="int" name="unknown" />
+				<data type="string" name="unknownKey" />
+				<data type="int" name="key" />
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<!--output type="Networking.Packets.Server.ReconnectPacket" schemaName="packetData" /-->
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<!--output type="Networking.Packets.Server.ReconnectPacket" schemaName="packetData" /-->
+				<data type="int" name="code" />
+			</condition>
+		</opcode>
+		<opcode name="Ping" value="0x6">
+			<output type="Networking.Packets.Server.PingPacket" schemaName="packetData" />
+			<data type="int" name="unknown" />
+		</opcode>
 		<opcode name="Reconnect7" value="0x7">
 			<output type="Networking.Packets.Server.Reconnect7Packet" schemaName="packetData" />
 			<data type="int" name="unknown" />
+		</opcode>
+		<opcode name="FinalizeReconnect" value="0x8">
+			<output type="Networking.Packets.Server.FinalizeReconnectPacket" schemaName="packetData" />
+			<data type="int" name="unknown" />
+			<data type="int" name="unknownKey" />
+		</opcode>
+		<opcode name="RequestLogin" value="0x9">
+			<output type="Networking.Packets.Server.RequestLoginPacket" schemaName="packetData" />
+		</opcode>
+		<opcode name="LoginResult" value="0xA">
+			<output type="Networking.Packets.Server.LoginResultPacket" schemaName="packetData" />
+			<data type="byte" name="code" />
+			<data type="int" name="unknown" />
+			<data type="wstring" name="banReason" />
+			<data type="long" name="accountId" />
+			<data type="long" name="syncTime" />
+			<data type="int" name="timeOffset" />
+			<data type="byte" name="timeZone" />
+			<data type="byte" name="mode">
+				<enum name="NoBan" value="0" />
+				<enum name="PermanentBan" value="1" />
+				<enum name="TemporaryBan" value="2" />
+			</data>
+			<data type="int" name="unknown">
+				<enum name="Unknown" value="0" />
+			</data>
+			<data type="long" name="unknown">
+				<enum name="Unknown" value="0" />
+			</data>
+			<condition data="mode" value="1" comparison="equal">
+				<data type="long" name="timestamp" />
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<data type="long" name="timestamp" />
+				<data type="long" name="currentTimestamp" />
+			</condition>
+			<data type="int" name="unknownStatus" />
+		</opcode>
+		<opcode name="ServerList" value="0xB">
+			<output type="Networking.Packets.Server.ServerListPacket" schemaName="packetData" />
+			<data type="bool" name="loadServers" />
+			<condition data="loadServers" value="1" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="wstring" name="serverName" />
+				<data type="byte" name="unknown" />
+				<data type="short" name="count" />
+				<array data="count" output="Servers">
+					<data type="wstring" name="ipAddress" />
+					<data type="short" name="port" />
+				</array>
+				<data type="int" name="unknown" />
+				<data type="short" name="count2" />
+				<array data="count2" output="Channels">
+					<data type="short" name="channel" />
+				</array>
+			</condition>
 		</opcode>
 		<opcode name="CharacterList" value="0xC">
 			<data type="byte" name="mode">
@@ -1312,6 +1485,89 @@
 				<output type="Networking.Packets.Server.CharacterListChangeNamePacket" schemaName="packetData" />
 				<data type="int" name="confirm" output="Confirm" />
 			</condition>
+		</opcode>
+		<opcode name="MoveResult" value="0xD">
+			<output type="Networking.Packets.Server.MoveResultPacket" schemaName="packetData" />
+			<data type="byte" name="message" />
+		</opcode>
+		<opcode name="LoginToGame" value="0xE">
+			<output type="Networking.Packets.Server.LoginToGamePacket" schemaName="packetData" />
+			<data type="byte" name="message" />
+			<condition data="message" value="1" comparison="equal">
+				<data type="int" name="ipAddress" />
+				<data type="short" name="port" />
+				<data type="long" name="migrationToken" />
+				<data type="int" name="mapId" />
+			</condition>
+			<condition else="true" comparison="none">
+				<data type="wstring" name="messageString" />
+			</condition>
+			<condition data="message" value="49" comparison="equal">
+				<data type="long" name="unknown" />
+			</condition>
+		</opcode>
+		<opcode name="GameToLogin" value="0xF">
+			<output type="Networking.Packets.Server.GameToLoginPacket" schemaName="packetData" />
+			<data type="bool" name="message" />
+			<condition data="message" value="0" comparison="equal">
+				<data type="int" name="ipAddress" />
+				<data type="short" name="port" />
+				<data type="long" name="migrationToken" />
+			</condition>
+		</opcode>
+		<opcode name="GameToGame" value="0x10">
+			<output type="Networking.Packets.Server.GameToGamePacket" schemaName="packetData" />
+			<data type="bool" name="message" />
+			<condition data="message" value="0" comparison="equal">
+				<data type="int" name="migrationTokenA" />
+				<data type="int" name="migrationTokenB" />
+				<data type="int" name="ipAddress" />
+				<data type="short" name="port" />
+				<data type="int" name="mapId" />
+				<data type="byte" name="unknown" />
+			</condition>
+		</opcode>
+		<opcode name="ResponseTimeSync" value="0x11">
+			<data type="byte" name="mode">
+				<enum name="Initialize" value="0" />
+				<enum name="ResetFields" value="1" />
+				<enum name="Request" value="2" />
+				<enum name="SetTime" value="3" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.ResponseTimeSyncInitializePacket" schemaName="packetData" />
+				<data type="int" name="serverTick" />
+				<data type="long" name="timestamp" />
+				<data type="int" name="timeOffset" />
+				<data type="byte" name="timezone" />
+				<data type="int" name="key" />
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.ResponseTimeSyncResetFieldsPacket" schemaName="packetData" />
+				<data type="int" name="serverTick" />
+				<data type="long" name="timestamp" />
+				<data type="int" name="timeOffset" />
+				<data type="byte" name="timezone" />
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<output type="Networking.Packets.Server.ResponseTimeSyncRequestPacket" schemaName="packetData" />
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<output type="Networking.Packets.Server.ResponseTimeSyncSetTimePacket" schemaName="packetData" />
+				<data type="long" name="timestamp" />
+			</condition>
+		</opcode>
+		<opcode name="RequestHeartbeat" value="0x12">
+			<output type="Networking.Packets.Server.RequestHeartbeatPacket" schemaName="packetData" />
+			<data type="int" name="heartbeat" />
+		</opcode>
+		<opcode name="RequestClientTickSync" value="0x13">
+			<output type="Networking.Packets.Server.RequestClientTickSyncPacket" schemaName="packetData" />
+			<data type="int" name="serverTick" />
+		</opcode>
+		<opcode name="SyncNumber" value="0x14">
+			<output type="Networking.Packets.Server.SyncNumberPacket" schemaName="packetData" />
+			<data type="byte" name="syncNumber" />
 		</opcode>
 		<opcode name="ServerEnter" value="0x15">
 			<output type="Networking.Packets.Server.ServerEnterPacket" schemaName="packetData" />
@@ -1466,6 +1722,37 @@
 			<output type="Networking.Packets.Server.FieldRemovePlayerPacket" schemaName="packetData" />
 			<data type="int" name="actorId" output="ActorId" />
 		</opcode>
+		<opcode name="DungeonList" value="0x19">
+			<data type="byte" name="mode">
+				<enum name="Entries" value="0" />
+				<enum name="Limit" value="1" />
+				<enum name="Unknown" value="2" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.DungeonListEntriesPacket" schemaName="packetData" />
+				<data type="int" name="count" />
+				<array data="count" output="Dungeons">
+					<data type="int" name="dungeonId" />
+					<data type="bool" name="eligibility" />
+				</array>
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<!--output type="Networking.Packets.Server.DungeonListUnknownPacket" schemaName="packetData" /-->
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<!--output type="Networking.Packets.Server.DungeonListUnknownPacket" schemaName="packetData" /-->
+				<data type="byte" name="message" />
+				<data type="int" name="dungeonRoomId" />
+			</condition>
+		</opcode>
+		<opcode name="UserSync" value="0x1C">
+			<output type="Networking.Packets.Server.UserSyncPacket" schemaName="packetData" />
+			<data type="int" name="actorId" />
+			<data type="byte" name="count" />
+			<array data="count" output="StateData">
+				<useBlock name="StateSyncData" version="12" />
+			</array>
+		</opcode>
 		<opcode name="UserChat" value="0x1D">
 			<output type="Networking.Packets.Server.UserChatPacket" schemaName="packetData" />
 			<data type="long" name="accountId" output="AccountId" />
@@ -1529,6 +1816,54 @@
 				<useBlock name="ItemData" version="12" output="ItemData" args="itemId" />
 			</array>
 		</opcode>
+		<opcode name="Emotion" value="0x1F">
+			<data type="byte" name="mode">
+				<enum name="Load" value="0" />
+				<enum name="Learn" value="1" />
+				<enum name="Error" value="3" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<output type="Networking.Packets.Server.EmotionLoadPacket" schemaName="packetData" />
+				<data type="int" name="count" />
+				<array data="count" output="Emotes">
+					<data type="int" name="emoteId" />
+					<data type="int" name="unknown" />
+					<data type="long" name="unknown" />
+				</array>
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.EmotionLearnPacket" schemaName="packetData" />
+				<data type="int" name="emoteId" />
+				<data type="int" name="unknown" />
+				<data type="long" name="unknown" />
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<output type="Networking.Packets.Server.EmotionErrorPacket" schemaName="packetData" />
+				<data type="byte" name="message" />
+			</condition>
+		</opcode>
+		<opcode name="ItemPutOnOrOff" value="0x20">
+			<data type="byte" name="mode">
+				<enum name="Unknown" value="2" />
+				<enum name="Learn" value="3" />
+				<enum name="Error" value="5" />
+			</data>
+			<condition data="mode" value="2" comparison="equal">
+				<!--output type="Networking.Packets.Server.ItemPutOnOrOffPacket" schemaName="packetData" /-->
+				<data type="long" name="itemInstanceId" />
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<!--output type="Networking.Packets.Server.ItemPutOnOrOffPacket" schemaName="packetData" /-->
+				<data type="long" name="itemInstanceId" />
+			</condition>
+			<condition data="mode" value="5" comparison="equal">
+				<!--output type="Networking.Packets.Server.ItemPutOnOrOffPacket" schemaName="packetData" /-->
+				<data type="int" name="unknown" />
+				<data type="long" name="itemInstanceId" />
+				<data type="wstring" name="unknown" />
+				<data type="byte" name="unknown" />
+			</condition>
+		</opcode>
 		<opcode name="FurnishingStorage" value="0x23">
 			<data type="byte" name="mode">
 				<enum name="StartList" value="1" />
@@ -1578,6 +1913,40 @@
 			</condition>
 			<condition data="mode" value="8" comparison="equal">
 				<output type="Networking.Packets.Server.FurnishingStorageEndListPacket" schemaName="packetData" />
+			</condition>
+		</opcode>
+		<opcode name="FurnishingInventory" value="0x24">
+			<data type="byte" name="mode">
+				<enum name="StartList" value="0" />
+				<enum name="Unknown" value="1" />
+				<enum name="Remove" value="2" />
+				<enum name="Update" value="3" />
+				<enum name="EndList" value="4" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<!--output type="Networking.Packets.Server.FurnishingInventoryPacket" schemaName="packetData" /-->
+			</condition>
+			<condition data="mode" value="1" comparison="equal">
+				<output type="Networking.Packets.Server.FurnishingInventoryUnknownPacket" schemaName="packetData" />
+				<data type="int" name="itemId" />
+				<data type="long" name="itemInstanceId" />
+				<data type="long" name="unknown" />
+				<data type="bool" name="isTemplate" />
+				<condition data="isTemplate" value="1" comparison="equal">
+					<useBlock name="ItemUgc" version="12" output="Ugc" />
+				</condition>
+			</condition>
+			<condition data="mode" value="2" comparison="equal">
+				<!--output type="Networking.Packets.Server.FurnishingInventoryPacket" schemaName="packetData" /-->
+				<data type="long" name="itemInstanceId" />
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<!--output type="Networking.Packets.Server.FurnishingInventoryPacket" schemaName="packetData" /-->
+				<data type="long" name="itemInstanceId" />
+				<data type="int" name="count" />
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<!--output type="Networking.Packets.Server.FurnishingInventoryPacket" schemaName="packetData" /-->
 			</condition>
 		</opcode>
 		<opcode name="ItemPutOn" value="0x25">
@@ -1669,6 +2038,19 @@
 			<output type="Networking.Packets.Server.FieldRemoveItemPacket" schemaName="packetData" />
 			<data type="int" name="objectId" output="ObjectId" />
 		</opcode>
+		<opcode name="FieldPickUpItem" value="0x2D">
+			<output type="Networking.Packets.Server.FieldPickUpItemPacket" schemaName="packetData" />
+			<data type="bool" name="pickedUp" />
+			<data type="int" name="objectId" />
+			<condition data="pickedUp" value="1" comparison="equal">
+				<data type="int" name="actorId" />
+			</condition>
+		</opcode>
+		<opcode name="FieldMutateItem" value="0x2D">
+			<output type="Networking.Packets.Server.FieldMutateItemPacket" schemaName="packetData" />
+			<data type="int" name="objectId" />
+			<data type="int" name="mutationId" />
+		</opcode>
 		<opcode name="Stat" value="0x2F">
 			<output type="Networking.Packets.Server.StatPacket" schemaName="packetData" />
 			<data type="int" name="actorId" output="ActorId" />
@@ -1712,6 +2094,41 @@
 				<useBlock name="SpecificStats" version="12" output="Stats" args="statCount" />
 			</condition>
 		</opcode>
+		<opcode name="UserBattle" value="0x30">
+			<output type="Networking.Packets.Server.UserBattlePacket" schemaName="packetData" />
+			<data type="int" name="actorId" />
+			<data type="bool" name="inBattle" />
+		</opcode>
+		<opcode name="UserSkinColor" value="0x31">
+			<output type="Networking.Packets.Server.UserSkinColorPacket" schemaName="packetData" />
+			<data type="int" name="actorId" />
+			<data type="Color4I" name="skinColorPrimary" />
+			<data type="Color4I" name="skinColorSecondary" />
+		</opcode>
+		<opcode name="AdventurerBar" value="0x33">
+			<output type="Networking.Packets.Server.AdventurerBarPacket" schemaName="packetData" />
+			<data type="int" name="unknown" />
+		</opcode>
+		<opcode name="RevivalConfirm" value="0x34">
+			<output type="Networking.Packets.Server.RevivalConfirmPacket" schemaName="packetData" />
+			<data type="int" name="actorId" />
+			<data type="int" name="serverTick" />
+			<data type="int" name="unknown" />
+		</opcode>
+		<opcode name="Revival" value="0x35">
+			<output type="Networking.Packets.Server.RevivalPacket" schemaName="packetData" />
+			<data type="int" name="actorId" />
+			<data type="byte" name="revival" />
+		</opcode>
+		<opcode name="RevivalCount" value="0x36">
+			<output type="Networking.Packets.Server.RevivalCountPacket" schemaName="packetData" />
+			<data type="int" name="revivalCount" />
+		</opcode>
+		<opcode name="UserState" value="0x37">
+			<output type="Networking.Packets.Server.UserStatePacket" schemaName="packetData" />
+			<data type="int" name="actorId" />
+			<data type="byte" name="state" />
+		</opcode>
 		<opcode name="ExpUp" value="0x38">
 			<output type="Networking.Packets.Server.ExpUpPacket" schemaName="packetData" />
 			<data type="bool" name="isRestExp" output="IsRestExp" />
@@ -1747,6 +2164,45 @@
 			<output type="Networking.Packets.Server.LevelUpPacket" schemaName="packetData" />
 			<data type="int" name="actorId" output="ActorId" />
 			<data type="int" name="level" output="Level" />
+		</opcode>
+		<opcode name="Meso" value="0x3A">
+			<output type="Networking.Packets.Server.MesoPacket" schemaName="packetData" />
+			<data type="long" name="mesos" />
+			<data type="int" name="pcbang" />
+		</opcode>
+		<opcode name="Meret" value="0x3B">
+			<output type="Networking.Packets.Server.MeretPacket" schemaName="packetData" />
+			<data type="long" name="merets" />
+			<data type="long" name="merets2" />
+			<data type="long" name="gameMerets" />
+			<data type="long" name="gameMerets2" />
+			<data type="long" name="deductMerets" />
+		</opcode>
+		<opcode name="CurrencyToken" value="0x3C">
+			<output type="Networking.Packets.Server.CurrencyTokenPacket" schemaName="packetData" />
+			<data type="byte" name="type" />
+			<data type="long" name="amount" />
+			<data type="long" name="deduct" />
+			<data type="long" name="overflow" />
+		</opcode>
+		<opcode name="SkillUse" value="0x3D">
+			<output type="Networking.Packets.Server.SkillUsePacket" schemaName="packetData" />
+			<data type="long" name="skillSn" />
+			<data type="int" name="serverTick" />
+			<data type="int" name="actorId" />
+			<data type="int" name="skillId" />
+			<data type="short" name="skillLevel" />
+			<data type="byte" name="motionPoint" />
+			<data type="Vector3Short" name="position" />
+			<data type="Vector3S" name="direction" />
+			<data type="Vector3S" name="rotation" />
+			<data type="short" name="posDiv10" />
+			<data type="bool" name="unknown" />
+			<data type="bool" name="isHold" />
+			<condition data="mode" value="0" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="wstring" name="unknown" />
+			</condition>
 		</opcode>
 		<opcode name="SkillDamage" value="0x3E">
 			<data type="byte" name="mode">
@@ -1817,6 +2273,20 @@
 					<data type="int" name="npcId" />
 				</condition>
 			</condition>
+		</opcode>
+		<opcode name="SkillSync" value="0x3F">
+			<output type="Networking.Packets.Server.SkillSyncPacket" schemaName="packetData" />
+			<data type="long" name="skillSn" />
+			<data type="int" name="actorId" />
+			<data type="int" name="skillId" />
+			<data type="short" name="skillLevel" />
+			<data type="Vector3S" name="position" />
+			<data type="Vector3S" name="direction" />
+			<data type="Vector3S" name="rotation" />
+			<data type="Vector3S" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="byte" name="attackPoint" />
+			<data type="int" name="unknown" />
 		</opcode>
 		<opcode name="Buff" value="0x48">
 			<output type="Networking.Packets.Server.BuffPacket" schemaName="packetData" />
@@ -2974,7 +3444,7 @@
 				<enum name="AddItem" value="2" />
 				<enum name="Error" value="4" />
 			</data>
-			<condition data="mode" value="2" comparison="equal">
+			<condition data="mode" value="1" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesPreviewChangePacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
@@ -2984,7 +3454,7 @@
 				</condition>
 				<useBlock name="ItemData" version="12" output="ItemData" args="itemId" />
 			</condition>
-			<condition data="mode" value="3" comparison="equal">
+			<condition data="mode" value="2" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesApplyPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
@@ -3022,7 +3492,7 @@
 				<output type="Networking.Packets.Server.ChangeAttributesScrollUseScrollPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 			</condition>
-			<condition data="mode" value="1" comparison="equal">
+			<condition data="mode" value="2" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesScrollPreviewChangePacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />
@@ -3032,7 +3502,7 @@
 				</condition>
 				<useBlock name="ItemData" version="12" output="ItemData" args="itemId" />
 			</condition>
-			<condition data="mode" value="2" comparison="equal">
+			<condition data="mode" value="3" comparison="equal">
 				<output type="Networking.Packets.Server.ChangeAttributesScrollApplyPacket" schemaName="packetData" />
 				<data type="long" name="itemInstanceId" output="ItemInstanceId" />
 				<data type="int" name="itemId" doRead="false" />

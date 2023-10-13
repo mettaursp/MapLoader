@@ -12,6 +12,11 @@ namespace Networking
 		{
 			Item* item = RegisterItem(packet.ItemInstanceId, packet.ItemId);
 
+			if (item == nullptr)
+			{
+				return;
+			}
+
 			item->Amount = packet.Amount;
 			item->Rarity = packet.Rarity;
 

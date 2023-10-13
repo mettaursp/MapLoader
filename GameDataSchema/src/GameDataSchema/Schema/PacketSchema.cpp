@@ -773,6 +773,14 @@ namespace PacketSchema
 				{
 					condition.Comparison = PacketInfoComparison::NotBetween;
 				}
+				else if (strcmp(value, "lessThan") == 0)
+				{
+					condition.Comparison = PacketInfoComparison::LessThan;
+				}
+				else if (strcmp(value, "greaterThan") == 0)
+				{
+					condition.Comparison = PacketInfoComparison::GreaterThan;
+				}
 				else if (strcmp(value, "none") == 0)
 				{
 					condition.Comparison = PacketInfoComparison::None;
@@ -1235,7 +1243,9 @@ namespace PacketSchema
 			"Equal",
 			"NotEqual",
 			"Between",
-			"NotBetween"
+			"NotBetween",
+			"LessThan",
+			"GreaterThan"
 		};
 		bool compare2[] = {
 			false,
@@ -2880,6 +2890,14 @@ namespace PacketSchema
 					{
 						conditionOut << " < " << condition.Value << " || " << param.Name << " > " << condition.Value2;
 					}
+					else if (condition.Comparison == PacketInfoComparison::LessThan)
+					{
+						conditionOut << " < " << condition.Value;
+					}
+					else if (condition.Comparison == PacketInfoComparison::GreaterThan)
+					{
+						conditionOut << " > " << condition.Value;
+					}
 
 					out << conditionOut.str() << ")\n";
 				}
@@ -3250,7 +3268,7 @@ namespace PacketSchema
 				}
 
 				cppOut << "\t\t\t{\n";
-				cppOut << "\t\t\t\t0x" << std::hex << minServerOpcode << ", 0x" << minClientOpcode << std::dec << ",\n";
+				cppOut << "\t\t\t\t0x" << std::hex << minServerOpcode << ", 0x" << minClientOpcode << std::dec << ", // v" << version->Version << "+\n";
 
 				if (serverOpcodes.size() > 0)
 				{
@@ -3262,7 +3280,7 @@ namespace PacketSchema
 
 						if (opcodeData.Reference != nullptr)
 						{
-							cppOut << "\t\t\t\t\t{ \"" << opcodeData.Name << "\", &ParsePacket<" << opcodeData.Reference->TargetVersion << ", ServerPacket, 0x" << std::hex << opcodeData.Reference->TargetOpcode << std::dec << "> }" << (i + 1 < serverOpcodes.size() ? ",\n" : "\n");
+							cppOut << "\t\t\t\t\t{ \"" << opcodeData.Name << "\", &ParsePacket<" << opcodeData.Reference->TargetVersion << ", ServerPacket, 0x" << std::hex << opcodeData.Reference->TargetOpcode << std::dec << "> }" << (i + 1 < serverOpcodes.size() ? ", // 0x" : " // 0x") << std::hex << (minServerOpcode + i) << "\n" << std::dec;
 
 							continue;
 						}
@@ -3271,12 +3289,12 @@ namespace PacketSchema
 
 						if (!opcode)
 						{
-							cppOut << "\t\t\t\t\t{ \"\", &ParsePacket<0, false, 0> }" << (i + 1 < serverOpcodes.size() ? ",\n" : "\n");
+							cppOut << "\t\t\t\t\t{ \"\", &ParsePacket<0, false, 0> }" << (i + 1 < serverOpcodes.size() ? ", // 0x" : " // 0x") << std::hex << (minServerOpcode + i) << "\n" << std::dec;
 
 							continue;
 						}
 
-						cppOut << "\t\t\t\t\t{ \"" << opcode->Name << "\", &ParsePacket<" << opcodeData.Version << ", ServerPacket, 0x" << std::hex << (minServerOpcode + i) << std::dec << (i + 1 < serverOpcodes.size() ? "> },\n" : "> }\n");
+						cppOut << "\t\t\t\t\t{ \"" << opcode->Name << "\", &ParsePacket<" << opcodeData.Version << ", ServerPacket, 0x" << std::hex << (minServerOpcode + i) << std::dec << (i + 1 < serverOpcodes.size() ? "> }, // 0x" : "> } // 0x") << std::hex << (minServerOpcode + i) << "\n" << std::dec;
 					}
 
 					cppOut << "\t\t\t\t},\n";
@@ -3296,7 +3314,7 @@ namespace PacketSchema
 
 						if (opcodeData.Reference != nullptr)
 						{
-							cppOut << "\t\t\t\t\t{ \"" << opcodeData.Name << "\", &ParsePacket<" << opcodeData.Reference->TargetVersion << ", ClientPacket, 0x" << std::hex << opcodeData.Reference->TargetOpcode << std::dec << "> }" << (i + 1 < clientOpcodes.size() ? ",\n" : "\n");
+							cppOut << "\t\t\t\t\t{ \"" << opcodeData.Name << "\", &ParsePacket<" << opcodeData.Reference->TargetVersion << ", ClientPacket, 0x" << std::hex << opcodeData.Reference->TargetOpcode << std::dec << "> }" << (i + 1 < clientOpcodes.size() ? ", // 0x" : " // 0x") << std::hex << (minClientOpcode + i) << "\n" << std::dec;
 
 							continue;
 						}
@@ -3305,12 +3323,12 @@ namespace PacketSchema
 
 						if (!opcode)
 						{
-							cppOut << "\t\t\t\t\t{ \"\", &ParsePacket<0, false, 0> }" << (i + 1 < clientOpcodes.size() ? ",\n" : "\n");
+							cppOut << "\t\t\t\t\t{ \"\", &ParsePacket<0, false, 0> }" << (i + 1 < clientOpcodes.size() ? ", // 0x" : " // 0x") << std::hex << (minClientOpcode + i) << "\n" << std::dec;
 
 							continue;
 						}
 
-						cppOut << "\t\t\t\t\t{ \"" << opcode->Name << "\", &ParsePacket<" << opcodeData.Version << ", ClientPacket, 0x" << std::hex << (minClientOpcode + i) << std::dec << (i + 1 < clientOpcodes.size() ? "> },\n" : "> }\n");
+						cppOut << "\t\t\t\t\t{ \"" << opcode->Name << "\", &ParsePacket<" << opcodeData.Version << ", ClientPacket, 0x" << std::hex << (minClientOpcode + i) << std::dec << (i + 1 < clientOpcodes.size() ? "> }, // 0x" : "> } // 0x") << std::hex << (minClientOpcode + i) << "\n" << std::dec;
 					}
 
 					cppOut << "\t\t\t\t}\n";

@@ -8485,10 +8485,10 @@ namespace Networking
 
 			ValidateValues(handler, "mode", mode_var0, (unsigned char)1, (unsigned char)2, (unsigned char)4);
 
-			if (mode_var0 == 2)
+			if (mode_var0 == 1)
 			{
-				StackWatch<PacketHandler> watch_1(handler, "if mode_var0 == 2");
-				Server::ChangeAttributesAddPacket output0;
+				StackWatch<PacketHandler> watch_1(handler, "if mode_var0 == 1");
+				Server::ChangeAttributesPreviewChangePacket output0;
 
 				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId);
 
@@ -8511,16 +8511,16 @@ namespace Networking
 
 				if (handler.Succeeded())
 				{
-					handler.PacketParsed<Server::ChangeAttributesAddPacket>(output0);
+					handler.PacketParsed<Server::ChangeAttributesPreviewChangePacket>(output0);
 				}
 
 
 				return;
 			}
 
-			if (mode_var0 == 3)
+			if (mode_var0 == 2)
 			{
-				StackWatch<PacketHandler> watch_9(handler, "if mode_var0 == 3");
+				StackWatch<PacketHandler> watch_9(handler, "if mode_var0 == 2");
 				Server::ChangeAttributesApplyPacket output1;
 
 				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId);
@@ -10550,10 +10550,10 @@ namespace Networking
 				return;
 			}
 
-			if (mode_var0 == 1)
+			if (mode_var0 == 2)
 			{
-				StackWatch<PacketHandler> watch_4(handler, "if mode_var0 == 1");
-				Server::ChangeAttributesScrollAddPacket output1;
+				StackWatch<PacketHandler> watch_4(handler, "if mode_var0 == 2");
+				Server::ChangeAttributesScrollPreviewChangePacket output1;
 
 				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId);
 
@@ -10576,16 +10576,16 @@ namespace Networking
 
 				if (handler.Succeeded())
 				{
-					handler.PacketParsed<Server::ChangeAttributesScrollAddPacket>(output1);
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewChangePacket>(output1);
 				}
 
 
 				return;
 			}
 
-			if (mode_var0 == 2)
+			if (mode_var0 == 3)
 			{
-				StackWatch<PacketHandler> watch_12(handler, "if mode_var0 == 2");
+				StackWatch<PacketHandler> watch_12(handler, "if mode_var0 == 3");
 				Server::ChangeAttributesScrollApplyPacket output2;
 
 				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId);
@@ -14883,10 +14883,10 @@ namespace Networking
 
 			ValidateValues(handler, "mode", mode_var0, (unsigned char)1, (unsigned char)2, (unsigned char)4);
 
-			if (mode_var0 == 2)
+			if (mode_var0 == 1)
 			{
-				StackWatch<PacketHandler> watch_1(handler, "if mode_var0 == 2");
-				Server::ChangeAttributesAddPacket output0;
+				StackWatch<PacketHandler> watch_1(handler, "if mode_var0 == 1");
+				Server::ChangeAttributesPreviewChangePacket output0;
 
 				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId);
 
@@ -14909,16 +14909,16 @@ namespace Networking
 
 				if (handler.Succeeded())
 				{
-					handler.PacketParsed<Server::ChangeAttributesAddPacket>(output0);
+					handler.PacketParsed<Server::ChangeAttributesPreviewChangePacket>(output0);
 				}
 
 
 				return;
 			}
 
-			if (mode_var0 == 3)
+			if (mode_var0 == 2)
 			{
-				StackWatch<PacketHandler> watch_9(handler, "if mode_var0 == 3");
+				StackWatch<PacketHandler> watch_9(handler, "if mode_var0 == 2");
 				Server::ChangeAttributesApplyPacket output1;
 
 				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId);
@@ -15004,10 +15004,10 @@ namespace Networking
 				return;
 			}
 
-			if (mode_var0 == 1)
+			if (mode_var0 == 2)
 			{
-				StackWatch<PacketHandler> watch_4(handler, "if mode_var0 == 1");
-				Server::ChangeAttributesScrollAddPacket output1;
+				StackWatch<PacketHandler> watch_4(handler, "if mode_var0 == 2");
+				Server::ChangeAttributesScrollPreviewChangePacket output1;
 
 				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId);
 
@@ -15030,16 +15030,16 @@ namespace Networking
 
 				if (handler.Succeeded())
 				{
-					handler.PacketParsed<Server::ChangeAttributesScrollAddPacket>(output1);
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewChangePacket>(output1);
 				}
 
 
 				return;
 			}
 
-			if (mode_var0 == 2)
+			if (mode_var0 == 3)
 			{
-				StackWatch<PacketHandler> watch_12(handler, "if mode_var0 == 2");
+				StackWatch<PacketHandler> watch_12(handler, "if mode_var0 == 3");
 				Server::ChangeAttributesScrollApplyPacket output2;
 
 				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId);
@@ -15344,45 +15344,6 @@ namespace Networking
 
 				return;
 			}
-		}
-
-		template <>
-		void ParsePacket<2486, ServerPacket, 0x105>(PacketHandler& handler)
-		{
-			using namespace ParserUtils::Packets;
-
-			ParserUtils::DataStream& stream = handler.PacketStream();
-
-				StackWatch<PacketHandler> watch_block(handler, "[Server] 0x105 'BindItem' v2486");
-
-			Server::BindItemPacket output0;
-
-			Read<long long>("itemInstanceId", handler, output0.ItemInstanceId);
-
-			int itemId_var1 = 0;
-
-			if (!handler.PacketStream().HasRecentlyFailed)
-			{
-				itemId_var1 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
-			}
-
-			if (itemId_var1 == 0)
-			{
-				StackWatch<PacketHandler> watch_4(handler, "if itemId_var1 == 0");
-				handler.DiscardPacket();
-
-				return;
-
-			}
-			ParseItemData_v12(handler, output0.ItemData, (unsigned int)itemId_var1);
-
-			if (handler.Succeeded())
-			{
-				handler.PacketParsed<Server::BindItemPacket>(output0);
-			}
-
-
-			return;
 		}
 
 		template <>
@@ -19220,10 +19181,10 @@ namespace Networking
 
 			ValidateValues(handler, "mode", mode_var0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
 
-			if (mode_var0 == 2)
+			if (mode_var0 == 1)
 			{
-				StackWatch<PacketHandler> watch_1(handler, "if mode_var0 == 2");
-				Server::ChangeAttributesAddPacket output0;
+				StackWatch<PacketHandler> watch_1(handler, "if mode_var0 == 1");
+				Server::ChangeAttributesPreviewChangePacket output0;
 
 				Read<long long>("itemInstanceId", handler, output0.ItemInstanceId);
 
@@ -19246,16 +19207,16 @@ namespace Networking
 
 				if (handler.Succeeded())
 				{
-					handler.PacketParsed<Server::ChangeAttributesAddPacket>(output0);
+					handler.PacketParsed<Server::ChangeAttributesPreviewChangePacket>(output0);
 				}
 
 
 				return;
 			}
 
-			if (mode_var0 == 3)
+			if (mode_var0 == 2)
 			{
-				StackWatch<PacketHandler> watch_9(handler, "if mode_var0 == 3");
+				StackWatch<PacketHandler> watch_9(handler, "if mode_var0 == 2");
 				Server::ChangeAttributesScrollApplyPacket output1;
 
 				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId);
@@ -19341,10 +19302,10 @@ namespace Networking
 				return;
 			}
 
-			if (mode_var0 == 1)
+			if (mode_var0 == 2)
 			{
-				StackWatch<PacketHandler> watch_4(handler, "if mode_var0 == 1");
-				Server::ChangeAttributesScrollAddPacket output1;
+				StackWatch<PacketHandler> watch_4(handler, "if mode_var0 == 2");
+				Server::ChangeAttributesScrollPreviewChangePacket output1;
 
 				Read<long long>("itemInstanceId", handler, output1.ItemInstanceId);
 
@@ -19367,16 +19328,16 @@ namespace Networking
 
 				if (handler.Succeeded())
 				{
-					handler.PacketParsed<Server::ChangeAttributesScrollAddPacket>(output1);
+					handler.PacketParsed<Server::ChangeAttributesScrollPreviewChangePacket>(output1);
 				}
 
 
 				return;
 			}
 
-			if (mode_var0 == 2)
+			if (mode_var0 == 3)
 			{
-				StackWatch<PacketHandler> watch_12(handler, "if mode_var0 == 2");
+				StackWatch<PacketHandler> watch_12(handler, "if mode_var0 == 3");
 				Server::ChangeAttributesScrollApplyPacket output2;
 
 				Read<long long>("itemInstanceId", handler, output2.ItemInstanceId);
@@ -19678,45 +19639,6 @@ namespace Networking
 
 				return;
 			}
-		}
-
-		template <>
-		void ParsePacket<2497, ServerPacket, 0x105>(PacketHandler& handler)
-		{
-			using namespace ParserUtils::Packets;
-
-			ParserUtils::DataStream& stream = handler.PacketStream();
-
-				StackWatch<PacketHandler> watch_block(handler, "[Server] 0x105 'BindItem' v2497");
-
-			Server::BindItemPacket output0;
-
-			Read<long long>("itemInstanceId", handler, output0.ItemInstanceId);
-
-			int itemId_var1 = 0;
-
-			if (!handler.PacketStream().HasRecentlyFailed)
-			{
-				itemId_var1 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
-			}
-
-			if (itemId_var1 == 0)
-			{
-				StackWatch<PacketHandler> watch_4(handler, "if itemId_var1 == 0");
-				handler.DiscardPacket();
-
-				return;
-
-			}
-			ParseItemData_v12(handler, output0.ItemData, (unsigned int)itemId_var1);
-
-			if (handler.Succeeded())
-			{
-				handler.PacketParsed<Server::BindItemPacket>(output0);
-			}
-
-
-			return;
 		}
 
 		template <>

@@ -2,6 +2,7 @@
 
 #include <string_view>
 #include <sstream>
+#include <vector>
 
 #include <Engine/Math/Vector3S-decl.h>
 #include <Engine/Math/Color4I.h>
@@ -154,4 +155,55 @@ namespace ParserUtils
 
 	template <>
 	bool DataStream::Read<Color4I_BGRA>(Color4I_BGRA& value);
+
+	template <typename T>
+	void WriteStream(std::vector<char>& buffer, const T& value)
+	{
+		//static_assert(false, "attempt to read in unimplemented type");
+	}
+
+	template <typename T>
+	T* GrowStream(std::vector<char>& buffer, size_t amount)
+	{
+		size_t size = buffer.size();
+		size_t capacity = buffer.capacity();
+
+		if (size + amount > capacity)
+		{
+			buffer.reserve(std::max(2 * capacity, size + amount));
+		}
+
+		buffer.resize(size + amount);
+
+		return reinterpret_cast<T*>(buffer.data() + size);
+	}
+
+	template <Numeric T>
+	void WriteStream(std::vector<char>& buffer, const T& value)
+	{
+		T* data = GrowStream<T>(buffer, sizeof(T));
+
+		*data = value;
+	}
+
+	template <>
+	void WriteStream<bool>(std::vector<char>& buffer, const bool& value);
+
+	template <>
+	void WriteStream<std::string>(std::vector<char>& buffer, const std::string& value);
+
+	template <>
+	void WriteStream<std::wstring>(std::vector<char>& buffer, const std::wstring& value);
+
+	template <>
+	void WriteStream<Vector3S>(std::vector<char>& buffer, const Vector3S& value);
+
+	template <>
+	void WriteStream<Vector3Short>(std::vector<char>& buffer, const Vector3Short& value);
+
+	template <>
+	void WriteStream<Vector3Byte>(std::vector<char>& buffer, const Vector3Byte& value);
+
+	template <>
+	void WriteStream<Color4I_BGRA>(std::vector<char>& buffer, const Color4I_BGRA& value);
 }

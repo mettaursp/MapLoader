@@ -197,6 +197,12 @@ namespace ParserUtils
 		}
 
 		template <typename T>
+		void Write(std::vector<char>& buffer, const T& value)
+		{
+			ParserUtils::WriteStream<T>(buffer, value);
+		}
+
+		template <typename T>
 		concept IntegerType = requires(T param)
 		{
 			{ std::is_integral_v<T> };

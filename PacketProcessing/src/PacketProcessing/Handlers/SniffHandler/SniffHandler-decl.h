@@ -260,12 +260,22 @@ namespace Networking
 				std::string DeflatedData;
 			};
 
+			struct FindValueEntry
+			{
+				size_t BufferStart = (size_t)-1;
+				size_t BufferLength = 0;
+				size_t PacketIndex = 0;
+			};
+
 			unsigned short Version = 0;
 			unsigned short Feature = 0;
 			std::string Locale;
 			std::string LastPacketName;
 			size_t StackDepth = 0;
 			size_t DiscardedItemPackets = 0;
+			size_t PacketIndex = 0;
+			std::vector<char> FindValuesBuffer;
+			std::vector<FindValueEntry> FindValues;
 
 			const char* Tabs() const;
 
@@ -280,10 +290,11 @@ namespace Networking
 			bool HasReconnected = false;
 			FieldState Field;
 			bool ReportPackets = true;
+			bool AllowValueSearch = false;
 			std::string MsbPath;
 
 			template <typename T>
-			void PacketParsed(const T& packet);
+			void PacketParsed(const T& value);
 
 			ParserUtils::DataStream& ResetPacketStream();
 			ParserUtils::DataStream& PacketStream() { return StreamStack.back().PacketStream; }
@@ -294,6 +305,12 @@ namespace Networking
 			bool Succeeded() const;
 			void DiscardPacket();
 			void FoundUnknownValue();
+
+			template <typename T>
+			void FindValueReferences(const T& value);
+
+			template <typename T, typename U>
+			void FindTypeValueReferences(const U& value);
 
 			bool IsNpcBoss(Enum::NpcId npcId) const;
 			bool NpcHasHiddenHp(Enum::NpcId npcId) const;
@@ -312,7 +329,31 @@ namespace Networking
 
 		private:
 
+			void FindValueReferencesInternal(size_t lastBufferEnd);
 		};
+
+		template <typename T>
+		void SniffHandler::FindValueReferences(const T& value)
+		{
+			if (!AllowValueSearch)
+			{
+				return;
+			}
+
+			size_t bufferEnd = FindValuesBuffer.size();
+
+			ParserUtils::WriteStream(FindValuesBuffer, value);
+
+			FindValueReferencesInternal(bufferEnd);
+		}
+
+		template <typename T, typename U>
+		void SniffHandler::FindTypeValueReferences(const U& value)
+		{
+			T castedValue = (T)value;
+
+			FindValueReferences<T>(castedValue);
+		}
 	}
 }
 

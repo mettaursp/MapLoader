@@ -78,6 +78,7 @@ namespace ParserUtils
 		std::unordered_map<unsigned short, VersionSuccesses> successfulPackets;
 		std::unordered_map<unsigned short, VersionSuccesses> seenPackets;
 		std::unordered_map<unsigned short, VersionSuccesses> unparsedPackets;
+		std::unordered_map<unsigned short, VersionSuccesses> discardedPackets;
 		size_t discardedItemPackets = 0;
 
 		std::string printTimeStamp(long long timeStamp)
@@ -127,6 +128,175 @@ namespace ParserUtils
 			out << " " << (buffer + size - 4) << "] ";
 
 			return out.str();
+		}
+
+		void scanForReferences(std::ifstream& file, const Networking::Packets::SniffHandler& handler, unsigned short version, unsigned int build, std::streampos packetsStart)
+		{
+			std::streampos position = file.tellg();
+
+			file.seekg(packetsStart);
+
+			size_t packetsRead = 0;
+
+			size_t smallest = handler.FindValues.size() ? handler.FindValues[0].BufferLength - 1 : 0;
+
+			for (size_t i = 1; i < handler.FindValues.size(); ++i)
+			{
+				smallest = std::min(smallest, handler.FindValues[i].BufferLength - 1);
+			}
+
+			std::vector<size_t> foundHitCount(handler.FindValues.size());
+
+			while (!file.eof() && packetsRead < handler.PacketIndex)
+			{
+				std::streampos packetHeaderStart = file.tellg();
+
+				long long timeStamp;
+
+				read(file, timeStamp);
+
+				int size;
+
+				if (version < 0x2027)
+				{
+					unsigned short ssize;
+					read(file, ssize);
+					size = ssize;
+				}
+				else
+					read(file, size);
+
+				unsigned short opcode;
+
+				read(file, opcode);
+
+				bool outbound;
+
+				if (version >= 0x2020)
+					read(file, outbound);
+				else
+				{
+					outbound = (size & 0x8000) != 0;
+					size = size & 0x7FFF;
+				}
+
+				std::vector<unsigned char> buffer;
+
+				buffer.resize(size);
+
+				std::streampos packetDataStart = file.tellg();
+
+				file.read(reinterpret_cast<char*>(buffer.data()), size);
+				std::streampos bytesRead = file.gcount();
+
+				if (bytesRead < (std::streampos)size)
+				{
+					break;
+				}
+
+				if (version >= 0x2025 && version < 0x2030)
+				{
+					unsigned int val;
+					read(file, val);
+					read(file, val);
+				}
+
+				std::vector<std::vector<size_t>> searchHits(handler.FindValues.size());
+
+				for (size_t entryIndex = 0; entryIndex < handler.FindValues.size(); ++entryIndex)
+				{
+					const auto& entry = handler.FindValues[entryIndex];
+
+					if (entry.BufferLength == 0)
+					{
+						continue;
+					}
+
+					size_t searchTill = size >= entry.BufferLength ? size - entry.BufferLength + 1 : 0;
+
+					for (size_t i = 0; i < searchTill; ++i)
+					{
+						bool matches = true;
+
+						for (size_t j = 0; j < entry.BufferLength && matches; ++j)
+						{
+							matches = buffer[i + j] == handler.FindValuesBuffer[entry.BufferStart + j];
+						}
+
+						if (!matches)
+						{
+							continue;
+						}
+
+						searchHits[entryIndex].push_back(i);
+						foundHitCount[entryIndex]++;
+					}
+				}
+
+				for (size_t i = 0; i < searchHits.size(); ++i)
+				{
+					const auto& entryHits = searchHits[i];
+
+					if (entryHits.size() == 0)
+					{
+						continue;
+					}
+
+					const auto& entry = handler.FindValues[i];
+
+					std::cout << "\tfound byte string '" << std::hex;
+
+					for (size_t j = 0; j < entry.BufferLength; ++j)
+					{
+						if (j != 0)
+						{
+							std::cout << " ";
+						}
+
+						std::cout << std::setw(2) << std::setfill('0') << (unsigned int)(unsigned char)handler.FindValuesBuffer[entry.BufferStart + j];
+					}
+
+					std::cout << std::dec << "' " << entryHits.size() << " times in packet [" << packetsRead << "] 0x" << std::hex << opcode << ":" << std::dec;
+
+					for (size_t j = 0; j < entryHits.size(); ++j)
+					{
+						size_t index = entryHits[j];
+
+						std::cout << (j == 0 ? " " : ", ") << index;
+					}
+
+
+					std::cout << std::endl;
+				}
+
+				++packetsRead;
+			}
+
+			for (size_t i = 0; i < foundHitCount.size(); ++i)
+			{
+				if (foundHitCount[i] != 0)
+				{
+					continue;
+				}
+
+				const auto& entry = handler.FindValues[i];
+
+				std::cout << "\tfound no hits for byte string '" << std::hex;
+
+				for (size_t j = 0; j < entry.BufferLength; ++j)
+				{
+					if (j != 0)
+					{
+						std::cout << " ";
+					}
+
+					std::cout << std::setw(2) << std::setfill('0') << (unsigned int)(unsigned char)handler.FindValuesBuffer[entry.BufferStart + j];
+				}
+
+				std::cout << std::dec << "'" << std::endl;
+			}
+
+			file.seekg(position);
 		}
 
 		unsigned short parseMsb(const fs::path& path)
@@ -211,6 +381,8 @@ namespace ParserUtils
 				}
 			}
 
+			std::streampos packetsStart = file.tellg();
+
 			while (!file.eof())
 			{
 				std::streampos packetHeaderStart = file.tellg();
@@ -282,6 +454,10 @@ namespace ParserUtils
 				handler.FoundValues = {};
 				handler.ReportPackets = true;
 				handler.TimeStamp = printTimeStamp(timeStamp);
+				handler.PacketIndex = readPackets;
+				handler.FindValuesBuffer.clear();
+				handler.FindValues.clear();
+				handler.AllowValueSearch = true;
 
 				unsigned long long opcodeVersion = ((((unsigned long long)opcode << 16) | (unsigned long long)build) << 32) | buffer.size();
 
@@ -296,6 +472,15 @@ namespace ParserUtils
 
 				Networking::Packets::ParsePacket(handler, build, !outbound, opcode);
 
+				handler.AllowValueSearch = false;
+
+				if (handler.FindValues.size())
+				{
+					std::cout << "requested searching for value references in sniff '" << handler.MsbPath << "' version " << build << " before packet [" << readPackets << "] 0x" << std::hex << opcode << std::dec << " " << handler.LastPacketName << std::endl;
+
+					scanForReferences(file, handler, version, build, packetsStart);
+				}
+
 				discardedItemPackets += handler.DiscardedItemPackets;
 
 				ParserUtils::DataStream& stream = handler.PacketStream();
@@ -309,6 +494,14 @@ namespace ParserUtils
 
 				if (stream.DiscardErrors)
 				{
+					auto& discarded = discardedPackets[build];
+					auto& packetSet = !outbound ? discarded.ServerPackets : discarded.ClientPackets;
+
+					if (!packetSet.contains(opcode))
+					{
+						packetSet.insert(opcode);
+					}
+
 					continue;
 				}
 
@@ -921,9 +1114,10 @@ int main(int argc, char** argv)
 	};
 
 	bool regenerate = true;
-	bool showSuccesses = false;
-	bool showSeen = false;
-	bool showUnparsed = false;
+	bool showSuccesses = !false;
+	bool showSeen = !false;
+	bool showUnparsed = !false;
+	bool showDiscarded = !false;
 	bool showUnused = false;
 	bool printBaseStats = false;
 
@@ -1387,6 +1581,7 @@ int main(int argc, char** argv)
 	showSuccesses &= !regenerate;
 	showSeen &= !regenerate;
 	showUnparsed &= !regenerate;
+	showDiscarded &= !regenerate;
 	showUnused &= !regenerate;
 	printBaseStats &= !regenerate;
 
@@ -1693,6 +1888,65 @@ int main(int argc, char** argv)
 			}
 
 			for (unsigned short opcode : unparsed[index]->ClientPackets)
+			{
+				opcodes.push_back(opcode);
+			}
+
+			std::sort(opcodes.begin(), opcodes.end());
+
+			bool lastWasServer = false;
+
+			for (unsigned short opcode : opcodes)
+			{
+				bool isServer = (opcode & 0x8000) != 0;
+
+				opcode &= 0x7FFF;
+
+				if (lastWasServer != isServer)
+				{
+					std::cout << "\n\t\tServer: ";
+				}
+
+				lastWasServer = isServer;
+
+				std::cout << "0x" << opcode << ", ";
+			}
+
+			std::cout << std::dec << std::endl;
+		}
+	}
+
+	if (showDiscarded)
+	{
+		std::vector<unsigned int> discardedVersions;
+		std::vector<const ParserUtils::Packets::VersionSuccesses*> discarded;
+
+		for (const auto& discardedEntry : ParserUtils::Packets::discardedPackets)
+		{
+			unsigned int index = (unsigned int)discarded.size();
+			discardedVersions.push_back(index | ((unsigned int)discardedEntry.first << 16));
+			discarded.push_back(&discardedEntry.second);
+		}
+
+		std::sort(discardedVersions.begin(), discardedVersions.end());
+
+		std::cout << "discarded opcodes:" << std::endl;
+
+		for (unsigned int entry : discardedVersions)
+		{
+			unsigned short version = (unsigned short)(entry >> 16);
+			unsigned int index = entry & 0xFFFF;
+
+			std::cout << std::dec << "\t" << version << std::hex << ":\n\t\tClient: ";
+
+			std::vector<unsigned short> opcodes;
+
+			for (unsigned short opcode : discarded[index]->ServerPackets)
+			{
+				opcodes.push_back(opcode | 0x8000);
+			}
+
+			for (unsigned short opcode : discarded[index]->ClientPackets)
 			{
 				opcodes.push_back(opcode);
 			}

@@ -154,7 +154,7 @@ namespace ParserUtils
 			return false;
 		}
 
-		if (Index + sizeof(Vector3Byte) > Data.size())
+		if (Index + sizeof(Vector3Byte) + sizeof(unsigned char) > Data.size())
 		{
 			Failed();
 
@@ -180,7 +180,7 @@ namespace ParserUtils
 			return false;
 		}
 
-		if (Index + sizeof(Vector3Short) > Data.size())
+		if (Index + sizeof(Color4I_BGRA) > Data.size())
 		{
 			Failed();
 

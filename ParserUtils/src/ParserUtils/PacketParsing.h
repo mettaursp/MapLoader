@@ -215,7 +215,7 @@ namespace ParserUtils
 		}
 		
 		template <typename T, typename HandlerType, typename... Types>
-		void ValidateValues(HandlerType& handler, const char* name, const T& value, Types... expected)
+		void ValidateValues(HandlerType& handler, const char* name, const T& value, const Types&... expected)
 		{
 			if constexpr (PrintUnknownValues)
 			{
@@ -246,6 +246,61 @@ namespace ParserUtils
 					}
 
 					stream.FoundUnknownValue = true;
+				}
+			}
+		}
+
+		template <typename T>
+		void PrintValues(std::ostream& out, const T& value)
+		{
+			out << value;
+		}
+
+		template <typename T, typename... Types>
+		void PrintValues(std::ostream& out, const T& value, const Types&... values)
+		{
+			out << value << ", ";
+
+			PrintValues(out, values...);
+		}
+
+		template <typename T, typename HandlerType, typename... Types>
+		void CalledFunction(HandlerType& handler, const char* name, const char* outputName, const T& value, const Types&... values)
+		{
+			if constexpr (PrintOutput || PrintErrors)
+			{
+				DataStream& stream = handler.PacketStream();
+
+				if (!(!PrintOutput && !stream.DiscardErrors && (stream.SuppressErrors || !stream.PrintOutput)))
+				{
+					std::ostream& out = PrintOutput ? std::cout : handler.FoundValues;
+
+					out << handler.Tabs() << name << "(";
+
+					if (sizeof...(values) > 0)
+					{
+						PrintValues(out, values...);
+					}
+
+					out << ") -> ";
+
+					if constexpr (std::is_integral_v<T> && !std::is_floating_point_v<T>)
+					{
+						if constexpr (std::is_signed_v<T>)
+						{
+							out << (long long)value;
+						}
+						else
+						{
+							out << (unsigned long long)value;
+						}
+					}
+					else
+					{
+						out << value;
+					}
+
+					out << " " << outputName << std::endl;
 				}
 			}
 		}

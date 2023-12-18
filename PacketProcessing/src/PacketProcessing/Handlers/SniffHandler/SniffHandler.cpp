@@ -1055,6 +1055,70 @@ namespace Networking
 			return (int)entry->second.ItemId;
 		}
 
+		unsigned int SniffHandler::GetFieldItemType(Enum::ItemEntityId instanceId)
+		{
+			const auto entry = Field.FieldItems.find(instanceId);
+
+			if (entry == Field.FieldItems.end())
+			{
+				//FindTypeValueReferences<unsigned int>(instanceId);
+
+				DiscardPacket();
+
+				return 0;
+			}
+
+			unsigned int itemId = (unsigned int)entry->second.ItemId;
+
+			//if (itemId == 90000001 || itemId == 90000002 || itemId == 90000010)
+			//{
+			//	FoundUnknownValue();
+			//}
+
+			//size_t combo = (size_t(itemId) << 32) | (size_t(Version) << 16) | StreamStack[0].PacketStream.Data.size();
+			//
+			//if (!IdAmountStates.contains(combo))
+			//{
+			//	IdAmountStates.insert(combo);
+			//}
+
+			if (itemId == 90000001 || itemId == 90000002)
+			{
+				return 1;
+			}
+
+			if (itemId == 90000010)
+			{
+				return 2;
+			}
+
+			return 0;
+		}
+
+		unsigned int SniffHandler::GetFieldItemType(unsigned int instanceId)
+		{
+			return GetFieldItemType((Enum::ItemEntityId)instanceId);
+		}
+
+		unsigned int SniffHandler::GetFieldItemId(Enum::ItemEntityId instanceId)
+		{
+			const auto entry = Field.FieldItems.find(instanceId);
+
+			if (entry == Field.FieldItems.end())
+			{
+				FindTypeValueReferences<unsigned int>(instanceId);
+
+				return 0;
+			}
+
+			return (unsigned int)entry->second.ItemId;
+		}
+
+		unsigned int SniffHandler::GetFieldItemId(unsigned int instanceId)
+		{
+			return GetFieldItemId((Enum::ItemEntityId)instanceId);
+		}
+
 		Item* SniffHandler::RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId)
 		{
 			if (itemId == Enum::ItemId::Null)
@@ -1158,7 +1222,14 @@ namespace Networking
 				{
 					Field.PrintedMap = true;
 
-					std::cout << "entered map [" << (unsigned int)Field.MapId << "] '" << Field.CurrentMap->Name << "'" << std::endl;
+					std::cout << "entered map [" << (unsigned int)Field.MapId << "] '";
+
+					if (Field.CurrentMap)
+					{
+						std::cout << Field.CurrentMap->Name;
+					}
+
+					std::cout << "'" << std::endl;
 				}
 
 				PacketStream().FoundUnknownValue = true;

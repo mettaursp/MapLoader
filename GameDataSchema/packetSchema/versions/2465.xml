@@ -16,7 +16,23 @@
 		<opcodeReference value="0x3B" version="12" opcode="0x3C" />
 		<opcodeReference value="0x3C" version="12" opcode="0x3D" />
 		<opcodeReference value="0x3D" version="12" opcode="0x3E" />
-		<opcodeReference value="0x3E" version="12" opcode="0x3F" />
+		<opcode name="SkillSync" value="0x3E">
+			<output type="Networking.Packets.Server.SkillSyncPacket" schemaName="packetData" />
+			<data type="long" name="skillSn" />
+			<data type="int" name="actorId" />
+			<data type="int" name="skillId" />
+			<data type="short" name="skillLevel" />
+			<data type="byte" name="unknown">
+				<enum name="Unknown" value="0" />
+			</data>
+			<data type="Vector3S" name="position" />
+			<data type="Vector3S" name="direction" />
+			<data type="Vector3S" name="rotation" />
+			<data type="Vector3S" name="unknown" />
+			<data type="byte" name="unknown" />
+			<data type="byte" name="attackPoint" />
+			<data type="int" name="unknown" />
+		</opcode>
 		<opcodeReference value="0x3F" removeReference="true" />
 		<opcodeReference value="0x49" version="12" opcode="0x4A" />
 		<opcodeReference value="0x4B" version="12" opcode="0x4C" />

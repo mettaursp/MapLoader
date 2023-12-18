@@ -27,6 +27,10 @@ namespace Maple
 			SkillTreePageData Consumable;
 		};
 		
+		struct StateSyncData
+		{
+		};
+		
 		struct MasteryData
 		{
 			int Fishing = 0;

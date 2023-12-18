@@ -2534,7 +2534,30 @@ namespace PacketSchema
 						}
 					}
 
+					out << ");\n\n";
+
+					out << tabs << "\tCalledFunction(handler, \"" << function.Name << "\", ";
+
+					if (/*makeVariable ||*/ !output.Member)
+					{
+						out << "\"" << data << "\", " << data;
+					}
+					else
+					{
+						out << "\"" << output.Name << "\", " << output.Name;
+					}
+
+					for (size_t j = 0; j < function.ParamDataIndices.size(); ++j)
+					{
+						size_t paramIndex = function.ParamDataIndices[j];
+
+						std::string param = getReference(paramIndex, opcode, i, outputs, topOutput, stack).Name;
+
+						out << ", " << param;
+					}
+
 					out << ");\n";
+
 					out << tabs << "}\n";
 				}
 

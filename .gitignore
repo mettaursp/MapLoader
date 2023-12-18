@@ -406,3 +406,5 @@ spv/
 screenshot.png
 screenshots/
 GameDataSchema/log
+
+!/dependencies/**

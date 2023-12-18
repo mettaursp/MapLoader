@@ -20,6 +20,11 @@ namespace Networking
 			item->Amount = packet.Amount;
 			item->Rarity = packet.Rarity;
 
+			Field.FieldItems[packet.ObjectId] = {
+				.ItemId = packet.ItemId,
+				.InstanceId = packet.ItemInstanceId
+			};
+
 			if ((unsigned int)packet.ItemId < 90000001 || (unsigned int)packet.ItemId > 90000003)
 			{
 				*item->Data = packet.ItemData;

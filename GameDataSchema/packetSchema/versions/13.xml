@@ -138,7 +138,26 @@
 		<opcodeReference value="0x8" version="12" opcode="0x8" />
 		<opcodeReference value="0x9" version="12" opcode="0x9" />
 		<opcodeReference value="0xA" version="12" opcode="0xA" />
-		<opcodeReference value="0xB" version="12" opcode="0xB" />
+		<opcode name="ServerList" value="0xB">
+			<output type="Networking.Packets.Server.ServerListPacket" schemaName="packetData" />
+			<data type="string" name="env" />
+			<data type="bool" name="loadServers" />
+			<condition data="loadServers" value="1" comparison="equal">
+				<data type="int" name="unknown" />
+				<data type="wstring" name="serverName" />
+				<data type="byte" name="unknown" />
+				<data type="short" name="count" />
+				<array data="count" output="Servers">
+					<data type="wstring" name="ipAddress" />
+					<data type="short" name="port" />
+				</array>
+				<data type="int" name="unknown" />
+				<data type="short" name="count2" />
+				<array data="count2" output="Channels">
+					<data type="short" name="channel" />
+				</array>
+			</condition>
+		</opcode>
 		<opcodeReference value="0xC" version="12" opcode="0xC" />
 		<opcodeReference value="0xD" version="12" opcode="0xD" />
 		<opcodeReference value="0xE" version="12" opcode="0xE" />

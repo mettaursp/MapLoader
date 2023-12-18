@@ -61,23 +61,23 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SystemInfoData.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\PacketCommon.h">
             <Filter>Source Files\Data</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestVersionData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingInventoryData.h">
+            <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
@@ -86,7 +86,7 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\AdventurerBarData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
@@ -111,7 +111,12 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPetData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MoveResultData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PatchFileData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
@@ -126,7 +131,47 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldMutateItemData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\VersionResultData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EmotionData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestKeyData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PingData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
@@ -136,13 +181,108 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FinalizeReconnectData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\StateSkillData.h">
-            <Filter>Source Files\Packets\Client</Filter>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestLoginData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillSyncData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CurrencyTokenData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoginResultData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserStateData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ServerListData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdateData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoginToGameData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\GameToLoginData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\GameToGameData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ResponseTimeSyncData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestHeartbeatData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestClientTickSyncData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SyncNumberData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterData.h">
+            <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
@@ -171,57 +311,17 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\DungeonListData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserSyncData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\MapleStats.h">
-            <Filter>Source Files\Enums</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInAuthTokenData.h">
-            <Filter>Source Files\Packets\Client</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdateData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldPickUpItemData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
@@ -241,27 +341,22 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPetInventoryDataData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MeretData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ExpUpData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserBattleData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RevivalConfirmData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LevelUpData.h">
-            <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterInfoData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserSkinColorData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
@@ -271,12 +366,37 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseKeyData.h">
-            <Filter>Source Files\Packets\Client</Filter>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RevivalData.h">
+            <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RevivalCountData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ExpUpData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LevelUpData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillUseData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MesoData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
@@ -291,13 +411,8 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPetData.h">
             <Filter>Source Files\Packets\Server</Filter>
-        </ClInclude>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkClientData.h">
-            <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
@@ -311,17 +426,32 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterInfoData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h">
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
@@ -336,13 +466,18 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPetInventoryDataData.h">
+            <Filter>Source Files\Packets\Server</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockData.h">
             <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInData.h">
-            <Filter>Source Files\Packets\Client</Filter>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h">
+            <Filter>Source Files\Packets\Server</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
@@ -356,12 +491,42 @@
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInData.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInAuthTokenData.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\ReconnectData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseKeyData.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillData.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\StateSkillData.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkClientData.h">
+            <Filter>Source Files\Packets\Client</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SystemInfoData.h">
             <Filter>Source Files\Packets\Client</Filter>
         </ClInclude>
     </ItemGroup>
@@ -377,6 +542,11 @@
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\MapleItem.h">
+            <Filter>Source Files\Enums</Filter>
+        </ClInclude>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapleStats.h">
             <Filter>Source Files\Enums</Filter>
         </ClInclude>
     </ItemGroup>

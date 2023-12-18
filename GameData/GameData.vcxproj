@@ -99,22 +99,22 @@
         <ClInclude Include="./../GameData\src/GameData\Data\SkillTreePageData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ReconnectData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SystemInfoData.h"/>
-    </ItemGroup>
-    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Data\PacketCommon.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestVersionData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FurnishingInventoryData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\MailData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BlackMarketData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\AdventurerBarData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterListData.h"/>
@@ -129,7 +129,10 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\NpcTalkServerData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPetData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MoveResultData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PatchFileData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ShopData.h"/>
@@ -138,16 +141,97 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\BuffData.h"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldMutateItemData.h"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\VersionResultData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\EmotionData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestKeyData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PingData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ServerEnterData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FinalizeReconnectData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\StateSkillData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestLoginData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillSyncData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CurrencyTokenData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoginResultData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserStateData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ServerListData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdateData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoginToGameData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\GameToLoginData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\GameToGameData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ResponseTimeSyncData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestHeartbeatData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestClientTickSyncData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SyncNumberData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RequestFieldEnterData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FittingDollData.h"/>
@@ -165,37 +249,13 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePlayerData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOnData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\DungeonListData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserSyncData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Enums\MapleStats.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LoadCubesData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserChatItemLinkData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemPutOffData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInAuthTokenData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemSkinPutOffData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemUpdateData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddItemData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldPickUpItemData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveItemData.h"/>
@@ -207,28 +267,40 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\StatData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPetInventoryDataData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MeretData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ExpUpData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserBattleData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RevivalConfirmData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LevelUpData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterInfoData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\UserSkinColorData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\JobData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseKeyData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RevivalData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\RevivalCountData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ExpUpData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\LevelUpData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillUseData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\MesoData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\SkillData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddNpcData.h"/>
@@ -237,10 +309,7 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemoveNpcData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldRemovePetData.h"/>
-    </ItemGroup>
-    <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkClientData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\FieldAddPetData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\RequestQuitData.h"/>
@@ -249,13 +318,22 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\TrophyData.h"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\CharacterInfoData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\TradeData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemEnchantData.h"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\EnchantScrollData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PlayInstrumentData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ChangeAttributesScrollData.h"/>
@@ -264,10 +342,13 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetInventoryData.h"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\PetPetInventoryDataData.h"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Server\ItemLockData.h"/>
     </ItemGroup>
     <ItemGroup>
-        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInData.h"/>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Server\BindItemData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseVersionData.h"/>
@@ -276,10 +357,28 @@
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\HandshakeData.h"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\LogInAuthTokenData.h"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\ReconnectData.h"/>
     </ItemGroup>
     <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\ResponseKeyData.h"/>
+    </ItemGroup>
+    <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Packets\Client\SkillData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\StateSkillData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\NpcTalkClientData.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Packets\Client\SystemInfoData.h"/>
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\MapleCombat.h"/>
@@ -289,5 +388,8 @@
     </ItemGroup>
     <ItemGroup>
         <ClInclude Include="./../GameData\src/GameData\Enums\MapleItem.h"/>
+    </ItemGroup>
+    <ItemGroup>
+        <ClInclude Include="./../GameData\src/GameData\Enums\MapleStats.h"/>
     </ItemGroup>
 </Project>

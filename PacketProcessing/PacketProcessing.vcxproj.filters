@@ -338,4 +338,179 @@
             <Filter>Source Files\Handlers\SniffHandler\Client</Filter>
         </ClCompile>
     </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ServerList-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\VersionResult-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\Meret-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldMutateItem-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RequestVersion-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\PatchFile-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserSync-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\Ping-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RequestKey-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\CurrencyToken-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FinalizeReconnect-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\GameToLogin-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RequestLogin-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoginResult-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\LoginToGame-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\MoveResult-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RevivalConfirm-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\GameToGame-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\Revival-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\ResponseTimeSync-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\DungeonList-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\Meso-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RequestHeartbeat-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RequestClientTickSync-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SyncNumber-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\Emotion-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserBattle-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FurnishingInventory-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserState-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\UserSkinColor-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\AdventurerBar-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\RevivalCount-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillUse-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\SkillSync-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
+    <ItemGroup>
+        <ClCompile Include="./../PacketProcessing\src/PacketProcessing/Handlers\SniffHandler\Server\FieldPickUpItem-s-SniffHandler.cpp">
+            <Filter>Source Files\Handlers\SniffHandler\Server</Filter>
+        </ClCompile>
+    </ItemGroup>
 </Project>

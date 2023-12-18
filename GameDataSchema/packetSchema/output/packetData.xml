@@ -777,6 +777,7 @@
 					<member name="ObjectId" type="Enum.ItemEntityId" />
 				</class>
 				<class name="FieldPickUpItemPacket" directory="Packets\Server" file="FieldPickUpItemData">
+					<member name="ObjectId" type="Enum.ItemEntityId" />
 				</class>
 				<class name="FieldMutateItemPacket" directory="Packets\Server" file="FieldMutateItemData">
 				</class>

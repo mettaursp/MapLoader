@@ -6,7 +6,7 @@ namespace Networking
 	{
 		namespace Server
 		{
-			struct ReconnectPacket
+			struct RevivalConfirmPacket
 			{
 			};
 		}

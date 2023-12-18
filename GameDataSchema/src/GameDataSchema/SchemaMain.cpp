@@ -80,6 +80,7 @@ namespace ParserUtils
 		std::unordered_map<unsigned short, VersionSuccesses> unparsedPackets;
 		std::unordered_map<unsigned short, VersionSuccesses> discardedPackets;
 		size_t discardedItemPackets = 0;
+		std::unordered_set<size_t> IdAmountStates;
 
 		std::string printTimeStamp(long long timeStamp)
 		{
@@ -482,6 +483,14 @@ namespace ParserUtils
 				}
 
 				discardedItemPackets += handler.DiscardedItemPackets;
+
+				for (size_t entry : handler.IdAmountStates)
+				{
+					if (!IdAmountStates.contains(entry))
+					{
+						IdAmountStates.insert(entry);
+					}
+				}
 
 				ParserUtils::DataStream& stream = handler.PacketStream();
 
@@ -1113,7 +1122,7 @@ int main(int argc, char** argv)
 		return false;
 	};
 
-	bool regenerate = true;
+	bool regenerate = !true;
 	bool showSuccesses = !false;
 	bool showSeen = !false;
 	bool showUnparsed = !false;
@@ -1663,9 +1672,36 @@ int main(int argc, char** argv)
 		std::cout << version << "[" << length << "]" << ", ";
 	}
 
+	std::cout << std::endl;
+
 	if (ParserUtils::Packets::discardedItemPackets)
 	{
 		std::cout << "discarded item packets: " << ParserUtils::Packets::discardedItemPackets << std::endl;
+	}
+
+	std::vector<size_t> itemPacketStates;
+
+	itemPacketStates.reserve(ParserUtils::Packets::IdAmountStates.size());
+
+	for (size_t combo : ParserUtils::Packets::IdAmountStates)
+	{
+		itemPacketStates.push_back(combo);
+	}
+
+	std::sort(itemPacketStates.begin(), itemPacketStates.end());
+
+	if (itemPacketStates.size())
+	{
+		std::cout << "item pick up packet sizes:" << std::endl;
+	}
+
+	for (size_t combo : itemPacketStates)
+	{
+		unsigned int itemId = unsigned int(combo >> 32);
+		unsigned short version = unsigned short((combo >> 16) & 0xFFFF);
+		unsigned short length = unsigned short(combo & 0xFFFF);
+
+		std::cout << "\t" << itemId << ": " << version << " [" << length << "]" << std::endl;
 	}
 
 	std::cout << std::endl << std::endl;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <unordered_map>
+#include <unordered_set>
 #include <ostream>
 
 #include <ParserUtils/DataStream.h>
@@ -179,6 +180,12 @@ namespace Networking
 			Maple::Game::ItemData* Data = nullptr;
 		};
 
+		struct FieldItem
+		{
+			Enum::ItemId ItemId = Enum::ItemId::Null;
+			Enum::ItemInstanceId InstanceId = Enum::ItemInstanceId::Null;
+		};
+
 		struct FieldState
 		{
 			const Metadata* GameData = nullptr;
@@ -191,6 +198,7 @@ namespace Networking
 			std::unordered_map<Enum::ActorId, Pet> Pets;
 			std::unordered_map<Enum::ItemInstanceId, Item> Items;
 			std::unordered_map<Enum::ItemInstanceId, Maple::Game::ItemData> ItemStats;
+			std::unordered_map<Enum::ItemEntityId, FieldItem> FieldItems;
 
 			Actor* GetActor(Enum::ActorId actor);
 			const Actor* GetActor(Enum::ActorId actor) const;
@@ -293,6 +301,8 @@ namespace Networking
 			bool AllowValueSearch = false;
 			std::string MsbPath;
 
+			std::unordered_set<size_t> IdAmountStates;
+
 			template <typename T>
 			void PacketParsed(const T& value);
 
@@ -320,6 +330,10 @@ namespace Networking
 			bool StatIntToFloat(float& rate) const;
 			unsigned char GetActorType(Enum::ActorId actorId);
 			int GetItemIdFromInstance(Enum::ItemInstanceId instanceId);
+			unsigned int GetFieldItemType(Enum::ItemEntityId instanceId);
+			unsigned int GetFieldItemType(unsigned int instanceId);
+			unsigned int GetFieldItemId(Enum::ItemEntityId instanceId);
+			unsigned int GetFieldItemId(unsigned int instanceId);
 
 			Item* RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId);
 			Item* GetItem(Enum::ItemInstanceId instanceId);

@@ -1317,7 +1317,6 @@
 			<output type="Networking.Packets.Server.VersionResultPacket" schemaName="packetData" />
 		</opcode>
 		<opcode name="PatchFile" value="0x3">
-			<output type="Networking.Packets.Server.PatchFilePacket" schemaName="packetData" />
 			<data type="byte" name="mode">
 				<enum name="Delete" value="1" />
 				<enum name="Unknown" value="2" />
@@ -1493,7 +1492,7 @@
 		<opcode name="LoginToGame" value="0xE">
 			<output type="Networking.Packets.Server.LoginToGamePacket" schemaName="packetData" />
 			<data type="byte" name="message" />
-			<condition data="message" value="1" comparison="equal">
+			<condition data="message" value="0" comparison="equal">
 				<data type="int" name="ipAddress" />
 				<data type="short" name="port" />
 				<data type="long" name="migrationToken" />
@@ -1551,6 +1550,10 @@
 			</condition>
 			<condition data="mode" value="2" comparison="equal">
 				<output type="Networking.Packets.Server.ResponseTimeSyncRequestPacket" schemaName="packetData" />
+				<data type="int" name="serverTick" />
+				<data type="long" name="timestamp" />
+				<data type="int" name="timeOffset" />
+				<data type="byte" name="timezone" />
 			</condition>
 			<condition data="mode" value="3" comparison="equal">
 				<output type="Networking.Packets.Server.ResponseTimeSyncSetTimePacket" schemaName="packetData" />
@@ -2041,12 +2044,33 @@
 		<opcode name="FieldPickUpItem" value="0x2D">
 			<output type="Networking.Packets.Server.FieldPickUpItemPacket" schemaName="packetData" />
 			<data type="bool" name="pickedUp" />
-			<data type="int" name="objectId" />
+			<data type="int" name="objectId" output="ObjectId" />
 			<condition data="pickedUp" value="1" comparison="equal">
 				<data type="int" name="actorId" />
 			</condition>
+			<data type="uint" name="itemType" doRead="false">
+				<enum name="Misc" value="0" />
+				<enum name="Meso" value="1" />
+				<enum name="Stamina" value="2" />
+			</data>
+			<condition data="pickedUp" value="1" comparison="equal">
+				<data type="uint" name="itemId" doRead="false" />
+				<function data="itemType" name="GetFieldItemType" params="objectId" />
+				<function data="itemId" name="GetFieldItemId" params="objectId" />
+				<condition data="itemType" value="1" comparison="equal">
+					<data type="long" name="amount" />
+				</condition>
+				<condition data="itemType" value="2" comparison="equal">
+					<data type="int" name="amount" />
+				</condition>
+			</condition>
+			<condition else="true" comparison="none">
+				<data type="int" name="unknown">
+					<enum name="Unknown" value="1" />
+				</data>
+			</condition>
 		</opcode>
-		<opcode name="FieldMutateItem" value="0x2D">
+		<opcode name="FieldMutateItem" value="0x2E">
 			<output type="Networking.Packets.Server.FieldMutateItemPacket" schemaName="packetData" />
 			<data type="int" name="objectId" />
 			<data type="int" name="mutationId" />
@@ -2183,6 +2207,7 @@
 			<data type="byte" name="type" />
 			<data type="long" name="amount" />
 			<data type="long" name="deduct" />
+			<data type="int" name="unknown" />
 			<data type="long" name="overflow" />
 		</opcode>
 		<opcode name="SkillUse" value="0x3D">
@@ -2199,7 +2224,7 @@
 			<data type="short" name="posDiv10" />
 			<data type="bool" name="unknown" />
 			<data type="bool" name="isHold" />
-			<condition data="mode" value="0" comparison="equal">
+			<condition data="isHold" value="1" comparison="equal">
 				<data type="int" name="unknown" />
 				<data type="wstring" name="unknown" />
 			</condition>

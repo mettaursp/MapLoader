@@ -11,38 +11,44 @@ namespace Networking
 		};
 		const std::vector<PacketVersionData> Versions = {
 			{
-				0x7, 0x1, // v12+
+				0x1, 0x1, // v12+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<12, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<12, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> }, // 0x1e
-					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "Emotion", &ParsePacket<12, ServerPacket, 0x1f> }, // 0x1f
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> }, // 0x27
@@ -51,25 +57,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
-					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
+					{ "FieldMutateItem", &ParsePacket<12, ServerPacket, 0x2e> }, // 0x2e
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
-					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x30
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x31
 					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
-					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x33
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x34
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x35
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x36
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x37
 					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> }, // 0x38
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
-					{ "", &ParsePacket<0, false, 0> }, // 0x3d
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x3a
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3b
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3c
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3d
 					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "SkillSync", &ParsePacket<12, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -456,38 +462,44 @@ namespace Networking
 				}
 			},
 			{
-				0x7, 0x1, // v13+
+				0x1, 0x1, // v13+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<13, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<13, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> }, // 0x27
@@ -496,25 +508,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
-					{ "", &ParsePacket<0, false, 0> }, // 0x2e
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
+					{ "FieldMutateItem", &ParsePacket<12, ServerPacket, 0x2e> }, // 0x2e
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
-					{ "", &ParsePacket<0, false, 0> }, // 0x31
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x30
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x31
 					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
-					{ "", &ParsePacket<0, false, 0> }, // 0x37
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x33
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x34
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x35
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x36
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x37
 					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> }, // 0x38
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3d
-					{ "", &ParsePacket<0, false, 0> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x3a
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3b
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3c
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3d
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "SkillSync", &ParsePacket<12, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -898,38 +910,44 @@ namespace Networking
 				}
 			},
 			{
-				0x7, 0x1, // v2465+
+				0x1, 0x1, // v2465+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<13, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<12, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<12, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<13, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<12, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<12, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<12, ServerPacket, 0x27> }, // 0x27
@@ -938,25 +956,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<12, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<12, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
-					{ "", &ParsePacket<0, false, 0> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x2f
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x30
 					{ "", &ParsePacket<0, false, 0> }, // 0x31
-					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x32
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x33
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x34
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x35
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x36
 					{ "ExpUp", &ParsePacket<12, ServerPacket, 0x38> }, // 0x37
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
-					{ "", &ParsePacket<0, false, 0> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x39
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3a
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3d
-					{ "", &ParsePacket<0, false, 0> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -1340,38 +1358,44 @@ namespace Networking
 				}
 			},
 			{
-				0x7, 0x1, // v2486+
+				0x1, 0x1, // v2486+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<13, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<2486, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<2486, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> }, // 0x27
@@ -1380,25 +1404,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
-					{ "", &ParsePacket<0, false, 0> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x2f
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x30
 					{ "", &ParsePacket<0, false, 0> }, // 0x31
-					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x32
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x33
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x34
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x35
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x36
 					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
-					{ "", &ParsePacket<0, false, 0> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x39
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3a
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
-					{ "", &ParsePacket<0, false, 0> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -1782,38 +1806,44 @@ namespace Networking
 				}
 			},
 			{
-				0x7, 0x1, // v2493+
+				0x1, 0x1, // v2493+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<13, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<2486, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<2493, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> }, // 0x27
@@ -1822,25 +1852,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
-					{ "", &ParsePacket<0, false, 0> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x2f
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x30
 					{ "", &ParsePacket<0, false, 0> }, // 0x31
-					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x32
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x33
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x34
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x35
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x36
 					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
-					{ "", &ParsePacket<0, false, 0> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x39
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3a
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
-					{ "", &ParsePacket<0, false, 0> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -2224,38 +2254,44 @@ namespace Networking
 				}
 			},
 			{
-				0x7, 0x1, // v2496+
+				0x1, 0x1, // v2496+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<13, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<2496, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<2493, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<2486, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<2486, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<2486, ServerPacket, 0x27> }, // 0x27
@@ -2264,25 +2300,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<2486, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<2486, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
-					{ "", &ParsePacket<0, false, 0> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x2f
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x30
 					{ "", &ParsePacket<0, false, 0> }, // 0x31
-					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x32
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x33
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x34
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x35
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x36
 					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
-					{ "", &ParsePacket<0, false, 0> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x39
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3a
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
-					{ "", &ParsePacket<0, false, 0> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -2666,38 +2702,44 @@ namespace Networking
 				}
 			},
 			{
-				0x7, 0x1, // v2497+
+				0x1, 0x1, // v2497+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<13, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<2497, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<2497, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> }, // 0x27
@@ -2706,25 +2748,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
-					{ "", &ParsePacket<0, false, 0> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x2f
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x30
 					{ "", &ParsePacket<0, false, 0> }, // 0x31
-					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x32
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x33
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x34
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x35
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x36
 					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
-					{ "", &ParsePacket<0, false, 0> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x39
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3a
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
-					{ "", &ParsePacket<0, false, 0> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -3108,38 +3150,44 @@ namespace Networking
 				}
 			},
 			{
-				0x7, 0x1, // v2503+
+				0x1, 0x1, // v2503+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<13, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<2497, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<2497, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> }, // 0x27
@@ -3148,25 +3196,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
-					{ "", &ParsePacket<0, false, 0> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x2f
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x30
 					{ "", &ParsePacket<0, false, 0> }, // 0x31
-					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x32
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x33
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x34
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x35
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x36
 					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
-					{ "", &ParsePacket<0, false, 0> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x39
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3a
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2503, ServerPacket, 0x3d> }, // 0x3d
-					{ "", &ParsePacket<0, false, 0> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -3550,38 +3598,44 @@ namespace Networking
 				}
 			},
 			{
-				0x7, 0x1, // v2509+
+				0x1, 0x1, // v2509+
 				{
+					{ "RequestVersion", &ParsePacket<12, ServerPacket, 0x1> }, // 0x1
+					{ "VersionResult", &ParsePacket<12, ServerPacket, 0x2> }, // 0x2
+					{ "PatchFile", &ParsePacket<12, ServerPacket, 0x3> }, // 0x3
+					{ "RequestKey", &ParsePacket<12, ServerPacket, 0x4> }, // 0x4
+					{ "Reconnect", &ParsePacket<12, ServerPacket, 0x5> }, // 0x5
+					{ "Ping", &ParsePacket<12, ServerPacket, 0x6> }, // 0x6
 					{ "Reconnect7", &ParsePacket<12, ServerPacket, 0x7> }, // 0x7
-					{ "", &ParsePacket<0, false, 0> }, // 0x8
-					{ "", &ParsePacket<0, false, 0> }, // 0x9
-					{ "", &ParsePacket<0, false, 0> }, // 0xa
-					{ "", &ParsePacket<0, false, 0> }, // 0xb
+					{ "FinalizeReconnect", &ParsePacket<12, ServerPacket, 0x8> }, // 0x8
+					{ "RequestLogin", &ParsePacket<12, ServerPacket, 0x9> }, // 0x9
+					{ "LoginResult", &ParsePacket<12, ServerPacket, 0xa> }, // 0xa
+					{ "ServerList", &ParsePacket<13, ServerPacket, 0xb> }, // 0xb
 					{ "CharacterList", &ParsePacket<2509, ServerPacket, 0xc> }, // 0xc
-					{ "", &ParsePacket<0, false, 0> }, // 0xd
-					{ "", &ParsePacket<0, false, 0> }, // 0xe
-					{ "", &ParsePacket<0, false, 0> }, // 0xf
-					{ "", &ParsePacket<0, false, 0> }, // 0x10
-					{ "", &ParsePacket<0, false, 0> }, // 0x11
-					{ "", &ParsePacket<0, false, 0> }, // 0x12
-					{ "", &ParsePacket<0, false, 0> }, // 0x13
-					{ "", &ParsePacket<0, false, 0> }, // 0x14
+					{ "MoveResult", &ParsePacket<12, ServerPacket, 0xd> }, // 0xd
+					{ "LoginToGame", &ParsePacket<12, ServerPacket, 0xe> }, // 0xe
+					{ "GameToLogin", &ParsePacket<12, ServerPacket, 0xf> }, // 0xf
+					{ "GameToGame", &ParsePacket<12, ServerPacket, 0x10> }, // 0x10
+					{ "ResponseTimeSync", &ParsePacket<12, ServerPacket, 0x11> }, // 0x11
+					{ "RequestHeartbeat", &ParsePacket<12, ServerPacket, 0x12> }, // 0x12
+					{ "RequestClientTickSync", &ParsePacket<12, ServerPacket, 0x13> }, // 0x13
+					{ "SyncNumber", &ParsePacket<12, ServerPacket, 0x14> }, // 0x14
 					{ "ServerEnter", &ParsePacket<2486, ServerPacket, 0x15> }, // 0x15
 					{ "RequestFieldEnter", &ParsePacket<12, ServerPacket, 0x16> }, // 0x16
 					{ "FieldAddPlayer", &ParsePacket<2509, ServerPacket, 0x17> }, // 0x17
 					{ "FieldRemovePlayer", &ParsePacket<12, ServerPacket, 0x18> }, // 0x18
-					{ "", &ParsePacket<0, false, 0> }, // 0x19
+					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "", &ParsePacket<0, false, 0> }, // 0x1c
+					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
-					{ "", &ParsePacket<0, false, 0> }, // 0x20
+					{ "ItemPutOnOrOff", &ParsePacket<12, ServerPacket, 0x20> }, // 0x20
 					{ "", &ParsePacket<0, false, 0> }, // 0x21
 					{ "", &ParsePacket<0, false, 0> }, // 0x22
 					{ "FurnishingStorage", &ParsePacket<2497, ServerPacket, 0x23> }, // 0x23
-					{ "", &ParsePacket<0, false, 0> }, // 0x24
+					{ "FurnishingInventory", &ParsePacket<12, ServerPacket, 0x24> }, // 0x24
 					{ "ItemPutOn", &ParsePacket<2497, ServerPacket, 0x25> }, // 0x25
 					{ "ItemPutOff", &ParsePacket<12, ServerPacket, 0x26> }, // 0x26
 					{ "ItemSkinPutOn", &ParsePacket<2497, ServerPacket, 0x27> }, // 0x27
@@ -3590,25 +3644,25 @@ namespace Networking
 					{ "ItemUpdate", &ParsePacket<2497, ServerPacket, 0x2a> }, // 0x2a
 					{ "FieldAddItem", &ParsePacket<2497, ServerPacket, 0x2b> }, // 0x2b
 					{ "FieldRemoveItem", &ParsePacket<12, ServerPacket, 0x2c> }, // 0x2c
-					{ "", &ParsePacket<0, false, 0> }, // 0x2d
+					{ "FieldPickUpItem", &ParsePacket<12, ServerPacket, 0x2d> }, // 0x2d
 					{ "Stat", &ParsePacket<12, ServerPacket, 0x2f> }, // 0x2e
-					{ "", &ParsePacket<0, false, 0> }, // 0x2f
-					{ "", &ParsePacket<0, false, 0> }, // 0x30
+					{ "UserBattle", &ParsePacket<12, ServerPacket, 0x30> }, // 0x2f
+					{ "UserSkinColor", &ParsePacket<12, ServerPacket, 0x31> }, // 0x30
 					{ "", &ParsePacket<0, false, 0> }, // 0x31
-					{ "", &ParsePacket<0, false, 0> }, // 0x32
-					{ "", &ParsePacket<0, false, 0> }, // 0x33
-					{ "", &ParsePacket<0, false, 0> }, // 0x34
-					{ "", &ParsePacket<0, false, 0> }, // 0x35
-					{ "", &ParsePacket<0, false, 0> }, // 0x36
+					{ "AdventurerBar", &ParsePacket<12, ServerPacket, 0x33> }, // 0x32
+					{ "RevivalConfirm", &ParsePacket<12, ServerPacket, 0x34> }, // 0x33
+					{ "Revival", &ParsePacket<12, ServerPacket, 0x35> }, // 0x34
+					{ "RevivalCount", &ParsePacket<12, ServerPacket, 0x36> }, // 0x35
+					{ "UserState", &ParsePacket<12, ServerPacket, 0x37> }, // 0x36
 					{ "ExpUp", &ParsePacket<2486, ServerPacket, 0x37> }, // 0x37
 					{ "LevelUp", &ParsePacket<12, ServerPacket, 0x39> }, // 0x38
-					{ "", &ParsePacket<0, false, 0> }, // 0x39
-					{ "", &ParsePacket<0, false, 0> }, // 0x3a
-					{ "", &ParsePacket<0, false, 0> }, // 0x3b
-					{ "", &ParsePacket<0, false, 0> }, // 0x3c
+					{ "Meso", &ParsePacket<12, ServerPacket, 0x3a> }, // 0x39
+					{ "Meret", &ParsePacket<12, ServerPacket, 0x3b> }, // 0x3a
+					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
+					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2503, ServerPacket, 0x3d> }, // 0x3d
-					{ "", &ParsePacket<0, false, 0> }, // 0x3e
-					{ "", &ParsePacket<0, false, 0> }, // 0x3f
+					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42

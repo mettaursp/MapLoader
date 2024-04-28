@@ -58,6 +58,7 @@ namespace Archive
 
 	private:
 		struct DirectoryEntry;
+	public:
 
 		struct FileEntry
 		{
@@ -72,6 +73,9 @@ namespace Archive
 			DirectoryEntry* Parent = nullptr;
 		};
 
+		const FileEntry& GetFileEntry(size_t index) { return Files[index]; }
+
+	private:
 		struct DirectoryEntry
 		{
 			size_t Index = (size_t)-1;

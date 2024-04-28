@@ -54,7 +54,7 @@ namespace ParserUtils
 
 		value.resize(length);
 
-		for (size_t i = 0; !HasRecentlyFailed && i < length; ++i)
+		for (size_t i = 0; !HasRecentlyFailed && i < value.size(); ++i)
 		{
 			Read<char>(value[i]);
 		}
@@ -90,13 +90,89 @@ namespace ParserUtils
 
 		value.resize(length);
 
-		for (size_t i = 0; !HasRecentlyFailed && i < length; ++i)
+		for (size_t i = 0; !HasRecentlyFailed && i < value.size(); ++i)
 		{
 			char16_t character = 0;
 
 			Read<char16_t>(character);
 
 			value[i] = (wchar_t)character;
+		}
+
+		return true;
+	}
+
+	template <>
+	bool DataStream::Read<StringCharLen>(StringCharLen& value)
+	{
+		if (HasRecentlyFailed)
+		{
+			return false;
+		}
+
+		if (Index + sizeof(unsigned char) > Data.size())
+		{
+			Failed();
+
+			return false;
+		}
+
+		unsigned char length = 0;
+
+		Read<unsigned char>(length);
+
+		if (HasRecentlyFailed || length == 0 || Index + length > Data.size())
+		{
+			HasRecentlyFailed |= length != 0;
+
+			return !HasRecentlyFailed;
+		}
+
+		value.String.resize(length);
+
+		for (size_t i = 0; !HasRecentlyFailed && i < value.String.size(); ++i)
+		{
+			Read<char>(value.String[i]);
+		}
+
+		return true;
+	}
+
+	template <>
+	bool DataStream::Read<WStringCharLen>(WStringCharLen& value)
+	{
+		if (HasRecentlyFailed)
+		{
+			return false;
+		}
+
+		if (Index + sizeof(unsigned char) > Data.size())
+		{
+			Failed();
+
+			return false;
+		}
+
+		unsigned char length = 0;
+
+		Read<unsigned char>(length);
+
+		if (HasRecentlyFailed || length == 0 || Index + length * 2 > Data.size())
+		{
+			HasRecentlyFailed |= length != 0;
+
+			return !HasRecentlyFailed;
+		}
+
+		value.String.resize(length);
+
+		for (size_t i = 0; !HasRecentlyFailed && i < value.String.size(); ++i)
+		{
+			char16_t character = 0;
+
+			Read<char16_t>(character);
+
+			value.String[i] = (wchar_t)character;
 		}
 
 		return true;

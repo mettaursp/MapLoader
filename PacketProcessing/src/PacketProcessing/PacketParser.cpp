@@ -477,7 +477,7 @@ namespace Networking
 			{
 				itemCategory_var5 = handler.GetItemCategory(itemId_param0);
 
-			CalledFunction(handler, "GetItemCategory", "itemCategory_var5", itemCategory_var5, itemId_param0);
+				CalledFunction(handler, "GetItemCategory", "itemCategory_var5", itemCategory_var5, itemId_param0);
 			}
 
 			if (itemCategory_var5 == 113)
@@ -1071,7 +1071,7 @@ namespace Networking
 			{
 				extraDataType_var7 = handler.GetItemExtraDataType(itemId_param0);
 
-			CalledFunction(handler, "GetItemExtraDataType", "extraDataType_var7", extraDataType_var7, itemId_param0);
+				CalledFunction(handler, "GetItemExtraDataType", "extraDataType_var7", extraDataType_var7, itemId_param0);
 			}
 
 			ValidateValues(handler, "extraDataType", extraDataType_var7, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
@@ -3186,6 +3186,130 @@ namespace Networking
 			ValidateValues(handler, "enabled", blockOutput.Enabled, (bool)0, (bool)1);
 		}
 
+		void ParseStateSyncData_v13(PacketHandler& handler, Maple::Game::StateSyncData& blockOutput)
+		{
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+				StackWatch<PacketHandler> watch_block(handler, "StateSyncData_v13(", ")");
+
+			unsigned char state_var0 = 0;
+			Read<unsigned char>("state", handler, state_var0);
+
+			unsigned char subState_var1 = 0;
+			Read<unsigned char>("subState", handler, subState_var1);
+
+			Vector3Short position_var2;
+			Read<Vector3Short>("position", handler, position_var2);
+
+			short rotation_var3 = 0;
+			Read<short>("rotation", handler, rotation_var3);
+
+			unsigned char animation3_var4 = 0;
+			Read<unsigned char>("animation3", handler, animation3_var4);
+
+			if (animation3_var4 > 127)
+			{
+				StackWatch<PacketHandler> watch_5(handler, "if animation3_var4 > 127");
+				float unknown_var5 = 0;
+				Read<float>("unknown", handler, unknown_var5);
+
+				float unknown_var6 = 0;
+				Read<float>("unknown", handler, unknown_var6);
+			}
+
+			Vector3Short speed_var7;
+			Read<Vector3Short>("speed", handler, speed_var7);
+
+			unsigned char unknown_var8 = 0;
+			Read<unsigned char>("unknown", handler, unknown_var8);
+
+			short rotation2Div10_var9 = 0;
+			Read<short>("rotation2Div10", handler, rotation2Div10_var9);
+
+			short coordsDiv1000_var10 = 0;
+			Read<short>("coordsDiv1000", handler, coordsDiv1000_var10);
+
+			unsigned char flags_var11 = 0;
+			Read<unsigned char>("flags", handler, flags_var11);
+
+			if (GetBit(flags_var11, 0) == 1)
+			{
+				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 0) == 1");
+				int unknown;
+				Read<int>("unknownInt", handler, unknown);
+			}
+
+			if (GetBit(flags_var11, 1) == 1)
+			{
+				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 1) == 1");
+				int unknown;
+				Read<int>("unknownInt", handler, unknown);
+			}
+
+			if (GetBit(flags_var11, 2) == 1)
+			{
+				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 2) == 1");
+				short unknown;
+				Read<short>("unknownShort", handler, unknown);
+			}
+
+			if (GetBit(flags_var11, 3) == 1)
+			{
+				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 3) == 1");
+				std::wstring animationString_var18;
+				Read<std::wstring>("animationString", handler, animationString_var18);
+			}
+
+			if (GetBit(flags_var11, 4) == 1)
+			{
+				StackWatch<PacketHandler> watch_16(handler, "if GetBit(flags_var11, 4) == 1");
+				Vector3S unknown_var14;
+				Read<Vector3S>("unknownVector", handler, unknown_var14);
+
+				std::wstring unknown_var15;
+				Read<std::wstring>("unknown", handler, unknown_var15);
+			}
+
+			if (GetBit(flags_var11, 5) == 1)
+			{
+				StackWatch<PacketHandler> watch_16(handler, "if GetBit(flags_var11, 5) == 1");
+
+				short unknown1;
+				Read<short>("unknownShort", handler, unknown1);
+
+				short unknown2;
+				Read<short>("unknownShort", handler, unknown2);
+
+				std::wstring unknown_var15;
+				Read<std::wstring>("unknown", handler, unknown_var15);
+			}
+
+			int unknown_var26 = 0;
+			Read<int>("unknown", handler, unknown_var26);
+
+			if (flags_var11 == 0 && (unknown_var8 & 0x10))
+			{
+				handler.PacketStream().HasRecentlyFailed = true;
+				return;
+				StackWatch<PacketHandler> watch_22(handler, "if flags_var11 == 0");
+
+				Vector3Short unknown;
+				Read<Vector3Short>("unknownVector", handler, unknown);
+
+				std::wstring animationString_var18;
+				WStringCharLen animationString_var18_wrapper = animationString_var18;
+
+				Read<WStringCharLen>("animationString", handler, animationString_var18_wrapper);
+			}
+		}
+
 		void ParseCharacterData_v13(PacketHandler& handler, Maple::Game::CharacterData& blockOutput)
 		{
 			if (handler.PacketStream().HasRecentlyFailed)
@@ -3577,7 +3701,7 @@ namespace Networking
 			{
 				extraDataType_var5 = handler.GetItemExtraDataType(itemId_param0);
 
-			CalledFunction(handler, "GetItemExtraDataType", "extraDataType_var5", extraDataType_var5, itemId_param0);
+				CalledFunction(handler, "GetItemExtraDataType", "extraDataType_var5", extraDataType_var5, itemId_param0);
 			}
 
 			ValidateValues(handler, "extraDataType", extraDataType_var5, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
@@ -4366,7 +4490,7 @@ namespace Networking
 			{
 				dummy_var2 = handler.StatIntToFloat(blockOutput.Value);
 
-			CalledFunction(handler, "StatIntToFloat", "dummy_var2", dummy_var2, blockOutput.Value);
+				CalledFunction(handler, "StatIntToFloat", "dummy_var2", dummy_var2, blockOutput.Value);
 			}
 
 			ValidateValues(handler, "dummy", dummy_var2, (bool)0, (bool)1);
@@ -4514,7 +4638,7 @@ namespace Networking
 			{
 				extraDataType_var8 = handler.GetItemExtraDataType(itemId_param0);
 
-			CalledFunction(handler, "GetItemExtraDataType", "extraDataType_var8", extraDataType_var8, itemId_param0);
+				CalledFunction(handler, "GetItemExtraDataType", "extraDataType_var8", extraDataType_var8, itemId_param0);
 			}
 
 			ValidateValues(handler, "extraDataType", extraDataType_var8, (unsigned char)0, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4);
@@ -4777,7 +4901,7 @@ namespace Networking
 				{
 					dummy_var3 = handler.StatIntToFloat(blockOutput.Special[i].Value);
 
-				CalledFunction(handler, "StatIntToFloat", "dummy_var3", dummy_var3, blockOutput.Special[i].Value);
+					CalledFunction(handler, "StatIntToFloat", "dummy_var3", dummy_var3, blockOutput.Special[i].Value);
 				}
 
 				ValidateValues(handler, "dummy", dummy_var3, (bool)0, (bool)1);
@@ -8179,7 +8303,7 @@ namespace Networking
 			{
 				isBoss_var4 = handler.IsNpcBoss(output0.NpcId);
 
-			CalledFunction(handler, "IsNpcBoss", "isBoss_var4", isBoss_var4, output0.NpcId);
+				CalledFunction(handler, "IsNpcBoss", "isBoss_var4", isBoss_var4, output0.NpcId);
 			}
 
 			ValidateValues(handler, "isBoss", isBoss_var4, (bool)0, (bool)1);
@@ -8277,7 +8401,7 @@ namespace Networking
 			{
 				hasHiddenHp_var30 = handler.NpcHasHiddenHp(output0.NpcId);
 
-			CalledFunction(handler, "NpcHasHiddenHp", "hasHiddenHp_var30", hasHiddenHp_var30, output0.NpcId);
+				CalledFunction(handler, "NpcHasHiddenHp", "hasHiddenHp_var30", hasHiddenHp_var30, output0.NpcId);
 			}
 
 			ValidateValues(handler, "hasHiddenHp", hasHiddenHp_var30, (bool)0, (bool)1);
@@ -9298,7 +9422,7 @@ namespace Networking
 			{
 				itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-			CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
+				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
 			}
 
 			if (itemId_var2 == 0)
@@ -9443,7 +9567,7 @@ namespace Networking
 				{
 					itemType_var3 = handler.GetFieldItemType(output0.ObjectId);
 
-				CalledFunction(handler, "GetFieldItemType", "itemType_var3", itemType_var3, output0.ObjectId);
+					CalledFunction(handler, "GetFieldItemType", "itemType_var3", itemType_var3, output0.ObjectId);
 				}
 
 				ValidateValues(handler, "itemType", itemType_var3, (unsigned int)0, (unsigned int)1, (unsigned int)2);
@@ -9452,7 +9576,7 @@ namespace Networking
 				{
 					itemId_var4 = handler.GetFieldItemId(output0.ObjectId);
 
-				CalledFunction(handler, "GetFieldItemId", "itemId_var4", itemId_var4, output0.ObjectId);
+					CalledFunction(handler, "GetFieldItemId", "itemId_var4", itemId_var4, output0.ObjectId);
 				}
 
 				if (itemType_var3 == 1)
@@ -9541,7 +9665,7 @@ namespace Networking
 			{
 				actorType_var3 = handler.GetActorType(output0.ActorId);
 
-			CalledFunction(handler, "GetActorType", "actorType_var3", actorType_var3, output0.ActorId);
+				CalledFunction(handler, "GetActorType", "actorType_var3", actorType_var3, output0.ActorId);
 			}
 
 			ValidateValues(handler, "actorType", actorType_var3, (unsigned char)1, (unsigned char)2, (unsigned char)3, (unsigned char)4, (unsigned char)255);
@@ -11320,7 +11444,7 @@ namespace Networking
 				{
 					itemId_var35 = handler.GetItemIdFromInstance(output4.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var35", itemId_var35, output4.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var35", itemId_var35, output4.ItemInstanceId);
 				}
 
 				if (itemId_var35 == 0)
@@ -11370,7 +11494,7 @@ namespace Networking
 				{
 					itemId_var38 = handler.GetItemIdFromInstance(output5.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var38", itemId_var38, output5.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var38", itemId_var38, output5.ItemInstanceId);
 				}
 
 				if (itemId_var38 == 0)
@@ -11701,7 +11825,7 @@ namespace Networking
 					{
 						itemId_var3 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
 
-					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output2.ItemInstanceId);
+						CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output2.ItemInstanceId);
 					}
 
 					if (itemId_var3 == 0)
@@ -11736,7 +11860,7 @@ namespace Networking
 					{
 						output3.Result = (Server::EnchantScrollResultPacket::ResultTypeEnum)handler.Copy(result_var1);
 
-					CalledFunction(handler, "Copy", "output3.Result", output3.Result, result_var1);
+						CalledFunction(handler, "Copy", "output3.Result", output3.Result, result_var1);
 					}
 
 					output3.Result = (Server::EnchantScrollResultPacket::ResultTypeEnum)resultData_var4;
@@ -11939,7 +12063,7 @@ namespace Networking
 				{
 					itemId_var24 = handler.GetItemIdFromInstance(output6.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var24", itemId_var24, output6.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var24", itemId_var24, output6.ItemInstanceId);
 				}
 
 				if (itemId_var24 == 0)
@@ -12058,7 +12182,7 @@ namespace Networking
 				{
 					itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
 				}
 
 				if (itemId_var2 == 0)
@@ -12093,7 +12217,7 @@ namespace Networking
 				{
 					itemId_var4 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var4", itemId_var4, output1.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var4", itemId_var4, output1.ItemInstanceId);
 				}
 
 				if (itemId_var4 == 0)
@@ -12183,7 +12307,7 @@ namespace Networking
 				{
 					itemId_var3 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output1.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output1.ItemInstanceId);
 				}
 
 				if (itemId_var3 == 0)
@@ -12218,7 +12342,7 @@ namespace Networking
 				{
 					itemId_var5 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var5", itemId_var5, output2.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var5", itemId_var5, output2.ItemInstanceId);
 				}
 
 				if (itemId_var5 == 0)
@@ -12564,7 +12688,7 @@ namespace Networking
 				{
 					itemId_var32 = handler.GetItemIdFromInstance(output14.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var32", itemId_var32, output14.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var32", itemId_var32, output14.ItemInstanceId);
 				}
 
 				if (itemId_var32 == 0)
@@ -12870,7 +12994,7 @@ namespace Networking
 					{
 						itemId_var6 = handler.GetItemIdFromInstance(output2.Items[i].ItemInstanceId);
 
-					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var6", itemId_var6, output2.Items[i].ItemInstanceId);
+						CalledFunction(handler, "GetItemIdFromInstance", "itemId_var6", itemId_var6, output2.Items[i].ItemInstanceId);
 					}
 
 					if (itemId_var6 == 0)
@@ -12929,7 +13053,7 @@ namespace Networking
 			{
 				itemId_var1 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-			CalledFunction(handler, "GetItemIdFromInstance", "itemId_var1", itemId_var1, output0.ItemInstanceId);
+				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var1", itemId_var1, output0.ItemInstanceId);
 			}
 
 			if (itemId_var1 == 0)
@@ -13250,7 +13374,7 @@ namespace Networking
 				{
 					itemId_var32 = handler.GetItemIdFromInstance(output14.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var32", itemId_var32, output14.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var32", itemId_var32, output14.ItemInstanceId);
 				}
 
 				if (itemId_var32 == 0)
@@ -13836,7 +13960,7 @@ namespace Networking
 				{
 					itemId_var35 = handler.GetItemIdFromInstance(output4.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var35", itemId_var35, output4.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var35", itemId_var35, output4.ItemInstanceId);
 				}
 
 				if (itemId_var35 == 0)
@@ -13886,7 +14010,7 @@ namespace Networking
 				{
 					itemId_var38 = handler.GetItemIdFromInstance(output5.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var38", itemId_var38, output5.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var38", itemId_var38, output5.ItemInstanceId);
 				}
 
 				if (itemId_var38 == 0)
@@ -14404,7 +14528,7 @@ namespace Networking
 			{
 				itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-			CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
+				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
 			}
 
 			if (itemId_var2 == 0)
@@ -16332,7 +16456,7 @@ namespace Networking
 					{
 						itemId_var3 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
 
-					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output2.ItemInstanceId);
+						CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output2.ItemInstanceId);
 					}
 
 					if (itemId_var3 == 0)
@@ -16367,7 +16491,7 @@ namespace Networking
 					{
 						output3.Result = (Server::EnchantScrollResultPacket::ResultTypeEnum)handler.Copy(result_var1);
 
-					CalledFunction(handler, "Copy", "output3.Result", output3.Result, result_var1);
+						CalledFunction(handler, "Copy", "output3.Result", output3.Result, result_var1);
 					}
 
 					output3.Result = (Server::EnchantScrollResultPacket::ResultTypeEnum)resultData_var4;
@@ -16570,7 +16694,7 @@ namespace Networking
 				{
 					itemId_var24 = handler.GetItemIdFromInstance(output6.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var24", itemId_var24, output6.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var24", itemId_var24, output6.ItemInstanceId);
 				}
 
 				if (itemId_var24 == 0)
@@ -16689,7 +16813,7 @@ namespace Networking
 				{
 					itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
 				}
 
 				if (itemId_var2 == 0)
@@ -16724,7 +16848,7 @@ namespace Networking
 				{
 					itemId_var4 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var4", itemId_var4, output1.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var4", itemId_var4, output1.ItemInstanceId);
 				}
 
 				if (itemId_var4 == 0)
@@ -16814,7 +16938,7 @@ namespace Networking
 				{
 					itemId_var3 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output1.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output1.ItemInstanceId);
 				}
 
 				if (itemId_var3 == 0)
@@ -16849,7 +16973,7 @@ namespace Networking
 				{
 					itemId_var5 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var5", itemId_var5, output2.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var5", itemId_var5, output2.ItemInstanceId);
 				}
 
 				if (itemId_var5 == 0)
@@ -17109,7 +17233,7 @@ namespace Networking
 					{
 						itemId_var6 = handler.GetItemIdFromInstance(output2.Items[i].ItemInstanceId);
 
-					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var6", itemId_var6, output2.Items[i].ItemInstanceId);
+						CalledFunction(handler, "GetItemIdFromInstance", "itemId_var6", itemId_var6, output2.Items[i].ItemInstanceId);
 					}
 
 					if (itemId_var6 == 0)
@@ -17168,7 +17292,7 @@ namespace Networking
 			{
 				itemId_var1 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-			CalledFunction(handler, "GetItemIdFromInstance", "itemId_var1", itemId_var1, output0.ItemInstanceId);
+				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var1", itemId_var1, output0.ItemInstanceId);
 			}
 
 			if (itemId_var1 == 0)
@@ -17662,6 +17786,44 @@ namespace Networking
 		}
 
 		template <>
+		void ParsePacket<13, ServerPacket, 0x1c>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+				StackWatch<PacketHandler> watch_block(handler, "[Server] 0x1c 'UserSync' v13");
+
+			Server::UserSyncPacket output0;
+
+			int actorId_var0 = 0;
+			Read<int>("actorId", handler, actorId_var0);
+
+			unsigned char count_var1 = 0;
+			Read<unsigned char>("count", handler, count_var1);
+
+			ResizeVector(handler, output0.StateData, count_var1);
+
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+			for (unsigned char i = 0; i < count_var1 && !handler.PacketStream().HasRecentlyFailed; ++i)
+			{
+				StackWatch<PacketHandler> watch_3(handler, "output0.StateData[", i, "]"); 
+				ParseStateSyncData_v13(handler, output0.StateData[i]);
+			}
+
+			if (handler.Succeeded())
+			{
+				handler.PacketParsed<Server::UserSyncPacket>(output0);
+			}
+
+
+			return;
+		}
+
+		template <>
 		void ParsePacket<2497, ServerPacket, 0xcc>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
@@ -17960,7 +18122,7 @@ namespace Networking
 				{
 					itemId_var32 = handler.GetItemIdFromInstance(output14.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var32", itemId_var32, output14.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var32", itemId_var32, output14.ItemInstanceId);
 				}
 
 				if (itemId_var32 == 0)
@@ -18427,7 +18589,7 @@ namespace Networking
 				{
 					itemId_var35 = handler.GetItemIdFromInstance(output4.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var35", itemId_var35, output4.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var35", itemId_var35, output4.ItemInstanceId);
 				}
 
 				if (itemId_var35 == 0)
@@ -18477,7 +18639,7 @@ namespace Networking
 				{
 					itemId_var38 = handler.GetItemIdFromInstance(output5.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var38", itemId_var38, output5.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var38", itemId_var38, output5.ItemInstanceId);
 				}
 
 				if (itemId_var38 == 0)
@@ -19078,7 +19240,7 @@ namespace Networking
 			{
 				itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-			CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
+				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
 			}
 
 			if (itemId_var2 == 0)
@@ -20735,7 +20897,7 @@ namespace Networking
 					{
 						itemId_var3 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
 
-					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output2.ItemInstanceId);
+						CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output2.ItemInstanceId);
 					}
 
 					if (itemId_var3 == 0)
@@ -20770,7 +20932,7 @@ namespace Networking
 					{
 						output3.Result = (Server::EnchantScrollResultPacket::ResultTypeEnum)handler.Copy(result_var1);
 
-					CalledFunction(handler, "Copy", "output3.Result", output3.Result, result_var1);
+						CalledFunction(handler, "Copy", "output3.Result", output3.Result, result_var1);
 					}
 
 					output3.Result = (Server::EnchantScrollResultPacket::ResultTypeEnum)resultData_var4;
@@ -20973,7 +21135,7 @@ namespace Networking
 				{
 					itemId_var24 = handler.GetItemIdFromInstance(output6.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var24", itemId_var24, output6.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var24", itemId_var24, output6.ItemInstanceId);
 				}
 
 				if (itemId_var24 == 0)
@@ -21092,7 +21254,7 @@ namespace Networking
 				{
 					itemId_var2 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var2", itemId_var2, output0.ItemInstanceId);
 				}
 
 				if (itemId_var2 == 0)
@@ -21127,7 +21289,7 @@ namespace Networking
 				{
 					itemId_var4 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var4", itemId_var4, output1.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var4", itemId_var4, output1.ItemInstanceId);
 				}
 
 				if (itemId_var4 == 0)
@@ -21217,7 +21379,7 @@ namespace Networking
 				{
 					itemId_var3 = handler.GetItemIdFromInstance(output1.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output1.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var3", itemId_var3, output1.ItemInstanceId);
 				}
 
 				if (itemId_var3 == 0)
@@ -21252,7 +21414,7 @@ namespace Networking
 				{
 					itemId_var5 = handler.GetItemIdFromInstance(output2.ItemInstanceId);
 
-				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var5", itemId_var5, output2.ItemInstanceId);
+					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var5", itemId_var5, output2.ItemInstanceId);
 				}
 
 				if (itemId_var5 == 0)
@@ -21509,7 +21671,7 @@ namespace Networking
 					{
 						itemId_var6 = handler.GetItemIdFromInstance(output2.Items[i].ItemInstanceId);
 
-					CalledFunction(handler, "GetItemIdFromInstance", "itemId_var6", itemId_var6, output2.Items[i].ItemInstanceId);
+						CalledFunction(handler, "GetItemIdFromInstance", "itemId_var6", itemId_var6, output2.Items[i].ItemInstanceId);
 					}
 
 					if (itemId_var6 == 0)
@@ -21568,7 +21730,7 @@ namespace Networking
 			{
 				itemId_var1 = handler.GetItemIdFromInstance(output0.ItemInstanceId);
 
-			CalledFunction(handler, "GetItemIdFromInstance", "itemId_var1", itemId_var1, output0.ItemInstanceId);
+				CalledFunction(handler, "GetItemIdFromInstance", "itemId_var1", itemId_var1, output0.ItemInstanceId);
 			}
 
 			if (itemId_var1 == 0)
@@ -21591,13 +21753,13 @@ namespace Networking
 		}
 
 		template <>
-		void ParsePacket<2465, ServerPacket, 0x3f>(PacketHandler& handler)
+		void ParsePacket<2465, ServerPacket, 0x3e>(PacketHandler& handler)
 		{
 			using namespace ParserUtils::Packets;
 
 			ParserUtils::DataStream& stream = handler.PacketStream();
 
-				StackWatch<PacketHandler> watch_block(handler, "[Server] 0x3f 'SkillSync' v2465");
+				StackWatch<PacketHandler> watch_block(handler, "[Server] 0x3e 'SkillSync' v2465");
 
 			Server::SkillSyncPacket output0;
 

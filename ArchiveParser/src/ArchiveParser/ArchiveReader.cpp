@@ -46,7 +46,10 @@ namespace Archive
 			{
 				if (path.extension() == ".m2h")
 				{
-					std::cout << "indexing archive file: ' " << path << "'" << std::endl;
+					if (!Quiet)
+					{
+						std::cout << "indexing archive file: ' " << path << "'" << std::endl;
+					}
 
 					fs::path sanitized = SanitizePath(path);
 					size_t archiveSize = ArchivePath.native().size() + 1;
@@ -178,7 +181,10 @@ namespace Archive
 
 		if (archive == nullptr)
 		{
-			std::cout << "archive not loaded yet: '" << path.string() << "'" << std::endl;
+			if (!Quiet)
+			{
+				std::cout << "archive not loaded yet: '" << path.string() << "'" << std::endl;
+			}
 
 			if (fs::is_regular_file(ArchivePath / path))
 			{
@@ -251,7 +257,10 @@ namespace Archive
 
 			fs::path archivePath = ArchivePath / parserPath;
 
-			std::cout << "loading archive: '" << archivePath.string() << "'" << std::endl;
+			if (!Quiet)
+			{
+				std::cout << "loading archive: '" << archivePath.string() << "'" << std::endl;
+			}
 
 			archive->Parser->Load(archivePath);
 		}

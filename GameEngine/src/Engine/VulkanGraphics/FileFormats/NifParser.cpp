@@ -688,19 +688,6 @@ std::unordered_map<std::string, std::string> attributeAliases = {
 
 using namespace Engine::Graphics;
 
-void NifParser::Parse(std::istream& stream)
-{
-	std::streampos start = stream.tellg();
-	stream.seekg(0, std::ios::end);
-	std::streampos length = stream.tellg() - start;
-	stream.seekg(start);
-	std::string buffer;
-	buffer.resize(length);
-	stream.read(&buffer[0], length);
-
-	Parse(buffer);
-}
-
 std::ostream& operator<<(std::ostream& out, const BlockData* block)
 {
 	return out << "[" << block->BlockIndex << "] " << block->BlockType << " \"" << block->BlockName << "\"";
@@ -1195,26 +1182,23 @@ void NifParser::Parse(std::string_view stream)
 			NiTransform& nodeTransform = data->Transformation;
 
 			std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
-			transform->SetInheritsTransformation((data->Flags & 0x4 || true) != 0);// || true);
+			transform->SetInheritsTransformation(((data->Flags & 0x4) || true) != 0);// || true);
 			transform->Name = block.BlockName;
 
-			ImportedNiMesh mesh;
+			std::shared_ptr<Engine::Graphics::MeshFormat> format = Engine::Graphics::MeshFormat::GetFormat(attributes);
+			std::shared_ptr<Engine::Graphics::MeshData> mesh = Engine::Create<Engine::Graphics::MeshData>();
 
-			mesh.Format = Engine::Graphics::MeshFormat::GetFormat(attributes);
-			mesh.Mesh = Engine::Create<Engine::Graphics::MeshData>();
-			mesh.Mesh->SetFormat(mesh.Format);
-			mesh.Mesh->PushVertices(vertexCount, false);
-			mesh.Mesh->PushIndices(indexBuffer);
+			mesh->SetFormat(format);
+			mesh->PushVertices(vertexCount, false);
+			mesh->PushIndices(indexBuffer);
 
-			mesh.Format->Copy(dataBuffers.data(), mesh.Mesh->GetData(), mesh.Format, vertexCount);
+			format->Copy(dataBuffers.data(), mesh->GetData(), format, vertexCount);
 
 			Matrix4F transformation = Matrix4F(nodeTransform.Translation) * nodeTransform.Rotation * Matrix4F::NewScale(nodeTransform.Scale, nodeTransform.Scale, nodeTransform.Scale);
 
 			transform->SetTransformation(transformation);
 
-			ImportedMeshes.push_back(mesh);
-
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, blockIndex, false, false, mesh.Format, mesh.Mesh, transform });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, blockIndex, false, false, format, mesh, transform });
 		}
 		else if (block.BlockType == "NiSequenceData")
 		{

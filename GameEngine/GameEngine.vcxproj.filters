@@ -153,6 +153,12 @@
     <ClInclude Include="src\Engine\Objects\Simulation.h">
       <Filter>Source Files\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\ObjParser.h">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Engine\VulkanGraphics\FileFormats\ModelParser.h">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Engine\Precision.cpp">
@@ -223,6 +229,12 @@
     </ClCompile>
     <ClCompile Include="src\Engine\Objects\Simulation.cpp">
       <Filter>Source Files\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\ObjParser.cpp">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Engine\VulkanGraphics\FileFormats\ModelParser.cpp">
+      <Filter>Source Files\VulkanGraphics\FileFormats</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

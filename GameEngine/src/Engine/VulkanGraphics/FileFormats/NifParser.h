@@ -5,43 +5,14 @@
 #include <unordered_set>
 #include <unordered_map>
 
+#include "ModelParser.h"
 #include "PackageNodes.h"
 
-namespace Engine
-{
-	namespace Graphics
-	{
-		class MeshFormat;
-		class MeshData;
-	}
-}
-
-struct ImportedNiMesh
-{
-	std::shared_ptr<Engine::Graphics::MeshFormat> Format;
-	std::shared_ptr<Engine::Graphics::MeshData> Mesh;
-};
-
-struct ParentNifNode
-{
-	std::string Name;
-	Matrix4F Transform;
-};
-
-struct ParentNifTransforms
-{
-	std::vector<ParentNifNode> Nodes;
-};
-
-class NifParser
+class NifParser : public ModelParser
 {
 public:
-	std::vector<ImportedNiMesh> ImportedMeshes;
-	Engine::Graphics::ModelPackage* Package = nullptr;
-	//ParentNifTransforms* ParentNodes = nullptr;
 	std::string Name;
 
-	void Parse(std::istream& stream);
 	void Parse(std::string_view stream);
 
 private:

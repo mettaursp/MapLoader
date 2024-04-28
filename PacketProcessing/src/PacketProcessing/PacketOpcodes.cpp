@@ -491,7 +491,7 @@ namespace Networking
 					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
+					{ "UserSync", &ParsePacket<13, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
@@ -939,7 +939,7 @@ namespace Networking
 					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
+					{ "UserSync", &ParsePacket<13, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<12, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
@@ -973,8 +973,8 @@ namespace Networking
 					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
 					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3d
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
-					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3e> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -1387,7 +1387,7 @@ namespace Networking
 					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
+					{ "UserSync", &ParsePacket<13, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
@@ -1421,8 +1421,8 @@ namespace Networking
 					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
 					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
-					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3e> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -1835,7 +1835,7 @@ namespace Networking
 					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
+					{ "UserSync", &ParsePacket<13, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
@@ -1869,8 +1869,8 @@ namespace Networking
 					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
 					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
-					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3e> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -2283,7 +2283,7 @@ namespace Networking
 					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
+					{ "UserSync", &ParsePacket<13, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2486, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
@@ -2317,8 +2317,8 @@ namespace Networking
 					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
 					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
-					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3e> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -2731,7 +2731,7 @@ namespace Networking
 					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
+					{ "UserSync", &ParsePacket<13, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
@@ -2765,8 +2765,8 @@ namespace Networking
 					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
 					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2486, ServerPacket, 0x3d> }, // 0x3d
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
-					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3e> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -3179,7 +3179,7 @@ namespace Networking
 					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
+					{ "UserSync", &ParsePacket<13, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
@@ -3213,8 +3213,8 @@ namespace Networking
 					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
 					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2503, ServerPacket, 0x3d> }, // 0x3d
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
-					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3e> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42
@@ -3627,7 +3627,7 @@ namespace Networking
 					{ "DungeonList", &ParsePacket<12, ServerPacket, 0x19> }, // 0x19
 					{ "", &ParsePacket<0, false, 0> }, // 0x1a
 					{ "", &ParsePacket<0, false, 0> }, // 0x1b
-					{ "UserSync", &ParsePacket<12, ServerPacket, 0x1c> }, // 0x1c
+					{ "UserSync", &ParsePacket<13, ServerPacket, 0x1c> }, // 0x1c
 					{ "UserChat", &ParsePacket<12, ServerPacket, 0x1d> }, // 0x1d
 					{ "UserChatItemLink", &ParsePacket<2497, ServerPacket, 0x1e> }, // 0x1e
 					{ "", &ParsePacket<0, false, 0> }, // 0x1f
@@ -3661,8 +3661,8 @@ namespace Networking
 					{ "CurrencyToken", &ParsePacket<12, ServerPacket, 0x3c> }, // 0x3b
 					{ "SkillUse", &ParsePacket<12, ServerPacket, 0x3d> }, // 0x3c
 					{ "SkillDamage", &ParsePacket<2503, ServerPacket, 0x3d> }, // 0x3d
-					{ "SkillDamage", &ParsePacket<12, ServerPacket, 0x3e> }, // 0x3e
-					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3f> }, // 0x3f
+					{ "SkillSync", &ParsePacket<2465, ServerPacket, 0x3e> }, // 0x3e
+					{ "", &ParsePacket<0, false, 0> }, // 0x3f
 					{ "", &ParsePacket<0, false, 0> }, // 0x40
 					{ "", &ParsePacket<0, false, 0> }, // 0x41
 					{ "", &ParsePacket<0, false, 0> }, // 0x42

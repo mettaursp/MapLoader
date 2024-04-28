@@ -47,7 +47,7 @@ void KfmParser::Parse(std::string_view stream)
 		std::cout << "unknown kfm header format encountered" << std::endl;
 	}
 
-	Endian endian(std::endian::big);
+	Endian endian(std::endian::little);
 
 	readString(Document->NifPath, endian, stream);
 	readString(Document->RootName, endian, stream);

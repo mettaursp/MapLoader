@@ -56,8 +56,8 @@ namespace ParserUtils
 		const bool PrintErrors = true;
 		const bool PrintUnknownValues = true;
 
-		template <typename T, typename Size, typename HandlerType>
-		void ResizeVector(HandlerType& handler, std::vector<T>& vector, Size size, const std::source_location location = std::source_location::current())
+		template <typename VectorType, typename Size, typename HandlerType>
+		void ResizeVector(HandlerType& handler, VectorType& vector, Size size, const std::source_location location = std::source_location::current())
 		{
 			DataStream& stream = handler.PacketStream();
 
@@ -183,17 +183,19 @@ namespace ParserUtils
 
 				return;
 			}
-
-			if (handler.PacketStream().HasRecentlyFailed)
+			else
 			{
-				return;
+				if (handler.PacketStream().HasRecentlyFailed)
+				{
+					return;
+				}
+
+				T tempValue = {};
+
+				ReadValue<T>(name, handler, tempValue, location);
+
+				value = (VarType)tempValue;
 			}
-
-			T tempValue = {};
-
-			ReadValue<T>(name, handler, tempValue, location);
-
-			value = (VarType)tempValue;
 		}
 
 		template <typename T>

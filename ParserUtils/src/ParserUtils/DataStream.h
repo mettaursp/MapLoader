@@ -72,6 +72,30 @@ struct Color4I_BGRA
 	}
 };
 
+struct StringCharLen
+{
+	std::string& String;
+
+	StringCharLen(std::string& string) : String(string) {}
+
+	operator std::string& ()
+	{
+		return String;
+	}
+};
+
+struct WStringCharLen
+{
+	std::wstring& String;
+
+	WStringCharLen(std::wstring& string) : String(string) {}
+
+	operator std::wstring& ()
+	{
+		return String;
+	}
+};
+
 std::ostream& operator<<(std::ostream& out, const Vector3Short& vector);
 std::ostream& operator<<(std::ostream& out, const Vector3Byte& vector);
 std::ostream& operator<<(std::ostream& out, const Color4I_BGRA& vector);
@@ -143,6 +167,12 @@ namespace ParserUtils
 
 	template <>
 	bool DataStream::Read<std::wstring>(std::wstring& value);
+
+	template <>
+	bool DataStream::Read<StringCharLen>(StringCharLen& value);
+
+	template <>
+	bool DataStream::Read<WStringCharLen>(WStringCharLen& value);
 
 	template <>
 	bool DataStream::Read<Vector3S>(Vector3S& value);

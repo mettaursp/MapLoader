@@ -11,6 +11,8 @@ namespace Archive
 	public:
 		struct Path;
 
+		bool Quiet = false;
+
 		ArchiveReader() {}
 		ArchiveReader(const fs::path& path, bool preindexAll = false);
 
@@ -52,16 +54,17 @@ namespace Archive
 			ArchiveReader& GetReader() const { return *Reader; }
 			const fs::path& GetPath() const { return FullPath; }
 			const fs::path& GetArchivePath() const { return ArchivePath; }
+			const ArchiveParser::FileEntry& GetEntry() const { return Parser->GetFileEntry(Index); }
 
 			friend class ArchiveReader;
 
 		private:
-			ArchiveReader* const Reader = nullptr;
-			ArchiveParser* const Parser = nullptr;
-			const fs::path FullPath;
-			const fs::path ArchivePath;
-			const size_t Index = (size_t)-1;
-			const bool ReferencesFile = false;
+			ArchiveReader* Reader = nullptr;
+			ArchiveParser* Parser = nullptr;
+			fs::path FullPath;
+			fs::path ArchivePath;
+			size_t Index = (size_t)-1;
+			bool ReferencesFile = false;
 		};
 
 		static fs::path SanitizePath(const fs::path& path);

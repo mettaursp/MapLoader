@@ -14,6 +14,8 @@
 #include "PackTraits.h"
 #include "ParserUtils.h"
 
+#include "ParserUtils.h"
+
 /*
 * Using keys & parsing strategy from https://github.com/Wunkolo/Maple2Tools & http://forum.xentax.com/viewtopic.php?f=10&t=18090
 */
@@ -341,6 +343,55 @@ namespace Archive
 		}
 	}
 
+	void XorFilter(const unsigned char* encoded, uint64_t encodedSize, const uint8_t* key, unsigned char* decoded, uint64_t decodedSize)
+	{
+		unsigned int block = (unsigned int)encodedSize >> 2;
+		unsigned int blockOffset = 0;
+		int keyOffset = 0;
+
+		if (encodedSize != decodedSize)
+		{
+			std::cout << "usm encode & decode size mismatch " << encodedSize << ", " << decodedSize << std::endl;
+
+			throw "size mismatch";
+		}
+
+		for (size_t i = 0; i < encodedSize; ++i)
+		{
+			decoded[i] = encoded[i];
+		}
+
+		while (block && blockOffset < block)
+		{
+			for (size_t i = 0; i < 4; ++i)
+			{
+				decoded[4 * blockOffset + i] = decoded[4 * blockOffset + i] ^ key[4 * keyOffset + i];
+			}
+
+			keyOffset = ((unsigned short)keyOffset + 1) & 0x1FF;
+			++blockOffset;
+		}
+
+		block = (unsigned int)encodedSize & 3;
+
+		if (!block)
+		{
+			return;
+		}
+
+		int start = (int)(4 * blockOffset);
+
+		blockOffset = 0;
+		keyOffset = 0;
+
+		while (blockOffset < block)
+		{
+			decoded[start + blockOffset++] ^= key[keyOffset];
+
+			keyOffset = ((unsigned short)keyOffset + 1) & 0x7FF;
+		}
+	}
+
 	template <typename Traits>
 	bool ArchiveParser::DumpArchiveStream(const FileEntry& file, std::string& contents)
 	{
@@ -351,21 +402,32 @@ namespace Archive
 
 		ArchiveFile.read(ArchiveBuffer.data(), file.EncodedSize);
 
-		contents.resize(decompressionBufferSize(file.Size));
+		contents.resize(std::max(decompressionBufferSize(file.Size), file.EncodedSize));
 
 		TotalBytesRead += file.Size;
-		TotalDiskBytesRead += file.CompressedSize;
+		TotalDiskBytesRead += file.EncodedSize;
 
-		DecryptStream(
-			streamOf<unsigned char>(ArchiveBuffer.data()),
-			file.EncodedSize,
-			Traits::IV_LUT[file.CompressedSize % std::extent<std::remove_cvref_t<decltype(Traits::IV_LUT)>, 0u>::value],
-			Traits::Key_LUT[file.CompressedSize % std::extent<std::remove_cvref_t<decltype(Traits::Key_LUT)>, 0u>::value],
-			contents.data(),
-			contents.size(),
-			file.Compression != CompressionType::None || file.CompressedSize != file.Size,
-			Context
-		);
+		if (file.Compression == CompressionType::Usm)
+		{
+			XorFilter(
+				streamOf<unsigned char>(ArchiveBuffer.data()), file.EncodedSize,
+				Traits::XOR_Key,
+				streamOf<unsigned char>(contents.data()), file.Size
+			);
+		}
+		else
+		{
+			DecryptStream(
+				streamOf<unsigned char>(ArchiveBuffer.data()),
+				file.EncodedSize,
+				Traits::IV_LUT[file.CompressedSize % std::extent<std::remove_cvref_t<decltype(Traits::IV_LUT)>, 0u>::value],
+				Traits::Key_LUT[file.CompressedSize % std::extent<std::remove_cvref_t<decltype(Traits::Key_LUT)>, 0u>::value],
+				contents.data(),
+				contents.size(),
+				file.Compression == CompressionType::Deflate,
+				Context
+			);
+		}
 
 		contents.resize(file.Size);
 

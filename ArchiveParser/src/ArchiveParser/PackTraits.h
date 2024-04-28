@@ -138,6 +138,7 @@ struct PackTraits<PackVersion::MS2F>
 	static constexpr PackVersion Version = PackVersion::MS2F;
 	static constexpr auto& IV_LUT = Archive::MS2F_IV_LUT;
 	static constexpr auto& Key_LUT = Archive::MS2F_Key_LUT;
+	static constexpr auto& XOR_Key = Archive::MS2F_XOR_Key;
 	typedef PackStreamVer1 StreamType;
 	typedef PackFileHeaderVer1 FileHeaderType;
 };
@@ -148,6 +149,7 @@ struct PackTraits<PackVersion::NS2F>
 	static constexpr PackVersion Version = PackVersion::NS2F;
 	static constexpr auto& IV_LUT = Archive::NS2F_IV_LUT;
 	static constexpr auto& Key_LUT = Archive::NS2F_Key_LUT;
+	static constexpr auto& XOR_Key = Archive::NS2F_XOR_Key;
 	typedef PackStreamVer2 StreamType;
 	typedef PackFileHeaderVer2 FileHeaderType;
 };
@@ -158,6 +160,7 @@ struct PackTraits<PackVersion::OS2F>
 	static constexpr PackVersion Version = PackVersion::OS2F;
 	static constexpr auto& IV_LUT = Archive::OS2F_IV_LUT;
 	static constexpr auto& Key_LUT = Archive::OS2F_Key_LUT;
+	static constexpr auto& XOR_Key = Archive::OS2F_XOR_Key;
 	typedef PackStreamVer3 StreamType;
 	typedef PackFileHeaderVer3 FileHeaderType;
 };
@@ -168,6 +171,7 @@ struct PackTraits<PackVersion::PS2F>
 	static constexpr PackVersion Version = PackVersion::PS2F;
 	static constexpr auto& IV_LUT = Archive::PS2F_IV_LUT;
 	static constexpr auto& Key_LUT = Archive::PS2F_Key_LUT;
+	static constexpr auto& XOR_Key = Archive::PS2F_XOR_Key;
 	typedef PackStreamVer3 StreamType;
 	typedef PackFileHeaderVer3 FileHeaderType;
 };

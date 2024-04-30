@@ -161,10 +161,22 @@ namespace Archive
 	ArchiveReader::Archive* ArchiveReader::FindArchive(const fs::path& path)
 	{
 		const fs::path::value_type* pathString = path.c_str();
+		size_t pathLength = path.native().size();
 
 		for (Archive& archive : Archives)
 		{
 			const fs::path::value_type* archivePath = archive.Path.c_str();
+			size_t archivePathLength = archive.Path.native().size();
+
+			if (pathLength < archivePathLength)
+			{
+				continue;
+			}
+
+			if (pathLength != archivePathLength && pathString[archivePathLength] != '.' && pathString[archivePathLength] != '/')
+			{
+				continue;
+			}
 
 			if (wcsncmp(pathString, archivePath, archive.Path.native().size()) == 0)
 			{
@@ -272,6 +284,11 @@ namespace Archive
 
 		fs::path internalPath = pathString;
 
+		if (internalPath == ".m2h" || internalPath == ".m2d")
+		{
+			internalPath = "";
+		}
+
 		if (archive->Parser == nullptr || !archive->Parser->HasPath(internalPath))
 		{
 			fs::path archivePath = ArchivePath / archive->Path;
@@ -280,7 +297,7 @@ namespace Archive
 			{
 				std::cout << "archive wasn't loaded: '" << archivePath.string() << "'" << std::endl;
 			}
-			else
+			//else if (!Quiet)
 			{
 				std::cout << "archive '" << archivePath.string() << "' doesn't contain file: '" << internalPath.string() << "'" << std::endl;
 			}
@@ -355,6 +372,14 @@ namespace Archive
 			return;
 
 		Parser->ReadFile(Index, output);
+	}
+
+	void ArchiveReader::Path::ReadRaw(std::string& output) const
+	{
+		if (!IsFile())
+			return;
+
+		Parser->ReadFileRaw(Index, output);
 	}
 
 	ArchiveReader::Path ArchiveReader::Path::Child(const std::string& child) const

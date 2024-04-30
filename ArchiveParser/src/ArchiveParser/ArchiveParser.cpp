@@ -480,6 +480,29 @@ namespace Archive
 		return false;
 	}
 
+	bool ArchiveParser::ReadFileRaw(size_t index, std::string& contents)
+	{
+		if (index < Files.size())
+		{
+			contents.clear();
+
+			if (!IsOpen()) return false;
+
+			const FileEntry& file = Files[index];
+
+			ArchiveFile.seekg(file.Offset);
+
+			ArchiveBuffer.clear();
+			ArchiveBuffer.resize(file.EncodedSize);
+
+			ArchiveFile.read(ArchiveBuffer.data(), file.EncodedSize);
+
+			return true;
+		}
+
+		return false;
+	}
+
 	bool ArchiveParser::ProcessHeader()
 	{
 		if (!fs::exists(HeaderPath))

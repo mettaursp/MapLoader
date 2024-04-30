@@ -55,6 +55,7 @@ namespace Archive
 
 		bool ReadFile(const fs::path& path, std::string& contents);
 		bool ReadFile(size_t index, std::string& contents);
+		bool ReadFileRaw(size_t index, std::string& contents);
 
 	private:
 		struct DirectoryEntry;

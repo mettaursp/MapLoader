@@ -44,6 +44,7 @@ namespace Archive
 			bool IsInArchive() const { return Parser != nullptr; }
 
 			void Read(std::string& output) const;
+			void ReadRaw(std::string& output) const;
 
 			Path Child(const std::string& child) const;
 			Path ChildFile(size_t index) const;

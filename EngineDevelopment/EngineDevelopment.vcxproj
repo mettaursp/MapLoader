@@ -154,12 +154,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\EngineDevelopment\ClientDiff.cpp" />
     <ClCompile Include="src\EngineDevelopment\EngineDevelopmentMain.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">
       <Project>{01d10ca8-8e23-4880-b235-786919567bc4}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\EngineDevelopment\ClientDiff.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

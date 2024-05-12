@@ -9477,12 +9477,14 @@ namespace Networking
 
 			unsigned char unknown_var8 = 0;
 			Read<unsigned char>("unknown", handler, unknown_var8);
+			ValidateValues(handler, "weirdByteValue1", unknown_var8, (unsigned char)0, (unsigned char)3);
 			Read<int>("rarity", handler, output0.Rarity);
 
 			ValidateValues(handler, "rarity", output0.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 
 			short unknown_var10 = 0;
-			Read<short>("unknown", handler, unknown_var10);
+			Read<short>("printMeUnknownShort", handler, unknown_var10);
+
 
 			bool unknown_var11 = false;
 			Read<bool>("unknown", handler, unknown_var11);
@@ -9504,7 +9506,6 @@ namespace Networking
 			{
 				handler.PacketParsed<Server::FieldAddItemPacket>(output0);
 			}
-
 
 			return;
 		}

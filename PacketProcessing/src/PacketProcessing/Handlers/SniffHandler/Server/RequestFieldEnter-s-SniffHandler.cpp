@@ -18,6 +18,10 @@ namespace Networking
 			Field.MapId = packet.MapId;
 			Field.GameData = Data;
 
+			std::unordered_set<Enum::MapId> maps = { (Enum::MapId)61000005, (Enum::MapId)52000065, (Enum::MapId)52010055 };
+			if (maps.contains(packet.MapId))
+				FoundUnknownValue();
+
 			if (entry != Data->Maps.end())
 			{
 				Field.CurrentMap = &entry->second;

@@ -9,29 +9,67 @@ namespace XmlLite
 	void XmlReader::OpenDocument(const std::string_view& stream)
 	{
 		Document = stream;
+		NodeTree.clear();
+		HeaderName = "";
+		HeaderAttributes.clear();
+		FileHeader = {};
+		NextNode = {};
+		LastAttribute = {};
 		CurrentIndex = 0;
 		LineNumber = 1;
 		LastLineStart = 0;
-		NodeTree.clear();
-		HeaderAttributes.clear();
-		NextNode = {};
-		FileHeader = {};
+		IsReadingNode = false;
+		FoundClosingNode = false;
+		HasNoChildren = false;
+		CurrentNodeSet = false;
 		Error = XmlErrorType::None;
 
 		TryReadHeader();
 	}
 
-	const XmlNode* XmlReader::GetNextSibling()
+	XmlReader::StackMarker XmlReader::GetStackMarker() const
+	{
+		if (IsReadingNode)
+		{
+			return { NodeTree.size(), NextNode.Start };
+		}
+
+		return { NodeTree.size(), NodeTree.size() ? NodeTree.back().BranchStart : 0 };
+	}
+
+	const XmlNode* XmlReader::GetNextSibling(const StackMarker& marker)
 	{
 		if (FoundClosingNode) return nullptr;
 		
 		size_t stackDepth = 0;
 
-		while (CanContinue()) // might need to revisit this loop to double check error handling. didnt care to do it while setting it up
+		if (marker.Index != (size_t)-1)
+		{
+			stackDepth = NodeTree.size() - marker.Index - 1;
+
+			if (stackDepth >= NodeTree.size() || marker.Start < NodeTree[marker.Index].BranchStart)
+			{
+				return nullptr;
+			}
+		}
+
+		while (CanContinue() && stackDepth < NodeTree.size()) // might need to revisit this loop to double check error handling. didnt care to do it while setting it up
 		{
 			if (!IsReadingNode)
 			{
-				if (!ReadNextNode()) return nullptr;
+				if (!ReadNextNode())
+				{
+					if (FoundClosingNode)
+					{
+						--stackDepth;
+
+						NodeTree.pop_back();
+
+						continue;
+					}
+
+					return nullptr;
+				}
 
 				if (!FoundClosingNode && stackDepth == 0)
 				{
@@ -52,12 +90,16 @@ namespace XmlLite
 				return nullptr;
 			}
 
-			if (!HasNoChildren)
+			if (!HasNoChildren && !FoundClosingNode)
 			{
 				++stackDepth;
+
+				NodeTree.push_back({ NextNode, NextNode.Start });
 			}
 
-			if (!ReadNextNode()) return nullptr;
+			ReadNextNode();
+			//if (!ReadNextNode())
+			//	return nullptr;
 
 			if (FoundClosingNode)
 			{
@@ -65,6 +107,8 @@ namespace XmlLite
 					stackDepth += 0;
 
 				--stackDepth;
+
+				NodeTree.pop_back();
 			}
 			else if (stackDepth == 0)
 			{
@@ -72,14 +116,19 @@ namespace XmlLite
 			}
 		}
 
+		if (stackDepth == (size_t)-1 && IsReadingNode && FoundClosingNode)
+		{
+			FinishCurrentNode();
+		}
+
 		return nullptr;
 	}
 
-	const XmlNode* XmlReader::GetNextSibling(const std::string_view& name, bool caseSensitive)
+	const XmlNode* XmlReader::GetNextSibling(const std::string_view& name, bool caseSensitive, const StackMarker& marker)
 	{
 		const XmlNode* node = nullptr;
 
-		for (node = GetNextSibling(); node != nullptr && !matches(name, node->Name, !caseSensitive); node = GetNextSibling());
+		for (node = GetNextSibling(marker); node != nullptr && !matches(name, node->Name, !caseSensitive); node = GetNextSibling());
 
 		return node;
 	}
@@ -98,12 +147,15 @@ namespace XmlLite
 			return nullptr;
 		}
 
-		if (HasNoChildren) return nullptr;
+		if (HasNoChildren)
+		{
+			return nullptr;
+		}
 
 		if (!ReadNextNode()) return nullptr;
 
 		if (addToStack)
-			NodeTree.push_back(newStackNode);
+			NodeTree.push_back({ newStackNode, newStackNode.Start });
 
 		if (FoundClosingNode) return nullptr;
 
@@ -141,7 +193,7 @@ namespace XmlLite
 
 		if (FoundClosingNode)
 		{
-			if ((NodeTree.size() == 0 || NextNode.Name != NodeTree.back().Name))
+			if ((NodeTree.size() == 0 || NextNode.Name != NodeTree.back().Node.Name))
 				return TrySetError(XmlErrorType::UnexpectedClosingNode);
 
 			return false;
@@ -150,6 +202,51 @@ namespace XmlLite
 		CurrentNodeSet = true;
 
 		return true;
+	}
+
+	std::string XmlReader::GetFullNodePath() const
+	{
+		std::stringstream lineNumber;
+
+		lineNumber << "[" << LineNumber << "]: ";
+
+		std::string nodePath = lineNumber.str();
+		bool isFirst = true;
+
+		for (const StackItem& node : NodeTree)
+		{
+			nodePath = nodePath + (isFirst ? std::string(node.Node.Name) : "." + std::string(node.Node.Name));
+			isFirst = false;
+
+			std::stringstream lineNumber;
+
+			lineNumber << "[" << node.Node.Line << "]";
+
+			nodePath += lineNumber.str();
+		}
+
+		if (IsReadingNode)
+		{
+			if (!isFirst)
+			{
+				nodePath += ".";
+			}
+
+			if (FoundClosingNode)
+			{
+				nodePath += "/";
+			}
+
+			nodePath += NextNode.Name;
+
+			std::stringstream lineNumber;
+
+			lineNumber << "[" << NextNode.Line << "]";
+
+			nodePath += lineNumber.str();
+		}
+
+		return nodePath;
 	}
 
 	const XmlAttribute* XmlReader::GetNextAttribute()
@@ -181,7 +278,7 @@ namespace XmlLite
 		{
 			while (GetNextSibling());
 
-			if (!FoundClosingNode || !matches(NextNode.Name, NodeTree.back().Name, false))
+			if (!FoundClosingNode || !matches(NextNode.Name, NodeTree.back().Node.Name, false))
 			{
 				TrySetError(XmlErrorType::ExpectedClosingNode);
 
@@ -346,7 +443,7 @@ namespace XmlLite
 			"\xef\xbb\xbf",
 			"\xfe\xff",
 			"\xff\xff",
-			"\x00\x00\xfe\xff",
+			{ "\x00\x00\xfe\xff", 4 },
 			"\xff\xfe\x00\x00",
 			"\x2b\x2f\x76",
 			"\xf7\x64\x4c",
@@ -371,7 +468,13 @@ namespace XmlLite
 
 		IsReadingNode = true;
 
-		if (Document[CurrentIndex] != '?') return CanContinue();
+		if (Document[CurrentIndex] != '?')
+		{
+			CurrentIndex = 0;
+			IsReadingNode = false;
+
+			return CanContinue();
+		}
 
 		++CurrentIndex;
 
@@ -532,13 +635,21 @@ namespace XmlLite
 			return TrySetError(XmlErrorType::ExpectedNodeStart);
 
 		NextNode.Start = CurrentIndex;
+		NextNode.Line = LineNumber;
 
 		++CurrentIndex;
 		IsReadingNode = true;
 
 		while (SkipWhitespace() && Document[CurrentIndex] == '!')
 		{
-			if (!FinishCurrentNode()) return false;
+			if (!FinishCurrentNode() || CurrentIndex < 3) return false;
+
+			while (Document[CurrentIndex - 3] != '-' && Document[CurrentIndex - 2] != '-')
+			{
+				IsReadingNode = true;
+
+				if (!FinishCurrentNode() || CurrentIndex < 3) return false;
+			}
 
 			if (!SkipWhitespace()) return false;
 
@@ -546,6 +657,7 @@ namespace XmlLite
 				return TrySetError(XmlErrorType::ExpectedNodeStart);
 
 			NextNode.Start = CurrentIndex;
+			NextNode.Line = LineNumber;
 
 			++CurrentIndex;
 			IsReadingNode = true;

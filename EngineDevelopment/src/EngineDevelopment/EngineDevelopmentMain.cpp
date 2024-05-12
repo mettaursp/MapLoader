@@ -1,727 +1,1208 @@
-#include <filesystem>
-#include <string>
-#include <fstream>
 #include <iostream>
+#include <filesystem>
+#include <unordered_set>
+#include <unordered_map>
 
-#include <openssl/evp.h>
 #include <ArchiveParser/ArchiveReader.h>
+#include <ArchiveParser/XmlReader.h>
 
 namespace fs = std::filesystem;
 
-void loadFile(const fs::path& filePath, std::string& contents)
+struct Counter
 {
-	if (!fs::is_regular_file(filePath))
-	{
-		std::cout << "path '" << filePath << "' is not a file" << std::endl;
+	size_t Min = (size_t)-1;
+	size_t Max = 0;
 
-		throw "not a file";
+	Counter& operator=(size_t value)
+	{
+		Min = std::min(Min, value);
+		Max = std::max(Max, value);
+
+		return *this;
 	}
 
-	std::ifstream file(filePath);
-
-	std::streampos start = file.tellg();
-	file.seekg(0, std::ios::end);
-	std::streampos length = file.tellg() - start;
-	file.seekg(start);
-	contents.resize(length);
-	file.read(&contents[0], length);
-}
-
-void computeMD5(const std::string& contents, std::string& hash)
-{
-	EVP_MD_CTX* mdContext = EVP_MD_CTX_new();
-	unsigned int md5Length = EVP_MD_size(EVP_md5());
-
-	hash.resize(md5Length);
-
-	EVP_DigestInit_ex(mdContext, EVP_md5(), NULL);
-	EVP_DigestUpdate(mdContext, reinterpret_cast<const unsigned char*>(contents.data()), (unsigned int)contents.size());
-	EVP_DigestFinal_ex(mdContext, reinterpret_cast<unsigned char*>(hash.data()), &md5Length);
-	EVP_MD_CTX_free(mdContext);
-}
-
-void convertHashToHex(std::string& hash)
-{
-	size_t size = hash.size();
-
-	hash.resize(size * 2);
-
-	for (size_t i = size; i > 0; --i)
+	void print(const std::string& name)
 	{
-		unsigned char high = (unsigned char)hash[i - 1] >> 4;
-		unsigned char low = (unsigned char)hash[i - 1] & 0xF;
-
-		char highDigit = high < 10 ? '0' + high : 'a' + high - 10;
-		char lowDigit = low < 10 ? '0' + low : 'a' + low - 10;
-
-		hash[2 * (i - 1)] = highDigit;
-		hash[2 * (i - 1) + 1] = lowDigit;
+		std::cout << name << " min: " << Min << std::endl;
+		std::cout << name << " max: " << Max << std::endl;
 	}
-}
-
-void computeMD5Hex(const std::string& contents, std::string& hash)
-{
-	computeMD5(contents, hash);
-	convertHashToHex(hash);
-}
-
-int comparePaths(const fs::path& left, const fs::path& right)
-{
-	const std::wstring& leftString = left.native();
-	const std::wstring& rightString = right.native();
-
-	const wchar_t* leftStr = leftString.c_str();
-	const wchar_t* rightStr = rightString.c_str();
-
-	size_t length = std::min(leftString.size(), rightString.size());
-
-	for (size_t i = 0; i < length; ++i)
-	{
-		if (leftStr[i] < rightStr[i])
-		{
-			// (left < right) == false
-			return -1;
-		}
-
-		if (leftStr[i] > rightStr[i])
-		{
-			// (left < right) == false
-			return 1;
-		}
-	}
-
-	size_t leftLength = leftString.size();
-	size_t rightLength = rightString.size();
-
-	if (leftLength < rightLength)
-	{
-		return -1;
-	}
-
-	if (leftLength > rightLength)
-	{
-		return 1;
-	}
-
-	return 0;
-}
-
-bool pathLessThan(const fs::path& left, const fs::path& right)
-{
-	return comparePaths(left, right) < 0;
-}
-
-struct ClientVisitor
-{
-	Archive::ArchiveReader Reader;
-	fs::path ClientPath;
-
-	bool IsFile = false;
-	bool IsEncrypted = false;
-	std::string Hash;
-	std::string Contents;
-
-	fs::path LastEntry;
-	Archive::ArchiveReader::Path LastEntryArchive;
-	fs::path LastEntryDirectory;
-	bool LastEntryWasFile = false;
-	size_t LastDepth = 1;
-
-	struct ClientSubPath
-	{
-		size_t Index = 0;
-		fs::path Path;
-		std::vector<fs::path> SubPaths;
-	};
-
-	std::vector<ClientSubPath> ClientPathStack;
-
-	struct ArchiveSubPath
-	{
-		size_t Index = 0;
-		Archive::ArchiveReader::Path Path;
-		std::vector<Archive::ArchiveReader::Path> SubPaths;
-	};
-
-	fs::path ArchivePath;
-
-	std::vector<ArchiveSubPath> ArchivePathStack;
-
-	void StepArchive(bool quiet = false);
-	void EnterArchive(const fs::path& m2dPath, bool quiet = false);
-	void StepDirectory(bool quiet = false);
-	void EnterClient(const fs::path& clientPath, bool quiet = false);
-	void Step(bool quiet = false);
-	void DumpClient(const fs::path& clientPath);
-	void LoadFile();
-	void LoadFileRaw();
-	size_t GetDepth() const;
 };
 
-fs::path sanitize(const fs::path& path)
+struct AttributeData
 {
-	std::wstring output = path;
+	std::vector<std::unordered_set<std::string>> AttributeSets;
+	std::unordered_set<std::string> ChildNodes;
+	std::unordered_set<std::string> ChildConditions;
+	bool CanHaveAiPreset = false;
+	bool IsTopLevel = false;
+	std::string Name;
+};
 
-	std::replace(output.begin(), output.end(), '\\', '/');
-
-	return output;
-}
-
-void ClientVisitor::LoadFile()
+struct Parser
 {
-	Hash.clear();
+	bool Verbose = false;
+	Archive::ArchiveReader::Path SubPath;
+	XmlLite::XmlReader Document;
 
-	IsFile = LastEntryWasFile;
-	IsEncrypted = false;
+	std::unordered_set<std::string> rootChildren;
+	std::unordered_set<std::string> battleChildren;
+	std::unordered_map<std::string, AttributeData> battle_nodeData;
+	std::unordered_set<std::string> reservedChildren;
+	std::unordered_map<std::string, AttributeData> reserved_conditionData;
+	std::unordered_set<std::string> battleEndChildren;
+	std::unordered_map<std::string, AttributeData> battleEnd_nodeData;
+	std::unordered_set<std::string> aiPresetsChildren;
+	std::unordered_map<std::string, AttributeData> aiPresets_aiPresetData;
+	std::unordered_set<std::string> aiPresets_aiPresetNames;
 
-	if (!IsFile)
-	{
-		return;
-	}
+	std::unordered_map<std::string, AttributeData> nodeTypes;
+	std::unordered_map<std::string, AttributeData> conditionTypes;
+};
 
-	if (LastEntryDirectory == "")
-	{
-		LastEntryArchive.Read(Contents);
-	}
-	else
-	{
-		loadFile(LastEntryDirectory, Contents);
-	}
-}
-
-void ClientVisitor::LoadFileRaw()
+void printPath(Parser& parser)
 {
-	IsFile = LastEntryWasFile;
-	IsEncrypted = false;
-
-	if (!IsFile)
+	if (parser.Verbose)
 	{
-		return;
-	}
-
-	if (LastEntryDirectory == "")
-	{
-		IsEncrypted = true;
-
-		LastEntryArchive.ReadRaw(Contents);
-	}
-	else
-	{
-		loadFile(LastEntryDirectory, Contents);
+		std::cout << parser.Document.GetFullNodePath() << std::endl;
+		int i = 0;
+		++i;
 	}
 }
 
-void ClientVisitor::StepArchive(bool quiet)
+void parseChild(Parser& parser, const XmlLite::XmlNode* childNode, AttributeData& parentData, const char* ancestorType, bool& unknownValueFound)
 {
-	ArchiveSubPath& stackEntry = ArchivePathStack.back();
+	printPath(parser);
 
-	IsFile = stackEntry.Path.IsFile();
-	IsEncrypted = false;
-	LastEntry = "";
-	LastEntryArchive = {};
-	LastEntryDirectory = "";
-	LastEntryWasFile = false;
-	LastDepth = ClientPathStack.size() + ArchivePathStack.size();
+	std::string childType = std::string(childNode->Name);
+	std::string name;
+	std::string childName;
+	std::vector<std::string> attributes;
+	bool foundName = false;
+	
+	parentData.CanHaveAiPreset |= childType == "aiPreset";
 
-	if (IsFile)
+	if (childType != "aiPreset" && childType != "node" && childType != "condition")
 	{
-		LastEntry = sanitize("Data" / stackEntry.Path.GetPath());
-		LastEntryArchive = stackEntry.Path;
-		LastEntryWasFile = true;
-
-		if (!quiet)
+		std::cout << "node type '" << childType << "' found in '" << parentData.Name;
+		
+		if (!parentData.IsTopLevel)
 		{
-			stackEntry.Path.Read(Contents);
-
-			computeMD5Hex(Contents, Hash);
-
-			std::cout << LastEntry << " " << Hash << std::endl;
+			std::cout << "' under npcAi." << ancestorType;
 		}
 
-		ArchivePathStack.pop_back();
+		std::cout << std::endl;
+
+		unknownValueFound = true;
 
 		return;
 	}
 
-	if (stackEntry.SubPaths.size() == 0)
+	for (const XmlLite::XmlAttribute* attribute = parser.Document.GetNextAttribute(); attribute; attribute = parser.Document.GetNextAttribute())
 	{
-		LastEntry = sanitize("Data" / stackEntry.Path.GetPath());
-
-		if (!quiet)
+		if (strncmp(attribute->Name.data(), "name", attribute->Name.size()) != 0)
 		{
-			std::cout << LastEntry << std::endl;
-		}
-
-		size_t childDirectoryCount = stackEntry.Path.ChildDirectories();
-
-		for (size_t i = 0; i < childDirectoryCount; ++i)
-		{
-			Archive::ArchiveReader::Path child = stackEntry.Path.ChildDirectory(i);
-
-			stackEntry.SubPaths.push_back(child);
-		}
-
-		size_t childFileCount = stackEntry.Path.ChildFiles();
-
-		for (size_t i = 0; i < childFileCount; ++i)
-		{
-			Archive::ArchiveReader::Path child = stackEntry.Path.ChildFile(i);
-
-			stackEntry.SubPaths.push_back(child);
-		}
-
-		if (stackEntry.SubPaths.size() == 0)
-		{
-			ArchivePathStack.pop_back();
-
-			return;
-		}
-
-		const auto sortComparator = [](const Archive::ArchiveReader::Path& left, const Archive::ArchiveReader::Path& right)
-		{
-			return pathLessThan(left.GetPath(), right.GetPath());
-		};
-
-		std::sort(stackEntry.SubPaths.begin(), stackEntry.SubPaths.begin() + childDirectoryCount, sortComparator);
-		std::sort(stackEntry.SubPaths.begin() + childDirectoryCount, stackEntry.SubPaths.end(), sortComparator);
-	}
-
-	if (stackEntry.Index >= stackEntry.SubPaths.size())
-	{
-		ArchivePathStack.pop_back();
-
-		return;
-	}
-
-	++stackEntry.Index;
-
-	ArchivePathStack.push_back({ 0, stackEntry.SubPaths[stackEntry.Index - 1] });
-}
-
-void ClientVisitor::EnterArchive(const fs::path& m2dPath, bool quiet)
-{
-	ArchivePath = m2dPath;
-	ArchivePath.replace_extension("");
-
-	ArchivePathStack = { { 0, Reader.GetPath(fs::relative(ArchivePath, ClientPath / "Data")) } };
-
-	StepArchive(quiet);
-}
-
-void ClientVisitor::StepDirectory(bool quiet)
-{
-	ClientSubPath& stackEntry = ClientPathStack.back();
-
-	IsFile = fs::is_regular_file(stackEntry.Path);
-	IsEncrypted = false;
-	LastEntry = "";
-	LastEntryArchive = {};
-	LastEntryDirectory = "";
-	LastEntryWasFile = false;
-	LastDepth = ClientPathStack.size() + ArchivePathStack.size();
-
-	if (IsFile)
-	{
-		LastEntry = sanitize(fs::relative(stackEntry.Path, ClientPath));
-		LastEntryDirectory = stackEntry.Path;
-		LastEntryWasFile = true;
-
-		if (!quiet)
-		{
-			loadFile(stackEntry.Path, Contents);
-
-			computeMD5Hex(Contents, Hash);
-
-			std::cout << LastEntry << " " << Hash << std::endl;
-		}
-
-		if (stackEntry.Path.extension() == fs::path(".m2d"))
-		{
-			fs::path headerPath = stackEntry.Path.replace_extension("m2h");
-
-			if (fs::is_regular_file(headerPath))
+			if (!foundName)
 			{
-				EnterArchive(headerPath, quiet);
+				std::cout << "node '" << childType << "' has attribute '" << attribute->Name << "' before 'name' under " << ancestorType << std::endl;
+				unknownValueFound = true;
+
+				continue;
 			}
-		}
 
-		ClientPathStack.pop_back();
+			if (childType == "aiPreset")
+			{
+				std::cout << "node '" << childType << "' has attribute '" << attribute->Name << "' under " << ancestorType << std::endl;
+				unknownValueFound = true;
 
-		return;
-	}
+				continue;
+			}
 
-	if (stackEntry.SubPaths.size() == 0)
-	{
-		LastEntry = sanitize(fs::relative(stackEntry.Path, ClientPath));
-
-		if (!quiet)
-		{
-			std::cout << LastEntry << std::endl;
-		}
-
-		for (auto child = fs::directory_iterator(stackEntry.Path); child != fs::directory_iterator(); ++child)
-		{
-			stackEntry.SubPaths.push_back(child->path());
-		}
-
-		if (stackEntry.SubPaths.size() == 0)
-		{
-			ClientPathStack.pop_back();
-
-			return;
-		}
-
-		std::sort(stackEntry.SubPaths.begin(), stackEntry.SubPaths.end(), pathLessThan);
-	}
-
-	if (stackEntry.Index >= stackEntry.SubPaths.size())
-	{
-		ClientPathStack.pop_back();
-
-		return;
-	}
-
-	++stackEntry.Index;
-
-	ClientPathStack.push_back({ 0, stackEntry.SubPaths[stackEntry.Index - 1] });
-}
-
-void ClientVisitor::EnterClient(const fs::path& clientPath, bool quiet)
-{
-	ClientPath = clientPath;
-
-	Reader.Quiet = true;
-	Reader.Load(clientPath / "Data", true);
-
-	ClientPathStack = { { 0, clientPath } };
-
-	std::string extension;
-
-	if (clientPath.has_extension() && fs::is_regular_file(clientPath))
-	{
-		extension = clientPath.extension().string();
-	}
-
-	if (extension == ".m2d" || extension == ".m2h")
-	{
-		EnterArchive(clientPath, quiet);
-
-		return;
-	}
-
-	StepDirectory(quiet);
-}
-
-void ClientVisitor::Step(bool quiet)
-{
-	IsFile = false;
-	IsEncrypted = false;
-
-	Contents.clear();
-
-	if (ArchivePathStack.size())
-	{
-		StepArchive(quiet);
-	}
-	else if (ClientPathStack.size())
-	{
-		StepDirectory(quiet);
-	}
-	else
-	{
-		LastEntry = "";
-		LastEntryArchive = {};
-		LastEntryDirectory = "";
-		LastEntryWasFile = false;
-		LastDepth = 0;
-	}
-}
-
-void ClientVisitor::DumpClient(const fs::path& clientPath)
-{
-	EnterClient(clientPath);
-
-	while (GetDepth())
-	{
-		Step();
-	}
-}
-
-size_t ClientVisitor::GetDepth() const
-{
-	return ArchivePathStack.size() + ClientPathStack.size();
-}
-
-void dumpClientData(const fs::path& clientPath)
-{
-	ClientVisitor visitor;
-
-	visitor.DumpClient(clientPath);
-}
-
-bool diffClientData(const fs::path& clientPath1, const fs::path& clientPath2)
-{
-	ClientVisitor visitor1;
-	ClientVisitor visitor2;
-
-	visitor1.EnterClient(clientPath1, true);
-	visitor2.EnterClient(clientPath2, true);
-
-	std::vector<std::string> removals;
-	std::vector<std::string> adds;
-
-	bool foundDiff = false;
-	bool addedDiff = false;
-
-	while (visitor1.LastDepth || visitor2.LastDepth)
-	{
-		if (visitor1.LastEntry == "" && visitor1.LastDepth)
-		{
-			visitor1.Step(true);
+			attributes.push_back(std::string(attribute->Name));
 
 			continue;
 		}
 
-		if (visitor2.LastEntry == "" && visitor2.LastDepth)
+		name = std::string(attribute->Value);
+		childName = childType + "[" + name + "]";
+		foundName = true;
+
+		if (childType == "node" || childType == "condition")
 		{
-			visitor2.Step(true);
+			auto& children = childType == "node" ? parentData.ChildNodes : parentData.ChildConditions;
 
-			continue;
-		}
-
-		if (!foundDiff && addedDiff)
-		{
-			std::cout << "index 0000000..0000000 000000\n";
-			std::cout << "--- " << clientPath1.string() << "/diff.txt\n";
-			std::cout << "+++ " << clientPath2.string() << "/diff.txt\n";
-		}
-
-		foundDiff |= addedDiff;
-
-		if (!addedDiff && (removals.size() || adds.size()))
-		{
-			std::cout << "@@ -" << removals.size() << " +" << adds.size() << " @@\n";
-
-			for (const std::string& removal : removals)
+			if (!children.contains(name))
 			{
-				std::cout << "-" << removal << "\n";
-			}
+				std::cout << parentData.Name << " has child '" << childName << "'";
 
-			for (const std::string& add : adds)
-			{
-				std::cout << "+" << add << "\n";
-			}
-
-			removals.clear();
-			adds.clear();
-		}
-
-		addedDiff = false;
-
-		size_t depth1 = visitor1.LastDepth;
-		size_t depth2 = visitor2.LastDepth;
-
-		fs::path path1 = visitor1.LastEntry;
-		fs::path path2 = visitor2.LastEntry;
-
-		if (depth1 == depth2)
-		{
-			int comparison = comparePaths(path1, path2);
-
-			if (comparison == 0)
-			{
-				visitor1.LoadFileRaw();
-				visitor2.LoadFileRaw();
-
-				if (visitor1.IsFile == visitor2.IsFile)
+				if (!parentData.IsTopLevel)
 				{
-					if (visitor1.Contents != visitor2.Contents)
+					std::cout << " in " << "npcAi." << ancestorType;
+				}
+
+				std::cout << std::endl;
+
+				children.insert(name);
+
+				unknownValueFound = true;
+			}
+		}
+	}
+
+	if (attributes.size() && (childType == "node" || childType == "condition"))
+	{
+		AttributeData& data = childType == "node" ? parser.nodeTypes[name] : parser.conditionTypes[name];
+
+		bool foundMatching = false;
+		auto& attributeSets = data.AttributeSets;
+
+		for (const auto& set : attributeSets)
+		{
+			if (set.size() != attributes.size()) continue;
+
+			foundMatching = true;
+
+			for (const auto& attribute : attributes)
+			{
+				if (!set.contains(attribute))
+				{
+					foundMatching = false;
+
+					break;
+				}
+			}
+
+			if (foundMatching)
+			{
+				break;
+			}
+		}
+
+		if (!foundMatching)
+		{
+			attributeSets.push_back({});
+
+			for (const auto& attribute : attributes)
+			{
+				if (!attributeSets.back().contains(attribute))
+				{
+					attributeSets.back().insert(attribute);
+				}
+			}
+		}
+	}
+
+	XmlLite::XmlReader::StackMarker childMarker = parser.Document.GetStackMarker();
+
+	for (const XmlLite::XmlNode* subNode = parser.Document.GetFirstChild(); subNode; subNode = parser.Document.GetNextSibling(childMarker))
+	{
+		if (childType == "aiPreset")
+		{
+			std::cout << "node '" << childType << "' has child '" << subNode->Name << "' under " << ancestorType << std::endl;
+			unknownValueFound = true;
+
+			continue;
+		}
+
+		AttributeData& data = childType == "node" ? parser.nodeTypes[name] : parser.conditionTypes[name];
+
+		data.Name = childName;
+
+		parseChild(parser, subNode, data, ancestorType, unknownValueFound);
+	}
+}
+
+/*
+<npcAi>
+	<reserved?>
+		<condition[]? name="hpLess"> </condition>
+
+		<condition name="hpLess" value=>
+	</reserved>
+	<battle?>
+		<node[] name="jump,select,standby,skill,RemoveMe,conditions"> </node>
+
+		<node name="jump" pos= speed= heightMultiplier= />
+		<node name="select" prob= | useNpcProb=>
+		<node name="standby" limit= animation=? cooltime=? (facePos=? | faceTarget=?) initialCooltime=? isKeepBattle=?>
+		<node name="skill" idx= (facePos=? | faceTarget=?) initialCooltime=? isKeepBattle=?>
+		<node name="RemoveMe" />
+		<node name="conditions">
+	</battle>
+	<battleEnd?>
+		<node[] name="HideVibrateAll,TriggerSetUserValue,SetMasterValue,summon,select,say,sidePopup,SetValueRangeTarget,TriggerModifyUserValue,runaway,CreateRandomRoom,CreateInteractObject,RemoveMe,conditions"?> </node>
+
+		<node name="HideVibrateAll" isKeepBattle= >
+		<node name="TriggerSetUserValue" key= value= triggerID= isKeepBattle=? >
+		<node name="SetMasterValue" key= value= isModify=? >
+		<node name="summon" npcId= npcCount= npcCountMax= delayTick=? lifeTime=? group= summonPosOffset=? summonRot=? master=? isKeepBattle=? >
+		<node name="select" prob= >
+		<node name="buff" type= id= />
+		<node name="say" message= durationTick= delayTick=? isKeepBattle=? >
+		<node name="sidePopup" duration= type= illust= script= >
+		<node name="SetValueRangeTarget" key= value= radius= height=? isModify=? >
+		<node name="TriggerModifyUserValue" key= value= triggerID= />
+		<node name="runaway" till= limit= />
+		<node name="CreateRandomRoom" randomRoomID= portalDuration= />
+		<node name="CreateInteractObject" normal= interactID= lifeTime= kfmName= reactable= />
+		<node name="RemoveMe" />
+		<node name="conditions" >
+			<condition />
+		</node>
+	</battleEnd>
+	<aiPresets?>
+		<aiPreset[] name="unique values">
+	</aiPresets>
+</npcAi>
+
+<node>
+	<node name="trace,skill,teleport,standby,setData,target,say,SetValue,conditions,jump,select,move,summon,HideVibrateAll,TriggerSetUserValue,ride,SetSlaveValue,SetMasterValue,runaway,MinimumHp,buff,TargetEffect,ShowVibrate,sidePopup,SetValueRangeTarget,announce,ModifyRoomTime,TriggerModifyUserValue,Buff,RemoveSlaves,CreateRandomRoom,CreateInteractObject" />
+
+	<node name="trace" limit= skillIdx=? animation=? speed=? till=? initialCooltime=? cooltime=? isKeepBattle=? >
+	<node name="skill" idx= level=? prob=? sequence=? facePos=? [zp]?faceTarget=? faceTargetTick=? initialCooltime=? c?ooltime=? limit=? rob=? isKeepBattle=? >
+	<node name="teleport" pos= prob=? facePos=? faceTarget=? initialCooltime=? cooltime=? isKeepBattle=? >
+	<node name="standby" limit= pro[pb]=? animation=? facePos=? faceTarget=? initialCooltime=? cooltime=? isKeepBattle=? >
+	<node name="setData" key= value= cooltime=? >
+	<node name="target" type= prob=? rank=? additionalId=? additionalLevel=? from=? to=? center=? target=? noChangeWhenNoTarget=? initialCooltime=? cooltime=? rob=? isKeepBattle=? >
+	<node name="say" message= prob=? durationTick= delayTick=? initialCooltime=? cooltime=? isKeepBattle=? >
+	<node name="SetValue" key= value= initialCooltime=? cooltime=? isModify=? isKeepBattle=? >
+	<node name="conditions" initialCooltime=? cooltime=? isKeepBattle=? >
+		<condition />
+	</node>
+	<node name="jump" pos= speed= heightMultiplier= type=? cooltime=? isKeepBattle=? >
+	<node name="select" prob= | useNpcProb= >
+	<node name="move" destination= prob=? animation=? limit=? speed=? faceTarget=? initialCooltime=? cooltime=? isKeepBattle=? >
+	<node name="summon" npcId= npcCountMax= npcCount= delayTick=? lifeTime=? summonRot=? summonPos=? summonPosOffset=? summonTargetOffset=? summonRadius=? group=? master=? option=? cooltime=? isKeepBattle=? >
+	<node name="HideVibrateAll" isKeepBattle= >
+	<node name="TriggerSetUserValue" triggerID= key= value= cooltime=? isKeepBattle=? >
+	<node name="ride" type= isRideOff= rideNpcIDs=? />
+	<node name="SetSlaveValue" key= value= isRandom=? cooltime=? isModify=? isKeepBattle=? >
+	<node name="SetMasterValue" key= value= isRandom=? cooltime=? isModify=? isKeepBattle=? >
+	<node name="runaway" animation=? skillIdx=? till=? limit=? facePos=? initialCooltime=? cooltime=? >
+	<node name="MinimumHp" hpPercent= />
+	<node name="buff" id= type= level=? prob=? initialCooltime=? cooltime=? isTarget=? isKeepBattle=? >
+	<node name="TargetEffect" effectName= >
+	<node name="ShowVibrate" groupID= >
+	<node name="sidePopup" type= illust= duration= script=? sound=? voice=? />
+	<node name="SetValueRangeTarget" key= value= height=? radius=? cooltime=? isModify=? isKeepBattle=? >
+	<node name="announce" message= durationTick= cooltime=? >
+	<node name="ModifyRoomTime" timeTick= isShowEffect=? >
+	<node name="TriggerModifyUserValue" triggerID= key= value= >
+	<node name="Buff" id= level= type= />
+	<node name="RemoveSlaves" isKeepBattle= >
+	<node name="CreateRandomRoom" randomRoomID= portalDuration= />
+	<node name="CreateInteractObject" normal= interactID= lifeTime= kfmName= reactable= />
+	<node name="RemoveMe" >
+	<node name="Suicide" >
+</node>
+
+<condition>
+	<condition name="distanceOver,combatTime,distanceLess,skillRange,extraData,SlaveCount,hpOver,state,additional,feature,hpLess,DistanceLess,slaveCount,true," />
+
+	<condition name="distanceOver" value= >
+	<condition name="combatTime" battleTimeBegin= battleTimeLoop= battleTimeEnd=? >
+	<condition name="distanceLess" value= >
+	<condition name="skillRange" skillIdx= skillLev=? isKeepBattle=? >
+	<condition name="extraData" key= value= op=? isKeepBattle=? >
+	<condition name="SlaveCount" count= useSummonGroup=? summonGroup=? >
+	<condition name="hpOver" value= >
+	<condition name="state" targetState= >
+	<condition name="additional" id= level=? overlapCount=? isTarget=? >
+	<condition name="feature" feature= >
+	<condition name="hpLess" value= >
+	<condition name="DistanceLess" value= >
+	<condition name="slaveCount" slaveCount= slaveCountOp= >
+	<condition name="true" >
+</condition>
+*/
+/*
+npcAi.battle children: node,
+npcAi.reserved children: condition,
+npcAi.battleEnd children: node,
+npcAi.aiPresets children: aiPreset,
+
+npcAi.battle.node.name values with attributes: jump, select, standby, skill,
+npcAi.battle.node.name="jump" attribute sets:
+		pos, speed, heightMultiplier,
+npcAi.battle.node.name="select" attribute sets:
+		prob,
+		useNpcProb,
+npcAi.battle.node.name="standby" attribute sets:
+		limit, faceTarget, isKeepBattle,
+		limit, faceTarget,
+		limit, cooltime, faceTarget, isKeepBattle,
+		limit, faceTarget, cooltime,
+		limit, isKeepBattle,
+		limit, cooltime, faceTarget, initialCooltime,
+		limit, faceTarget, animation, isKeepBattle,
+		limit, faceTarget, animation,
+		limit, facePos,
+		limit, facePos, animation,
+		limit, facePos, isKeepBattle,
+		limit, faceTarget, initialCooltime,
+		limit,
+npcAi.battle.node.name="skill" attribute sets:
+		idx,
+		facePos, idx,
+		isKeepBattle, idx,
+		initialCooltime, facePos, idx,
+		faceTarget, idx,
+		facePos, cooltime, isKeepBattle, idx,
+		facePos, isKeepBattle, idx,
+npcAi.battle.node.name values with no attributes: RemoveMe, conditions,
+npcAi.battle.node[select] can have child 'aiPreset' nodes
+npcAi.battle.node[select] child 'node' types: trace, skill, standby, conditions, SetValue, target, buff, select, move, runaway, SetSlaveValue,
+npcAi.battle.node[conditions] child 'condition' types: extraData, true, skillRange, additional, hpOver, combatTime, hpLess, state,
+npcAi.battle.node[standby] child 'node' types: say, standby, teleport, skill, select, jump, TriggerSetUserValue, RemoveMe, buff, summon, move, target, SetValueRangeTarget, trace,
+npcAi.battle.node[skill] child 'node' types: skill, standby, sidePopup, target, jump,
+
+npcAi.reserved.condition.name values with attributes: hpLess,
+npcAi.reserved.condition.name="hpLess" attribute sets:
+		value,
+npcAi.reserved.condition[hpLess] can have child 'aiPreset' nodes
+npcAi.reserved.condition[hpLess] child 'node' types: SetMasterValue, skill, teleport, standby, say, SetValue, conditions, RemoveMe, TriggerSetUserValue, MinimumHp, buff, target, summon, SetSlaveValue, TriggerModifyUserValue, move, jump, select, trace,
+
+npcAi.battleEnd.node.name values with attributes: TriggerSetUserValue, HideVibrateAll, buff, SetMasterValue, summon, select, sidePopup, SetValueRangeTarget, say, TriggerModifyUserValue, runaway, CreateRandomRoom, CreateInteractObject,
+npcAi.battleEnd.node.name="TriggerSetUserValue" attribute sets:
+		triggerID, key, value,
+		value, isKeepBattle, triggerID, key,
+npcAi.battleEnd.node.name="HideVibrateAll" attribute sets:
+		isKeepBattle,
+npcAi.battleEnd.node.name="buff" attribute sets:
+		type, id,
+npcAi.battleEnd.node.name="SetMasterValue" attribute sets:
+		key, value,
+		key, value, isModify,
+npcAi.battleEnd.node.name="summon" attribute sets:
+		npcId, npcCountMax, npcCount, group, summonRot, summonPosOffset, master,
+		npcId, delayTick, npcCount, npcCountMax, group, master, summonPosOffset, summonRot,
+		npcId, npcCountMax, npcCount, group, summonRot, master, lifeTime, summonPos,
+		delayTick, npcId, npcCountMax, npcCount, group, summonRot, summonPosOffset, master, isKeepBattle,
+		npcId, npcCountMax, npcCount, group, summonRot, summonPosOffset,
+npcAi.battleEnd.node.name="select" attribute sets:
+		prob,
+npcAi.battleEnd.node.name="sidePopup" attribute sets:
+		duration, type, illust, script,
+npcAi.battleEnd.node.name="SetValueRangeTarget" attribute sets:
+		key, value, radius, isModify,
+		key, height, value, radius,
+		key, value, height, radius, isModify,
+		key, value, radius,
+npcAi.battleEnd.node.name="say" attribute sets:
+		durationTick, message, isKeepBattle,
+		message, durationTick,
+		durationTick, message, delayTick,
+npcAi.battleEnd.node.name="TriggerModifyUserValue" attribute sets:
+		triggerID, key, value,
+npcAi.battleEnd.node.name="runaway" attribute sets:
+		till, limit,
+npcAi.battleEnd.node.name="CreateRandomRoom" attribute sets:
+		randomRoomID, portalDuration,
+npcAi.battleEnd.node.name="CreateInteractObject" attribute sets:
+		normal, interactID, lifeTime, kfmName, reactable,
+npcAi.battleEnd.node.name values with no attributes: RemoveMe, conditions,
+npcAi.battleEnd.node[TriggerSetUserValue] child 'node' types: SetValueRangeTarget, conditions, TriggerModifyUserValue, TriggerSetUserValue,
+npcAi.battleEnd.node[HideVibrateAll] child 'node' types: SetValueRangeTarget, say,
+npcAi.battleEnd.node[conditions] child 'condition' types: extraData, true,
+npcAi.battleEnd.node[SetMasterValue] child 'node' types: SetMasterValue, SetValueRangeTarget,
+npcAi.battleEnd.node[summon] child 'node' types: conditions, TriggerSetUserValue, SetValueRangeTarget,
+npcAi.battleEnd.node[select] child 'node' types: summon, setData, say, TriggerSetUserValue,
+npcAi.battleEnd.node[SetValueRangeTarget] child 'node' types: SetValueRangeTarget, conditions,
+npcAi.battleEnd.node[say] child 'node' types: TriggerSetUserValue,
+npcAi.battleEnd.node[TriggerModifyUserValue] child 'node' types: TriggerSetUserValue,
+
+npcAi.aiPresets.aiPreset.name values with no attributes: misc...,
+npcAi.aiPresets.aiPreset[misc...] can have child 'aiPreset' nodes
+npcAi.aiPresets.aiPreset[misc...] child 'node' types: MinimumHp, TriggerSetUserValue, conditions, standby, teleport, skill, select, target, Suicide, move, SetValue, buff,
+
+node.name values with attributes: trace, skill, teleport, standby, setData, target, say, SetValue, conditions, jump, select, move, summon, TriggerSetUserValue, ride, SetSlaveValue, SetMasterValue, runaway, MinimumHp, buff, TargetEffect, ShowVibrate, sidePopup, SetValueRangeTarget, announce, ModifyRoomTime, TriggerModifyUserValue, Buff, RemoveSlaves, CreateInteractObject,
+node.name="trace" attribute sets:
+		limit, skillIdx,
+		limit, animation, skillIdx,
+		till, limit,
+		limit, cooltime, skillIdx,
+		till, limit, cooltime, initialCooltime,
+		limit, animation, isKeepBattle, skillIdx,
+		till, limit, cooltime,
+		limit, till, animation,
+		limit, till, speed,
+		limit, cooltime, initialCooltime, skillIdx,
+		limit, isKeepBattle, skillIdx,
+		limit, initialCooltime, skillIdx,
+		skillIdx,
+		cooltime, skillIdx,
+		limit, cooltime, animation, skillIdx,
+		limit, animation, initialCooltime, skillIdx,
+node.name="skill" attribute sets:
+		idx,
+		faceTarget, idx,
+		c?ooltime, idx,
+		cooltime, initialCooltime, idx,
+		faceTarget, cooltime, idx,
+		faceTarget, isKeepBattle, idx,
+		cooltime, faceTarget, isKeepBattle, idx,
+		isKeepBattle, idx,
+		c?ooltime, isKeepBattle, idx,
+		facePos, cooltime, isKeepBattle, idx,
+		facePos, isKeepBattle, idx,
+		facePos, idx,
+		idx, level,
+		cooltime, initialCooltime, facePos, isKeepBattle, idx,
+		facePos, prob, isKeepBattle, idx,
+		facePos, cooltime, idx,
+		prob, idx,
+		prob, facePos, idx,
+		faceTarget, prob, idx,
+		faceTarget, cooltime, initialCooltime, idx,
+		faceTarget, initialCooltime, idx,
+		faceTarget, cooltime, initialCooltime, isKeepBattle, idx,
+		faceTarget, facePos, idx,
+		cooltime, initialCooltime, isKeepBattle, idx,
+		idx, level, faceTarget,
+		idx, level, faceTarget, cooltime,
+		idx, initialCooltime,
+		idx, level, facePos,
+		idx, faceTarget, level, faceTargetTick,
+		pfaceTarget, rob, idx,
+		faceTarget, rob, idx,
+		prob, cooltime, isKeepBattle, idx,
+		sequnce, idx,
+		facePos, cooltime, initialCooltime, idx,
+		facePos, initialCooltime, idx,
+		limit, idx,
+node.name="teleport" attribute sets:
+		pos,
+		pos, facePos, faceTarget,
+		pos, prob,
+		pos, cooltime, isKeepBattle,
+		pos, cooltime,
+		pos, isKeepBattle,
+		pos, cooltime, initialCooltime,
+node.name="standby" attribute sets:
+		limit, faceTarget, cooltime, isKeepBattle,
+		limit, cooltime, faceTarget,
+		limit, faceTarget,
+		limit, animation, faceTarget, isKeepBattle,
+		limit, faceTarget, animation,
+		limit, faceTarget, isKeepBattle,
+		limit, facePos, faceTarget,
+		limit, facePos, animation, faceTarget,
+		limit, facePos,
+		limit, faceTarget, cooltime, initialCooltime,
+		limit, faceTarget, cooltime, initialCooltime, isKeepBattle,
+		limit,
+		limit, initialCooltime,
+		limit, faceTarget, initialCooltime,
+		limit, faceTarget, prop,
+		limit, faceTarget, prob,
+		limit, facePos, isKeepBattle,
+		limit, facePos, animation,
+		limit, facePos, animation, isKeepBattle,
+		limit, facePos, cooltime, isKeepBattle,
+		limit, faceTarget, animation, cooltime,
+		limit, faceTarget, animation, cooltime, initialCooltime, isKeepBattle,
+		limit, faceTarget, animation, cooltime, isKeepBattle,
+		limit, isKeepBattle,
+		limit, facePos, faceTarget, isKeepBattle,
+		limit, facePos, cooltime, initialCooltime, isKeepBattle,
+		limit, animation,
+		limit, animation, cooltime, initialCooltime,
+		limit, zfaceTarget,
+		limit, cooltime,
+		limit, cooltime, isKeepBattle,
+		limit, facePos, cooltime,
+		limit, facePos, cooltime, animation, initialCooltime,
+		limit, facePos, cooltime, animation,
+		limit, cooltime, animation, faceTarget, initialCooltime,
+		limit, cooltime, animation, isKeepBattle,
+		limit, animation, isKeepBattle,
+		limit, cooltime, initialCooltime, isKeepBattle,
+		limit, cooltime, faceTarget, facePos, initialCooltime,
+		limit, cooltime, faceTarget, facePos,
+		limit, cooltime, initialCooltime,
+node.name="setData" attribute sets:
+		key, value,
+		key, value, cooltime,
+node.name="target" attribute sets:
+		type, from, to,
+		cooltime, from, type, to,
+		type, center, isKeepBattle,
+		type, center,
+		type, cooltime, center,
+		type, additionalId, additionalLevel, target,
+		cooltime, type, additionalId, additionalLevel, target,
+		from, type, prob, to,
+		from, type, to, isKeepBattle,
+		type, additionalId, additionalLevel, isKeepBattle, target,
+		type, additionalId, additionalLevel, isKeepBattle, target, rob,
+		type,
+		type, from, cooltime, to, initialCooltime,
+		type, rank,
+		cooltime, from, type, to, isKeepBattle,
+		cooltime, type, isKeepBattle,
+		cooltime, type,
+		type, additionalId, additionalLevel, noChangeWhenNoTarget, target,
+		from, type, target, to,
+node.name="say" attribute sets:
+		message, durationTick, delayTick,
+		durationTick, message, cooltime,
+		message, durationTick,
+		durationTick, message, isKeepBattle,
+		message, durationTick, delayTick, isKeepBattle,
+		message, durationTick, cooltime, initialCooltime,
+		durationTick, message, cooltime, isKeepBattle,
+		durationTick, message, cooltime, delayTick,
+		durationTick, message, prob,
+node.name="SetValue" attribute sets:
+		key, value,
+		key, value, isModify,
+		isKeepBattle, value, key,
+		cooltime, key, value,
+		cooltime, key, value, isModify,
+		isKeepBattle, value, key, isModify,
+		cooltime, initialCooltime, key, value,
+node.name="conditions" attribute sets:
+		cooltime,
+		cooltime, initialCooltime,
+		isKeepBattle,
+		initialCooltime,
+node.name="jump" attribute sets:
+		pos, speed, heightMultiplier,
+		pos, speed, heightMultiplier, cooltime, isKeepBattle,
+		pos, speed, type, heightMultiplier,
+		pos, speed, heightMultiplier, isKeepBattle,
+		pos, speed, cooltime, heightMultiplier,
+node.name="select" attribute sets:
+		prob,
+		useNpcProb,
+node.name="move" attribute sets:
+		destination, limit, cooltime,
+		destination, limit,
+		destination, limit, isKeepBattle,
+		destination, limit, cooltime, isKeepBattle,
+		destination, initialCooltime, limit, faceTarget, cooltime,
+		destination, animation, speed,
+		destination, animation, limit,
+		initialCooltime, destination, limit, cooltime,
+		destination,
+		destination, cooltime,
+		destination, limit, prob,
+		destination, animation,
+		destination, limit, animation, isKeepBattle,
+		destination, limit, animation, speed,
+		initialCooltime, destination, cooltime,
+		destination, animation, cooltime, speed,
+		initialCooltime, destination, cooltime, animation, speed,
+node.name="summon" attribute sets:
+		npcId, npcCountMax, npcCount, summonRot, summonPosOffset,
+		npcId, npcCount, npcCountMax, group, summonPos,
+		npcId, npcCountMax, npcCount, group, summonRadius, summonPosOffset,
+		npcId, npcCount, npcCountMax, group, summonRadius, summonPos,
+		delayTick, npcId, npcCountMax, npcCount, summonPosOffset, master, summonRadius, group,
+		delayTick, npcId, npcCountMax, npcCount, group, summonRadius, summonPosOffset,
+		npcId, npcCount, npcCountMax, group, option, summonPosOffset,
+		npcId, cooltime, npcCount, npcCountMax, group, summonRadius, summonPosOffset,
+		npcId, npcCount, npcCountMax, group, summonPosOffset,
+		npcId, npcCountMax, npcCount, group, summonPos, summonRot,
+		npcId, npcCountMax, npcCount, group, summonPos, master,
+		npcId, npcCountMax, npcCount, group, summonPos, master, summonRot,
+		delayTick, npcId, npcCountMax, npcCount, group, summonPos,
+		npcId, cooltime, npcCount, npcCountMax, group, summonPos,
+		npcId, npcCount, npcCountMax, group, summonPos, summonRot, isKeepBattle,
+		npcId, delayTick, npcCount, npcCountMax, group, summonPos, summonRot,
+		npcId, npcCount, npcCountMax, group, option, master, summonPosOffset, summonRot,
+		npcId, npcCount, npcCountMax, group, summonPosOffset, summonRot,
+		npcId, npcCount, npcCountMax, group, master, summonPosOffset, summonRot,
+		npcId, npcCountMax, npcCount, group, lifeTime, summonPos, summonRot,
+		npcId, npcCountMax, npcCount, group, lifeTime, summonPos,
+		npcId, npcCountMax, npcCount, group, lifeTime, summonRot, summonPosOffset,
+		npcId, npcCountMax, npcCount, option, group, summonPos, summonRot,
+		npcId, npcCountMax, npcCount, group, summonPos, summonRadius, lifeTime,
+		npcId, npcCountMax, npcCount, summonPos, lifeTime,
+		npcId, npcCountMax, npcCount, summonPosOffset,
+		npcId, npcCountMax, npcCount, group, summonRadius, summonTargetOffset,
+		npcId, npcCountMax, npcCount, master, group, summonTargetOffset, summonRadius,
+		npcId, npcCount, npcCountMax, group, option, master, summonPos,
+		npcId, npcCount, npcCountMax, group, master, summonPosOffset, summonRot, lifeTime,
+		npcId, delayTick, npcCount, npcCountMax, group, summonPosOffset, summonRot,
+		npcId, delayTick, npcCount, npcCountMax, group, lifeTime, summonPos, summonRot,
+		npcId, cooltime, npcCount, npcCountMax, group, summonPos, summonRot,
+		npcId, npcCount, npcCountMax, summonPos, master,
+		npcId, npcCount, npcCountMax, group, summonPos, summonRadius, master, lifeTime,
+		npcId, npcCount, npcCountMax, summonPosOffset, master,
+		npcId, npcCount, npcCountMax, group, master, summonRot, lifeTime, summonPos,
+		npcId, npcCount, npcCountMax, master, summonPosOffset, group, summonRadius,
+		npcId, npcCount, npcCountMax, group, lifeTime, summonPosOffset,
+		npcId, npcCount, npcCountMax, lifeTime, summonPosOffset,
+		npcId, npcCount, npcCountMax, summonPos,
+		npcId, npcCount, npcCountMax, summonPosOffset, master, lifeTime,
+		cooltime, npcId, npcCountMax, npcCount, group, summonPosOffset,
+node.name="TriggerSetUserValue" attribute sets:
+		triggerID, key, value,
+		value, isKeepBattle, triggerID, key,
+		cooltime, triggerID, key, value,
+		cooltime, value, isKeepBattle, triggerID, key,
+node.name="ride" attribute sets:
+		type, isRideOff,
+		type, isRideOff, rideNpcIDs,
+node.name="SetSlaveValue" attribute sets:
+		key, value,
+		value, isKeepBattle, key, isModify,
+		cooltime, key, value,
+		key, value, isModify,
+		cooltime, isKeepBattle, value, key,
+		isKeepBattle, value, key,
+		key, isRandom, value,
+node.name="SetMasterValue" attribute sets:
+		key, value,
+		key, value, isModify,
+		value, isKeepBattle, key,
+		isKeepBattle, value, key, isModify,
+		cooltime, key, value,
+node.name="runaway" attribute sets:
+		till, limit,
+		skillIdx, limit,
+		till, cooltime,
+		till, limit, cooltime,
+		till, limit, animation,
+		till,
+		till, limit, cooltime, initialCooltime,
+		facePos, till, limit,
+node.name="MinimumHp" attribute sets:
+		hpPercent,
+node.name="buff" attribute sets:
+		level, type, id,
+		type, level, cooltime, id,
+		level, type, id, isKeepBattle,
+		type, cooltime, id, initialCooltime,
+		type, id,
+		cooltime, type, id,
+		type, id, isKeepBattle,
+		type, level, id, isTarget,
+		type, id, prob,
+		cooltime, type, id, isKeepBattle,
+		cooltime, type, id, initialCooltime, isKeepBattle,
+node.name="TargetEffect" attribute sets:
+		effectName,
+node.name="ShowVibrate" attribute sets:
+		groupID,
+node.name="sidePopup" attribute sets:
+		type, duration, illust, script, voice,
+		duration, type, illust, script,
+		type, duration, illust, sound,
+		duration, type, illust,
+node.name="SetValueRangeTarget" attribute sets:
+		key, value, height, radius,
+		cooltime, key, height, value, isModify, radius,
+		key, value, height, radius, isModify,
+		cooltime, key, height, value, radius,
+		isKeepBattle, value, height, key, radius,
+		key, value, radius,
+		key, value,
+		key, value, isModify, radius,
+node.name="announce" attribute sets:
+		message, durationTick,
+		durationTick, message, cooltime,
+node.name="ModifyRoomTime" attribute sets:
+		timeTick,
+		timeTick, isShowEffect,
+node.name="TriggerModifyUserValue" attribute sets:
+		triggerID, key, value,
+node.name="Buff" attribute sets:
+		level, type, id,
+node.name="RemoveSlaves" attribute sets:
+		isKeepBattle,
+node.name="CreateInteractObject" attribute sets:
+		normal, interactID, lifeTime, kfmName, reactable,
+node.name values with no attributes: RemoveMe,
+node[trace] child 'node' types: trace, skill, standby, select, SetValue, say, target, buff, sidePopup, conditions, runaway,
+node[skill] can have child 'aiPreset' nodes
+node[skill] child 'node' types: conditions, skill, teleport, standby, jump, select, move, target, say, SetValue, SetSlaveValue, SetMasterValue, summon, trace, runaway, HideVibrateAll, ShowVibrate, RemoveMe, TriggerSetUserValue, buff, SetValueRangeTarget, sidePopup, announce, MinimumHp, setData, ModifyRoomTime, RemoveSlaves,
+node[teleport] child 'node' types: standby, teleport, skill, conditions, SetValue, target, select, summon, buff, trace,
+node[standby] can have child 'aiPreset' nodes
+node[standby] child 'node' types: setData, target, say, SetValue, jump, select, move, summon, teleport, standby, RemoveMe, TriggerSetUserValue, ride, SetSlaveValue, skill, SetMasterValue, trace, TargetEffect, RemoveSlaves, buff, conditions, HideVibrateAll, ShowVibrate, sidePopup, SetValueRangeTarget, announce, TriggerModifyUserValue, MinimumHp, runaway,
+node[setData] child 'node' types: TriggerSetUserValue, buff, SetSlaveValue,
+node[target] can have child 'aiPreset' nodes
+node[target] child 'node' types: trace, teleport, standby, skill, SetValue, say, target, conditions, select, announce, summon, TargetEffect, ShowVibrate, buff, runaway,
+node[say] can have child 'aiPreset' nodes
+node[say] child 'node' types: standby, teleport, skill, SetValue, buff, move, select, jump, SetSlaveValue, TargetEffect, conditions, target,
+node[SetValue] can have child 'aiPreset' nodes
+node[SetValue] child 'node' types: target, say, SetValue, SetSlaveValue, skill, teleport, standby, summon, select, jump, TriggerSetUserValue, TargetEffect, sidePopup, SetValueRangeTarget, buff, conditions, RemoveSlaves, SetMasterValue, move, ShowVibrate, announce, TriggerModifyUserValue,
+node[conditions] child 'condition' types: distanceOver, combatTime, distanceLess, skillRange, true, extraData, SlaveCount, hpOver, state, additional, feature, hpLess, DistanceLess, slaveCount,
+node[jump] child 'node' types: standby, skill, target, SetValueRangeTarget, SetValue, summon, announce, jump, buff, move,
+node[select] can have child 'aiPreset' nodes
+node[select] child 'node' types: trace, teleport, standby, skill, conditions, move, target, say, SetValue, SetSlaveValue, setData, runaway, summon, buff, SetValueRangeTarget, announce, select, jump, RemoveMe, TriggerSetUserValue, TargetEffect, SetMasterValue,
+node[move] child 'node' types: select, target, say, SetValue, skill, standby, SetMasterValue, summon, buff, SetSlaveValue, setData, runaway, SetValueRangeTarget,
+node[summon] child 'node' types: SetValueRangeTarget, SetValue, summon, skill, standby, SetSlaveValue, conditions, select, move,
+node[RemoveMe] child 'node' types: standby,
+node[TriggerSetUserValue] can have child 'aiPreset' nodes
+node[TriggerSetUserValue] child 'node' types: target, say, SetValue, move, buff, conditions, TriggerSetUserValue, MinimumHp, skill, standby, teleport, sidePopup, announce, ModifyRoomTime,
+node[SetSlaveValue] child 'node' types: skill, standby, TriggerSetUserValue, conditions, ride, SetValue, select, buff,
+node[SetMasterValue] can have child 'aiPreset' nodes
+node[SetMasterValue] child 'node' types: skill, standby, SetMasterValue, SetValue, SetValueRangeTarget, select, summon, buff, TriggerModifyUserValue,
+node[runaway] child 'node' types: skill, standby, select, buff, runaway, conditions,
+node[buff] child 'node' types: skill, teleport, standby, jump, select, buff, target, say, SetValue, RemoveMe, TriggerSetUserValue, summon, SetSlaveValue, ModifyRoomTime, SetValueRangeTarget,
+node[TargetEffect] child 'node' types: select, target,
+node[ShowVibrate] child 'node' types: target,
+node[SetValueRangeTarget] child 'node' types: select, jump, TriggerSetUserValue, standby, skill, SetValueRangeTarget, SetSlaveValue, summon, target,
+node[announce] can have child 'aiPreset' nodes
+node[announce] child 'node' types: select, skill, SetValue,
+node[ModifyRoomTime] child 'node' types: skill,
+node[TriggerModifyUserValue] child 'node' types: SetMasterValue, SetValue, TriggerModifyUserValue,
+node[RemoveSlaves] child 'node' types: standby, TriggerSetUserValue, SetValueRangeTarget, SetValue,
+
+condition.name values with attributes: distanceOver, combatTime, distanceLess, skillRange, extraData, SlaveCount, hpOver, state, additional, feature, hpLess, DistanceLess, slaveCount,
+condition.name="distanceOver" attribute sets:
+		value,
+condition.name="combatTime" attribute sets:
+		battleTimeBegin, battleTimeEnd, battleTimeLoop,
+		battleTimeBegin, battleTimeLoop,
+condition.name="distanceLess" attribute sets:
+		value,
+condition.name="skillRange" attribute sets:
+		skillIdx,
+		skillIdx, skillLev,
+		isKeepBattle, skillIdx,
+condition.name="extraData" attribute sets:
+		key, value,
+		key, op, value,
+		isKeepBattle, value, op, key,
+		value, isKeepBattle, key,
+condition.name="SlaveCount" attribute sets:
+		count,
+		count, useSummonGroup, summonGroup,
+condition.name="hpOver" attribute sets:
+		value,
+condition.name="state" attribute sets:
+		targetState,
+condition.name="additional" attribute sets:
+		id,
+		id, level,
+		id, overlapCount,
+		isTarget, id,
+condition.name="feature" attribute sets:
+		feature,
+condition.name="hpLess" attribute sets:
+		value,
+condition.name="DistanceLess" attribute sets:
+		value,
+condition.name="slaveCount" attribute sets:
+		slaveCount, slaveCountOp,
+condition.name values with no attributes: true,
+condition[distanceOver] child 'node' types: trace, standby, select,
+condition[combatTime] can have child 'aiPreset' nodes
+condition[combatTime] child 'node' types: conditions, select, summon, skill, standby, target, SetValue, say, SetMasterValue,
+condition[distanceLess] child 'node' types: select, runaway,
+condition[skillRange] can have child 'aiPreset' nodes
+condition[skillRange] child 'node' types: select, trace, standby, skill, RemoveMe, conditions, say, SetValue, target, buff, move, SetSlaveValue,
+condition[true] can have child 'aiPreset' nodes
+condition[true] child 'node' types: teleport, standby, skill, jump, select, SetSlaveValue, target, SetValue, conditions, move, trace, sidePopup, SetValueRangeTarget, RemoveMe, TriggerSetUserValue, TargetEffect, buff, SetMasterValue, runaway, summon,
+condition[extraData] can have child 'aiPreset' nodes
+condition[extraData] child 'node' types: conditions, jump, select, target, say, SetValue, SetMasterValue, skill, teleport, standby, move, TriggerSetUserValue, RemoveMe, sidePopup, SetValueRangeTarget, buff, announce, summon, TriggerModifyUserValue, trace, SetSlaveValue, RemoveSlaves, MinimumHp, Buff,
+condition[SlaveCount] child 'node' types: target, SetValue, move, buff, teleport, standby, skill, select, TriggerSetUserValue, SetSlaveValue, MinimumHp, summon,
+condition[hpOver] can have child 'aiPreset' nodes
+condition[hpOver] child 'node' types: conditions, select, target, SetValue, skill, standby, buff,
+condition[state] child 'node' types: select, standby, trace, skill, TriggerSetUserValue, target, move,
+condition[additional] can have child 'aiPreset' nodes
+condition[additional] child 'node' types: buff, SetValue, say, target, select, skill, conditions, SetSlaveValue, standby, sidePopup, TriggerSetUserValue, RemoveMe, CreateInteractObject,
+condition[feature] child 'node' types: skill, sidePopup, summon,
+condition[hpLess] can have child 'aiPreset' nodes
+condition[hpLess] child 'node' types: standby, skill, Suicide, MinimumHp, TriggerSetUserValue,
+condition[DistanceLess] child 'node' types: skill,
+condition[slaveCount] can have child 'aiPreset' nodes
+*/
+
+void parseAIXml(Parser& parser)
+{
+	const XmlLite::XmlNode* envNode = parser.Document.GetFirstChild();
+	bool unknownValueFound = false;
+
+	XmlLite::XmlReader::StackMarker rootMarker = parser.Document.GetStackMarker();
+
+	if (parser.Verbose)
+	{
+		std::cout << parser.SubPath.GetPath() << std::endl;
+	}
+
+	printPath(parser);
+
+	for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(rootMarker))
+	{
+		printPath(parser);
+
+		if (strncmp(childNode->Name.data(), "battle", childNode->Name.size()) == 0)
+		{
+			XmlLite::XmlReader::StackMarker nodeMarker = parser.Document.GetStackMarker();
+
+			for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(nodeMarker))
+			{
+				printPath(parser);
+
+				if (!parser.battleChildren.contains(std::string(childNode->Name)))
+				{
+					parser.battleChildren.insert(std::string(childNode->Name));
+					std::cout << "npcAi.battle child: " << childNode->Name << std::endl;
+					unknownValueFound = true;
+				}
+
+				std::string name;
+				std::vector<std::string> attributes;
+				for (const XmlLite::XmlAttribute* attribute = parser.Document.GetNextAttribute(); attribute; attribute = parser.Document.GetNextAttribute())
+				{
+					if (strncmp(attribute->Name.data(), "name", attribute->Name.size()) != 0)
 					{
-						if (visitor1.IsEncrypted)
+						attributes.push_back(std::string(attribute->Name));
+					}
+					else
+					{
+						name = attribute->Value;
+						if (!parser.battle_nodeData.contains(name))
 						{
-							visitor1.LoadFile();
+							std::cout << "npcAi.battle.node.name=\"" << attribute->Value << "\"" << std::endl;
+							unknownValueFound = true;
+							parser.battle_nodeData[name];
+						}
+					}
+				}
+				if (attributes.size())
+				{
+					bool foundMatching = false;
+					auto& attributeSets = parser.battle_nodeData[name].AttributeSets;
+
+					for (const auto& set : attributeSets)
+					{
+						if (set.size() != attributes.size()) continue;
+
+						foundMatching = true;
+
+						for (const auto& attribute : attributes)
+						{
+							if (!set.contains(attribute))
+							{
+								foundMatching = false;
+							
+								break;
+							}
 						}
 
-						if (visitor2.IsEncrypted)
+						if (foundMatching)
 						{
-							visitor2.LoadFile();
+							break;
 						}
-
-						computeMD5Hex(visitor1.Contents, visitor1.Hash);
-						computeMD5Hex(visitor2.Contents, visitor2.Hash);
-
-						removals.push_back(path1.string() + " " + visitor1.Hash);
-						adds.push_back(path2.string() + " " + visitor2.Hash);
-
-						addedDiff = true;
 					}
 
-					visitor1.Step(true);
-					visitor2.Step(true);
+					if (!foundMatching)
+					{
+						attributeSets.push_back({});
 
-					continue;
+						for (const auto& attribute : attributes)
+						{
+							if (!attributeSets.back().contains(attribute))
+							{
+								attributeSets.back().insert(attribute);
+							}
+						}
+					}
 				}
 
-				if (visitor1.IsEncrypted)
+				XmlLite::XmlReader::StackMarker childMarker = parser.Document.GetStackMarker();
+
+				for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(childMarker))
 				{
-					visitor1.LoadFile();
+					AttributeData& data = parser.battle_nodeData[name];
+
+					data.IsTopLevel = true;
+					data.Name = "npcAi.battle.node[" + name + "]";
+
+					parseChild(parser, childNode, data, "battle.node", unknownValueFound);
 				}
-
-				if (visitor2.IsEncrypted)
-				{
-					visitor2.LoadFile();
-				}
-
-				addedDiff = true;
-
-				ClientVisitor& fileVisitor = visitor1.IsFile ? visitor1 : visitor2;
-				ClientVisitor& directoryVisitor = !visitor1.IsFile ? visitor1 : visitor2;
-				std::vector<std::string>& fileTarget = visitor1.IsFile ? removals : adds;
-				std::vector<std::string>& directoryTarget = !visitor1.IsFile ? removals : adds;
-
-				computeMD5Hex(fileVisitor.Contents, fileVisitor.Hash);
-
-				fileTarget.push_back(fileVisitor.LastEntry.string() + " " + fileVisitor.Hash);
-				directoryTarget.push_back(directoryVisitor.LastEntry.string());
-
-				fileVisitor.Step(true);
-				directoryVisitor.Step(true);
-
-				//do
-				//{
-				//	directoryVisitor.Step(true);
-				//	directoryVisitor.LoadFile();
-				//
-				//	if (directoryVisitor.IsFile)
-				//	{
-				//		computeMD5Hex(directoryVisitor.Contents, directoryVisitor.Hash);
-				//
-				//		directoryTarget.push_back(directoryVisitor.GetCurrentPath().string() + " " + directoryVisitor.Hash);
-				//	}
-				//	else
-				//	{
-				//		directoryTarget.push_back(directoryVisitor.GetCurrentPath().string());
-				//	}
-				//} while (directoryVisitor.GetDepth() > depth1);
-
-				continue;
 			}
-
-			if (comparison < 0)
-			{
-				visitor1.LoadFile();
-
-				if (visitor1.IsFile)
-				{
-					computeMD5Hex(visitor1.Contents, visitor1.Hash);
-
-					removals.push_back(path1.string() + " " + visitor1.Hash);
-				}
-				else
-				{
-					removals.push_back(path1.string());
-				}
-
-				visitor1.Step(true);
-
-				addedDiff = true;
-
-				continue;
-			}
-
-			visitor2.LoadFile();
-
-			if (visitor2.IsFile)
-			{
-				computeMD5Hex(visitor2.Contents, visitor2.Hash);
-
-				adds.push_back(path2.string() + " " + visitor2.Hash);
-			}
-			else
-			{
-				adds.push_back(path2.string());
-			}
-
-			visitor2.Step(true);
-
-			addedDiff = true;
-
-			continue;
 		}
-
-		if (depth1 > depth2)
+		else if (strncmp(childNode->Name.data(), "reserved", childNode->Name.size()) == 0)
 		{
-			visitor1.LoadFile();
+			XmlLite::XmlReader::StackMarker nodeMarker = parser.Document.GetStackMarker();
 
-			if (visitor1.IsFile)
+			for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(nodeMarker))
 			{
-				computeMD5Hex(visitor1.Contents, visitor1.Hash);
+				printPath(parser);
 
-				removals.push_back(path1.string() + " " + visitor1.Hash);
+				if (!parser.reservedChildren.contains(std::string(childNode->Name)))
+				{
+					parser.reservedChildren.insert(std::string(childNode->Name));
+					std::cout << "npcAi.reserved child: " << childNode->Name << std::endl;
+					unknownValueFound = true;
+				}
+
+				std::string name;
+				std::vector<std::string> attributes;
+				for (const XmlLite::XmlAttribute* attribute = parser.Document.GetNextAttribute(); attribute; attribute = parser.Document.GetNextAttribute())
+				{
+					if (strncmp(attribute->Name.data(), "name", attribute->Name.size()) != 0)
+					{
+						attributes.push_back(std::string(attribute->Name));
+					}
+					else
+					{
+						name = attribute->Value;
+						if (!parser.reserved_conditionData.contains(name))
+						{
+							std::cout << "npcAi.reserved.condition.name=\"" << attribute->Value << "\"" << std::endl;
+							unknownValueFound = true;
+							parser.reserved_conditionData[name];
+						}
+					}
+				}
+				if (attributes.size())
+				{
+					bool foundMatching = false;
+					auto& attributeSets = parser.reserved_conditionData[name].AttributeSets;
+
+					for (const auto& set : attributeSets)
+					{
+						if (set.size() != attributes.size()) continue;
+
+						foundMatching = true;
+
+						for (const auto& attribute : attributes)
+						{
+							if (!set.contains(attribute))
+							{
+								foundMatching = false;
+
+								break;
+							}
+						}
+
+						if (foundMatching)
+						{
+							break;
+						}
+					}
+
+					if (!foundMatching)
+					{
+						attributeSets.push_back({});
+
+						for (const auto& attribute : attributes)
+						{
+							if (!attributeSets.back().contains(attribute))
+							{
+								attributeSets.back().insert(attribute);
+							}
+						}
+					}
+				}
+
+				XmlLite::XmlReader::StackMarker childMarker = parser.Document.GetStackMarker();
+
+				for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(childMarker))
+				{
+					AttributeData& data = parser.reserved_conditionData[name];
+
+					data.IsTopLevel = true;
+					data.Name = "npcAi.reserved.condition[" + name + "]";
+
+					parseChild(parser, childNode, data, "reserved.condition", unknownValueFound);
+				}
 			}
-			else
-			{
-				removals.push_back(path1.string());
-			}
-
-			visitor1.Step(true);
-
-			addedDiff = true;
-
-			continue;
 		}
-
-		visitor2.LoadFile();
-
-		if (visitor2.IsFile)
+		else if (strncmp(childNode->Name.data(), "battleEnd", childNode->Name.size()) == 0)
 		{
-			computeMD5Hex(visitor2.Contents, visitor2.Hash);
+			XmlLite::XmlReader::StackMarker nodeMarker = parser.Document.GetStackMarker();
 
-			adds.push_back(path2.string() + " " + visitor2.Hash);
+			for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(nodeMarker))
+			{
+				printPath(parser);
+
+				if (!parser.battleEndChildren.contains(std::string(childNode->Name)))
+				{
+					parser.battleEndChildren.insert(std::string(childNode->Name));
+					std::cout << "npcAi.battleEnd child: " << childNode->Name << std::endl;
+					unknownValueFound = true;
+				}
+
+				std::string name;
+				std::vector<std::string> attributes;
+				for (const XmlLite::XmlAttribute* attribute = parser.Document.GetNextAttribute(); attribute; attribute = parser.Document.GetNextAttribute())
+				{
+					if (strncmp(attribute->Name.data(), "name", attribute->Name.size()) != 0)
+					{
+						attributes.push_back(std::string(attribute->Name));
+					}
+					else
+					{
+						name = attribute->Value;
+						if (!parser.battleEnd_nodeData.contains(name))
+						{
+							std::cout << "npcAi.battleEnd.node.name=\"" << attribute->Value << "\"" << std::endl;
+							unknownValueFound = true;
+							parser.battleEnd_nodeData[name];
+						}
+					}
+				}
+				if (attributes.size())
+				{
+					bool foundMatching = false;
+					auto& attributeSets = parser.battleEnd_nodeData[name].AttributeSets;
+
+					for (const auto& set : attributeSets)
+					{
+						if (set.size() != attributes.size()) continue;
+
+						foundMatching = true;
+
+						for (const auto& attribute : attributes)
+						{
+							if (!set.contains(attribute))
+							{
+								foundMatching = false;
+
+								break;
+							}
+						}
+
+						if (foundMatching)
+						{
+							break;
+						}
+					}
+
+					if (!foundMatching)
+					{
+						attributeSets.push_back({});
+
+						for (const auto& attribute : attributes)
+						{
+							if (!attributeSets.back().contains(attribute))
+							{
+								attributeSets.back().insert(attribute);
+							}
+						}
+					}
+				}
+
+				XmlLite::XmlReader::StackMarker childMarker = parser.Document.GetStackMarker();
+
+				for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(childMarker))
+				{
+					AttributeData& data = parser.battleEnd_nodeData[name];
+
+					data.IsTopLevel = true;
+					data.Name = "npcAi.battleEnd.node[" + name + "]";
+
+					parseChild(parser, childNode, data, "battleEnd.node", unknownValueFound);
+				}
+			}
+		}
+		else if (strncmp(childNode->Name.data(), "aiPresets", childNode->Name.size()) == 0)
+		{
+			XmlLite::XmlReader::StackMarker nodeMarker = parser.Document.GetStackMarker();
+
+			for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(nodeMarker))
+			{
+				printPath(parser);
+
+				if (!parser.aiPresetsChildren.contains(std::string(childNode->Name)))
+				{
+					parser.aiPresetsChildren.insert(std::string(childNode->Name));
+					std::cout << "npcAi.aiPresets child: " << childNode->Name << std::endl;
+					unknownValueFound = true;
+				}
+
+				std::string name;
+				std::vector<std::string> attributes;
+				for (const XmlLite::XmlAttribute* attribute = parser.Document.GetNextAttribute(); attribute; attribute = parser.Document.GetNextAttribute())
+				{
+					if (strncmp(attribute->Name.data(), "name", attribute->Name.size()) != 0)
+					{
+						attributes.push_back(std::string(attribute->Name));
+					}
+					else
+					{
+						name = attribute->Value;
+						if (!parser.aiPresets_aiPresetNames.contains(name))
+						{
+							std::cout << "npcAi.aiPresets.aiPreset.name=\"" << attribute->Value << "\"" << std::endl;
+							unknownValueFound = true;
+							parser.aiPresets_aiPresetNames.insert(name);
+						}
+					}
+				}
+				if (attributes.size())
+				{
+					bool foundMatching = false;
+					auto& attributeSets = parser.aiPresets_aiPresetData["misc..."].AttributeSets;
+
+					for (const auto& set : attributeSets)
+					{
+						if (set.size() != attributes.size()) continue;
+
+						foundMatching = true;
+
+						for (const auto& attribute : attributes)
+						{
+							if (!set.contains(attribute))
+							{
+								foundMatching = false;
+
+								break;
+							}
+						}
+
+						if (foundMatching)
+						{
+							break;
+						}
+					}
+
+					if (!foundMatching)
+					{
+						attributeSets.push_back({});
+
+						for (const auto& attribute : attributes)
+						{
+							if (!attributeSets.back().contains(attribute))
+							{
+								attributeSets.back().insert(attribute);
+							}
+						}
+					}
+				}
+
+				XmlLite::XmlReader::StackMarker childMarker = parser.Document.GetStackMarker();
+
+				for (const XmlLite::XmlNode* childNode = parser.Document.GetFirstChild(); childNode; childNode = parser.Document.GetNextSibling(childMarker))
+				{
+					AttributeData& data = parser.aiPresets_aiPresetData["misc..."];
+
+					data.IsTopLevel = true;
+					data.Name = "npcAi.aiPresets.aiPreset[misc]";
+
+					parseChild(parser, childNode, data, "aiPresets.aiPreset", unknownValueFound);
+				}
+			}
 		}
 		else
 		{
-			adds.push_back(path2.string());
+
 		}
-
-		visitor2.Step(true);
-
-		addedDiff = true;
 	}
 
-	if (removals.size() || adds.size())
+	if (unknownValueFound)
 	{
-		if (!foundDiff)
-		{
-			std::cout << "index 0000000..0000000 000000\n";
-			std::cout << "--- " << clientPath1.string() << "/diff.txt\n";
-			std::cout << "+++ " << clientPath2.string() << "/diff.txt\n";
-		}
+		std::cout << parser.SubPath.GetPath() << std::endl;
 
-		foundDiff = true;
-
-		std::cout << "@@ -" << removals.size() << " +" << adds.size() << " @@\n";
-
-		for (const std::string& removal : removals)
-		{
-			std::cout << "-" << removal << "\n";
-		}
-
-		for (const std::string& add : adds)
-		{
-			std::cout << "+" << add << "\n";
-		}
+		//XmlLite::XmlReader document2;
+		//
+		//document2.OpenDocument(contents);
+		//
+		//const XmlLite::XmlNode* envNode = document2.GetFirstChild();
+		//unknownValueFound = true;
 	}
-
-	return foundDiff;
 }
 
 int main(int argc, char** argv)
 {
 	fs::path ms2Root;
-	fs::path ms2Root2;
-	bool setFirstRoot = false;
-	bool setSecondRoot = false;
 
 	for (int i = 0; i < argc; ++i)
 	{
@@ -735,65 +1216,319 @@ int main(int argc, char** argv)
 			}
 
 			ms2Root = argv[i];
-			setFirstRoot = true;
+		}
+	}
+
+	Archive::ArchiveReader reader(ms2Root / "Data", false);
+
+	struct StackEntry
+	{
+		Archive::ArchiveReader::Path Path;
+		size_t Index = 0;
+	};
+
+	Archive::ArchiveReader::Path aiPath = reader.GetPath("Server/AI");
+
+	std::cout << aiPath.GetPath() << std::endl;
+
+	std::vector<StackEntry> stack = { { aiPath } };
+
+	std::string contents;
+
+	Parser parser;
+
+	//parser.Verbose = true;
+
+	std::unordered_set<std::string> aiFiles;
+
+	while (stack.size())
+	{
+		StackEntry& entry = stack.back();
+
+		if (entry.Index < entry.Path.ChildDirectories())
+		{
+			++entry.Index;
+
+			stack.push_back({ entry.Path.ChildDirectory(entry.Index - 1), 0 });
+
+			//std::cout << stack.back().Path.GetPath() << std::endl;
+
+			continue;
 		}
 
-		if (strcmp(argv[i], "--root2") == 0 && ++i < argc)
+		for (size_t i = 0; i < entry.Path.ChildFiles(); ++i)
 		{
-			if (!fs::exists(fs::path(argv[i])))
-			{
-				std::cout << "failed to find root dir: " << argv[i] << std::endl;
+			parser.SubPath = entry.Path.ChildFile(i);
 
-				return -1;
+			if (parser.SubPath.GetPath().string() == "server/ai/pet/ai_defaultpettaming.xml")
+			std::cout << "\t" << parser.SubPath.GetPath() << std::endl;
+
+			std::string path = parser.SubPath.GetPath().string().substr(10);
+
+			aiFiles.insert(path);
+
+			parser.SubPath.Read(contents);
+			parser.Document.OpenDocument(contents);
+
+			parseAIXml(parser);
+		}
+
+		stack.pop_back();
+	}
+
+	std::cout << "npcAi.battle children: ";
+
+	for (const std::string& name : parser.battleChildren)
+	{
+		std::cout << name << ", ";
+	}
+
+	std::cout << std::endl;
+
+	std::cout << "npcAi.reserved children: ";
+
+	for (const std::string& name : parser.reservedChildren)
+	{
+		std::cout << name << ", ";
+	}
+
+	std::cout << std::endl;
+
+	std::cout << "npcAi.battleEnd children: ";
+
+	for (const std::string& name : parser.battleEndChildren)
+	{
+		std::cout << name << ", ";
+	}
+
+	std::cout << std::endl;
+
+	std::cout << "npcAi.aiPresets children: ";
+
+	for (const std::string& name : parser.aiPresetsChildren)
+	{
+		std::cout << name << ", ";
+	}
+
+	std::cout << std::endl;
+
+	const auto printAttribs = [&parser](const char* childName, const std::unordered_map<std::string, AttributeData>& attributeData)
+	{
+		std::cout << std::endl;
+
+		bool found = false;
+
+		for (const auto& entryIndex : attributeData)
+		{
+			const std::string& name = entryIndex.first;
+			const AttributeData& data = entryIndex.second;
+
+			if (data.AttributeSets.size() != 0)
+			{
+				found = true;
+
+				break;
+			}
+		}
+
+		if (found)
+		{
+			std::cout << childName << ".name values with attributes: ";
+
+			for (const auto& entryIndex : attributeData)
+			{
+				const std::string& name = entryIndex.first;
+				const AttributeData& data = entryIndex.second;
+
+				if (data.AttributeSets.size() == 0)
+					continue;
+
+				std::cout << name << ", ";
 			}
 
-			ms2Root2 = argv[i];
-			setSecondRoot = true;
+			std::cout << std::endl;
 		}
-	}
 
-	if (setFirstRoot)
-	{
-		if (!setSecondRoot)
+		bool skipped = false;
+
+		for (const auto& entryIndex : attributeData)
 		{
-			std::cout << "using root path: " << ms2Root.string() << std::endl;
-			std::cout << "path found: " << fs::exists(ms2Root) << std::endl;
+			const std::string& name = entryIndex.first;
+			const AttributeData& data = entryIndex.second;
+
+			if (data.AttributeSets.size() == 0)
+			{
+				skipped = true;
+				continue;
+			}
+
+			std::cout << childName << ".name=\"" << name << "\" attribute sets:" << std::endl;
+
+			for (const auto& set : data.AttributeSets)
+			{
+				std::cout << "\t";
+
+				for (const std::string& attribute : set)
+				{
+					std::cout << attribute << ", ";
+				}
+
+				std::cout << std::endl;
+			}
 		}
 
-		if (!fs::exists(ms2Root))
+		if (skipped)
 		{
-			std::cout << "root path " << ms2Root << " not found" << std::endl;
+			std::cout << childName << ".name values with no attributes: ";
 
-			return -1;
+			for (const auto& entryIndex : attributeData)
+			{
+				const std::string& name = entryIndex.first;
+				const AttributeData& data = entryIndex.second;
+
+				if (data.AttributeSets.size() != 0)
+					continue;
+
+				std::cout << name << ", ";
+			}
+
+			std::cout << std::endl;
 		}
-	}
 
-	if (setSecondRoot && !fs::exists(ms2Root2))
-	{
-		std::cout << "root path 2 " << ms2Root << " not found" << std::endl;
-
-		return -1;
-	}
-
-	if (setFirstRoot && !setSecondRoot)
-	{
-		dumpClientData(setFirstRoot ? ms2Root : ms2Root2);
-	}
-	else if (setFirstRoot && setSecondRoot)
-	{
-		bool foundDiff = diffClientData(ms2Root, ms2Root2);
-
-		if (foundDiff)
+		for (const auto& entryIndex : attributeData)
 		{
-			return 1;
+			const std::string& name = entryIndex.first;
+			const AttributeData& data = entryIndex.second;
+
+			if (data.CanHaveAiPreset)
+			{
+				std::cout << childName << "[" << name << "] can have child 'aiPreset' nodes" << std::endl;
+			}
+
+			if (data.ChildNodes.size())
+			{
+				std::cout << childName << "[" << name << "] child 'node' types: ";
+
+				for (const std::string& type : data.ChildNodes)
+				{
+					std::cout << type << ", ";
+				}
+
+				std::cout << std::endl;
+			}
+
+			if (data.ChildConditions.size())
+			{
+				std::cout << childName << "[" << name << "] child 'condition' types: ";
+
+				for (const std::string& type : data.ChildConditions)
+				{
+					std::cout << type << ", ";
+				}
+
+				std::cout << std::endl;
+			}
 		}
-	}
-	else if (setSecondRoot && !setFirstRoot)
+	};
+
+	printAttribs("npcAi.battle.node", parser.battle_nodeData);
+	printAttribs("npcAi.reserved.condition", parser.reserved_conditionData);
+	printAttribs("npcAi.battleEnd.node", parser.battleEnd_nodeData);
+	printAttribs("npcAi.aiPresets.aiPreset", parser.aiPresets_aiPresetData);
+
+	printAttribs("node", parser.nodeTypes);
+	printAttribs("condition", parser.conditionTypes);
+
+	Archive::ArchiveReader::Path npcPath = reader.GetPath("Xml/npc");
+
+	std::cout << npcPath.GetPath() << std::endl;
+
+	std::vector<StackEntry> stack2 = { { npcPath } };
+
+			std::unordered_set<std::string> referenced;
+			std::unordered_set<std::string> seen;
+	while (stack2.size())
 	{
-		std::cout << "only set second root, missing first" << std::endl;
+		StackEntry& entry = stack2.back();
 
-		return -1;
+		if (entry.Index < entry.Path.ChildDirectories())
+		{
+			++entry.Index;
+
+			stack2.push_back({ entry.Path.ChildDirectory(entry.Index - 1), 0 });
+
+			//std::cout << stack.back().Path.GetPath() << std::endl;
+
+			continue;
+		}
+
+		for (size_t i = 0; i < entry.Path.ChildFiles(); ++i)
+		{
+			parser.SubPath = entry.Path.ChildFile(i);
+
+			//if (parser.SubPath.GetPath().string() == "server/ai/pet/ai_defaultpettaming.xml")
+			//	std::cout << "\t" << parser.SubPath.GetPath() << std::endl;
+
+			parser.SubPath.Read(contents);
+			parser.Document.OpenDocument(contents);
+
+			const XmlLite::XmlNode* ms2Node = parser.Document.GetFirstChild();
+			bool unknownValueFound = false;
+
+			XmlLite::XmlReader::StackMarker rootMarker = parser.Document.GetStackMarker();
+
+
+			for (const XmlLite::XmlNode* envNode = parser.Document.GetFirstChild(); envNode; envNode = parser.Document.GetNextSibling(rootMarker))
+			{
+				XmlLite::XmlReader::StackMarker envMarker = parser.Document.GetStackMarker();
+
+				for (const XmlLite::XmlNode* npcNode = parser.Document.GetFirstChild(); npcNode; npcNode = parser.Document.GetNextSibling(envMarker))
+				{
+					if (strncmp(npcNode->Name.data(), "aiInfo", npcNode->Name.size()) == 0)
+					{
+						for (const XmlLite::XmlAttribute* attribute = parser.Document.GetNextAttribute(); attribute; attribute = parser.Document.GetNextAttribute())
+						{
+							if (strncmp(attribute->Name.data(), "path", attribute->Name.size()) == 0)
+							{
+								std::string path = std::string{ attribute->Value };
+
+								for (char& character : path)
+								{
+									if (character >= 'A' && character <= 'Z')
+									{
+										character += 'a' - 'A';
+									}
+								}
+
+								if (path.size() != 0)
+								{
+									if (!aiFiles.contains(path))
+									{
+										if (!seen.contains(path))
+										//std::cout << "found referenced path that doesnt exist: " << path << std::endl;
+										seen.insert(path);
+									}
+									else 
+									{if (!referenced.contains(path))
+										referenced.insert(path);
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+
+		}
+
+		stack2.pop_back();
 	}
+	std::cout << "missing files found:" << std::endl;
 
-	return -2;
+	for (const std::string& path : seen) std::cout << "\t" << path << std::endl;
+			std::cout << "referenced files found:" << std::endl;
+
+			for (const std::string& path : referenced) std::cout << "\t" << path << std::endl;
+
+	return 0;
 }

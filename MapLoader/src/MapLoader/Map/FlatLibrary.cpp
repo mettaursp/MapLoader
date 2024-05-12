@@ -206,7 +206,9 @@ namespace MapLoader
 		const Archive::Metadata::Entry* modelEntry = nullptr;
 		bool popNode = false;
 
-		for (const XmlLite::XmlNode* traitNode = document.GetFirstChild(); traitNode; traitNode = document.GetNextSibling())
+		XmlLite::XmlReader::StackMarker traitMarker = document.GetStackMarker();
+
+		for (const XmlLite::XmlNode* traitNode = document.GetFirstChild(); traitNode; traitNode = document.GetNextSibling(traitMarker))
 		{
 			popNode = true;
 
@@ -291,14 +293,9 @@ namespace MapLoader
 				LoadLightProperties(entry.Light, document, name) ||
 				LoadPortalProperties(entry.Portal, document, name);
 
-				document.PopNode();
-
 				continue;
 			}
 		}
-
-		if (popNode)
-			document.PopNode();
 
 		if (entry.Placeable != nullptr)
 			entry.Placeable->Transformation = getMatrix(entry.Placeable->Position, entry.Placeable->Rotation, entry.Placeable->Scale);

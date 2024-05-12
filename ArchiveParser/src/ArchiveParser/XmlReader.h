@@ -11,6 +11,7 @@ namespace XmlLite
 	{
 		size_t Start = (size_t)-1;
 		std::string_view Name;
+		size_t Line = (size_t)-1;
 	};
 
 	struct XmlAttribute
@@ -168,6 +169,12 @@ namespace XmlLite
 	class XmlReader
 	{
 	public:
+		struct StackMarker
+		{
+			size_t Index = (size_t)-1;
+			size_t Start = 0;
+		};
+		
 		enum class XmlErrorType
 		{
 			None,
@@ -191,13 +198,15 @@ namespace XmlLite
 		bool HasError() const { return Error != XmlErrorType::None; }
 		std::string GetErrorMessage() const;
 
-		const XmlNode* GetNextSibling();
-		const XmlNode* GetNextSibling(const std::string_view& name, bool caseSensitive = true);
+		StackMarker GetStackMarker() const;
+		const XmlNode* GetNextSibling(const StackMarker& marker = {});
+		const XmlNode* GetNextSibling(const std::string_view& name, bool caseSensitive = true, const StackMarker& marker = {});
 		const XmlNode* GetFirstChild();
 		const XmlNode* GetFirstChild(const std::string_view& name, bool caseSensitive = true);
 		const XmlAttribute* GetNextAttribute();
 		const XmlAttribute* GetNextAttribute(const std::string_view& name, bool caseSensitive = true);
 		void PopNode(size_t count = 1);
+		std::string GetFullNodePath() const;
 
 		size_t GetLineNumber() const { return LineNumber; }
 
@@ -223,8 +232,14 @@ namespace XmlLite
 		typename TaskCompletionStatus<sizeof...(TaskType)> ReadAttributes(const TaskType&... tasks);
 
 	private:
+		struct StackItem
+		{
+			XmlNode Node;
+			size_t BranchStart = 0;
+		};
+
 		std::string_view Document;
-		std::vector<XmlNode> NodeTree;
+		std::vector<StackItem> NodeTree;
 		std::string_view HeaderName;
 		std::vector<XmlAttribute> HeaderAttributes;
 		XmlNode FileHeader;

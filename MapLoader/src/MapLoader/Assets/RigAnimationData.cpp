@@ -5,6 +5,7 @@
 namespace MapLoader
 {
 	std::vector<std::vector<float>> KnotVectors;
+	std::unordered_map<std::string, AnimationList> RigAnimations;
 
 	RigAnimation* RigAnimationData::FetchAnimation(const std::string& name)
 	{

@@ -286,7 +286,9 @@ void loadMap(const std::string& mapId)
 
 			document.GetFirstChild();
 
-			for (const XmlLite::XmlNode* envNode = document.GetFirstChild(); envNode; envNode = document.GetNextSibling())
+			XmlLite::XmlReader::StackMarker envMarker = document.GetStackMarker();
+
+			for (const XmlLite::XmlNode* envNode = document.GetFirstChild(); envNode; envNode = document.GetNextSibling(envMarker))
 			{
 				if (!isNodeEnabled(document, &feature, &locale)) continue;
 
@@ -295,8 +297,6 @@ void loadMap(const std::string& mapId)
 				if (xblock == nullptr) continue;
 
 				xblockName = document.ReadAttributeValue<std::string_view>("name", "");
-
-				document.PopNode();
 			}
 		}
 	}
@@ -336,7 +336,9 @@ void loadMap(const std::string& mapId)
 	MapLoader::FlatLight ambient;
 	bool hasAmbient = false;
 
-	for (const XmlLite::XmlNode* entityNode = document.GetFirstChild(); entityNode; entityNode = document.GetNextSibling())
+	XmlLite::XmlReader::StackMarker entityMarker = document.GetStackMarker();
+
+	for (const XmlLite::XmlNode* entityNode = document.GetFirstChild(); entityNode; entityNode = document.GetNextSibling(entityMarker))
 	{
 		size_t lineNumber = document.GetLineNumber();
 
@@ -472,7 +474,9 @@ void loadMapNames(const Archive::ArchivePath& file)
 
 	document.GetFirstChild();
 
-	for (const XmlLite::XmlNode* keyNode = document.GetFirstChild(); keyNode; keyNode = document.GetNextSibling())
+	XmlLite::XmlReader::StackMarker keyMarker = document.GetStackMarker();
+
+	for (const XmlLite::XmlNode* keyNode = document.GetFirstChild(); keyNode; keyNode = document.GetNextSibling(keyMarker))
 	{
 		std::string id = document.ReadAttributeValue<std::string>("id", "");
 
@@ -496,7 +500,9 @@ void loadMapFileNames(const Archive::ArchivePath& file)
 
 	document.GetFirstChild();
 
-	for (const XmlLite::XmlNode* fieldDataNode = document.GetFirstChild(); fieldDataNode; fieldDataNode = document.GetNextSibling())
+	XmlLite::XmlReader::StackMarker fieldDataMarker = document.GetStackMarker();
+
+	for (const XmlLite::XmlNode* fieldDataNode = document.GetFirstChild(); fieldDataNode; fieldDataNode = document.GetNextSibling(fieldDataMarker))
 	{
 		int id = document.ReadAttributeValue("id", 0);
 
@@ -506,16 +512,76 @@ void loadMapFileNames(const Archive::ArchivePath& file)
 
 		if (envElement->Name != "environment")
 		{
-			document.PopNode();
-
 			continue;
 		}
 
-		for (const XmlLite::XmlNode* componentElement = document.GetFirstChild(); componentElement; componentElement = document.GetNextSibling())
+		XmlLite::XmlReader::StackMarker componentMarker = document.GetStackMarker();
+
+		for (const XmlLite::XmlNode* componentElement = document.GetFirstChild(); componentElement; componentElement = document.GetNextSibling(componentMarker))
 		{
 			if (componentElement->Name != "xblock") continue;
 
 			mapFileNames[id] = document.ReadAttributeValue<std::string_view>("name", "");
+		}
+
+		document.PopNode(2);
+	}
+}
+
+void LoadAniKeyText(const Archive::ArchivePath& file)
+{
+	if (!file.Loaded())
+	{
+		std::cout << "failed to load fielddata.xml " << file.GetPath().string() << std::endl;
+		return;
+	}
+
+	file.Read(documentBuffer);
+
+	XmlLite::XmlReader document;
+
+	document.OpenDocument(documentBuffer);
+	document.GetFirstChild();
+	XmlLite::XmlReader::StackMarker kfmMarker = document.GetStackMarker();
+
+	for (const XmlLite::XmlNode* kfmNode = document.GetFirstChild(); kfmNode; kfmNode = document.GetNextSibling(kfmMarker))
+	{
+		std::string name = std::string(document.ReadAttributeValue<std::string_view>("name", ""));
+
+		if (name == "")
+			continue;
+
+		MapLoader::AnimationList& rig = MapLoader::RigAnimations[name];
+
+		rig.RigName = name;
+
+		XmlLite::XmlReader::StackMarker seqMarker = document.GetStackMarker();
+
+		for (const XmlLite::XmlNode* sequenceElement = document.GetFirstChild(); sequenceElement; sequenceElement = document.GetNextSibling(seqMarker))
+		{
+			int id = document.ReadAttributeValue<int>("id", -1);
+			std::string sequenceName = std::string(document.ReadAttributeValue<std::string_view>("name", ""));
+
+			if (sequenceName == "")
+				continue;
+
+			MapLoader::Sequence& sequence = rig.Animations[sequenceName];
+
+			sequence.Id = id;
+			sequence.Name = sequenceName;
+
+			XmlLite::XmlReader::StackMarker keyMarker = document.GetStackMarker();
+
+			for (const XmlLite::XmlNode* keyElement = document.GetFirstChild(); keyElement; keyElement = document.GetNextSibling(keyMarker))
+			{
+				std::string keyName = std::string(document.ReadAttributeValue<std::string_view>("name", ""));
+				float time = document.ReadAttributeValue<float>("time", 0);
+
+				if (keyName == "")
+					continue;
+
+				sequence.Keyframes.push_back({ keyName, time });
+			}
 		}
 
 		document.PopNode(2);
@@ -702,6 +768,7 @@ int main(int argc, char** argv)
 
 	loadMapNames(Reader->GetPath("Xml/string/en/mapname.xml"));
 	loadMapFileNames(Reader->GetPath("Xml/table/fielddata.xml"));
+	LoadAniKeyText(Reader->GetPath("Xml/anikeytext.xml"));
 
 	struct mapPlacement
 	{

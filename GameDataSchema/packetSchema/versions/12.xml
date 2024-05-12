@@ -2221,7 +2221,7 @@
 			<data type="Vector3Short" name="position" />
 			<data type="Vector3S" name="direction" />
 			<data type="Vector3S" name="rotation" />
-			<data type="short" name="posDiv10" />
+			<data type="short" name="rotateZ" /> <!-- x10 -->
 			<data type="bool" name="unknown" />
 			<data type="bool" name="isHold" />
 			<condition data="isHold" value="1" comparison="equal">

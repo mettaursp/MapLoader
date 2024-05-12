@@ -52,11 +52,15 @@ namespace MapLoader
 
 		document.GetFirstChild();
 
-		for (const XmlLite::XmlNode* paletteElement = document.GetFirstChild(); paletteElement; paletteElement = document.GetNextSibling())
+		XmlLite::XmlReader::StackMarker paletteMarker = document.GetStackMarker();
+
+		for (const XmlLite::XmlNode* paletteElement = document.GetFirstChild(); paletteElement; paletteElement = document.GetNextSibling(paletteMarker))
 		{
+			XmlLite::XmlReader::StackMarker colorMarker = document.GetStackMarker();
+
 			int paletteId = document.ReadAttributeValue<int>("id", 0);
 
-			for (const XmlLite::XmlNode* colorElement = document.GetFirstChild(); colorElement; colorElement = document.GetNextSibling())
+			for (const XmlLite::XmlNode* colorElement = document.GetFirstChild(); colorElement; colorElement = document.GetNextSibling(colorMarker))
 			{
 				DyeColorInfo dyeColor;
 
@@ -102,8 +106,6 @@ namespace MapLoader
 
 				container.push_back(dyeColor);
 			}
-
-			document.PopNode();
 		}
 	}
 
@@ -145,7 +147,9 @@ namespace MapLoader
 
 		const XmlLite::XmlNode* node2 = document.GetFirstChild();
 
-		for (const XmlLite::XmlNode* node = document.GetFirstChild(); node != nullptr; node = document.GetNextSibling())
+		XmlLite::XmlReader::StackMarker nodeMarker = document.GetStackMarker();
+
+		for (const XmlLite::XmlNode* node = document.GetFirstChild(); node != nullptr; node = document.GetNextSibling(nodeMarker))
 		{
 			int id = document.ReadAttributeValue<int>("id", 0);
 

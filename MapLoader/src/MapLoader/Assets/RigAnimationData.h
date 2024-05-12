@@ -42,12 +42,34 @@ namespace MapLoader
 		Matrix4F ComputeAnimationMatrix(const Vector3SF& translation, const Vector3SF& rotation, float scale);
 	};
 
+	struct SequenceKeyframe
+	{
+		std::string Name;
+		float Time = 0;
+	};
+
+	struct Sequence
+	{
+		std::string Name;
+		int Id = 0;
+		std::vector<SequenceKeyframe> Keyframes;
+	};
+
+	struct AnimationList
+	{
+		std::string RigName;
+		std::unordered_map<std::string, Sequence> Animations;
+	};
+
+	extern std::unordered_map<std::string, AnimationList> RigAnimations;
+
 	struct RigAnimationData
 	{
 		size_t Index = 0;
 		const Archive::Metadata::Entry* Entry = nullptr;
 		const Archive::Metadata::Entry* RigEntry = nullptr;
 		ModelData* Rig = nullptr;
+		AnimationList* AnimationList = nullptr;
 		std::string RootName;
 		std::vector<RigAnimation> Animations;
 		std::unordered_map<std::string, RigAnimation*> AnimationMap;

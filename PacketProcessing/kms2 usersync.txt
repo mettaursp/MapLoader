@@ -1,0 +1,124 @@
+
+		void ParseStateSyncData_v13(PacketHandler& handler, Maple::Game::StateSyncData& blockOutput)
+		{
+			if (handler.PacketStream().HasRecentlyFailed)
+			{
+				return;
+			}
+
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+				StackWatch<PacketHandler> watch_block(handler, "StateSyncData_v13(", ")");
+
+			unsigned char state_var0 = 0;
+			Read<unsigned char>("state", handler, state_var0);
+
+			unsigned char subState_var1 = 0;
+			Read<unsigned char>("subState", handler, subState_var1);
+
+			Vector3Short position_var2;
+			Read<Vector3Short>("position", handler, position_var2);
+
+			short rotation_var3 = 0;
+			Read<short>("rotation", handler, rotation_var3);
+
+			unsigned char animation3_var4 = 0;
+			Read<unsigned char>("animation3", handler, animation3_var4);
+
+			if (animation3_var4 > 127)
+			{
+				StackWatch<PacketHandler> watch_5(handler, "if animation3_var4 > 127");
+				float unknown_var5 = 0;
+				Read<float>("unknown", handler, unknown_var5);
+
+				float unknown_var6 = 0;
+				Read<float>("unknown", handler, unknown_var6);
+			}
+
+			Vector3Short speed_var7;
+			Read<Vector3Short>("speed", handler, speed_var7);
+
+			unsigned char unknown_var8 = 0;
+			Read<unsigned char>("unknown", handler, unknown_var8);
+
+			short rotation2Div10_var9 = 0;
+			Read<short>("rotation2Div10", handler, rotation2Div10_var9);
+
+			short coordsDiv1000_var10 = 0;
+			Read<short>("coordsDiv1000", handler, coordsDiv1000_var10);
+
+			unsigned char flags_var11 = 0;
+			Read<unsigned char>("flags", handler, flags_var11);
+
+			if (GetBit(flags_var11, 0) == 1)
+			{
+				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 0) == 1");
+				int unknown;
+				Read<int>("unknownInt", handler, unknown);
+			}
+
+			if (GetBit(flags_var11, 1) == 1)
+			{
+				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 1) == 1");
+				int unknown;
+				Read<int>("unknownInt", handler, unknown);
+			}
+
+			if (GetBit(flags_var11, 2) == 1)
+			{
+				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 2) == 1");
+				short unknown;
+				Read<short>("unknownShort", handler, unknown);
+			}
+
+			if (GetBit(flags_var11, 3) == 1)
+			{
+				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 3) == 1");
+				std::wstring animationString_var18;
+				Read<std::wstring>("animationString", handler, animationString_var18);
+			}
+
+			if (GetBit(flags_var11, 4) == 1)
+			{
+				StackWatch<PacketHandler> watch_16(handler, "if GetBit(flags_var11, 4) == 1");
+				Vector3S unknown_var14;
+				Read<Vector3S>("unknownVector", handler, unknown_var14);
+
+				std::wstring unknown_var15;
+				Read<std::wstring>("unknown", handler, unknown_var15);
+			}
+
+			if (GetBit(flags_var11, 5) == 1)
+			{
+				StackWatch<PacketHandler> watch_16(handler, "if GetBit(flags_var11, 5) == 1");
+
+				short unknown1;
+				Read<short>("unknownShort", handler, unknown1);
+
+				short unknown2;
+				Read<short>("unknownShort", handler, unknown2);
+
+				std::wstring unknown_var15;
+				Read<std::wstring>("unknown", handler, unknown_var15);
+			}
+
+			int unknown_var26 = 0;
+			Read<int>("unknown", handler, unknown_var26);
+
+			if (flags_var11 == 0 && (unknown_var8 & 0x10))
+			{
+				handler.PacketStream().HasRecentlyFailed = true;
+				return;
+				StackWatch<PacketHandler> watch_22(handler, "if flags_var11 == 0");
+
+				Vector3Short unknown;
+				Read<Vector3Short>("unknownVector", handler, unknown);
+
+				std::wstring animationString_var18;
+				WStringCharLen animationString_var18_wrapper = animationString_var18;
+
+				Read<WStringCharLen>("animationString", handler, animationString_var18_wrapper);
+			}
+		}

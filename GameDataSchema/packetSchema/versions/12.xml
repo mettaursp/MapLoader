@@ -3015,6 +3015,127 @@
 				<data type="int" name="errorCode" output="ErrorCode" />
 			</condition>
 		</opcode>
+		<opcode name="ProxyGameObj" value="0x80">
+			<data type="byte" name="mode">
+				<enum name="SpawnPlayer" value="3" />
+				<enum name="RemovePlayer" value="4" />
+				<enum name="Update" value="5" />
+				<enum name="Unknown6" value="6" />
+				<enum name="RemoveNpc" value="7" />
+				<enum name="MoveNpc" value="8" />
+				<enum name="Pet" value="11" />
+				<enum name="RemovePet" value="10" />
+				<enum name="MovePet" value="11" />
+			</data>
+			<condition data="mode" value="0" comparison="equal">
+				<data type="long" name="skillSn" />
+				<data type="int" name="casterId" output="CasterId" />
+				<data type="uint" name="skillId" output="SkillId" />
+				<data type="ushort" name="skillLevel" output="SkillLevel" />
+				<data type="byte" name="motionPoint" output="MotionPoint" />
+				<data type="byte" name="attackPoint" output="AttackPoint" />
+				<data type="Vector3Short" name="position" output="Position" />
+				<data type="Vector3S" name="direction" output="Direction" />
+				<data type="bool" name="isChaining" output="IsChaining" />
+				<data type="int" name="serverTick" output="ServerTick" />
+				<data type="byte" name="count" />
+				<array data="count" output="Hits">
+					<data type="long" name="unknown" />
+					<data type="long" name="skillAttack" output="SkillAttack" />
+					<data type="int" name="targetId" output="TargetId" />
+					<data type="short" name="animation" output="Animation" />
+				</array>
+			</condition>
+			<condition data="mode" value="3" comparison="equal">
+				<data type="int" name="objectId" />
+				<data type="long" name="characterId" />
+				<data type="long" name="accountId" />
+				<data type="string" name="name" />
+				<data type="string" name="profileUrl" />
+				<data type="string" name="motto" />
+				<data type="byte" name="CProxyGameObject" />
+				<data type="Vector3S" name="position" />
+				<data type="short" name="level" />
+				<data type="short" name="jobCode" />
+				<data type="int" name="jobId" />
+				<data type="int" name="homePlotMapId" />
+				<data type="int" name="plotId" />
+				<data type="int" name="apartmentNumber" />
+				<data type="string" name="homeName" />
+				<data type="int" name="gearScore" />
+				<data type="short" name="State" />
+				<data type="int" name="trophies1" />
+				<data type="int" name="trophies2" />
+				<data type="int" name="trophies2" />
+			</condition>
+			<condition data="mode" value="4" comparison="equal">
+				<data type="int" name="objectId" />
+			</condition>
+			<condition data="mode" value="7" comparison="equal">
+				<data type="int" name="objectId" />
+			</condition>
+			<condition data="mode" value="10" comparison="equal">
+				<data type="int" name="objectId" />
+			</condition>
+			<condition data="mode" value="5" comparison="equal">
+				<data type="int" name="objectId" />
+				<data type="byte" name="flags">
+					<bit name="unknown1" bitIndex="0" />
+					<bit name="unknown2" bitIndex="1" />
+					<bit name="unknown2" bitIndex="2" />
+					<bit name="unknown2" bitIndex="3" />
+					<bit name="unknown2" bitIndex="4" />
+					<bit name="unknown2" bitIndex="5" />
+					<bit name="unknown2" bitIndex="6" />
+				</data>
+				<condition data="flags" bitIndex="0" value="1" comparison="equal">
+					<data type="byte" name="CProxyGameObject" />
+				</condition>
+				<condition data="flags" bitIndex="1" value="1" comparison="equal">
+					<data type="Vector3S" name="position" />
+				</condition>
+				<condition data="flags" bitIndex="2" value="1" comparison="equal">
+					<data type="short" name="level" />
+				</condition>
+				<condition data="flags" bitIndex="3" value="1" comparison="equal">
+					<data type="short" name="jobCode" />
+					<data type="int" name="jobId" />
+				</condition>
+				<condition data="flags" bitIndex="4" value="1" comparison="equal">
+					<data type="string" name="motto" />
+				</condition>
+				<condition data="flags" bitIndex="5" value="1" comparison="equal">
+					<data type="int" name="gearScore" />
+				</condition>
+				<condition data="flags" bitIndex="6" value="1" comparison="equal">
+					<data type="short" name="State" />
+				</condition>
+			</condition>
+			<condition data="mode" value="6" comparison="equal">
+				<data type="int" name="objectId" />
+				<data type="int" name="npcId" />
+				<data type="byte" name="CProxyGameObject" />
+				<data type="int" name="CProxyGameObject2" />
+				<data type="Vector3S" name="position" />
+			</condition>
+			<condition data="mode" value="8" comparison="equal">
+				<data type="int" name="objectId" />
+				<data type="byte" name="CProxyGameObject" />
+				<data type="Vector3S" name="position" />
+			</condition>
+			<condition data="mode" value="11" comparison="equal">
+				<data type="int" name="objectId" />
+				<data type="byte" name="CProxyGameObject" />
+				<data type="Vector3S" name="position" />
+			</condition>
+			<condition data="mode" value="9" comparison="equal">
+				<data type="int" name="objectId" />
+				<data type="int" name="petId" />
+				<data type="int" name="npcId" />
+				<data type="byte" name="CProxyGameObject" />
+				<data type="Vector3S" name="position" />
+			</condition>
+		</opcode>
 		<opcode name="Trade" value="0x84">
 			<data type="byte" name="mode">
 				<enum name="ReceiveRequest" value="0" />

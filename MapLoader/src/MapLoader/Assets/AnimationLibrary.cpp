@@ -42,6 +42,13 @@ namespace MapLoader
 		loadedRig.Entry = entry;
 		loadedRig.Index = (uint32_t)Rigs.size() - 1;
 
+		auto animationList = RigAnimations.find(name);
+
+		if (animationList != RigAnimations.end())
+		{
+			loadedRig.AnimationList = &animationList->second;
+		}
+
 		FetchRigAnimations(AssetLibrary.GetReader()->GetPath(filepath), loadedRig);
 
 		return &loadedRig;
@@ -110,6 +117,16 @@ namespace MapLoader
 
 			animation.Id = documentAnimation.Id;
 			animation.Name = documentAnimation.Name;
+
+			if (animation.Name == "" && loadedRig.AnimationList)
+			{
+				auto entry = loadedRig.AnimationList->IdNames.find(animation.Id);
+
+				if (entry != loadedRig.AnimationList->IdNames.end())
+				{
+					animation.Name = entry->second;
+				}
+			}
 
 			loadedRig.AnimationMap[animation.Name] = &animation;
 			loadedRig.AnimationEntryMap[animation.Entry] = &animation;

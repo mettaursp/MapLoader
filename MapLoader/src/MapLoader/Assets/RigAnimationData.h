@@ -51,7 +51,7 @@ namespace MapLoader
 	struct Sequence
 	{
 		std::string Name;
-		int Id = 0;
+		unsigned int Id = 0;
 		std::vector<SequenceKeyframe> Keyframes;
 	};
 
@@ -59,6 +59,7 @@ namespace MapLoader
 	{
 		std::string RigName;
 		std::unordered_map<std::string, Sequence> Animations;
+		std::unordered_map<unsigned int, std::string> IdNames;
 	};
 
 	extern std::unordered_map<std::string, AnimationList> RigAnimations;

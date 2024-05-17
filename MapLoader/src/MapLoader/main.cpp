@@ -523,8 +523,6 @@ void loadMapFileNames(const Archive::ArchivePath& file)
 
 			mapFileNames[id] = document.ReadAttributeValue<std::string_view>("name", "");
 		}
-
-		document.PopNode(2);
 	}
 }
 
@@ -559,7 +557,7 @@ void LoadAniKeyText(const Archive::ArchivePath& file)
 
 		for (const XmlLite::XmlNode* sequenceElement = document.GetFirstChild(); sequenceElement; sequenceElement = document.GetNextSibling(seqMarker))
 		{
-			int id = document.ReadAttributeValue<int>("id", -1);
+			unsigned int id = document.ReadAttributeValue<unsigned int>("id", -1);
 			std::string sequenceName = std::string(document.ReadAttributeValue<std::string_view>("name", ""));
 
 			if (sequenceName == "")
@@ -569,6 +567,8 @@ void LoadAniKeyText(const Archive::ArchivePath& file)
 
 			sequence.Id = id;
 			sequence.Name = sequenceName;
+
+			rig.IdNames[id] = sequenceName;
 
 			XmlLite::XmlReader::StackMarker keyMarker = document.GetStackMarker();
 
@@ -583,8 +583,6 @@ void LoadAniKeyText(const Archive::ArchivePath& file)
 				sequence.Keyframes.push_back({ keyName, time });
 			}
 		}
-
-		document.PopNode(2);
 	}
 }
 
@@ -1053,6 +1051,33 @@ int main(int argc, char** argv)
 
 	Scene->AddSkinnedModel(derpPandaRig);
 
+	const char* npcModelName = "21000201_M_CalfWhiteVikingHelmet";
+
+	const Archive::Metadata::Entry* npcAnimationEntry = Archive::Metadata::Entry::FindFirstEntryByTags(npcModelName, "gamebryo-animation");
+
+	MapLoader::RigAnimationData* npcAnimData = AssetLibrary->GetAnimations().FetchRigAnimations(npcAnimationEntry);
+
+	MapLoader::ModelData* npcModel = nullptr;
+	std::shared_ptr<MapLoader::SkinnedModel> npcRig = Engine::Create<MapLoader::SkinnedModel>(AssetLibrary, Scene);
+
+	std::shared_ptr<Engine::Transform> npcTransform = Engine::Create<Engine::Transform>();
+	npcTransform->SetTransformation(Matrix4F(-2250, -2500, 1800) * Matrix4F::RollRotation(-0.5f * PI));
+	npcTransform->Update(0);
+
+	npcRig->SetParent(npcTransform);
+	npcRig->SetTransform(npcTransform.get());
+
+	npcModel = AssetLibrary->GetAnimations().FetchRig(npcAnimData);
+	npcRig->AddModel(npcModel, {}, [](auto&)
+		{
+			return true;
+		}
+	);
+	npcRig->CreateRigDebugMesh();
+	npcRig->SetRigAnimations(npcModelName);
+
+	Scene->AddSkinnedModel(npcRig);
+
 	MapLoader::ModelData* derpPandaBoreA = AssetLibrary->GetAnimations().FetchAnimation(derpPandaAnimData->FetchAnimation("Bore_A"));
 
 	const auto& f00dModel = f00dCharacter.GetModel();
@@ -1069,6 +1094,7 @@ int main(int argc, char** argv)
 		MapLoader::RigAnimationData* AnimationData = nullptr;
 		MapLoader::AnimationPlayer* AnimationPlayer = nullptr;
 		MapLoader::RigAnimation* CurrentlyPlaying = nullptr;
+		MapLoader::Sequence* PlayingSequenceData = nullptr;
 		size_t AnimationIndex = (size_t)-1;
 		bool Looping = false;
 		float PlaybackSpeed = 1;
@@ -1078,7 +1104,8 @@ int main(int argc, char** argv)
 		{ "HornetSp", "Male", maleAnimationData, hornetCharacter.GetModel()->GetAnimationPlayer()},
 		{ "BAADF00D", "Female", femaleAnimationData, f00dModel->GetAnimationPlayer()},
 		{ "BlazeModz", "Female", femaleAnimationData, blazemodzCharacter.GetModel()->GetAnimationPlayer() },
-		{ "Derp Panda", "60000053_LesserPanda", derpPandaAnimData, derpPandaRig->GetAnimationPlayer()}
+		{ "Derp Panda", "60000053_LesserPanda", derpPandaAnimData, derpPandaRig->GetAnimationPlayer()},
+		{ "Npc", npcModelName, npcAnimData, npcRig->GetAnimationPlayer()}
 	};
 
 	int currentRig = 3;
@@ -1558,7 +1585,7 @@ int main(int argc, char** argv)
 										continue;
 								}
 								std::stringstream buttonText;
-								buttonText << name << "##" << rig.RigName << ";" << i;
+								buttonText << name << " (" << rig.AnimationData->Animations[i].Id << ")##" << rig.RigName << ";" << i;
 								std::string text = buttonText.str();
 
 								if (ImGui::Button(text.c_str()))
@@ -1600,10 +1627,63 @@ int main(int argc, char** argv)
 							rig.AnimationPlayer->SetTime(rig.AnimationIndex, time);
 						}
 
+						rig.PlayingSequenceData = nullptr;
+
 						if (rig.CurrentlyPlaying != nullptr)
 						{
 							rig.AnimationPlayer->SetLooping(rig.AnimationIndex, rig.Looping);
 							rig.AnimationPlayer->SetPlaybackSpeed(rig.AnimationIndex, rig.PlaybackSpeed);
+
+							if (rig.AnimationData && rig.AnimationData->AnimationList)
+							{
+								auto entry = rig.AnimationData->AnimationList->Animations.find(rig.CurrentlyPlaying->Name);
+
+								if (entry != rig.AnimationData->AnimationList->Animations.end())
+								{
+									rig.PlayingSequenceData = &entry->second;
+								}
+							}
+						}
+
+						if (ImGui::BeginTable("Keyframes Panel", 2))
+						{
+							ImGui::TableNextRow();
+
+							ImGui::TableSetColumnIndex(0);
+							ImGui::Text("Key Frame");
+
+							ImGui::TableSetColumnIndex(1);
+							ImGui::Text("Time");
+
+							if (rig.PlayingSequenceData)
+							{
+								size_t index = 0;
+
+								for (MapLoader::SequenceKeyframe& keyframe : rig.PlayingSequenceData->Keyframes)
+								{
+									ImGui::TableNextRow();
+
+									std::stringstream keyframeName;
+									keyframeName << keyframe.Name + "##KeyframesPanel" << index;
+									ImGui::TableSetColumnIndex(0);
+									
+									if (ImGui::Button(keyframeName.str().c_str()))
+									{
+										time = keyframe.Time;
+
+										rig.AnimationPlayer->SetTime(rig.AnimationIndex, time);
+									}
+
+									std::stringstream keyframeValue;
+									keyframeValue << keyframe.Time;
+									ImGui::TableSetColumnIndex(1);
+									ImGui::Text(keyframeValue.str().c_str());
+
+									++index;
+								}
+							}
+
+							ImGui::EndTable();
 						}
 					}
 
@@ -1828,6 +1908,7 @@ int main(int argc, char** argv)
 	f00dCharacter.ReleaseResources();
 	blazemodzCharacter.ReleaseResources();
 	derpPandaRig->ReleaseResources();
+	npcRig->ReleaseResources();
 	helloVk.destroyResources();
 	helloVk.destroy();
 	vkctx.deinit();

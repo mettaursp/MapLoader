@@ -550,7 +550,7 @@ namespace ParserUtils
 					continue;
 				}
 
-				if (opcode == 0x54 && build == 12) stream.FoundUnknownValue = true;
+				//if (opcode == 0x80 && build == 12) stream.FoundUnknownValue = true;
 
 				if (stream.HasRecentlyFailed || stream.Index < stream.Data.size() || stream.FoundUnknownValue)
 				{

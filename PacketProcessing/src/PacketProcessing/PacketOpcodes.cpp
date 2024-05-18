@@ -140,7 +140,7 @@ namespace Networking
 					{ "FittingDoll", &ParsePacket<12, ServerPacket, 0x7d> }, // 0x7d
 					{ "", &ParsePacket<0, false, 0> }, // 0x7e
 					{ "", &ParsePacket<0, false, 0> }, // 0x7f
-					{ "", &ParsePacket<0, false, 0> }, // 0x80
+					{ "ProxyGameObj", &ParsePacket<12, ServerPacket, 0x80> }, // 0x80
 					{ "", &ParsePacket<0, false, 0> }, // 0x81
 					{ "", &ParsePacket<0, false, 0> }, // 0x82
 					{ "", &ParsePacket<0, false, 0> }, // 0x83

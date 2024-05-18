@@ -1119,6 +1119,25 @@ namespace Networking
 			return GetFieldItemId((Enum::ItemEntityId)instanceId);
 		}
 
+		unsigned int SniffHandler::GetClassFromNpc(unsigned int actorId)
+		{
+			return GetClassFromNpc((Enum::ActorId)actorId);
+		}
+
+		unsigned int SniffHandler::GetClassFromNpc(Enum::ActorId actorId)
+		{
+			const auto entry = Field.Npcs.find(actorId);
+
+			if (entry == Field.Npcs.end())
+			{
+				DiscardPacket();
+
+				return 0;
+			}
+
+			return (unsigned int)entry->second.Data->Class;
+		}
+
 		Item* SniffHandler::RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId)
 		{
 			if (itemId == Enum::ItemId::Null)

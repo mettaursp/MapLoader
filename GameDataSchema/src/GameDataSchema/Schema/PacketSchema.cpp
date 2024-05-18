@@ -781,6 +781,14 @@ namespace PacketSchema
 				{
 					condition.Comparison = PacketInfoComparison::GreaterThan;
 				}
+				else if (strcmp(value, "lessEqual") == 0)
+				{
+					condition.Comparison = PacketInfoComparison::LessEqual;
+				}
+				else if (strcmp(value, "greaterEqual") == 0)
+				{
+					condition.Comparison = PacketInfoComparison::GreaterEqual;
+				}
 				else if (strcmp(value, "none") == 0)
 				{
 					condition.Comparison = PacketInfoComparison::None;
@@ -2920,6 +2928,14 @@ namespace PacketSchema
 					else if (condition.Comparison == PacketInfoComparison::GreaterThan)
 					{
 						conditionOut << " > " << condition.Value;
+					}
+					else if (condition.Comparison == PacketInfoComparison::LessEqual)
+					{
+						conditionOut << " <= " << condition.Value;
+					}
+					else if (condition.Comparison == PacketInfoComparison::GreaterEqual)
+					{
+						conditionOut << " >= " << condition.Value;
 					}
 
 					out << conditionOut.str() << ")\n";

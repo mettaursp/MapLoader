@@ -3239,75 +3239,74 @@ namespace Networking
 			unsigned char flags_var11 = 0;
 			Read<unsigned char>("flags", handler, flags_var11);
 
-			if (GetBit(flags_var11, 0) == 1)
+			if (flags_var11 == 1)
 			{
-				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 0) == 1");
-				int unknown;
-				Read<int>("unknownInt", handler, unknown);
+				StackWatch<PacketHandler> watch_13(handler, "if flags_var11 == 1");
+				std::wstring animationString_var12;
+				Read<std::wstring>("animationString", handler, animationString_var12);
+			}
+
+			if (flags_var11 == 5)
+			{
+				StackWatch<PacketHandler> watch_15(handler, "if flags_var11 == 5");
+				int unknown_var13 = 0;
+				Read<int>("unknown", handler, unknown_var13);
+
+				std::wstring unknown_var14;
+				Read<std::wstring>("unknown", handler, unknown_var14);
 			}
 
 			if (GetBit(flags_var11, 1) == 1)
 			{
-				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 1) == 1");
-				int unknown;
-				Read<int>("unknownInt", handler, unknown);
+				StackWatch<PacketHandler> watch_18(handler, "if GetBit(flags_var11, 1) == 1");
+				Vector3S unknown_var15;
+				Read<Vector3S>("unknown", handler, unknown_var15);
+
+				std::wstring unknown_var16;
+				Read<std::wstring>("unknown", handler, unknown_var16);
 			}
 
 			if (GetBit(flags_var11, 2) == 1)
 			{
-				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 2) == 1");
-				short unknown;
-				Read<short>("unknownShort", handler, unknown);
+				StackWatch<PacketHandler> watch_21(handler, "if GetBit(flags_var11, 2) == 1");
+				int unknown_var17 = 0;
+				Read<int>("unknown", handler, unknown_var17);
+
+				std::wstring unknown_var18;
+				Read<std::wstring>("unknown", handler, unknown_var18);
 			}
 
 			if (GetBit(flags_var11, 3) == 1)
 			{
-				StackWatch<PacketHandler> watch_22(handler, "if GetBit(flags_var11, 3) == 1");
-				std::wstring animationString_var18;
-				Read<std::wstring>("animationString", handler, animationString_var18);
-			}
+				StackWatch<PacketHandler> watch_24(handler, "if GetBit(flags_var11, 3) == 1");
+				int unknown_var19 = 0;
+				Read<int>("unknown", handler, unknown_var19);
 
-			if (GetBit(flags_var11, 4) == 1)
-			{
-				StackWatch<PacketHandler> watch_16(handler, "if GetBit(flags_var11, 4) == 1");
-				Vector3S unknown_var14;
-				Read<Vector3S>("unknownVector", handler, unknown_var14);
-
-				std::wstring unknown_var15;
-				Read<std::wstring>("unknown", handler, unknown_var15);
+				short unknown_var20 = 0;
+				Read<short>("unknown", handler, unknown_var20);
 			}
 
 			if (GetBit(flags_var11, 5) == 1)
 			{
-				StackWatch<PacketHandler> watch_16(handler, "if GetBit(flags_var11, 5) == 1");
+				StackWatch<PacketHandler> watch_27(handler, "if GetBit(flags_var11, 5) == 1");
+				int unknown_var21 = 0;
+				Read<int>("unknown", handler, unknown_var21);
 
-				short unknown1;
-				Read<short>("unknownShort", handler, unknown1);
+				int unknown_var22 = 0;
+				Read<int>("unknown", handler, unknown_var22);
 
-				short unknown2;
-				Read<short>("unknownShort", handler, unknown2);
+				unsigned char unknown_var23 = 0;
+				Read<unsigned char>("unknown", handler, unknown_var23);
 
-				std::wstring unknown_var15;
-				Read<std::wstring>("unknown", handler, unknown_var15);
+				Vector3S unknown_var24;
+				Read<Vector3S>("unknown", handler, unknown_var24);
+
+				Vector3S unknown_var25;
+				Read<Vector3S>("unknown", handler, unknown_var25);
 			}
 
 			int unknown_var26 = 0;
 			Read<int>("unknown", handler, unknown_var26);
-
-			if (flags_var11 == 0 && (unknown_var8 & 0x10))
-			{
-				handler.PacketStream().HasRecentlyFailed = true;
-				return;
-				StackWatch<PacketHandler> watch_22(handler, "if flags_var11 == 0");
-
-				Vector3Short unknown;
-				Read<Vector3Short>("unknownVector", handler, unknown);
-
-				std::wstring animationString_var18;
-				WStringCharLen animationString_var18_wrapper = animationString_var18;
-
-				Read<WStringCharLen>("animationString", handler, animationString_var18_wrapper);
-			}
 		}
 
 		void ParseCharacterData_v13(PacketHandler& handler, Maple::Game::CharacterData& blockOutput)
@@ -9477,14 +9476,12 @@ namespace Networking
 
 			unsigned char unknown_var8 = 0;
 			Read<unsigned char>("unknown", handler, unknown_var8);
-			ValidateValues(handler, "weirdByteValue1", unknown_var8, (unsigned char)0, (unsigned char)3);
 			Read<int>("rarity", handler, output0.Rarity);
 
 			ValidateValues(handler, "rarity", output0.Rarity, (int)0, (int)1, (int)2, (int)3, (int)4, (int)5, (int)6);
 
 			short unknown_var10 = 0;
-			Read<short>("printMeUnknownShort", handler, unknown_var10);
-
+			Read<short>("unknown", handler, unknown_var10);
 
 			bool unknown_var11 = false;
 			Read<bool>("unknown", handler, unknown_var11);
@@ -9506,6 +9503,7 @@ namespace Networking
 			{
 				handler.PacketParsed<Server::FieldAddItemPacket>(output0);
 			}
+
 
 			return;
 		}
@@ -10130,8 +10128,8 @@ namespace Networking
 			Vector3S rotation_var8;
 			Read<Vector3S>("rotation", handler, rotation_var8);
 
-			short posDiv10_var9 = 0;
-			Read<short>("posDiv10", handler, posDiv10_var9);
+			short rotateZ_var9 = 0;
+			Read<short>("rotateZ", handler, rotateZ_var9);
 
 			bool unknown_var10 = false;
 			Read<bool>("unknown", handler, unknown_var10);
@@ -11002,6 +11000,252 @@ namespace Networking
 
 
 				return;
+			}
+		}
+
+		template <>
+		void ParsePacket<12, ServerPacket, 0x80>(PacketHandler& handler)
+		{
+			using namespace ParserUtils::Packets;
+
+			ParserUtils::DataStream& stream = handler.PacketStream();
+
+				StackWatch<PacketHandler> watch_block(handler, "[Server] 0x80 'ProxyGameObj' v12");
+
+			unsigned char mode_var0 = 0;
+			Read<unsigned char>("mode", handler, mode_var0);
+
+			ValidateValues(handler, "mode", mode_var0, (unsigned char)3, (unsigned char)11, (unsigned char)4, (unsigned char)5, (unsigned char)6, (unsigned char)7, (unsigned char)8, (unsigned char)10);
+
+			if (mode_var0 == 3)
+			{
+				StackWatch<PacketHandler> watch_18(handler, "if mode_var0 == 3");
+				int objectId_var16 = 0;
+				Read<int>("objectId", handler, objectId_var16);
+
+				long long characterId_var17 = 0;
+				Read<long long>("characterId", handler, characterId_var17);
+
+				long long accountId_var18 = 0;
+				Read<long long>("accountId", handler, accountId_var18);
+
+				std::wstring name_var19;
+				Read<std::wstring>("name", handler, name_var19);
+
+				std::wstring profileUrl_var20;
+				Read<std::wstring>("profileUrl", handler, profileUrl_var20);
+
+				std::wstring motto_var21;
+				Read<std::wstring>("motto", handler, motto_var21);
+
+				unsigned char CProxyGameObject_var22 = 0;
+				Read<unsigned char>("CProxyGameObject", handler, CProxyGameObject_var22);
+
+				Vector3S position_var23;
+				Read<Vector3S>("position", handler, position_var23);
+
+				short level_var24 = 0;
+				Read<short>("level", handler, level_var24);
+
+				short jobCode_var25 = 0;
+				Read<short>("jobCode", handler, jobCode_var25);
+
+				int jobId_var26 = 0;
+				Read<int>("jobId", handler, jobId_var26);
+
+				int homePlotMapId_var27 = 0;
+				Read<int>("homePlotMapId", handler, homePlotMapId_var27);
+
+				int plotId_var28 = 0;
+				Read<int>("plotId", handler, plotId_var28);
+
+				int apartmentNumber_var29 = 0;
+				Read<int>("apartmentNumber", handler, apartmentNumber_var29);
+
+				std::wstring homeName_var30;
+				Read<std::wstring>("homeName", handler, homeName_var30);
+
+				int gearScore_var31 = 0;
+				Read<int>("gearScore", handler, gearScore_var31);
+
+				short State_var32 = 0;
+				Read<short>("State", handler, State_var32);
+
+				int trophies1_var33 = 0;
+				Read<int>("trophies1", handler, trophies1_var33);
+
+				int trophies2_var34 = 0;
+				Read<int>("trophies2", handler, trophies2_var34);
+
+				int trophies2_var35 = 0;
+				Read<int>("trophies2", handler, trophies2_var35);
+			}
+
+			if (mode_var0 == 4)
+			{
+				StackWatch<PacketHandler> watch_39(handler, "if mode_var0 == 4");
+				int objectId_var36 = 0;
+				Read<int>("objectId", handler, objectId_var36);
+			}
+
+			if (mode_var0 == 7)
+			{
+				StackWatch<PacketHandler> watch_41(handler, "if mode_var0 == 7");
+				int objectId_var37 = 0;
+				Read<int>("objectId", handler, objectId_var37);
+			}
+
+			if (mode_var0 == 10)
+			{
+				StackWatch<PacketHandler> watch_43(handler, "if mode_var0 == 10");
+				int objectId_var38 = 0;
+				Read<int>("objectId", handler, objectId_var38);
+			}
+
+			if (mode_var0 == 5)
+			{
+				StackWatch<PacketHandler> watch_45(handler, "if mode_var0 == 5");
+				int objectId_var39 = 0;
+				Read<int>("objectId", handler, objectId_var39);
+
+				unsigned char flags_var40 = 0;
+				Read<unsigned char>("flags", handler, flags_var40);
+
+				unsigned char flags_0 = flags_var40 & 0x01;
+				unsigned char flags_1 = flags_var40 & 0x02;
+				unsigned char flags_2 = flags_var40 & 0x04;
+				unsigned char flags_3 = flags_var40 & 0x08;
+				unsigned char flags_4 = flags_var40 & 0x10;
+				unsigned char flags_5 = flags_var40 & 0x20;
+				unsigned char flags_6 = flags_var40 & 0x40;
+				unsigned char flags_7 = flags_var40 & 0x80;
+
+				//ValidateValues(handler, "flags", flags_var40, (unsigned char)0xFF);
+				ValidateValues(handler, "flags[0]", flags_0, (unsigned char)0);
+				ValidateValues(handler, "flags[1]", flags_1, (unsigned char)0);
+				ValidateValues(handler, "flags[2]", flags_2, (unsigned char)0);
+				ValidateValues(handler, "flags[3]", flags_3, (unsigned char)0);
+				ValidateValues(handler, "flags[4]", flags_4, (unsigned char)0);
+				ValidateValues(handler, "flags[5]", flags_5, (unsigned char)0);
+				ValidateValues(handler, "flags[6]", flags_6, (unsigned char)0);
+				ValidateValues(handler, "flags[7]", flags_7, (unsigned char)0);
+
+
+				if (GetBit(flags_var40, 0) == 1)
+				{
+					StackWatch<PacketHandler> watch_48(handler, "if GetBit(flags_var40, 0) == 1");
+					unsigned char CProxyGameObject_var41 = 0;
+					Read<unsigned char>("CProxyGameObject", handler, CProxyGameObject_var41);
+				}
+
+				if (GetBit(flags_var40, 1) == 1)
+				{
+					StackWatch<PacketHandler> watch_50(handler, "if GetBit(flags_var40, 1) == 1");
+					Vector3S position_var42;
+					Read<Vector3S>("position", handler, position_var42);
+				}
+
+				if (GetBit(flags_var40, 2) == 1)
+				{
+					StackWatch<PacketHandler> watch_52(handler, "if GetBit(flags_var40, 2) == 1");
+					short level_var43 = 0;
+					Read<short>("level", handler, level_var43);
+				}
+
+				if (GetBit(flags_var40, 3) == 1)
+				{
+					StackWatch<PacketHandler> watch_54(handler, "if GetBit(flags_var40, 3) == 1");
+					short jobCode_var44 = 0;
+					Read<short>("jobCode", handler, jobCode_var44);
+
+					int jobId_var45 = 0;
+					Read<int>("jobId", handler, jobId_var45);
+				}
+
+				if (GetBit(flags_var40, 4) == 1)
+				{
+					StackWatch<PacketHandler> watch_57(handler, "if GetBit(flags_var40, 4) == 1");
+					std::wstring motto_var46;
+					Read<std::wstring>("motto", handler, motto_var46);
+				}
+
+				if (GetBit(flags_var40, 5) == 1)
+				{
+					StackWatch<PacketHandler> watch_59(handler, "if GetBit(flags_var40, 5) == 1");
+					int gearScore_var47 = 0;
+					Read<int>("gearScore", handler, gearScore_var47);
+				}
+
+				if (GetBit(flags_var40, 6) == 1)
+				{
+					StackWatch<PacketHandler> watch_61(handler, "if GetBit(flags_var40, 6) == 1");
+					short State_var48 = 0;
+					Read<short>("State", handler, State_var48);
+				}
+			}
+
+			if (mode_var0 == 6)
+			{
+				StackWatch<PacketHandler> watch_63(handler, "if mode_var0 == 6");
+				int objectId_var49 = 0;
+				Read<int>("objectId", handler, objectId_var49);
+
+				int npcId_var50 = 0;
+				Read<int>("npcId", handler, npcId_var50);
+
+				unsigned char CProxyGameObject_var51 = 0;
+				Read<unsigned char>("CProxyGameObject", handler, CProxyGameObject_var51);
+
+				int CProxyGameObject2_var52 = 0;
+				Read<int>("CProxyGameObject2", handler, CProxyGameObject2_var52);
+
+				Vector3S position_var53;
+				Read<Vector3S>("position", handler, position_var53);
+			}
+
+			if (mode_var0 == 8)
+			{
+				StackWatch<PacketHandler> watch_69(handler, "if mode_var0 == 8");
+				int objectId_var54 = 0;
+				Read<int>("objectId", handler, objectId_var54);
+
+				unsigned char CProxyGameObject_var55 = 0;
+				Read<unsigned char>("CProxyGameObject", handler, CProxyGameObject_var55);
+
+				Vector3S position_var56;
+				Read<Vector3S>("position", handler, position_var56);
+			}
+
+			if (mode_var0 == 11)
+			{
+				StackWatch<PacketHandler> watch_73(handler, "if mode_var0 == 11");
+				int objectId_var57 = 0;
+				Read<int>("objectId", handler, objectId_var57);
+
+				unsigned char CProxyGameObject_var58 = 0;
+				Read<unsigned char>("CProxyGameObject", handler, CProxyGameObject_var58);
+
+				Vector3S position_var59;
+				Read<Vector3S>("position", handler, position_var59);
+			}
+
+			if (mode_var0 == 9)
+			{
+				StackWatch<PacketHandler> watch_77(handler, "if mode_var0 == 9");
+				int objectId_var60 = 0;
+				Read<int>("objectId", handler, objectId_var60);
+
+				int petId_var61 = 0;
+				Read<int>("petId", handler, petId_var61);
+
+				int npcId_var62 = 0;
+				Read<int>("npcId", handler, npcId_var62);
+
+				unsigned char CProxyGameObject_var63 = 0;
+				Read<unsigned char>("CProxyGameObject", handler, CProxyGameObject_var63);
+
+				Vector3S position_var64;
+				Read<Vector3S>("position", handler, position_var64);
 			}
 		}
 

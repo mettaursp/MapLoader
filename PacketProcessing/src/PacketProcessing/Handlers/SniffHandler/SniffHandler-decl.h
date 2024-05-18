@@ -334,6 +334,8 @@ namespace Networking
 			unsigned int GetFieldItemType(unsigned int instanceId);
 			unsigned int GetFieldItemId(Enum::ItemEntityId instanceId);
 			unsigned int GetFieldItemId(unsigned int instanceId);
+			unsigned int GetClassFromNpc(unsigned int actorId);
+			unsigned int GetClassFromNpc(Enum::ActorId actorId);
 
 			Item* RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId);
 			Item* GetItem(Enum::ItemInstanceId instanceId);

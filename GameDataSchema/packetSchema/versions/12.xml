@@ -2781,6 +2781,48 @@
 			<data type="int" name="unknown" />
 			<data type="wstring" name="name" output="Name" />
 		</opcode>
+		<opcode name="NpcControl" value="0x59">
+			<data type="short" name="npcCount" />
+			<array data="npcCount">
+				<data type="short" name="bufferSize" />
+				<buffer sizeData="bufferSize">
+					<data type="int" name="actorId" />
+					<data type="Vector3S" name="position" />
+					<data type="short" name="rotationZ" />
+					<data type="Vector3S" name="velocity" />
+					<data type="short" name="sequenceSpeed" />
+					<data type="byte" name="enemyClass" doRead="false" />
+					<function data="enemyClass" name="GetClassFromNpc" params="actorId" />
+					<condition data="enemyClass" value="3" comparison="greaterEqual">
+						<data type="int" name="targetObject" />
+					</condition>
+					<data type="byte" name="state" />
+					<data type="short" name="sequenceId" />
+					<data type="short" name="actionCounter" />
+					<condition data="sequenceId" value="-3" value2="-2" comparison="between">
+						<data type="bool" name="flag" />
+						<condition data="flag" value="1" comparison="equal">
+							<data type="Vector3S" name="startPosition" />
+							<data type="Vector3S" name="endPosition" />
+							<data type="float" name="duration" />
+							<data type="float" name="height" />
+						</condition>
+						<condition else="true" comparison="none">
+							<data type="Vector3S" name="offset" />
+						</condition>
+					</condition>
+					<condition data="state" value="13" comparison="equal">
+						<data type="float" name="unknown1" />
+						<data type="float" name="unknown2" />
+						<data type="float" name="unknown3" />
+						<data type="byte" name="unknown4" />
+					</condition>
+					<condition data="state" value="17" comparison="equal">
+						<data type="int" name="unknown" />
+					</condition>
+				</buffer>
+			</array>
+		</opcode>
 		<opcode name="FieldRemovePet" value="0x5C">
 			<output type="Networking.Packets.Server.FieldRemovePetPacket" schemaName="packetData" />
 			<data type="int" name="actorId" output="ActorId" />
@@ -3027,32 +3069,13 @@
 				<enum name="RemovePet" value="10" />
 				<enum name="MovePet" value="11" />
 			</data>
-			<condition data="mode" value="0" comparison="equal">
-				<data type="long" name="skillSn" />
-				<data type="int" name="casterId" output="CasterId" />
-				<data type="uint" name="skillId" output="SkillId" />
-				<data type="ushort" name="skillLevel" output="SkillLevel" />
-				<data type="byte" name="motionPoint" output="MotionPoint" />
-				<data type="byte" name="attackPoint" output="AttackPoint" />
-				<data type="Vector3Short" name="position" output="Position" />
-				<data type="Vector3S" name="direction" output="Direction" />
-				<data type="bool" name="isChaining" output="IsChaining" />
-				<data type="int" name="serverTick" output="ServerTick" />
-				<data type="byte" name="count" />
-				<array data="count" output="Hits">
-					<data type="long" name="unknown" />
-					<data type="long" name="skillAttack" output="SkillAttack" />
-					<data type="int" name="targetId" output="TargetId" />
-					<data type="short" name="animation" output="Animation" />
-				</array>
-			</condition>
 			<condition data="mode" value="3" comparison="equal">
 				<data type="int" name="objectId" />
 				<data type="long" name="characterId" />
 				<data type="long" name="accountId" />
-				<data type="string" name="name" />
-				<data type="string" name="profileUrl" />
-				<data type="string" name="motto" />
+				<data type="wstring" name="name" />
+				<data type="wstring" name="profileUrl" />
+				<data type="wstring" name="motto" />
 				<data type="byte" name="CProxyGameObject" />
 				<data type="Vector3S" name="position" />
 				<data type="short" name="level" />
@@ -3061,7 +3084,7 @@
 				<data type="int" name="homePlotMapId" />
 				<data type="int" name="plotId" />
 				<data type="int" name="apartmentNumber" />
-				<data type="string" name="homeName" />
+				<data type="wstring" name="homeName" />
 				<data type="int" name="gearScore" />
 				<data type="short" name="State" />
 				<data type="int" name="trophies1" />
@@ -3102,7 +3125,7 @@
 					<data type="int" name="jobId" />
 				</condition>
 				<condition data="flags" bitIndex="4" value="1" comparison="equal">
-					<data type="string" name="motto" />
+					<data type="wstring" name="motto" />
 				</condition>
 				<condition data="flags" bitIndex="5" value="1" comparison="equal">
 					<data type="int" name="gearScore" />

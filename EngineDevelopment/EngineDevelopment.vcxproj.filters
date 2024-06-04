@@ -21,9 +21,21 @@
     <ClCompile Include="src\EngineDevelopment\ClientDiff.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\EngineDevelopment\AiXmlProcessing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\EngineDevelopment\SkillXmlProcessing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\EngineDevelopment\ClientDiff.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EngineDevelopment\AiXmlProcessing.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\EngineDevelopment\SkillXmlProcessing.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

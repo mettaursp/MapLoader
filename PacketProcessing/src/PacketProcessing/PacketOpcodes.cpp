@@ -101,7 +101,7 @@ namespace Networking
 					{ "FieldAddNpc", &ParsePacket<12, ServerPacket, 0x56> }, // 0x56
 					{ "FieldRemoveNpc", &ParsePacket<12, ServerPacket, 0x57> }, // 0x57
 					{ "", &ParsePacket<0, false, 0> }, // 0x58
-					{ "", &ParsePacket<0, false, 0> }, // 0x59
+					{ "NpcControl", &ParsePacket<12, ServerPacket, 0x59> }, // 0x59
 					{ "", &ParsePacket<0, false, 0> }, // 0x5a
 					{ "FieldAddPet", &ParsePacket<12, ServerPacket, 0x5b> }, // 0x5b
 					{ "FieldRemovePet", &ParsePacket<12, ServerPacket, 0x5c> }, // 0x5c

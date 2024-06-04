@@ -41,8 +41,11 @@ namespace MapLoader
 		std::vector<size_t> Bones;
 		size_t Vertices = 0;
 		size_t Indices = 0;
+		bool IsVisible = true;
 		bool HasTransparency = false;
 		bool HasInvisibility = false;
+		bool HasEnabledPhysXMesh = false;
+		bool IsPhysXMesh = false;
 	};
 
 	struct ModelData
@@ -54,6 +57,7 @@ namespace MapLoader
 		int DuplicateFormatUses = 0;
 		std::vector<Engine::Graphics::ModelPackageAnimation> Animations;
 		//ParentNifTransforms NodeTransforms;
+		uint32_t DefaultCubeId = (uint32_t)-1;
 
 		bool IsLoaded(size_t index) const;
 

@@ -95,7 +95,7 @@ void main()
 
 		traceRayEXT(topLevelAS,     // acceleration structure
 								rayFlags,       // rayFlags
-								uni.drawMask,//0xFF,           // cullMask
+								uint(uni.drawMask),//0xFF,           // cullMask
 								uni.lightingModelOffset,              // sbtRecordOffset
 								0,              // sbtRecordStride
 								0,              // missIndex

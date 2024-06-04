@@ -113,7 +113,7 @@ namespace MapLoader
 		EntityMap[entry] = Entities.size();
 		Entities.push_back({ Entities.size(), entry });
 
-		FlatEntry flatEntry = { &Entities.back() };
+		FlatEntry flatEntry = { this, Entities.size() - 1 };
 
 		flatFile.Read(DocumentBuffer);
 
@@ -121,9 +121,11 @@ namespace MapLoader
 
 		document.OpenDocument(DocumentBuffer);
 
-		document.GetFirstChild();
+		const XmlLite::XmlNode* modelNode = document.GetFirstChild();
 
-		LoadEntity(flatEntry, document);
+		std::string_view name = document.ReadAttributeValue<std::string_view>("name", "");
+
+		LoadEntity(flatEntry, document, name);
 
 		return flatEntry;
 	}
@@ -144,28 +146,39 @@ namespace MapLoader
 	}
 
 	template <typename FlatType>
-	void AddFlatMixInFrom(const FlatType* parent, FlatEntry& entry, FlatType*& pointer, size_t& pointerIndex, std::vector<FlatType>& vector)
+	void AddFlatMixInFrom(const std::vector<FlatType>& parentVector, size_t parentIndex, FlatEntry& entry, size_t& index, std::vector<FlatType>& vector)
 	{
-		if (parent == nullptr) return;
+		if (parentIndex == (size_t)-1) return;
 
-		vector.push_back(*parent);
+		index = vector.size();
 
-		pointer = &vector.back();
-		pointer->Index = vector.size() - 1;
-		pointer->Parent = entry.Entity->Index;
-		pointerIndex = pointer->Index;
+		vector.push_back(parentVector[parentIndex]);
+
+		FlatType& data = vector.back();
+		data.Index = index;
+		data.Parent = entry.Entity;
 	}
 
 	FlatEntry FlatLibrary::LoadEntityFromFlat(const FlatEntry& flat, XmlLite::XmlReader& document)
 	{
-		Entities.push_back({ Entities.size(), flat.Entity->Entry });
+		FlatEntity flatEntity = flat.Library->Entities[flat.Entity];
 
-		FlatEntry entityEntry = { &Entities.back() };
+		Entities.push_back({ Entities.size(), flatEntity.Entry });
 
-		AddFlatMixInFrom(flat.Placeable, entityEntry, entityEntry.Placeable, entityEntry.Entity->PlaceableIndex, Placeables);
-		AddFlatMixInFrom(flat.Mesh, entityEntry, entityEntry.Mesh, entityEntry.Entity->MeshIndex, Meshes);
-		AddFlatMixInFrom(flat.Light, entityEntry, entityEntry.Light, entityEntry.Entity->LightIndex, Lights);
-		AddFlatMixInFrom(flat.Portal, entityEntry, entityEntry.Portal, entityEntry.Entity->PortalIndex, Portals);
+		FlatEntry entityEntry = { this, Entities.size() - 1 };
+		FlatEntity& entity = Entities.back();
+
+		AddFlatMixInFrom(flat.Library->Placeables, flatEntity.Placeable, entityEntry, entity.Placeable, Placeables);
+		AddFlatMixInFrom(flat.Library->Meshes, flatEntity.Mesh, entityEntry, entity.Mesh, Meshes);
+		AddFlatMixInFrom(flat.Library->Lights, flatEntity.Light, entityEntry, entity.Light, Lights);
+		AddFlatMixInFrom(flat.Library->Portals, flatEntity.Portal, entityEntry, entity.Portal, Portals);
+		AddFlatMixInFrom(flat.Library->PhysXShapes, flatEntity.PhysXShape, entityEntry, entity.PhysXShape, PhysXShapes);
+		AddFlatMixInFrom(flat.Library->PhysXMeshes, flatEntity.PhysXMesh, entityEntry, entity.PhysXMesh, PhysXMeshes);
+		AddFlatMixInFrom(flat.Library->Fluids, flatEntity.Fluid, entityEntry, entity.Fluid, Fluids);
+		AddFlatMixInFrom(flat.Library->MapProperties, flatEntity.MapProperties, entityEntry, entity.MapProperties, MapProperties);
+		AddFlatMixInFrom(flat.Library->VibrateObjects, flatEntity.Vibrate, entityEntry, entity.Vibrate, VibrateObjects);
+		AddFlatMixInFrom(flat.Library->Breakable, flatEntity.Breakable, entityEntry, entity.Breakable, Breakable);
+		AddFlatMixInFrom(flat.Library->PhysXWhiteboxes, flatEntity.PhysXWhitebox, entityEntry, entity.PhysXWhitebox, PhysXWhiteboxes);
 
 		LoadEntity(entityEntry, document);
 
@@ -179,29 +192,129 @@ namespace MapLoader
 
 		FlatEntity* entity = &Entities[index];
 
-		return { 
-			entity,
-			entity->PlaceableIndex != (size_t)-1 ? &Placeables[entity->PlaceableIndex] : nullptr,
-			entity->MeshIndex != (size_t)-1 ? &Meshes[entity->MeshIndex] : nullptr,
-			entity->LightIndex != (size_t)-1 ? &Lights[entity->LightIndex] : nullptr,
-			entity->PortalIndex != (size_t)-1 ? &Portals[entity->PortalIndex] : nullptr
-		};
+		return { this, index };
 	}
 
 	template <typename FlatType>
-	void AddFlatMixIn(FlatEntry& entry, FlatType*& pointer, size_t& pointerIndex, std::vector<FlatType>& vector)
+	void AddFlatMixIn(FlatEntry& entry, size_t& index, std::vector<FlatType>& vector)
 	{
-		if (pointer != nullptr) return;
+		if (index != (size_t)-1) return;
 
-		vector.push_back({ vector.size(), entry.Entity->Index });
+		index = vector.size();
 
-		pointer = &vector.back();
-		pointerIndex = pointer->Index;
+		vector.push_back({ vector.size(), entry.Entity });
 	}
 
-	void FlatLibrary::LoadEntity(FlatEntry& entry, XmlLite::XmlReader& document)
+	void FlatLibrary::LoadMixin(FlatEntry& entry, FlatEntity& entity, std::string_view name)
 	{
-		entry.Entity->Id = document.ReadAttributeValue<std::string_view>("id", "");
+		if (strcmp(name, "Placeable") == 0)
+		{
+			AddFlatMixIn(entry, entity.Placeable, Placeables);
+
+			return;
+		}
+
+		if (strcmp(name, "Mesh") == 0)
+		{
+			AddFlatMixIn(entry, entity.Mesh, Meshes);
+
+			return;
+		}
+
+		if (strcmp(name, "Light") == 0)
+		{
+			AddFlatMixIn(entry, entity.Light, Lights);
+
+			return;
+		}
+
+		if (strcmp(name, "PhysXShape") == 0)
+		{
+			AddFlatMixIn(entry, entity.PhysXShape, PhysXShapes);
+
+			return;
+		}
+
+		if (strcmp(name, "PhysXProp") == 0)
+		{
+			AddFlatMixIn(entry, entity.PhysXMesh, PhysXMeshes);
+
+			return;
+		}
+
+		if (strcmp(name, "MS2Fluid") == 0)
+		{
+			AddFlatMixIn(entry, entity.Fluid, Fluids);
+
+			return;
+		}
+
+		if (strcmp(name, "MS2Vibrate") == 0)
+		{
+			AddFlatMixIn(entry, entity.Vibrate, VibrateObjects);
+
+			return;
+		}
+
+		if (strcmp(name, "MS2Breakable") == 0)
+		{
+			AddFlatMixIn(entry, entity.Breakable, Breakable);
+
+			return;
+		}
+
+		if (strcmp(name, "MS2MapProperties") == 0)
+		{
+			AddFlatMixIn(entry, entity.MapProperties, MapProperties);
+
+			return;
+		}
+
+		if (strcmp(name, "PhysXWhitebox") == 0)
+		{
+			AddFlatMixIn(entry, entity.PhysXWhitebox, PhysXWhiteboxes);
+
+			return;
+		}
+
+		if (strcmp(name, "DirectionalLight") == 0)
+		{
+			AddFlatMixIn(entry, entity.Light, Lights);
+
+			Lights[entity.Light].Type = EntityLightType::Directional;
+
+			return;
+		}
+
+		if (strcmp(name, "PointLight") == 0)
+		{
+			AddFlatMixIn(entry, entity.Light, Lights);
+
+			Lights[entity.Light].Type = EntityLightType::Point;
+
+			return;
+		}
+
+		if (strcmp(name, "AmbientLight") == 0)
+		{
+			AddFlatMixIn(entry, entity.Light, Lights);
+
+			Lights[entity.Light].Type = EntityLightType::Ambient;
+
+			return;
+		}
+	}
+
+	void FlatLibrary::LoadEntity(FlatEntry& entry, XmlLite::XmlReader& document, std::string_view name)
+	{
+		FlatEntity& entity = Entities[entry.Entity];
+
+		entity.Id = document.ReadAttributeValue<std::string_view>("id", "");
+
+		if (name.size() != 0)
+		{
+			LoadMixin(entry, entity, name);
+		}
 
 		const Archive::Metadata::Entry* modelEntry = nullptr;
 		bool popNode = false;
@@ -223,60 +336,7 @@ namespace MapLoader
 
 			if (strcmp(type, "mixin") == 0)
 			{
-				if (strcmp(name, "Placeable") == 0)
-				{
-					AddFlatMixIn(entry, entry.Placeable, entry.Entity->PlaceableIndex, Placeables);
-
-					continue;
-				}
-
-				if (strcmp(name, "Mesh") == 0)
-				{
-					AddFlatMixIn(entry, entry.Mesh, entry.Entity->MeshIndex, Meshes);
-
-					continue;
-				}
-
-				if (strcmp(name, "Light") == 0)
-				{
-					AddFlatMixIn(entry, entry.Light, entry.Entity->LightIndex, Lights);
-
-					continue;
-				}
-
-				if (strcmp(name, "Portal") == 0)
-				{
-					AddFlatMixIn(entry, entry.Portal, entry.Entity->PortalIndex, Portals);
-
-					continue;
-				}
-
-				if (strcmp(name, "DirectionalLight") == 0)
-				{
-					AddFlatMixIn(entry, entry.Light, entry.Entity->LightIndex, Lights);
-
-					entry.Light->Type = EntityLightType::Directional;
-
-					continue;
-				}
-
-				if (strcmp(name, "PointLight") == 0)
-				{
-					AddFlatMixIn(entry, entry.Light, entry.Entity->LightIndex, Lights);
-
-					entry.Light->Type = EntityLightType::Point;
-
-					continue;
-				}
-
-				if (strcmp(name, "AmbientLight") == 0)
-				{
-					AddFlatMixIn(entry, entry.Light, entry.Entity->LightIndex, Lights);
-
-					entry.Light->Type = EntityLightType::Ambient;
-
-					continue;
-				}
+				LoadMixin(entry, entity, name);
 
 				continue;
 			}
@@ -287,18 +347,31 @@ namespace MapLoader
 
 				if (setNode == nullptr) continue;
 
-				LoadEntityProperties(entry.Entity, document, name) ||
-				LoadPlaceableProperties(entry.Placeable, document, name) ||
-				LoadMeshProperties(entry.Mesh, document, name) ||
-				LoadLightProperties(entry.Light, document, name) ||
-				LoadPortalProperties(entry.Portal, document, name);
+				
+				const auto get = [] <typename T> (std::vector<T>& vector, size_t index) -> T*
+				{
+					if (index == (size_t)-1) return nullptr;
+
+					return &vector[index];
+				};
+
+				LoadEntityProperties(get(Entities, entry.Entity), document, name) ||
+				LoadPlaceableProperties(get(Placeables, entity.Placeable), document, name) ||
+				LoadMeshProperties(get(Meshes, entity.Mesh), document, name) ||
+				LoadLightProperties(get(Lights, entity.Light), document, name) ||
+				LoadPortalProperties(get(Portals, entity.Portal), document, name) ||
+				LoadMapProperties(get(MapProperties, entity.MapProperties), document, name) ||
+				LoadVibrateProperties(get(VibrateObjects, entity.Vibrate), document, name) ||
+				LoadBreakableProperties(get(Breakable, entity.Breakable), document, name) ||
+				LoadPhysXMeshProperties(get(PhysXMeshes, entity.PhysXMesh), document, name) || 
+				LoadPhysXWhiteboxProperties(get(PhysXWhiteboxes, entity.PhysXWhitebox), document, name);
 
 				continue;
 			}
 		}
 
-		if (entry.Placeable != nullptr)
-			entry.Placeable->Transformation = getMatrix(entry.Placeable->Position, entry.Placeable->Rotation, entry.Placeable->Scale);
+		if (entity.Placeable != (size_t)-1)
+			Placeables[entity.Placeable].Transformation = getMatrix(Placeables[entity.Placeable].Position, Placeables[entity.Placeable].Rotation, Placeables[entity.Placeable].Scale);
 	}
 
 	bool FlatLibrary::LoadEntityProperties(FlatEntity* entity, XmlLite::XmlReader& document, const std::string_view& name)
@@ -466,4 +539,143 @@ namespace MapLoader
 
 		return false;
 	}
+
+	bool FlatLibrary::LoadMapProperties(FlatMapProperties* mapProperties, XmlLite::XmlReader& document, const std::string_view& name)
+	{
+		if (mapProperties == nullptr) return false;
+
+		if (strcmp(name, "CubeType") == 0)
+		{
+			std::string cubeType = document.ReadAttributeValue<std::string>("value", "None");
+
+			if (cubeType == "None")
+				mapProperties->CubeType = EntityCubeType::None;
+			if (cubeType == "Ground")
+				mapProperties->CubeType = EntityCubeType::Ground;
+			if (cubeType == "Fluid")
+				mapProperties->CubeType = EntityCubeType::Fluid;
+			if (cubeType == "Wall")
+				mapProperties->CubeType = EntityCubeType::Wall;
+			if (cubeType == "Object")
+				mapProperties->CubeType = EntityCubeType::Object;
+			if (cubeType == "Building")
+				mapProperties->CubeType = EntityCubeType::Building;
+
+			return true;
+		}
+
+		if (strcmp(name, "GeneratePhysX") == 0)
+		{
+			mapProperties->GeneratePhysX = lower(document.ReadAttributeValue<std::string>("value", "false")) == "true";
+
+			return true;
+		}
+
+		if (strcmp(name, "DisableCollision") == 0)
+		{
+			mapProperties->DisableCollision = lower(document.ReadAttributeValue<std::string>("value", "false")) == "true";
+
+			return true;
+		}
+
+		return false;
+	}
+
+	bool FlatLibrary::LoadVibrateProperties(FlatVibrate* vibrate, XmlLite::XmlReader& document, const std::string_view& name)
+	{
+		if (vibrate == nullptr) return false;
+
+		if (strcmp(name, "Enabled") == 0)
+		{
+			vibrate->Enabled = document.ReadAttributeValue<std::string>("value", "True") == "True";
+
+			return true;
+		}
+
+		return false;
+	}
+
+	bool FlatLibrary::LoadBreakableProperties(FlatBreakable* breakable, XmlLite::XmlReader& document, const std::string_view& name)
+	{
+		if (breakable == nullptr) return false;
+
+		if (strcmp(name, "Enabled") == 0)
+		{
+			breakable->Enabled = document.ReadAttributeValue<std::string>("value", "True") == "True";
+
+			return true;
+		}
+
+		if (strcmp(name, "NxCollision") == 0)
+		{
+			breakable->NxCollision = document.ReadAttributeValue<std::string>("value", "True") == "True";
+
+			return true;
+		}
+
+		if (strcmp(name, "PropCollisionGroup") == 0)
+		{
+			int value = document.ReadAttributeValue<int>("value", 0);
+
+			switch (value)
+			{
+			case 0: breakable->CollisionGroup = EntityCollisionGroup::CollisionGroup0;
+				break;
+			case 7: breakable->CollisionGroup = EntityCollisionGroup::CollisionGroup7;
+				break;
+			case 8: breakable->CollisionGroup = EntityCollisionGroup::CollisionGroup8;
+				break;
+			case 9: breakable->CollisionGroup = EntityCollisionGroup::CollisionGroup9;
+				break;
+			default: break;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	bool FlatLibrary::LoadPhysXMeshProperties(FlatPhysXMesh* mesh, XmlLite::XmlReader& document, const std::string_view& name)
+	{
+		if (mesh == nullptr) return false;
+
+		if (strcmp(name, "PropCollisionGroup") == 0)
+		{
+			int value = document.ReadAttributeValue<int>("value", 0);
+
+			switch (value)
+			{
+			case 0: mesh->CollisionGroup = EntityCollisionGroup::CollisionGroup0;
+				break;
+			case 7: mesh->CollisionGroup = EntityCollisionGroup::CollisionGroup7;
+				break;
+			case 8: mesh->CollisionGroup = EntityCollisionGroup::CollisionGroup8;
+				break;
+			case 9: mesh->CollisionGroup = EntityCollisionGroup::CollisionGroup9;
+				break;
+			default: break;
+			}
+
+			return true;
+		}
+
+		return false;
+	}
+
+	bool FlatLibrary::LoadPhysXWhiteboxProperties(FlatPhysXWhitebox* box, XmlLite::XmlReader& document, const std::string_view& name)
+	{
+		if (box == nullptr) return false;
+
+		if (strcmp(name, "ShapeDimensions") == 0)
+		{
+			box->ShapeDimensions = document.ReadAttributeValue<Vector3SF>("value", {});
+
+			return true;
+		}
+
+		return false;
+	}
+
+
 }

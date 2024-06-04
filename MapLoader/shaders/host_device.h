@@ -31,6 +31,7 @@ using uint64_t = unsigned long long;
 // clang-format off
 #ifdef __cplusplus // Descriptor binding helper for C++ and GLSL
  #define START_BINDING(a) enum a {
+ #define START_BINDING_64(a) enum a : uint64_t {
  #define END_BINDING() }
 #define WITH_DEFAULT(x) = x
 #else
@@ -38,6 +39,7 @@ using uint64_t = unsigned long long;
 #extension GL_EXT_shader_explicit_arithmetic_types_int32 : require
 #extension GL_EXT_shader_explicit_arithmetic_types_int64 : require
  #define START_BINDING(a)  const uint
+ #define START_BINDING_64(a)  const uint64_t
  #define END_BINDING() 
 #define WITH_DEFAULT(x)
 #endif
@@ -87,11 +89,27 @@ END_BINDING();
 START_BINDING(VisibilityFlags)
 	eDisabledObject = 0x0,
 	eStandardVisibility = 0x1,
-	eHasTransparency = 0x2,
+	eCollider = 0x2,
 	eHasInvisibility = 0x4,
 	eDebugObject = 0x8,
 	eHiddenObject = 0x10,
-	eHasShadow = 0x20
+	eHasShadow = 0x20,
+	eHasPhysXMesh = 0x40,
+	eHasFluid = 0x80,
+	eHasVibrate = 0x100,
+	eHasBreakable = 0x200,
+	eCubeTypeNone = 0x400,
+	eCubeTypeGround = 0x800,
+	eCubeTypeFluid = 0x1000,
+	eCubeTypeWall = 0x2000,
+	eCubeTypeObject = 0x4000,
+	eCubeTypeBuilding = 0x8000,
+	eCollisionGroup0 = 0x10000,
+	eCollisionGroup7 = 0x20000,
+	eCollisionGroup8 = 0x40000,
+	eCollisionGroup9 = 0x80000,
+	eCollisionGroupMisc = 0x100000,
+	eHasTransparency = 0x200000
 END_BINDING();
 
 START_BINDING(SpecializationTypes)
@@ -180,6 +198,8 @@ struct GlobalUniforms
 	int lightingModel WITH_DEFAULT(1);
 	int skyLightMode WITH_DEFAULT(0);
 	uint32_t drawMask WITH_DEFAULT(eStandardVisibility);
+	uint32_t highlightMask WITH_DEFAULT(eDisabledObject);
+	uint32_t drawMaskHighlightPos WITH_DEFAULT(8);
 	uint32_t lightingModelOffset WITH_DEFAULT(0);
 	uint32_t highlightMaterialFlags WITH_DEFAULT(0);
 	int8_t sliceAxisIndex WITH_DEFAULT(-1);

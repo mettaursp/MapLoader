@@ -357,10 +357,15 @@ namespace MapLoader
 
 		VkGeometryInstanceFlagsKHR flags = 0;
 
-		const ModelNode& node = sceneObject->GetModel()->Nodes[sceneObject->GetModelIndex()];
+		size_t nodeIndex = sceneObject->GetModelIndex();
 
-		if (!node.HasInvisibility)
-			flags |= VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR;
+		if (nodeIndex != (size_t)-1)
+		{
+			const ModelNode& node = sceneObject->GetModel()->Nodes[nodeIndex];
+
+			if (!node.HasInvisibility)
+				flags |= VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR;
+		}
 
 		VkAccelerationStructureInstanceKHR& instance = AccelStructureInstances[index];
 		instance.transform = nvvk::toTransformMatrixKHR(sceneObject->GetTransform()->GetWorldTransformation());

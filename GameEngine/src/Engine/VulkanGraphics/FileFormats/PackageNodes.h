@@ -28,8 +28,10 @@ namespace Engine
 			size_t AttachedTo = (size_t)-1;
 			size_t MaterialIndex = (size_t)-1;
 			size_t DataIndex = (size_t)-1;
+			bool HasPhysXData = false;
 			bool IsBone = false;
 			bool IsInBoneList = false;
+			bool IsVisible = true;
 			std::shared_ptr<Engine::Graphics::MeshFormat> Format;
 			std::shared_ptr<Engine::Graphics::MeshData> Mesh;
 			std::shared_ptr<Engine::Transform> Transform;
@@ -265,12 +267,33 @@ namespace Engine
 			std::vector<ModelPackageAnimationEvent> Events;
 		};
 
+		struct ModelPhysXMesh
+		{
+			size_t DataIndex = (size_t)-1;
+			size_t MaterialIndex = (size_t)-1;
+			std::shared_ptr<Engine::Graphics::MeshFormat> Format;
+			std::shared_ptr<Engine::Graphics::MeshData> Mesh;
+			std::shared_ptr<Engine::Transform> Transform;
+		};
+
+		struct ModelPhysXActor
+		{
+			std::vector<ModelPhysXMesh> Meshes;
+		};
+
+		struct ModelPhysXProp
+		{
+			std::vector<ModelPhysXActor> Actors;
+		};
+
 		struct ModelPackage
 		{
 			std::vector<size_t> Bones;
 			std::vector<ModelPackageNode> Nodes;
 			std::vector<ModelPackageMaterial> Materials;
 			std::vector<ModelPackageAnimation> Animations;
+			std::vector<ModelPhysXProp> PhysXProps;
+			bool HasEnabledPhysXMeshes = false;
 		};
 	}
 }

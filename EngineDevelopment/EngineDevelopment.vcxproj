@@ -154,8 +154,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\EngineDevelopment\AiXmlProcessing.cpp" />
     <ClCompile Include="src\EngineDevelopment\ClientDiff.cpp" />
     <ClCompile Include="src\EngineDevelopment\EngineDevelopmentMain.cpp" />
+    <ClCompile Include="src\EngineDevelopment\SkillXmlProcessing.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ArchiveParser\ArchiveParser.vcxproj">
@@ -163,7 +165,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\EngineDevelopment\AiXmlProcessing.h" />
     <ClInclude Include="src\EngineDevelopment\ClientDiff.h" />
+    <ClInclude Include="src\EngineDevelopment\SkillXmlProcessing.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

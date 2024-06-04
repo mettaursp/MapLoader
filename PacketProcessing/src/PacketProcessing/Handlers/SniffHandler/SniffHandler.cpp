@@ -815,7 +815,7 @@ namespace Networking
 			ParserUtils::DataStream& oldTop = PacketStream();
 			ParserUtils::DataStream& newTop = StreamStack[StreamStack.size() - 2].PacketStream;
 
-			if (!newTop.HasRecentlyFailed && oldTop.Index < oldTop.Data.size())
+			if (!newTop.HasRecentlyFailed && oldTop.Index < oldTop.Data.size() && !oldTop.DiscardErrors)
 			{
 				std::cout << "popping buffer when not all bytes have been read from it. bytes remaining: " << (oldTop.Data.size() - oldTop.Index) << std::endl;
 
@@ -863,6 +863,7 @@ namespace Networking
 				newTop.Index -= oldTop.Data.size() - oldTop.Index;
 			}
 
+			newTop.DiscardErrors = oldTop.DiscardErrors;
 			newTop.HasRecentlyFailed = oldTop.HasRecentlyFailed || oldTop.Index < oldTop.Data.size();
 			newTop.FoundUnknownValue = oldTop.FoundUnknownValue;
 
@@ -1136,6 +1137,25 @@ namespace Networking
 			}
 
 			return (unsigned int)entry->second.Data->Class;
+		}
+
+		bool SniffHandler::IsNpcFriendly(unsigned int actorId)
+		{
+			return IsNpcFriendly((Enum::ActorId)actorId);
+		}
+
+		bool SniffHandler::IsNpcFriendly(Enum::ActorId actorId)
+		{
+			const auto entry = Field.Npcs.find(actorId);
+
+			if (entry == Field.Npcs.end())
+			{
+				DiscardPacket();
+
+				return 0;
+			}
+
+			return entry->second.Data->NpcType != 0;
 		}
 
 		Item* SniffHandler::RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId)

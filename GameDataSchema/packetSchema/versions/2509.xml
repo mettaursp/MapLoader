@@ -157,7 +157,7 @@
 				<data type="long" name="characterId" output="CharacterId" />
 				<data type="wstring" name="name" output="Name" />
 			</condition>
-		</opcode>ct
+		</opcode>
 		<opcode name="FieldAddPlayer" value="0x17">
 			<output type="Networking.Packets.Server.FieldAddPlayerPacket" schemaName="packetData" />
 			<data type="int" name="actorId" output="ActorId" />

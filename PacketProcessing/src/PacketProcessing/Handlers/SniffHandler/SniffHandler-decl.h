@@ -336,6 +336,8 @@ namespace Networking
 			unsigned int GetFieldItemId(unsigned int instanceId);
 			unsigned int GetClassFromNpc(unsigned int actorId);
 			unsigned int GetClassFromNpc(Enum::ActorId actorId);
+			bool IsNpcFriendly(unsigned int actorId);
+			bool IsNpcFriendly(Enum::ActorId actorId);
 
 			Item* RegisterItem(Enum::ItemInstanceId instanceId, Enum::ItemId itemId);
 			Item* GetItem(Enum::ItemInstanceId instanceId);

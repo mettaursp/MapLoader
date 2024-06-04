@@ -2787,14 +2787,19 @@
 				<data type="short" name="bufferSize" />
 				<buffer sizeData="bufferSize">
 					<data type="int" name="actorId" />
-					<data type="Vector3S" name="position" />
+					<data type="byte" name="flags" />
+					<data type="Vector3Short" name="position" />
 					<data type="short" name="rotationZ" />
-					<data type="Vector3S" name="velocity" />
+					<data type="Vector3Short" name="velocity" />
 					<data type="short" name="sequenceSpeed" />
 					<data type="byte" name="enemyClass" doRead="false" />
+					<data type="bool" name="isFriendly" doRead="false" />
 					<function data="enemyClass" name="GetClassFromNpc" params="actorId" />
+					<function data="isFriendly" name="IsNpcFriendly" params="actorId" />
 					<condition data="enemyClass" value="3" comparison="greaterEqual">
-						<data type="int" name="targetObject" />
+						<condition data="isFriendly" value="0" comparison="equal">
+							<data type="int" name="targetObject" />
+						</condition>
 					</condition>
 					<data type="byte" name="state" />
 					<data type="short" name="sequenceId" />

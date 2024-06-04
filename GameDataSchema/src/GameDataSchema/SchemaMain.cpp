@@ -496,9 +496,14 @@ namespace ParserUtils
 
 				++readPackets;
 
-				if (outbound == false && opcode == 0x7A && build == 12)
+				if (outbound == false && opcode == 0x17 && build >= 2509)
 				{
-					opcode += 0;
+					if (stream.Data.size() && stream.Data[0] == 0x14 && stream.Data.back() != 1)
+					{
+						opcode += 0;
+						stream.Index = 1;
+						stream.FoundUnknownValue = true;
+					}
 				}
 
 				if (stream.DiscardErrors)
@@ -1132,7 +1137,7 @@ int main(int argc, char** argv)
 	bool showUnused = false;
 	bool printBaseStats = false;
 
-	fs::path msbDir = "B:/Files/ms2sniffs/";
+	fs::path msbDir = "B:/Files/ms2sniffs/testStaging";
 
 	if (!regenerate)
 	{

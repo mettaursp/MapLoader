@@ -15,6 +15,26 @@ namespace MapLoader
 		Ambient
 	};
 
+	enum class EntityCubeType
+	{
+		Blank = 0,
+		None = VisibilityFlags::eCubeTypeNone,
+		Ground = VisibilityFlags::eCubeTypeGround,
+		Fluid = VisibilityFlags::eCubeTypeFluid,
+		Wall = VisibilityFlags::eCubeTypeWall,
+		Object = VisibilityFlags::eCubeTypeObject,
+		Building = VisibilityFlags::eCubeTypeBuilding
+	};
+
+	enum class EntityCollisionGroup
+	{
+		CollisionGroup0 = VisibilityFlags::eCollisionGroup0,
+		CollisionGroup7 = VisibilityFlags::eCollisionGroup7,
+		CollisionGroup8 = VisibilityFlags::eCollisionGroup8,
+		CollisionGroup9 = VisibilityFlags::eCollisionGroup9,
+		CollisionGroupMisc = VisibilityFlags::eCollisionGroupMisc
+	};
+
 	struct FlatLight
 	{
 		size_t Index = (size_t)-1;
@@ -41,6 +61,50 @@ namespace MapLoader
 		std::string TargetField;
 	};
 
+	struct FlatPhysXShape
+	{
+		size_t Index = (size_t)-1;
+		size_t Parent = (size_t)-1;
+	};
+	
+	struct FlatPhysXMesh
+	{
+		size_t Index = (size_t)-1;
+		size_t Parent = (size_t)-1;
+		EntityCollisionGroup CollisionGroup = EntityCollisionGroup::CollisionGroupMisc;
+	};
+
+	struct FlatFluid
+	{
+		size_t Index = (size_t)-1;
+		size_t Parent = (size_t)-1;
+	};
+
+	struct FlatVibrate
+	{
+		size_t Index = (size_t)-1;
+		size_t Parent = (size_t)-1;
+		bool Enabled = true;
+	};
+
+	struct FlatBreakable
+	{
+		size_t Index = (size_t)-1;
+		size_t Parent = (size_t)-1;
+		bool Enabled = true;
+		EntityCollisionGroup CollisionGroup = EntityCollisionGroup::CollisionGroupMisc;
+		bool NxCollision = false;
+	};
+
+	struct FlatMapProperties
+	{
+		size_t Index = (size_t)-1;
+		size_t Parent = (size_t)-1;
+		EntityCubeType CubeType = EntityCubeType::Blank;
+		bool GeneratePhysX = false;
+		bool DisableCollision = false;
+	};
+
 	struct FlatMesh
 	{
 		size_t Index = (size_t)-1;
@@ -60,15 +124,29 @@ namespace MapLoader
 		bool IsVisible = true;
 	};
 
+	struct FlatPhysXWhitebox
+	{
+		size_t Index = (size_t)-1;
+		size_t Parent = (size_t)-1;
+		Vector3SF ShapeDimensions;
+	};
+
 	struct FlatEntity
 	{
 		size_t Index = (size_t)-1;
 		const Archive::Metadata::Entry* Entry = nullptr;
 		MapLoader::ModelData* ProxyModel = nullptr;
 		std::string Id;
-		size_t PlaceableIndex = (size_t)-1;
-		size_t LightIndex = (size_t)-1;
-		size_t PortalIndex = (size_t)-1;
-		size_t MeshIndex = (size_t)-1;
+		size_t Placeable = (size_t)-1;
+		size_t Light = (size_t)-1;
+		size_t Portal = (size_t)-1;
+		size_t PhysXShape = (size_t)-1;
+		size_t PhysXMesh = (size_t)-1;
+		size_t Fluid = (size_t)-1;
+		size_t Vibrate = (size_t)-1;
+		size_t Breakable = (size_t)-1;
+		size_t MapProperties = (size_t)-1;
+		size_t Mesh = (size_t)-1;
+		size_t PhysXWhitebox = (size_t)-1;
 	};
 }

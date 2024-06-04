@@ -19,7 +19,8 @@
 struct BlockData;
 struct NifDocument;
 
-struct NiDataBlock {
+struct NiDataBlock
+{
 	unsigned int BlockIndex = 0;
 	NifDocument* Document = nullptr;
 
@@ -85,6 +86,124 @@ struct BlockData
 	const T* GetData() const
 	{
 		return reinterpret_cast<const T*>(Data.get());
+	}
+};
+
+template <typename T>
+struct NiRef
+{
+	const BlockData* Block = nullptr;
+
+	NiRef(const BlockData* block = nullptr)
+	{
+		*this = block;
+	}
+
+	NiRef(const NiRef<T>& ref)
+	{
+		Block = ref.Block;
+	}
+
+	NiRef(NiRef<T>&& ref)
+	{
+		Block = ref.Block;
+
+		ref.Block = nullptr;
+	}
+
+	T* operator->() {
+		return reinterpret_cast<T*>(Block->Data.get());
+	}
+
+	const T* operator->() const {
+		return reinterpret_cast<const T*>(Block->Data.get());
+	}
+
+	T& operator*() {
+		return *reinterpret_cast<T*>(Block->Data.get());
+	}
+
+	const T& operator*() const {
+		return *reinterpret_cast<const T*>(Block->Data.get());
+	}
+
+	// throws std::bad_cast
+	NiRef<T>& operator=(const BlockData* block)
+	{
+		if (Block == nullptr || dynamic_cast<T*>(block->Data.get()) != nullptr)
+		{
+			Block = block;
+		}
+
+		return *this;
+	}
+
+	NiRef<T>& operator=(std::nullptr_t)
+	{
+		Block = nullptr;
+
+		return *this;
+	}
+
+	NiRef<T>& operator=(const NiRef<T>& ref)
+	{
+		Block = ref.Block;
+
+		return *this;
+	}
+
+	template <typename T2>
+	NiRef<T>& operator=(const NiRef<T2>& ref)
+	{
+		static_assert(std::is_base_of<T, T2>::value, "NiRef: Derived not derived from BaseClass");
+
+		Block = ref.Block;
+
+		return *this;
+	}
+
+	NiRef<T>& operator=(NiRef<T>&& ref)
+	{
+		Block = ref.Block;
+
+		ref.Block = nullptr;
+
+		return *this;
+	}
+
+	bool operator==(const BlockData* block) const
+	{
+		return Block == block;
+	}
+
+	bool operator==(std::nullptr_t) const
+	{
+		return Block == nullptr;
+	}
+
+	bool operator==(const NiRef<T>& ref) const
+	{
+		return Block == ref.Block;
+	}
+
+	bool operator==(const T* data) const
+	{
+		if (Block == nullptr)
+		{
+			return data == nullptr;
+		}
+
+		return Block->Data.get() == data;
+	}
+
+	operator T* ()
+	{
+		return &**this;
+	}
+
+	operator T* () const
+	{
+		return &**this;
 	}
 };
 
@@ -329,27 +448,32 @@ struct NiSourceTexture : public NiDataBlock
 	bool PersistRenderData = false;
 };
 
-template <typename T>
 struct NiExtraData : public NiDataBlock
+{
+
+};
+
+template <typename T>
+struct NiExtraDataImpl : public NiExtraData
 {
 	T Value;
 };
 
-struct NiFloatExtraData : public NiExtraData<float>
+struct NiFloatExtraData : public NiExtraDataImpl<float>
 {
 	typedef float ValueType;
 
 	static inline const std::string BlockTypeName = "NiFloatExtraData";
 };
 
-struct NiColorExtraData : public NiExtraData<Color4>
+struct NiColorExtraData : public NiExtraDataImpl<Color4>
 {
 	typedef Color4 ValueType;
 
 	static inline const std::string BlockTypeName = "NiColorExtraData";
 };
 
-struct NiIntegerExtraData : public NiExtraData<unsigned int>
+struct NiIntegerExtraData : public NiExtraDataImpl<unsigned int>
 {
 	typedef unsigned int ValueType;
 
@@ -416,6 +540,234 @@ struct NiDataStream : public NiDataBlock
 	StreamUsage Usage;
 	bool Streamable = false;
 	std::vector<Engine::Graphics::VertexAttributeFormat> Attributes;
+};
+
+struct NiPhysXPropDesc;
+
+struct NiPhysXProp : public NiDataBlock
+{
+	static inline const std::string BlockTypeName = "NiPhysXProp";
+
+	std::vector<NiRef<NiExtraData>> ExtraData; // NiExtraData
+	const BlockData* Controller = nullptr; // NiTimeController
+	float PhysXToWorldScale = 1;
+	std::vector<const BlockData*> Sources; // NiPhysXSrc
+	std::vector<const BlockData*> Dests; // NiPhysXDest
+	std::vector<NiRef<NiMesh>> ModifiedMeshes; // NiMesh
+	bool KeepMeshes = false;
+	NiRef<NiPhysXPropDesc> Snapshot; // NiPhysXPropDesc
+};
+
+struct NiPhysXActorDesc;
+
+struct NiPhysXPropDesc : public NiDataBlock
+{
+	static inline const std::string BlockTypeName = "NiPhysXPropDesc";
+
+	struct StateString
+	{
+		std::string String;
+		unsigned int Value;
+	};
+
+	struct State
+	{
+		std::vector<StateString> Strings;
+	};
+
+	std::vector<NiRef<NiPhysXActorDesc>> Actors; // NiPhysXActorDesc
+	std::vector<const BlockData*> Joints; // NiPhysXJointDesc
+	std::vector<const BlockData*> Clothes; // NiPhysXClothDesc
+	std::unordered_map<unsigned short, const BlockData*> Materials;
+	std::vector<State> StateNames;
+	unsigned char Flags = 0;
+};
+
+struct NxActorFlagEnum
+{
+	enum NxActorFlag : unsigned int
+	{
+		None,
+		DisableCollision = 1 << 0,
+		DisableResponse = 1 << 1,
+		LockCenterOfMass = 1 << 2,
+		FluidDisableCollision = 1 << 3,
+		ContactModification = 1 << 4,
+		ForceConeFriction = 1 << 5,
+		UserActorPairFiltering = 1 << 6
+	};
+};
+
+typedef NxActorFlagEnum::NxActorFlag NxActorFlag;
+
+struct NiPhysXShapeDesc;
+
+struct NiPhysXActorDesc : public NiDataBlock
+{
+	static inline const std::string BlockTypeName = "NiPhysXActorDesc";
+
+	std::string ActorName;
+	std::vector<Matrix4F> Poses;
+	const BlockData* BodyDesc = nullptr; //NiPhysXBodyDesc
+	float Density = 1;
+	NxActorFlag ActorFlags = NxActorFlag::None;
+	unsigned short ActorGroup = 0;
+	unsigned short DominanceGroup = 0;
+	unsigned int ContactReportFlags = 0;
+	unsigned short ForceFieldMaterial = 0;
+	std::vector<NiRef<NiPhysXShapeDesc>> ShapeDescriptions;
+	NiRef<NiPhysXActorDesc> ActorParent;
+	const BlockData* Source = nullptr; // NiPhysXRigidBodySrc
+	const BlockData* Dest = nullptr; // NiPhysXRigidBodyDest
+};
+
+struct NxShapeTypeEnum
+{
+	enum NxShapeType : unsigned int
+	{
+		Plane,
+		Sphere,
+		Box,
+		Capsule,
+		Wheel,
+		Convex,
+		Mesh,
+		HeightField,
+		RawMesh,
+		Compound
+	};
+};
+
+typedef NxShapeTypeEnum::NxShapeType NxShapeType;
+
+struct NxShapeFlagEnum
+{
+	enum NxShapeFlag : unsigned int
+	{
+		Visualization = 1 << 3,
+		DisableCollision = 1 << 4,
+		FeatureIndices = 1 << 5,
+		DisableRaycasting = 1 << 6,
+		PointContactForce = 1 << 7,
+		FluidDrain = 1 << 8,
+		FluidDisableCollision = 1 << 10,
+		FluidTwoWay = 1 << 11,
+		DisableResponse = 1 << 12,
+		DynamicDynamicCCD = 1 << 13,
+		DisableSceneQueries = 1 << 14,
+		ClothDrain = 1 << 15,
+		ClothDisableCollision = 1 << 16,
+		ClothTwoWay = 1 << 17,
+		SoftBodyDrain = 1 << 18,
+		SoftBodyDisableCollision = 1 << 19,
+		SoftBodyTwoWay = 1 << 20
+	};
+};
+
+typedef NxShapeFlagEnum::NxShapeFlag NxShapeFlag;
+
+constexpr NxShapeFlag operator|(NxShapeFlag left, NxShapeFlag right)
+{
+	return NxShapeFlag((unsigned int)left | (unsigned int)right);
+}
+
+struct NiPhysXMeshDesc;
+
+struct NiPhysXShapeDesc : public NiDataBlock
+{
+	static inline const std::string BlockTypeName = "NiPhysXShapeDesc";
+
+	NxShapeType ShapeType = NxShapeType::Plane;
+	NxShapeFlag Flags = NxShapeFlag::Visualization | NxShapeFlag::ClothTwoWay | NxShapeFlag::SoftBodyTwoWay;
+	Matrix4F LocalPose;
+	unsigned short CollisionGroup = 0;
+	unsigned short MaterialIndex = 0;
+	float Density = 1;
+	float Mass = 1;
+	float SkinWidth = 0.01f;
+	std::string ShapeName;
+	unsigned int NonInteractingCompartment = 0;
+	unsigned int CollisionBits[4] = { 0 };
+	NiRef<NiPhysXMeshDesc> Mesh;
+};
+
+struct NxMeshShapeFlagsEnum
+{
+	enum NxMeshShapeFlags : unsigned int
+	{
+		None = 0,
+		SmoothSphereCollisions = 1 << 0,
+		DoubleSided = 1 << 1
+	};
+};
+
+typedef NxMeshShapeFlagsEnum::NxMeshShapeFlags NxMeshShapeFlags;
+
+struct NxPagingModeEnum
+{
+	enum NxPagingMode : unsigned int
+	{
+		Manual,
+		Fallback,
+		Auto
+	};
+};
+
+typedef NxPagingModeEnum::NxPagingMode NxPagingMode;
+
+struct PhysXMeshFlagsEnum
+{
+	enum PhysXMeshFlags : unsigned char
+	{
+		None = 0,
+		IsConvex = 0x1,
+		IsCloth = 0x2,
+		Hardware = 0x4,
+		CookedForWin32 = 0x8,
+		CookedForPS3 = 0x10,
+		CookedForXenon = 0x20
+	};
+};
+
+typedef PhysXMeshFlagsEnum::PhysXMeshFlags PhysXMeshFlags;
+
+struct NxsMeshTypeEnum
+{
+	enum class NxsMeshType
+	{
+		None,
+		Convex,
+		Triangle,
+		Cloth
+	};
+};
+
+typedef NxsMeshTypeEnum::NxsMeshType NxsMeshType;
+
+struct NxsFace
+{
+	unsigned char Vert1 = 0;
+	unsigned char Vert2 = 0;
+	unsigned char Vert3 = 0;
+};
+
+struct NxsMesh
+{
+	NxsMeshType Type = NxsMeshType::None;
+	std::vector<Vector3SF> Vertices;
+	std::vector<NxsFace> Faces;
+};
+
+struct NiPhysXMeshDesc : public NiDataBlock
+{
+	static inline const std::string BlockTypeName = "NiPhysXMeshDesc";
+
+	std::string MeshName;
+	std::vector<unsigned char> MeshData;
+	NxsMesh Mesh;
+	NxMeshShapeFlags MeshFlags = NxMeshShapeFlags::None;
+	NxPagingMode PagingMode = NxPagingMode::Manual;
+	PhysXMeshFlags Flags = PhysXMeshFlags::None;
 };
 
 struct CycleTypeEnum
@@ -716,6 +1068,8 @@ struct NifDocument
 	void ParseSourceTexture(std::string_view& stream, BlockData& block);
 	void ParseTexturingProperty(std::string_view& stream, BlockData& block);
 	void ParseTransform(std::string_view& stream, NiTransform& transform, bool translationFirst = true, bool isQuaternion = false);
+	void ParseMatrix(std::string_view& stream, Matrix4F& matrix);
+	Vector3SF ParseVector3(std::string_view& stream);
 	Color3 ParseColor3(std::string_view& stream);
 	Color4 ParseColor4(std::string_view& stream);
 	void ParseBounds(std::string_view& stream, NiBounds& bounds);
@@ -735,6 +1089,11 @@ struct NifDocument
 	void ParseFloatExtraData(std::string_view& stream, BlockData& block);
 	void ParseAlphaProperty(std::string_view& stream, BlockData& block);
 	void ParseVertexColorProperty(std::string_view& stream, BlockData& block);
+	void ParsePhysXProp(std::string_view& stream, BlockData& block);
+	void ParsePhysXPropDesc(std::string_view& stream, BlockData& block);
+	void ParsePhysXActorDesc(std::string_view& stream, BlockData& block);
+	void ParsePhysXShapeDesc(std::string_view& stream, BlockData& block);
+	void ParsePhysXMeshDesc(std::string_view& stream, BlockData& block);
 
 	void WriteNode(std::ostream& stream, BlockData& block);
 	void WriteMesh(std::ostream& stream, BlockData& block);
@@ -786,6 +1145,17 @@ struct NifDocument
 	const std::string& FetchString(unsigned int ref);
 	const std::string& FetchString(std::string_view& stream);
 	void ReadBlockRefs(std::string_view& stream, BlockData& block, std::vector<const BlockData*>& refs);
+
+	template <typename T>
+	void ReadBlockRefs(std::string_view& stream, BlockData& block, std::vector<NiRef<T>>& refs)
+	{
+		unsigned int count = Endian.read<unsigned int>(stream);
+
+		refs.resize(count);
+
+		for (unsigned int i = 0; i < count; ++i)
+			refs[i] = &Blocks[Endian.read<unsigned int>(stream)];
+	}
 };
 
 std::shared_ptr<Engine::Graphics::MeshFormat> GetNiMeshFormat();

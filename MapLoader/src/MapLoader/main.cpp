@@ -347,93 +347,220 @@ void loadMap(const std::string& mapId)
 		std::string_view entityName = document.ReadAttributeValue<std::string_view>("name", "");
 
 		MapLoader::FlatEntry flatentry = AssetLibrary->GetFlats().FetchFlat(modelName);
+		MapLoader::FlatEntity flatEntity = AssetLibrary->GetFlats().GetEntity(flatentry.Entity);
 
-		if (flatentry.Entity == nullptr)
+		if (flatentry.Entity == (size_t)-1)
 			continue;
 
-		MapLoader::FlatEntry entityEntry = AssetLibrary->GetMapData().LoadEntityFromFlat(flatentry, document);
+		MapLoader::FlatLibrary& mapData = AssetLibrary->GetMapData();
 
-		entityEntry.Entity->Id = id;
+		MapLoader::FlatEntry entityEntry = mapData.LoadEntityFromFlat(flatentry, document);
+		MapLoader::FlatEntity entity = mapData.GetEntity(entityEntry.Entity);
 
-		if (entityEntry.Light != nullptr && loadLights)
+		entity.Id = id;
+
+		if (entity.Light != (size_t)-1 && loadLights)
 		{
-			if (entityEntry.Light->Type == MapLoader::EntityLightType::Ambient)
+			MapLoader::FlatLight& light = mapData.GetLight(entity.Light);
+
+			if (light.Type == MapLoader::EntityLightType::Ambient)
 			{
 				hasAmbient = true;
-				ambient = *entityEntry.Light;
+				ambient = light;
 			}
 			else
 			{
-				Vector3F direction = -(/*ms2ToWorld */ entityEntry.Placeable->Transformation.FrontVector()).Unit();
-				Vector3F position = /*ms2ToWorld */ Vector3F(entityEntry.Placeable->Position, 1);
+				MapLoader::FlatPlaceable& placeable = mapData.GetPlaceable(entity.Placeable);
+
+				Vector3F direction = -(/*ms2ToWorld */ placeable.Transformation.FrontVector()).Unit();
+				Vector3F position = /*ms2ToWorld */ Vector3F(placeable.Position, 1);
 
 				helloVkPtr->lights.push_back(LightDesc{});
 
-				LightDesc& light = helloVkPtr->lights.back();
+				LightDesc& newLight = helloVkPtr->lights.back();
 
-				if (entityEntry.Light->Type == MapLoader::EntityLightType::Directional && directionalLight == -1)
+				if (light.Type == MapLoader::EntityLightType::Directional && directionalLight == -1)
 					directionalLight = helloVkPtr->lights.size() - 1;
 
-				light.position = vec3(position.X, position.Y, position.Z);
-				light.direction = vec3(direction.X, direction.Y, direction.Z);
-				light.brightness = entityEntry.Light->Dimmer;
-				light.type = (int)entityEntry.Light->Type;
-				light.range = entityEntry.Light->Range;
-				light.diffuse = (Vector3)entityEntry.Light->DiffuseColor;
-				light.specular = (Vector3)entityEntry.Light->SpecularColor;
-				light.ambient = (Vector3)entityEntry.Light->AmbientColor;
-				light.castsShadows = entityEntry.Light->CastsShadows;
+				newLight.position = vec3(position.X, position.Y, position.Z);
+				newLight.direction = vec3(direction.X, direction.Y, direction.Z);
+				newLight.brightness = light.Dimmer;
+				newLight.type = (int)light.Type;
+				newLight.range = light.Range;
+				newLight.diffuse = (Vector3)light.DiffuseColor;
+				newLight.specular = (Vector3)light.SpecularColor;
+				newLight.ambient = (Vector3)light.AmbientColor;
+				newLight.castsShadows = light.CastsShadows;
 			}
 		}
 
+
+		bool spawningCube = false;
 		bool spawningProxy = false;
-		
-		const auto spawnNewModel = [&entityEntry, &entityName, &flatentry, lineNumber, &spawningProxy](MapLoader::ModelData* model)
+		bool spawnCube = false;
+		Vector3SF physXBoxSize = { 1, 1, 1 };
+		Matrix4F transformation;
+		Vector3SF pos;
+
+		if (entity.Placeable != (size_t)-1)
 		{
-			SpawnedEntity* newModel = AssetLibrary->GetModels().SpawnModel(Scene.get(), model, entityEntry.Placeable->Transformation, entityEntry.Placeable->Position,
-				[&entityEntry, &spawningProxy](ModelSpawnParameters& spawnParameters)
+			transformation = mapData.GetPlaceable(entity.Placeable).Transformation;
+			pos = transformation.Translation();
+		}
+
+		if (entity.PhysXWhitebox != (size_t)-1)
+		{
+			spawnCube = true;
+			physXBoxSize = (1 / 150.f) * mapData.GetPhysXWhitebox(entity.PhysXWhitebox).ShapeDimensions;
+			transformation = transformation * Matrix4F(0, 0, -75 * physXBoxSize.Z);
+		}
+
+		bool canSpawnColliders = entity.PhysXShape != (size_t)-1 || entity.PhysXMesh != (size_t)-1;
+
+		if (entity.Breakable != (size_t)-1)
+		{
+			spawnCube |= mapData.GetBreakable(entity.Breakable).NxCollision;
+		}
+
+		if (entity.MapProperties != (size_t)-1)
+		{
+			spawnCube |= mapData.GetMapProperties(entity.MapProperties).GeneratePhysX;
+
+			if (mapData.GetMapProperties(entity.MapProperties).DisableCollision)
+			{
+				canSpawnColliders = false;
+				spawnCube = false;
+			}
+		}
+		
+		const auto spawnNewModel = [&mapData, &entityEntry, &entity, &entityName, &flatentry, &flatEntity, lineNumber, &spawningProxy, &transformation, &spawnCube, &spawningCube, canSpawnColliders, &physXBoxSize](MapLoader::ModelData* model)
+		{
+			MapLoader::FlatPlaceable& placeable = mapData.GetPlaceable(entity.Placeable);
+
+			SpawnedEntity* newModel = AssetLibrary->GetModels().SpawnModel(Scene.get(), model, transformation, placeable.Position, spawningCube, physXBoxSize,
+				[&mapData, &placeable, &entityEntry, &entity, &spawningProxy, &spawnCube, &spawningCube, canSpawnColliders](ModelSpawnParameters& spawnParameters)
 				{
-					if (entityEntry.Mesh != nullptr)
-						spawnParameters.NewInstance.color = (Vector3)entityEntry.Mesh->MaterialColor;
+					if (entity.Mesh != (size_t)-1)
+						spawnParameters.NewInstance.color = (Vector3)mapData.GetMesh(entity.Mesh).MaterialColor;
 
 					uint32_t overrideFlags = 0;
 
-					if (!entityEntry.Placeable->IsVisible)
+					if ((spawnParameters.NewInstance.drawFlags & VisibilityFlags::eCollider) != 0)
+					{
+						if (spawnCube && !spawningCube)
+						{
+							overrideFlags += 0;
+						}
+
+						if (spawningProxy || (!canSpawnColliders && !spawningCube)) return false;
+
+						overrideFlags = VisibilityFlags::eCollider;
+					}
+
+					if (!placeable.IsVisible || (spawnParameters.NewInstance.drawFlags & VisibilityFlags::eHiddenObject) != 0)
 						overrideFlags |= VisibilityFlags::eHiddenObject;
 
 					if (spawningProxy)
 						overrideFlags |= VisibilityFlags::eDebugObject;
 
+					if (spawnParameters.NewInstance.drawFlags & VisibilityFlags::eHiddenObject)
+						overrideFlags |= VisibilityFlags::eHiddenObject;
+
 					if (overrideFlags != 0)
 						spawnParameters.NewInstance.drawFlags = overrideFlags;
+
+					//if (entityEntry.PhysXShape != nullptr)
+					//	spawnParameters.NewInstance.drawFlags |= VisibilityFlags::eHasPhysXShape;
+
+					bool physXMeshFlagSet = (spawnParameters.NewInstance.drawFlags & VisibilityFlags::eHasPhysXMesh) != 0;
+					bool shouldGeneratePhysX = false;
+					Vector3SF physXBoxSize = { 1, 1, 1 };
+
+					if (entity.MapProperties != (size_t)-1)
+						shouldGeneratePhysX = (unsigned int)mapData.GetMapProperties(entity.MapProperties).GeneratePhysX;
+
+					if (entity.PhysXWhitebox != (size_t)-1)
+					{
+						shouldGeneratePhysX = true;
+						physXBoxSize = (1 / 150.f) * mapData.GetPhysXWhitebox(entity.PhysXWhitebox).ShapeDimensions;
+					}
+
+					if (entity.Breakable != (size_t)-1)
+					{
+						shouldGeneratePhysX |= mapData.GetBreakable(entity.Breakable).NxCollision;
+					}
+
+					bool hasPhysXMesh = physXMeshFlagSet || shouldGeneratePhysX;
+
+					if (hasPhysXMesh)
+						spawnParameters.NewInstance.drawFlags |= VisibilityFlags::eHasPhysXMesh;
+					else if (physXMeshFlagSet)
+						spawnParameters.NewInstance.drawFlags ^= VisibilityFlags::eHasPhysXMesh;
+
+					if (entity.Fluid != (size_t)-1)
+						spawnParameters.NewInstance.drawFlags |= VisibilityFlags::eHasFluid;
+
+					if (entity.Vibrate != (size_t)-1 && mapData.GetVibrateObject(entity.Vibrate).Enabled)
+						spawnParameters.NewInstance.drawFlags |= VisibilityFlags::eHasVibrate;
+
+					if (entity.Breakable != (size_t)-1)
+					{
+						spawnParameters.NewInstance.drawFlags |= VisibilityFlags::eHasBreakable;
+						spawnParameters.NewInstance.drawFlags |= (unsigned int)mapData.GetBreakable(entity.Breakable).CollisionGroup;
+					}
+
+					if (entity.MapProperties != (size_t)-1)
+						spawnParameters.NewInstance.drawFlags |= (unsigned int)mapData.GetMapProperties(entity.MapProperties).CubeType;
+
+					if (entity.PhysXMesh != (size_t)-1)
+						spawnParameters.NewInstance.drawFlags |= (unsigned int)mapData.GetPhysXMesh(entity.PhysXMesh).CollisionGroup;
 
 					return true;
 				}
 			);// *flat->Transformation);
-			newModel->Id = entityEntry.Entity->Id;
+			newModel->Id = entity.Id;
 			newModel->Name = entityName;
-			newModel->FlatEntry = flatentry.Entity->Entry;
-			newModel->Position = entityEntry.Placeable->Position;
-			newModel->WorldPosition = ms2ToWorld * Vector3F(entityEntry.Placeable->Position, 1);
+			newModel->FlatEntry = flatEntity.Entry;
+			newModel->Position = placeable.Position;
+			newModel->WorldPosition = ms2ToWorld * Vector3F(placeable.Position, 1);
 			newModel->MapIndex = (int)loadedMaps.size() - 1;
 			newModel->LineNumber = (int)lineNumber;
 
-			if (entityEntry.Portal != nullptr)
+			if (entity.Portal != (size_t)-1)
 			{
-				newModel->PortalIndex = (int)spawnedPortals.size();
-				loadedMaps.back().Portals[entityEntry.Portal->PortalId] = (int)AssetLibrary->GetModels().GetSpawnedEntities().size() - 1;
+				MapLoader::FlatPortal& portal = mapData.GetPortal(entity.Portal);
 
-				spawnedPortals.push_back(SpawnedPortal{ entityEntry.Portal->TargetField, entityEntry.Portal->TargetPortal, entityEntry.Portal->PortalId });
+				newModel->PortalIndex = (int)spawnedPortals.size();
+				loadedMaps.back().Portals[portal.PortalId] = (int)AssetLibrary->GetModels().GetSpawnedEntities().size() - 1;
+
+				spawnedPortals.push_back(SpawnedPortal{ portal.TargetField, portal.TargetPortal, portal.PortalId });
 			}
 		};
 
-		if (entityEntry.Mesh != nullptr && entityEntry.Mesh->Model != nullptr)
-			spawnNewModel(entityEntry.Mesh->Model);
+		if (entity.Mesh != (size_t)-1)
+		{
+			MapLoader::FlatMesh& mesh = mapData.GetMesh(entity.Mesh);
+
+			if (mesh.Model != nullptr)
+				spawnNewModel(mesh.Model);
+		}
+
+		if (spawnCube)
+		{
+			spawningCube = true;
+			spawnNewModel(nullptr);
+			spawningCube = false;
+		}
 
 		spawningProxy = true;
 
-		if (entityEntry.Entity != nullptr && entityEntry.Entity->ProxyModel != nullptr)
-			spawnNewModel(entityEntry.Entity->ProxyModel);
+		if (entityEntry.Entity != (size_t)-1)
+		{
+			MapLoader::FlatEntity& entity = mapData.GetEntity(entityEntry.Entity);
+
+			if (entity.ProxyModel != nullptr)
+				spawnNewModel(entity.ProxyModel);
+		}
 	}
 
 	if (hasAmbient && directionalLight == -1)
@@ -762,6 +889,7 @@ int main(int argc, char** argv)
 	helloVk.createFrameBuffers();
 
 	dyeColors.LoadDyes(Reader);
+	AssetLibrary->GetModels().GenerateDefaultCube();
 	AssetLibrary->GetEmotions().LoadEmotions(Reader);
 
 	loadMapNames(Reader->GetPath("Xml/string/en/mapname.xml"));
@@ -1051,7 +1179,8 @@ int main(int argc, char** argv)
 
 	Scene->AddSkinnedModel(derpPandaRig);
 
-	const char* npcModelName = "21000201_M_CalfWhiteVikingHelmet";
+	//const char* npcModelName = "23000011_B_LizardDragonFire";
+	const char* npcModelName = "23000007_B_DevilHugeBlue";
 
 	const Archive::Metadata::Entry* npcAnimationEntry = Archive::Metadata::Entry::FindFirstEntryByTags(npcModelName, "gamebryo-animation");
 
@@ -1287,6 +1416,7 @@ int main(int argc, char** argv)
 						}
 
 						int spawnedModelId = AssetLibrary->GetModels().GetSpawnedModels()[modelId].ModelId;
+						uint32_t drawFlags = AssetLibrary->GetModels().GetGpuEntityData()[modelId].drawFlags;
 
 						ImGui::Text("Entity Name: %s", entity.Name.c_str());
 
@@ -1296,26 +1426,39 @@ int main(int argc, char** argv)
 							ImGui::Text("Entity Flat Path: %s", entity.FlatEntry->RelativePath.string().c_str());
 						}
 
-						ImGui::Text("Entity Model Name: %s", entity.Model->Entry->Name.c_str());
-						ImGui::Text("Entity Model Path: %s", entity.Model->Entry->RelativePath.string().c_str());
+						if (entity.Model != nullptr)
+						{
+							ImGui::Text("Entity Model Name: %s", entity.Model->Entry->Name.c_str());
+							ImGui::Text("Entity Model Path: %s", entity.Model->Entry->RelativePath.string().c_str());
+						}
+
 						ImGui::Text("Entity Id: %s", entity.Id.c_str());
 						ImGui::Text("Spawned Entity Position: %.3f, %.3f, %.3f", entity.WorldPosition.X, entity.WorldPosition.Y, entity.WorldPosition.Z);
 						ImGui::Text("Entity Coordinates: %.3f, %.3f, %.3f", entity.Position.X, entity.Position.Y, entity.Position.Z);
 
-						MapLoader::ModelNode& node = entity.Model->Nodes[spawnedModelId];
+						if (entity.Model != nullptr && spawnedModelId < entity.Model->Nodes.size())
+						{
+							MapLoader::ModelNode& node = entity.Model->Nodes[spawnedModelId];
 
-						ImGui::Text("NiMesh Index: %d", node.NifBlockIndex);
+							ImGui::Text("NiMesh Index: %d", node.NifBlockIndex);
 
-						ImGui::Text("Shader: %s", node.Shader.c_str());
-						ImGui::Text("Material: %s", node.MaterialName.c_str());
+							ImGui::Text("Shader: %s", node.Shader.c_str());
+							ImGui::Text("Material: %s", node.MaterialName.c_str());
+							ImGui::Text("Draw Flags: %d", drawFlags);
 
-						ImGui::ColorEdit3("Diffuse", &node.Material.diffuse[0], ImGuiColorEditFlags_NoPicker);
-						ImGui::ColorEdit3("Specular", &node.Material.specular[0], ImGuiColorEditFlags_NoPicker);
-						ImGui::ColorEdit3("Ambient", &node.Material.ambient[0], ImGuiColorEditFlags_NoPicker);
-						ImGui::ColorEdit3("Emission", &node.Material.emission[0], ImGuiColorEditFlags_NoPicker);
-						ImGui::Text("Alpha: %.2f", node.Material.dissolve);
-						ImGui::Text("Shininess: %.2f", node.Material.shininess);
-
+							ImGui::ColorEdit3("Diffuse", &node.Material.diffuse[0], ImGuiColorEditFlags_NoPicker);
+							ImGui::ColorEdit3("Specular", &node.Material.specular[0], ImGuiColorEditFlags_NoPicker);
+							ImGui::ColorEdit3("Ambient", &node.Material.ambient[0], ImGuiColorEditFlags_NoPicker);
+							ImGui::ColorEdit3("Emission", &node.Material.emission[0], ImGuiColorEditFlags_NoPicker);
+							ImGui::Text("Alpha: %.2f", node.Material.dissolve);
+							ImGui::Text("Shininess: %.2f", node.Material.shininess);
+						}
+						else
+						{
+							ImGui::Text("NiMesh Index: -1");
+							ImGui::Text("Generated PhysX Cube");
+						}
+						
 						if (ImGui::IsKeyPressed(ImGuiKey_Insert) && fs::exists(ms2RootExtracted))
 						{
 							std::cout << modifiers << std::endl;
@@ -1710,28 +1853,46 @@ int main(int argc, char** argv)
 						ImGui::InputFloat("Epsilon", &helloVk.hostUBO.sliceAxisEpsilon);
 					}
 
-					bool drawFlags[8] = { false };
-					bool highlightFlags[8] = { false };
-
-					for (size_t i = 0; i < 8; ++i)
-					{
-						drawFlags[i] = (helloVk.hostUBO.drawMask & (1 << i)) != 0;
-						highlightFlags[i] = (helloVk.hostUBO.drawMask & (1 << (i + 8))) != 0;
-					}
-
-					const char* const drawFlagLabels[8] = {
+					const char* const drawFlagLabels[] = {
 						"Standard Objects",
-						"Objects With Transparency",
+						"Colliders",
 						"Objects With Invisibility",
 						"Debug/Proxy Objects",
 						"Hidden Objects",
 						"Objects With Shadows",
+						"Has PhysX Meshes",
+						"Has Fluid",
+						"Has Vibrate",
+						"Has Breakable",
+						"CubeType.None",
+						"CubeType.Ground",
+						"CubeType.Fluid",
+						"CubeType.Wall",
+						"CubeType.Object",
+						"CubeType.Building",
+						"Collision Group 0",
+						"Collision Group 7",
+						"Collision Group 8",
+						"Collision Group 9",
+						"Collision Group Misc",
+						"Objects With Transparency",
 						nullptr
 					};
+					const size_t count = sizeof(drawFlagLabels) / sizeof(drawFlagLabels[0]) - 1;
+
+					bool drawFlags[count] = { false };
+					bool highlightFlags[count] = { false };
+
+					for (size_t i = 0; i < count; ++i)
+					{
+						drawFlags[i] = (helloVk.hostUBO.drawMask & ((size_t)1 << i)) != 0;
+						highlightFlags[i] = (helloVk.hostUBO.highlightMask & ((size_t)1 << i)) != 0;
+					}
+
 
 					if (ImGui::CollapsingHeader("Draw Object Types"))
 					{
-						for (size_t i = 0; i < 8 && drawFlagLabels[i]; ++i)
+						for (size_t i = 0; i < count && drawFlagLabels[i]; ++i)
 						{
 							ImGui::Checkbox(drawFlagLabels[i], &drawFlags[i]);
 						}
@@ -1739,21 +1900,27 @@ int main(int argc, char** argv)
 
 					if (ImGui::CollapsingHeader("Highlight Object Types"))
 					{
-						for (size_t i = 0; i < 8 && drawFlagLabels[i]; ++i)
+						for (size_t i = 0; i < count && drawFlagLabels[i]; ++i)
 						{
-							ImGui::Checkbox(drawFlagLabels[i], &highlightFlags[i]);
+							std::string label = drawFlagLabels[i];
+							label += "##highlight";
+
+							ImGui::Checkbox(label.c_str(), &highlightFlags[i]);
 						}
 					}
 
 					uint32_t drawMask = 0;
+					uint32_t highlightMask = 0;
 
-					for (size_t i = 0; i < 8; ++i)
+					for (size_t i = 0; i < count; ++i)
 					{
-						drawMask |= drawFlags[i] << i;
-						drawMask |= highlightFlags[i] << (i + 8);
+						drawMask |= (uint64_t)drawFlags[i] << i;
+						highlightMask |= (uint64_t)highlightFlags[i] << i;
 					}
 
 					helloVk.hostUBO.drawMask = drawMask;
+					helloVk.hostUBO.highlightMask = highlightMask;
+					helloVk.hostUBO.drawMaskHighlightPos = count;
 
 					if (ImGui::CollapsingHeader("Highlight Materials"))
 					{

@@ -173,6 +173,10 @@ namespace MapLoader
 
 		for (size_t i = 0; i < nodeMappings.size(); ++i)
 		{
+			if (nodeMappings[i].NodeIndex >= Rig->GetRigNodes().size())
+			{
+				throw "out o bounds";
+			}
 			NodesNeedReset.insert(nodeMappings[i].NodeIndex);
 		}
 

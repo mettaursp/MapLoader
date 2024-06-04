@@ -173,7 +173,7 @@ void main()
 	int shaderType = mat.shaderType & 0xFFFF0000;
 	shaderType = shaderType < 0 ? -1 : shaderType >> 16;
 
-	uint32_t highlightMask = (uni.drawMask >> 8) & 0xFF;
+	uint32_t highlightMask = (uni.drawMask >> uni.drawMaskHighlightPos) & 0xFFFF;
 	//if (mat.shaderType == eNone)
 	//{ prd.hitValue = vec3(1, 0, 0); prd.rayLength = 0; return; }
 	//if (shaderType == eMS2GlowMaterial)
@@ -181,7 +181,7 @@ void main()
 
 	bool highlightMaterial = (uni.highlightMaterialFlags & (1 << (SHADER_TYPE + 1))) != 0;
 
-	if ((instanceDesc.drawFlags & highlightMask) != 0 || highlightMaterial)
+	if ((instanceDesc.drawFlags & uni.highlightMask) != 0 || highlightMaterial)
 	{
 		 prd.hitValue = vec3(0.9, 0.1, 0.9) + 0.1 * worldNrm;
 		 prd.rayLength = 0;
@@ -417,8 +417,10 @@ void main()
 			lightBoost = subsurfaceScatter * sssColor + (1 - subsurfaceScatter) * vec3(1, 1, 1);
 		}
 
+		bool unshadowed = (instanceDesc.drawFlags & eCollider) != 0;
+
 		// Tracing shadow ray only if the light is visible from the surface
-		if(light.castsShadows && dot(worldNrm, L) > 0)
+		if(!unshadowed && light.castsShadows && dot(worldNrm, L) > 0)
 		{
 			vec3  origin = gl_WorldRayOriginEXT + gl_WorldRayDirectionEXT * gl_HitTEXT;// + worldNrm * 0.002;
 			float tMin   = 0.005;
@@ -437,7 +439,7 @@ void main()
 			{
 				traceRayEXT(topLevelAS,  // acceleration structure
 									flags,       // rayFlags
-									eHasShadow,//uni.drawMask,        // cullMask
+									uint(eHasShadow),//uni.drawMask,        // cullMask
 									1,           // sbtRecordOffset
 									1,           // sbtRecordStride
 									1,           // missIndex
@@ -466,7 +468,7 @@ void main()
 		}
 		else
 		{
-			shadowPayload.isShadowed = light.castsShadows;
+			shadowPayload.isShadowed = light.castsShadows && !unshadowed;
 		}
 
 		if(shadowPayload.isShadowed)

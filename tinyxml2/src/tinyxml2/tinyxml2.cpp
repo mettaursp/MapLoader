@@ -2816,7 +2816,7 @@ namespace tinyxml2
 						_textDepth = -1;
 				}
 				if (_depth == 0 && !compactMode) {
-						Putc('\n');
+						//Putc('\n');
 				}
 				_elementJustOpened = false;
 		}

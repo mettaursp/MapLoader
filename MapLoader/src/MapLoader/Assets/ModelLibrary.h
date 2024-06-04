@@ -79,6 +79,7 @@ namespace MapLoader
 		ModelLibrary(GameAssetLibrary& assetLibrary);
 		~ModelLibrary();
 
+		void GenerateDefaultCube();
 		ModelData* FetchModel(const Archive::Metadata::Entry* entry, bool keepRawData = false, ModelData* parentRig = nullptr);
 		ModelData* FindModel(const Archive::Metadata::Entry* entry);
 		void SetCurrentMapTransform(const Matrix4F& mapTransform);
@@ -106,8 +107,8 @@ namespace MapLoader
 		const auto& GetSpawnedEntities() const { return SpawnedEntities; }
 		const auto& GetGpuEntityData() const { return GpuEntityData; }
 		const auto& GetBlasInstances() const { return BlasInstances; }
-
-		SpawnedEntity* SpawnModel(RTScene* scene, ModelData* model, const Matrix4F& transform, const Vector3SF& mapCoords, const ModelSpawnCallback& callback = nullptr);
+		
+		SpawnedEntity* SpawnModel(RTScene* scene, ModelData* model, const Matrix4F& transform, const Vector3SF& mapCoords, bool spawnDefaultCube, Vector3SF cubeSize, const ModelSpawnCallback& callback = nullptr);
 		void SpawnWireframe(RTScene* scene, uint32_t index, const Matrix4F& transform = Matrix4F());
 
 		void FreeResources();
@@ -189,6 +190,7 @@ namespace MapLoader
 		};
 
 		const bool LogMaterialTextures = false;
+		size_t DefaultCubeIndex = (size_t)-1;
 
 		std::unordered_map<std::string, MaterialLog> LoggedMaterials;
 

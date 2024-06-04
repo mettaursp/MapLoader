@@ -5,6 +5,8 @@
 #include <map>
 #include <set>
 #include <cstring>
+#include <iostream>
+#include <iomanip>
 
 #include <Engine/Math/Vector3S.h>
 #include <Engine/Math/Vector2S.h>
@@ -16,6 +18,28 @@
 #include <Engine/VulkanGraphics/Scene/MeshData.h>
 #include "NifComponentInfo.h"
 #include "NifBlockTypes.h"
+
+void NifDocument::ParseMatrix(std::string_view& stream, Matrix4F& matrix)
+{
+	for (int x = 0; x < 3; ++x)
+	{
+		for (int y = 0; y < 3; ++y)
+		{
+			matrix.Data[y][x] = Endian.read<float>(stream);
+		}
+	}
+}
+
+Vector3SF NifDocument::ParseVector3(std::string_view& stream)
+{
+	Vector3SF vector;
+
+	float x = Endian.read<float>(stream);
+	float y = Endian.read<float>(stream);
+	float z = Endian.read<float>(stream);
+
+	return Vector3SF(x, y, z);
+}
 
 void NifDocument::ParseTransform(std::string_view& stream, NiTransform& transform, bool translationFirst, bool isQuaternion)
 {
@@ -30,13 +54,7 @@ void NifDocument::ParseTransform(std::string_view& stream, NiTransform& transfor
 
 	if (!isQuaternion)
 	{
-		for (int x = 0; x < 3; ++x)
-		{
-			for (int y = 0; y < 3; ++y)
-			{
-				transform.Rotation.Data[y][x] = Endian.read<float>(stream);
-			}
-		}
+		ParseMatrix(stream, transform.Rotation);
 	}
 	else
 	{
@@ -621,6 +639,353 @@ void NifDocument::ParseVertexColorProperty(std::string_view& stream, BlockData& 
 	data->Flags = Endian.read<unsigned short>(stream);
 }
 
+void NifDocument::ParsePhysXProp(std::string_view& stream, BlockData& block)
+{
+	NiPhysXProp* data = block.AddData<NiPhysXProp>();
+
+	ReadBlockRefs(stream, block, data->ExtraData);
+
+	data->Controller = FetchRef(stream);
+	data->PhysXToWorldScale = Endian.read<float>(stream);
+
+	ReadBlockRefs(stream, block, data->Sources);
+	ReadBlockRefs(stream, block, data->Dests);
+	ReadBlockRefs(stream, block, data->ModifiedMeshes);
+
+	data->KeepMeshes = Endian.read<bool>(stream);
+	data->Snapshot = FetchRef(stream);
+}
+
+void NifDocument::ParsePhysXPropDesc(std::string_view& stream, BlockData& block)
+{
+	NiPhysXPropDesc* data = block.AddData<NiPhysXPropDesc>();
+
+	ReadBlockRefs(stream, block, data->Actors);
+	ReadBlockRefs(stream, block, data->Joints);
+	ReadBlockRefs(stream, block, data->Clothes);
+	
+	unsigned int materialCount = Endian.read<unsigned int>(stream);
+
+	for (unsigned int i = 0; i < materialCount; ++i)
+	{
+		unsigned short key = Endian.read<unsigned short>(stream);
+
+		data->Materials[key] = FetchRef(stream);
+	}
+
+	unsigned int stateCount = Endian.read<unsigned int>(stream);
+
+	data->StateNames.resize(stateCount);
+
+	for (unsigned int i = 0; i < stateCount; ++i)
+	{
+		unsigned int stringCount = Endian.read<unsigned int>(stream);
+
+		auto& state = data->StateNames[i];
+
+		state.Strings.resize(stringCount);
+
+		for (unsigned int j = 0; j < stringCount; ++j)
+		{
+			state.Strings[j].String = FetchString(stream);
+			state.Strings[j].Value = Endian.read<unsigned int>(stream);
+		}
+	}
+
+	data->Flags = Endian.read<unsigned char>(stream);
+}
+
+void NifDocument::ParsePhysXActorDesc(std::string_view& stream, BlockData& block)
+{
+	NiPhysXActorDesc* data = block.AddData<NiPhysXActorDesc>();
+
+	data->ActorName = FetchString(stream);
+
+	unsigned int poseCount = Endian.read<unsigned int>(stream);
+
+	data->Poses.resize(poseCount);
+
+	for (unsigned int i = 0; i < poseCount; ++i)
+	{
+		ParseMatrix(stream, data->Poses[i]);
+
+		data->Poses[i].SetTranslation(ParseVector3(stream));		
+	}
+
+	data->BodyDesc = FetchRef(stream);
+	data->Density = Endian.read<float>(stream);
+	data->ActorFlags = (NxActorFlag)Endian.read<unsigned int>(stream);
+	data->ActorGroup = Endian.read<unsigned short>(stream);
+	data->DominanceGroup = Endian.read<unsigned short>(stream);
+	data->ContactReportFlags = Endian.read<unsigned int>(stream);
+	data->ForceFieldMaterial = Endian.read<unsigned short>(stream);
+
+	ReadBlockRefs(stream, block, data->ShapeDescriptions);
+
+	data->ActorParent = FetchRef(stream);
+	data->Source = FetchRef(stream);
+	data->Dest = FetchRef(stream);
+}
+
+void NifDocument::ParsePhysXShapeDesc(std::string_view& stream, BlockData& block)
+{
+	NiPhysXShapeDesc* data = block.AddData<NiPhysXShapeDesc>();
+
+	data->ShapeType = (NxShapeType)Endian.read<unsigned int>(stream);
+
+	ParseMatrix(stream, data->LocalPose);
+
+	data->LocalPose.SetTranslation(ParseVector3(stream));
+	data->Flags = (NxShapeFlag)Endian.read<unsigned int>(stream);
+	data->CollisionGroup = Endian.read<unsigned short>(stream);
+	data->MaterialIndex = Endian.read<unsigned short>(stream);
+	data->Density = Endian.read<float>(stream);
+	data->Mass = Endian.read<float>(stream);
+	data->SkinWidth = Endian.read<float>(stream);
+	data->ShapeName = FetchString(stream);
+	data->NonInteractingCompartment = Endian.read<unsigned int>(stream);
+	data->CollisionBits[0] = Endian.read<unsigned int>(stream);
+	data->CollisionBits[1] = Endian.read<unsigned int>(stream);
+	data->CollisionBits[2] = Endian.read<unsigned int>(stream);
+	data->CollisionBits[3] = Endian.read<unsigned int>(stream);
+	data->Mesh = FetchRef(stream);
+}
+
+void dumpHex(const unsigned char* data, size_t size, size_t rowWidth = 0x10)
+{
+	std::cout << "\n      " << std::hex;
+
+	for (size_t i = 0; i < rowWidth; ++i)
+		std::cout << ' ' << std::setw(2) << std::setfill('0') << i;
+
+	std::cout << "\n      ";
+
+	for (size_t i = 0; i < rowWidth; ++i)
+		std::cout << "---";
+
+	for (size_t row = 0; row < size; row += rowWidth)
+	{
+		std::cout << "\n" << std::setw(4) << std::setfill('0') << row << " |";
+
+		size_t i = 0;
+
+		for (i; i + row < size && i < rowWidth; ++i)
+			std::cout << ' ' << std::setw(2) << std::setfill('0') << (size_t)data[row + i];
+
+		for (i; i < rowWidth; ++i)
+			std::cout << "   ";
+
+		std::cout << " | ";
+
+		for (i = 0; i + row < size && i < rowWidth; ++i)
+		{
+			char value = (char)data[row + i];
+
+			if (value < 0x20 || value > 0x7E)
+				value = '.';
+
+			std::cout << (char)value;
+		}
+	}
+
+	std::cout << std::endl;
+}
+
+
+NxsMeshType parseNxsConvexMesh(const char* data, size_t size, NiPhysXMeshDesc* meshDesc)
+{
+	//dumpHex((const unsigned char*)data, size);
+
+	Endian endian(std::endian::little);
+
+	std::string_view stream(data, size);
+
+	unsigned int unk1 = endian.read<unsigned int>(stream);
+	unsigned int unk2 = endian.read<unsigned int>(stream);
+
+	if (strncmp(stream.data(), "ICE\1CLHL", 8) != 0)
+	{
+		size += 0;
+	}
+
+	advanceStream(stream, 8);
+
+	unsigned int unk3 = endian.read<unsigned int>(stream);
+
+	if (strncmp(stream.data(), "ICE\1", 4) != 0)
+	{
+		size += 0;
+	}
+
+	advanceStream(stream, 4);
+
+	unsigned int unk4 = endian.read<unsigned int>(stream);
+	unsigned int unk5 = endian.read<unsigned int>(stream);
+	unsigned int vertexCount = endian.read<unsigned int>(stream);
+	unsigned int faceCount = endian.read<unsigned int>(stream);
+	unsigned int unk6 = endian.read<unsigned int>(stream);
+	unsigned int unk7 = endian.read<unsigned int>(stream);
+	unsigned int unk8 = endian.read<unsigned int>(stream);
+	unsigned int unk9 = endian.read<unsigned int>(stream);
+
+	meshDesc->Mesh.Vertices.resize(vertexCount);
+
+	for (unsigned int i = 0; i < vertexCount; ++i)
+	{
+		meshDesc->Mesh.Vertices[i] = {
+			endian.read<float>(stream),
+			endian.read<float>(stream),
+			endian.read<float>(stream)
+		};
+	}
+
+	unsigned int unk10 = endian.read<unsigned int>(stream);
+
+	meshDesc->Mesh.Faces.resize(faceCount);
+
+	for (unsigned int i = 0; i < faceCount; ++i)
+	{
+		NxsFace& face = meshDesc->Mesh.Faces[i];
+
+		face = {
+			endian.read<unsigned char>(stream),
+			endian.read<unsigned char>(stream),
+			endian.read<unsigned char>(stream)
+		};
+
+		if (face.Vert1 >= vertexCount || face.Vert2 >= vertexCount || face.Vert3 >= vertexCount)
+		{
+			size += 0;
+		}
+	}
+
+	return NxsMeshType::Convex;
+}
+
+NxsMeshType parseNxsTriangleMesh(const char* data, size_t size, NiPhysXMeshDesc* meshDesc)
+{
+	Endian endian(std::endian::little);
+
+	std::string_view stream(data, size);
+
+	unsigned int unk1 = endian.read<unsigned int>(stream);
+	unsigned int unk2 = endian.read<unsigned int>(stream);
+	float unk3 = endian.read<float>(stream);
+	size_t unk4 = endian.read<size_t>(stream);
+
+	if (unk4 != 0xFF || unk1 != 1)
+	{
+		size += 0;
+	}
+
+	unsigned int vertexCount = endian.read<unsigned int>(stream);
+	unsigned int faceCount = endian.read<unsigned int>(stream);
+
+	meshDesc->Mesh.Vertices.resize(vertexCount);
+	meshDesc->Mesh.Faces.resize(faceCount);
+
+	for (unsigned int i = 0; i < vertexCount; ++i)
+	{
+		meshDesc->Mesh.Vertices[i] = {
+			endian.read<float>(stream),
+			endian.read<float>(stream),
+			endian.read<float>(stream)
+		};
+	}
+
+	for (unsigned int i = 0; i < faceCount; ++i)
+	{
+		NxsFace& face = meshDesc->Mesh.Faces[i];
+
+		face = {
+			endian.read<unsigned char>(stream),
+			endian.read<unsigned char>(stream),
+			endian.read<unsigned char>(stream)
+		};
+
+		if (face.Vert1 >= vertexCount || face.Vert2 >= vertexCount || face.Vert3 >= vertexCount)
+		{
+			size += 0;
+		}
+	}
+
+	unsigned int unkCount = endian.read<unsigned int>(stream);
+
+	std::vector<unsigned char> unkData(unkCount);
+
+	for (unsigned int i = 0; i < unkCount; ++i)
+	{
+		unkData[i] = endian.read<unsigned char>(stream);
+	}
+
+	return NxsMeshType::Triangle;
+}
+
+NxsMeshType parseNxsClothMesh(const char* data, size_t size, NiPhysXMeshDesc* meshDesc)
+{
+	return NxsMeshType::None;
+}
+
+NxsMeshType parseNxsMesh(const unsigned char* data, size_t size, NiPhysXMeshDesc* meshDesc)
+{
+	const size_t headerCheckSize = std::min(size, (size_t)4);
+	const size_t headerCheckTypeSize = std::min((size_t)((long long)size - 4), (size_t)4);
+
+	const char* strData = reinterpret_cast<const char*>(data);
+
+	bool headerMatches = strncmp(strData, "NXS\1", headerCheckSize) == 0;
+
+	if (!headerMatches)
+	{
+		return NxsMeshType::None;
+	}
+
+	if (strncmp(strData + 4, "CVXM", headerCheckTypeSize) == 0)
+	{
+		return parseNxsConvexMesh(strData + 8, size - 8, meshDesc);
+	}
+
+	if (strncmp(strData + 4, "MESH", headerCheckTypeSize) == 0)
+	{
+		return parseNxsTriangleMesh(strData + 8, size - 8, meshDesc);
+	}
+
+	if (strncmp(strData + 4, "CLTH", headerCheckTypeSize) == 0)
+	{
+		return parseNxsClothMesh(strData + 8, size - 8, meshDesc);
+	}
+
+	return NxsMeshType::None;
+}
+
+void NifDocument::ParsePhysXMeshDesc(std::string_view& stream, BlockData& block)
+{
+	NiPhysXMeshDesc* data = block.AddData<NiPhysXMeshDesc>();
+
+	data->MeshName = FetchString(stream);
+
+	unsigned int meshSize = Endian.read<unsigned int>(stream);
+
+	data->MeshData.resize(meshSize);
+
+	std::memcpy(data->MeshData.data(), stream.data(), meshSize);
+
+	advanceStream(stream, meshSize);
+
+	bool printMesh = false;
+
+	if (printMesh)
+	{
+		dumpHex(data->MeshData.data(), meshSize);
+	}
+
+	data->Mesh.Type = parseNxsMesh(data->MeshData.data(), meshSize, data);
+
+	data->MeshFlags = (NxMeshShapeFlags)Endian.read<unsigned int>(stream);
+	data->PagingMode = (NxPagingMode)Endian.read<unsigned int>(stream);
+	data->Flags = (PhysXMeshFlags)Endian.read<unsigned char>(stream);
+}
+
 void advanceStream(std::string_view& stream, size_t amount)
 {
 	stream = std::string_view(stream.data() + amount, stream.size() - amount);
@@ -649,7 +1014,12 @@ std::unordered_map<std::string, NifDocument::BlockParseFunction> parserFunctions
 	{ "NiColorExtraData", &NifDocument::ParseColorExtraData },
 	{ "NiFloatExtraData", &NifDocument::ParseFloatExtraData },
 	{ "NiAlphaProperty", &NifDocument::ParseAlphaProperty },
-	{ "NiVertexColorProperty", &NifDocument::ParseVertexColorProperty }
+	{ "NiVertexColorProperty", &NifDocument::ParseVertexColorProperty },
+	{ "NiPhysXProp", &NifDocument::ParsePhysXProp },
+	{ "NiPhysXPropDesc", &NifDocument::ParsePhysXPropDesc },
+	{ "NiPhysXActorDesc", &NifDocument::ParsePhysXActorDesc },
+	{ "NiPhysXShapeDesc", &NifDocument::ParsePhysXShapeDesc },
+	{ "NiPhysXMeshDesc", &NifDocument::ParsePhysXMeshDesc },
 };
 
 std::set<std::string> ignoreBlockName = {
@@ -664,7 +1034,11 @@ std::set<std::string> ignoreBlockName = {
 	"NiBSplineData",
 	"NiBSplineBasisData",
 	"NiTransformEvaluator",
-	"NiTransformData"
+	"NiTransformData",
+	"NiPhysXPropDesc",
+	"NiPhysXActorDesc",
+	"NiPhysXShapeDesc",
+	"NiPhysXMeshDesc"
 };
 
 std::unordered_map<std::string, std::string> attributeAliases = {
@@ -864,6 +1238,22 @@ void NifParser::Parse(std::string_view stream)
 	std::unordered_map<unsigned int, size_t> nodeIndices;
 	std::unordered_map<size_t, size_t> boneIndices;
 
+	std::vector<Engine::Graphics::VertexAttributeFormat> physXMeshAttributes = {
+		{
+			.Type = VertexAttributeFormat::AttributeDataType::Float32,
+			.ElementCount = 3,
+			.Name = "position"
+		},
+		{
+			.Type = VertexAttributeFormat::AttributeDataType::Float32,
+			.ElementCount = 3,
+			.Name = "normal",
+			.Binding = 1
+		}
+	};
+	std::shared_ptr<Engine::Graphics::MeshFormat> physXMeshFormat = Engine::Graphics::MeshFormat::GetFormat(physXMeshAttributes);
+	size_t physXMaterialIndex = (size_t)-1;
+
 	for (unsigned int blockIndex = 0; blockIndex < numBlocks; ++blockIndex)
 	{
 		BlockData& block = document.Blocks[blockIndex];
@@ -897,7 +1287,7 @@ void NifParser::Parse(std::string_view stream)
 			transform->SetInheritsTransformation((data->Flags & 0x4 || true) != 0);// || true);
 			transform->Name = block.BlockName;
 
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, (size_t)-1, blockIndex, false, false, nullptr, nullptr, transform });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, (size_t)-1, blockIndex, false, false, false, false, nullptr, nullptr, transform });
 		}
 		else if (block.BlockType == "NiMesh")
 		{
@@ -1179,6 +1569,8 @@ void NifParser::Parse(std::string_view stream)
 				++binding;
 			}
 
+			bool isVisible = (data->Flags & 0x1) == 0;
+
 			NiTransform& nodeTransform = data->Transformation;
 
 			std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
@@ -1198,7 +1590,124 @@ void NifParser::Parse(std::string_view stream)
 
 			transform->SetTransformation(transformation);
 
-			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, blockIndex, false, false, format, mesh, transform });
+			Package->Nodes.push_back(ModelPackageNode{ block.BlockName, parentIndex, materialIndex, blockIndex, false, false, false, isVisible, format, mesh, transform });
+		}
+		else if (block.BlockType == "NiPhysXProp")
+		{
+			Package->PhysXProps.push_back({});
+
+			ModelPhysXProp& prop = Package->PhysXProps.back();
+
+			NiPhysXProp* data = block.Data->Cast<NiPhysXProp>();
+
+			if (data->Snapshot != nullptr)
+			{
+				for (const auto& actorData : data->Snapshot->Actors)
+				{
+					prop.Actors.push_back({});
+
+					ModelPhysXActor& actor = prop.Actors.back();
+
+					bool physicsDisabled = (actorData->ActorFlags & (NxActorFlag::DisableCollision | NxActorFlag::DisableResponse)) != 0;
+					
+					for (const auto& shapeData : actorData->ShapeDescriptions)
+					{
+						if (shapeData->Mesh != nullptr)
+						{
+							actor.Meshes.push_back({});
+
+							ModelPhysXMesh& mesh = actor.Meshes.back();
+							const NxsMesh& colliderMesh = shapeData->Mesh->Mesh;
+
+							Package->HasEnabledPhysXMeshes = !physicsDisabled;
+
+							if (colliderMesh.Type == NxsMeshType::None)
+							{
+								continue;
+							}
+
+							std::shared_ptr<Engine::Graphics::MeshData> meshData = Engine::Create<Engine::Graphics::MeshData>();
+
+							size_t faceCount = colliderMesh.Faces.size();
+							size_t vertexCount = faceCount * 3;
+							std::vector<int> indexBuffer(faceCount * 3);
+							std::vector<Vector3SF> vertexBuffer(vertexCount);
+							std::vector<Vector3SF> normalBuffer(vertexCount);
+
+							for (size_t i = 0; i < colliderMesh.Faces.size(); ++i)
+							{
+								const NxsFace& face = colliderMesh.Faces[i];
+
+								size_t i0 = 3 * i + 0;
+								size_t i1 = 3 * i + 1;
+								size_t i2 = 3 * i + 2;
+
+								indexBuffer[i0] = (int)i0;
+								indexBuffer[i1] = (int)i1;
+								indexBuffer[i2] = (int)i2;
+
+								vertexBuffer[i0] = colliderMesh.Vertices[face.Vert1];
+								vertexBuffer[i1] = colliderMesh.Vertices[face.Vert2];
+								vertexBuffer[i2] = colliderMesh.Vertices[face.Vert3];
+
+								Vector3SF normal = (vertexBuffer[i1] - vertexBuffer[i0]).Cross((vertexBuffer[i2] - vertexBuffer[i0])).Unit();
+
+								normalBuffer[i0] = normal;
+								normalBuffer[i1] = normal;
+								normalBuffer[i2] = normal;
+							}
+
+							meshData->SetFormat(physXMeshFormat);
+							meshData->PushVertices(vertexCount, false);
+							meshData->PushIndices(indexBuffer);
+
+							const void* vertexBufferPointers[2] = {
+								vertexBuffer.data(),
+								normalBuffer.data()
+							};
+
+							physXMeshFormat->Copy(vertexBufferPointers, meshData->GetData(), physXMeshFormat, vertexCount);
+
+							std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
+							transform->Name = block.BlockName + "Transform";
+
+							Matrix4F transformation = Matrix4F::NewScale(data->PhysXToWorldScale, data->PhysXToWorldScale, data->PhysXToWorldScale) * actorData->Poses[0] * shapeData->LocalPose;
+
+							transform->SetTransformation(transformation);
+
+							if (physXMaterialIndex == (size_t)-1)
+							{
+								physXMaterialIndex = Package->Materials.size();
+
+								Package->Materials.push_back({});
+
+								ModelPackageMaterial& material = Package->Materials.back();
+
+								material.EmissiveColor = Color3(0.f, 0.f, 0.f);
+								material.AmbientColor = Color3(0.2f, 0.2f, 0.2f);
+
+								switch (colliderMesh.Type)
+								{
+								case NxsMeshType::Convex: material.Name = "PhysX Convex Mesh";
+									break;
+								case NxsMeshType::Triangle: material.Name = "PhysX Triangle Mesh";
+									break;
+								case NxsMeshType::Cloth: material.Name = "PhysX Cloth Mesh";
+									break;
+								}
+							}
+
+							mesh.DataIndex = blockIndex;
+							mesh.MaterialIndex = physXMaterialIndex;
+							mesh.Format = physXMeshFormat;
+							mesh.Mesh = meshData;
+							mesh.Transform;
+
+							Package->Nodes.push_back(ModelPackageNode{ "ModelPhysXMesh", 0, physXMaterialIndex, blockIndex, true, false, false, false, physXMeshFormat, meshData, transform});
+						}
+					}
+				}
+			}
 		}
 		else if (block.BlockType == "NiSequenceData")
 		{

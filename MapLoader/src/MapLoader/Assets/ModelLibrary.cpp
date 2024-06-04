@@ -56,6 +56,7 @@ namespace MapLoader
 
 		loadedModel.Entry = entry;
 		loadedModel.Index = (uint32_t)Models.size() - 1;
+		loadedModel.DefaultCubeId = (uint32_t)DefaultCubeIndex;
 
 		FetchModel(AssetLibrary.GetReader()->GetPath(filepath), loadedModel, keepRawData, parentRig);
 
@@ -154,6 +155,9 @@ namespace MapLoader
 			modelNode.Bones = node.Bones;
 			modelNode.AttachedTo = node.AttachedTo;
 			modelNode.NifBlockIndex = node.DataIndex;
+			modelNode.IsVisible = node.IsVisible;
+			modelNode.HasEnabledPhysXMesh = parser.Package->HasEnabledPhysXMeshes;
+			modelNode.IsPhysXMesh = node.HasPhysXData;
 
 			if (node.Transform != nullptr)
 			{
@@ -198,7 +202,7 @@ namespace MapLoader
 				modelNode.Material = meshBuffers.Material;
 				modelNode.MeshId = (int)LoadModel(meshBuffers);
 				modelNode.HasTransparency = meshBuffers.HasTransparency;
-				modelNode.HasInvisibility = meshBuffers.HasInvisibility;
+				modelNode.HasInvisibility = !node.IsVisible || meshBuffers.HasInvisibility;
 
 				if (meshBuffers.Material.textures == 0) continue;
 				
@@ -245,6 +249,75 @@ namespace MapLoader
 	ModelLibrary::~ModelLibrary()
 	{
 		FreeResources();
+	}
+
+	void ModelLibrary::GenerateDefaultCube()
+	{
+		MeshBuffers buffers;
+		Matrix4F transform;
+
+		std::vector<Vector3SF> vertexBuffer = {
+			{ -0.75f,  0.75f, 0.0f },
+			{ -0.75f, -0.75f, 0.0f },
+			{ -0.75f, -0.75f, 1.5f },
+			{ -0.75f,  0.75f, 1.5f },
+			{  0.75f, -0.75f, 0.0f },
+			{  0.75f, -0.75f, 1.5f },
+			{  0.75f,  0.75f, 0.0f },
+			{  0.75f,  0.75f, 1.5f }
+		};
+
+		buffers.IndexBuffer = {
+			1, 4, 5,
+			4, 6, 7,
+			7, 5, 4,
+			2, 5, 7,
+			6, 4, 1,
+			3, 7, 6,
+			5, 2, 1,
+			7, 3, 2,
+			2, 3, 0,
+			1, 0, 6,
+			6, 0, 3,
+			0, 1, 2
+		};
+
+		size_t vertexCount = buffers.IndexBuffer.size();
+		buffers.VertexPositions.resize(vertexCount);
+
+		for (size_t i = 0; i < vertexCount; i += 3)
+		{
+			int* face = buffers.IndexBuffer.data() + i;
+
+			auto& vert0 = buffers.VertexPositions[i + 0];
+			auto& vert1 = buffers.VertexPositions[i + 1];
+			auto& vert2 = buffers.VertexPositions[i + 2];
+
+			vert0.position = vertexBuffer[face[0]];
+			vert1.position = vertexBuffer[face[1]];
+			vert2.position = vertexBuffer[face[2]];
+
+			face[0] = (int)i + 0;
+			face[1] = (int)i + 1;
+			face[2] = (int)i + 2;
+
+			Vector3SF normal = (vert1.position - vert0.position).Cross(vert2.position - vert0.position).Unit();
+
+			vert0.normal = normal;
+			vert1.normal = normal;
+			vert2.normal = normal;
+		}
+
+		Engine::Graphics::ModelPackageMaterial packageMaterial;
+
+		packageMaterial.EmissiveColor = Color3(0.f, 0.f, 0.f);
+		packageMaterial.AmbientColor = Color3(0.2f, 0.2f, 0.2f);
+
+		LoadMaterial(buffers.Material, packageMaterial);
+
+		buffers.VertexBindings[0] = buffers.VertexPositions.data();
+
+		DefaultCubeIndex = LoadModel(buffers, transform, false);
 	}
 
 	void ModelLibrary::LoadMaterial(MaterialObj& material, const Engine::Graphics::ModelPackageMaterial& packageMaterial)
@@ -684,16 +757,13 @@ namespace MapLoader
 		cmdBufGet.submitAndWait(cmdBuf);
 	}
 
-	SpawnedEntity* ModelLibrary::SpawnModel(RTScene* scene, MapLoader::ModelData* model, const Matrix4F& transformation, const Vector3SF& mapCoords, const ModelSpawnCallback& callback)
+	SpawnedEntity* ModelLibrary::SpawnModel(RTScene* scene, MapLoader::ModelData* model, const Matrix4F& transformation, const Vector3SF& mapCoords, bool spawnDefaultCube, Vector3SF cubeSize, const ModelSpawnCallback& callback)
 	{
-		if (model == nullptr)
-			return nullptr;
-
 		int entityId = (int)SpawnedEntities.size();
 		SpawnedEntities.push_back(SpawnedEntity{ model });
 		auto& spawnedEntity = SpawnedEntities.back();
 
-		for (size_t i = 0; i < model->Nodes.size(); ++i)
+		for (size_t i = 0; model != nullptr && i < model->Nodes.size(); ++i)
 		{
 			if (model->IsLoaded(i))
 			{
@@ -706,11 +776,20 @@ namespace MapLoader
 				instance.drawFlags = meshDescription.drawFlags;
 				instance.mapCoords = mapCoords;
 
+				if (modelNode.IsPhysXMesh)
+					instance.drawFlags = VisibilityFlags::eCollider;
+
 				if (modelNode.HasTransparency)
 					instance.drawFlags |= VisibilityFlags::eHasTransparency;
 
 				if (modelNode.HasInvisibility)
 					instance.drawFlags |= VisibilityFlags::eHasInvisibility;
+
+				if (!modelNode.IsVisible)
+					instance.drawFlags |= VisibilityFlags::eHiddenObject;
+
+				if (modelNode.HasEnabledPhysXMesh)
+					instance.drawFlags |= VisibilityFlags::eHasPhysXMesh;
 
 				if (callback != nullptr)
 				{
@@ -780,6 +859,86 @@ namespace MapLoader
 
 				GpuEntityData.push_back(instance);
 			}
+		}
+
+		if (spawnDefaultCube && DefaultCubeIndex != (size_t)-1)
+		{
+			InstDesc instance;
+			const auto& meshDescription = GetMeshDescriptions()[DefaultCubeIndex];
+			size_t meshId = GpuEntityData.size();
+			const auto& gpuMeshData = GpuMeshData[DefaultCubeIndex];
+
+			instance.drawFlags = VisibilityFlags::eCollider;
+			instance.mapCoords = mapCoords;
+
+			if (callback != nullptr)
+			{
+				ModelSpawnParameters parameters
+				{
+					.Model = model,
+					.MeshIndex = (size_t)-1,
+					.NewInstance = instance,
+					.MeshId = meshId,
+					.VertexCount = meshDescription.VertexCount,
+					.IndexCount = meshDescription.IndexCount,
+				};
+
+				if (!callback(parameters))
+					return &spawnedEntity;
+			}
+
+			size_t blasInstanceId = (size_t)-1;
+
+			if (instance.vertexPosAddress != (uint64_t)0)
+			{
+				blasInstanceId = BlasInstances.size();
+				BlasInstances.push_back(
+					{
+						.VertexCount = meshDescription.VertexCount,
+						.IndexCount = meshDescription.IndexCount,
+						.VertexBufferAddress = instance.vertexPosAddress,
+						.IndexBufferAddress = gpuMeshData.indexAddress//nvvk::getBufferDeviceAddress(AssetLibrary.GetVulkanContext()->Device, meshDescription.IndexBuffer.buffer)
+					}
+				);
+			}
+			else
+			{
+				instance.vertexPosAddress = gpuMeshData.vertexPosAddress;
+				instance.vertexBinormalAddress = gpuMeshData.vertexBinormalAddress;
+			}
+
+			instance.indexAddress = gpuMeshData.indexAddress;
+			instance.materialId = gpuMeshData.materialId;
+
+			if (instance.textures == -1)
+				instance.textures = GpuMaterialData[instance.materialId].textures;
+
+			Matrix4F cubeTransform = Matrix4F::NewScale(cubeSize.X * 100, cubeSize.Y * 100, cubeSize.Z * 100);
+
+			LoadModelInstance((uint32_t)DefaultCubeIndex, CurrentMapTransform * transformation * cubeTransform, blasInstanceId);
+
+			std::shared_ptr<MapLoader::SceneObject> sceneObject = Engine::Create<MapLoader::SceneObject>();
+
+			SpawnedModels.push_back(SpawnedModel{ entityId, -1, -1, blasInstanceId, sceneObject });
+
+			std::shared_ptr<Engine::Transform> transform = Engine::Create<Engine::Transform>();
+
+			uint32_t shaderType = 0;
+
+			shaderType = (shaderType & 0xFFFF0000) >> 16;
+
+			transform->SetTransformation(CurrentMapTransform * transformation * cubeTransform);
+			sceneObject->SetTransform(transform.get());
+			sceneObject->SetModel(model, -1);
+			sceneObject->SetInstanceId(meshId);
+			sceneObject->SetStatic(true);
+			sceneObject->SetParent(transform);
+			sceneObject->SetVisibilityFlags((VisibilityFlags)(instance.drawFlags & 0xFF));
+			sceneObject->SetShaderType(shaderType + 1);
+			scene->AddObject(sceneObject);
+			spawnedEntity.Meshes.push_back({ transform, sceneObject });
+
+			GpuEntityData.push_back(instance);
 		}
 
 		return &spawnedEntity;
